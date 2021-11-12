@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { Container, View, Text, Button } from 'native-base';
 import { Image, StatusBar, ImageBackground } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav1, S, SS, I18n, images, ThemeVar, Toast } from '@/common';
+import { Base, Nav1, S, SS, I18n, images, ThemeVar, Toast } from '@tangle-pay/common';
 import QRCode from 'react-native-qrcode-svg';
-import { useGetNodeWallet } from '@/store/common';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
 import Share from 'react-native-share';
 export const AssetsReceive = () => {
 	const [curWallet] = useGetNodeWallet();

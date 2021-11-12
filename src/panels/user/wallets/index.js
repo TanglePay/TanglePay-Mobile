@@ -2,9 +2,9 @@ import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { TouchableOpacity, Image } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav, S, SS, I18n, images, Toast, Icon } from '@/common';
-import { useGetNodeWallet } from '@/store/common';
-// import {useStore} from '@/store'
+import { Base, Nav, S, SS, I18n, images, Toast, Icon } from '@tangle-pay/common';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
+// import {useStore} from '@tangle-pay/store'
 
 export const UserWallets = () => {
 	const [_, walletsList] = useGetNodeWallet();

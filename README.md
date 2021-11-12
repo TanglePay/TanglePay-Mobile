@@ -145,4 +145,9 @@ Help out the TanglePay project by filing a bug report, making a feature request 
 > repository: git+https://github.com/jquense/yup.git
 
 > license: MIT
+
+#### tanglepay
+> repository: https://github.com/TanglePay/TanglePay.git
+
+> license: Apache-2.0
 </details>

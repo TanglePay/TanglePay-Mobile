@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, View, Text } from 'native-base';
 import { Image, TouchableOpacity, TextInput, RefreshControl, ScrollView } from 'react-native';
-import { Base, Nav, images, S, SS, I18n, ThemeVar, Icon, Toast } from '@/common';
-import { useStore } from '@/store';
+import { Base, Nav, images, S, SS, I18n, ThemeVar, Icon, Toast } from '@tangle-pay/common';
+import { useStore } from '@tangle-pay/store';
 import { CoinList, ActivityList } from './list';
-import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@/store/common';
+import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/store/common';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 export const Assets = () => {

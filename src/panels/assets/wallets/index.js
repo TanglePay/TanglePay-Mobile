@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { StyleSheet, InteractionManager, TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav1, I18n, S, SS, images, ThemeVar, Toast, Icon, NoData } from '@/common';
+import { Base, Nav1, I18n, S, SS, images, ThemeVar, Toast, Icon, NoData } from '@tangle-pay/common';
 import { AddDialog } from './addDialog';
-import { useSelectWallet, useGetNodeWallet } from '@/store/common';
+import { useSelectWallet, useGetNodeWallet } from '@tangle-pay/store/common';
 
 export const AssetsWallets = () => {
 	const dialogRef = useRef();

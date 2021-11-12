@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { StyleSheet, Image, Linking, TouchableOpacity, Platform } from 'react-native';
-import { Nav, S, SS, I18n, images, Toast } from '@/common';
+import { Nav, S, SS, I18n, images, Toast } from '@tangle-pay/common';
 import DeviceInfo from 'react-native-device-info';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Config from 'react-native-config';

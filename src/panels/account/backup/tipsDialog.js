@@ -3,7 +3,7 @@ import { StyleSheet, Image } from 'react-native';
 import { View, Text, Button } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
-import { S, SS, I18n, ThemeVar, Base, images } from '@/common';
+import { S, SS, I18n, ThemeVar, Base, images } from '@tangle-pay/common';
 export const TipsDialog = ({ dialogRef }) => {
 	const [isShow, setShow] = useState(false);
 	useImperativeHandle(

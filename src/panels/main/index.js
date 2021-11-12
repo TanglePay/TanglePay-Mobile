@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import { Text } from 'native-base';
-import { ThemeVar, images, S, I18n, IotaSDK } from '@/common';
+import { ThemeVar, images, S, I18n, IotaSDK } from '@tangle-pay/common';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Assets } from './assets';
 import { User } from './user';
-import { useStore } from '@/store';
-import { useGetNodeWallet } from '@/store/common';
+import { useStore } from '@tangle-pay/store';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
 
 const Tab = createBottomTabNavigator();
 export const Main = () => {

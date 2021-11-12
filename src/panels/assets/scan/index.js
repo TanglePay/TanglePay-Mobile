@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, View, Text } from 'native-base';
 import { StyleSheet, PermissionsAndroid, Animated, Easing, ImageBackground } from 'react-native';
-import { Base, Nav, S, SS, images, ThemeVar, I18n, Toast } from '@/common';
+import { Base, Nav, S, SS, images, ThemeVar, I18n, Toast } from '@tangle-pay/common';
 import { RNCamera } from 'react-native-camera';
 import { useRoute } from '@react-navigation/native';
 import _throttle from 'lodash/throttle';

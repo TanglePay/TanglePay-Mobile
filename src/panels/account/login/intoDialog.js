@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle } from 'react';
 import { View, Text } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { S, SS, I18n, Base, Toast } from '@/common';
+import { S, SS, I18n, Base, Toast } from '@tangle-pay/common';
 export const IntoDialog = ({ dialogRef }) => {
 	const [isShow, setShow] = useState(false);
 	useImperativeHandle(

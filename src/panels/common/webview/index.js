@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { Base, Nav, ThemeVar } from '@/common';
+import { Base, Nav, ThemeVar } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 

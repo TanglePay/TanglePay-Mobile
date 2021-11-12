@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav, S, SS, I18n, Icon, images, Toast, ThemeVar } from '@/common';
+import { Base, Nav, S, SS, I18n, Icon, images, Toast, ThemeVar } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';
 import { NameDialog } from './nameDialog';
-import { useGetNodeWallet } from '@/store/common';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
 
 export const UserEditWallet = () => {
 	const { params } = useRoute();

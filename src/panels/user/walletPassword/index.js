@@ -1,11 +1,11 @@
 import React from 'react';
 import { Container, Content, View, Text, Input, Form, Item, Button, Label } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { Base, S, SS, I18n, Nav, Toast } from '@/common';
+import { Base, S, SS, I18n, Nav, Toast } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useRoute } from '@react-navigation/native';
-import { useEditWallet } from '@/store/common';
+import { useEditWallet } from '@tangle-pay/store/common';
 
 const schema = Yup.object().shape({
 	old: Yup.string().required(),
@@ -37,7 +37,7 @@ export const UserWalletPassword = () => {
 						if (newPassword !== rePassword) {
 							return Toast.error(I18n.t('account.checkPasswrod'));
 						}
-						editWallet(params.id, { password: values.newPassword });
+						editWallet(params.id, { password: values.newPassword }, true);
 						Toast.success(I18n.t('user.passwordSucc'));
 						Base.goBack();
 					}}>

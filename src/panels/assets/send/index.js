@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, Content, View, Text, Form, Item, Input, Button } from 'native-base';
 import { StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Base, Nav1, I18n, images, S, SS, IotaSDK, Toast, ThemeVar } from '@/common';
+import { Base, Nav1, I18n, images, S, SS, IotaSDK, Toast, ThemeVar } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useStore } from '@/store';
+import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
-import { useGetNodeWallet, useUpdateBalance } from '@/store/common';
+import { useGetNodeWallet, useUpdateBalance } from '@tangle-pay/store/common';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -132,7 +132,7 @@ export const AssetsSend = () => {
 								</Item>
 								<View style={[S.marginT(100), SS.pb30]}>
 									<Button block onPress={handleSubmit}>
-										<Text>{I18n.t('assets.comfirm')}</Text>
+										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
 								</View>
 							</Form>

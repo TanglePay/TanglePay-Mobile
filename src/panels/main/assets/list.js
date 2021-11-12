@@ -1,9 +1,9 @@
 import React, { useState, useImperativeHandle } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
-import { S, SS, images, I18n, Base } from '@/common';
-import { useStore } from '@/store';
-import { useGetLegal } from '@/store/common';
+import { S, SS, images, I18n, Base } from '@tangle-pay/common';
+import { useStore } from '@tangle-pay/store';
+import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
 
 export const CoinList = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native';
-import { Base, Nav1, S, SS, I18n, images, Icon } from '@/common';
+import { Base, Nav1, S, SS, I18n, images, Icon } from '@tangle-pay/common';
 
 const list = [
 	{

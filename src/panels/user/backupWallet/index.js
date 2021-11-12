@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { Base, Nav, I18n, S, SS, ThemeVar } from '@/common';
+import { Base, Nav, I18n, S, SS, ThemeVar } from '@tangle-pay/common';
 
 export const UserBackupWallet = () => {
 	return (

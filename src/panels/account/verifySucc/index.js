@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { Base, SS, S, ThemeVar, I18n, IotaSDK, Toast } from '@/common';
-import { useStore } from '@/store';
-import { useAddWallet } from '@/store/common';
+import { Base, SS, S, ThemeVar, I18n, IotaSDK, Toast } from '@tangle-pay/common';
+import { useStore } from '@tangle-pay/store';
+import { useAddWallet } from '@tangle-pay/store/common';
 
 export const AccountVerifySucc = () => {
 	const addWallet = useAddWallet();

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Base, Nav, I18n, SS, S } from '@/common';
-import { useStore } from '@/store';
+import { Base, Nav, I18n, SS, S } from '@tangle-pay/common';
+import { useStore } from '@tangle-pay/store';
 
 export const UserLang = () => {
 	const [lang, setLang] = useStore('common.lang');

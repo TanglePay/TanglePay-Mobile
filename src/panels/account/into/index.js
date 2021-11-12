@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import { Image } from 'react-native';
-import { Base, S, SS, I18n, Nav1, images, ThemeVar, IotaSDK, Toast } from '@/common';
+import { Base, S, SS, I18n, Nav1, images, ThemeVar, IotaSDK, Toast } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import { useRoute } from '@react-navigation/native';
-import { useAddWallet } from '@/store/common';
+import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
-import { useCreateCheck } from '@/store/common';
+import { useCreateCheck } from '@tangle-pay/store/common';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),

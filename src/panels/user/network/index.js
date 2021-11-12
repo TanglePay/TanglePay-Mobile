@@ -1,9 +1,9 @@
 import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Nav, I18n, SS, S, IotaSDK } from '@/common';
-import { useChangeNode } from '@/store/common';
-import { useStore } from '@/store';
+import { Nav, I18n, SS, S, IotaSDK } from '@tangle-pay/common';
+import { useChangeNode } from '@tangle-pay/store/common';
+import { useStore } from '@tangle-pay/store';
 
 export const UserNetwork = () => {
 	const [curNodeId, _, dispatch] = useStore('common.curNodeId');

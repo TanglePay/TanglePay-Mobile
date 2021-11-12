@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { StyleSheet, Image } from 'react-native';
-import { Base, Nav1, SS, S, I18n, images } from '@/common';
+import { Base, Nav1, SS, S, I18n, images } from '@tangle-pay/common';
 import { TipsDialog } from './tipsDialog';
 
 export const AccountBackup = () => {

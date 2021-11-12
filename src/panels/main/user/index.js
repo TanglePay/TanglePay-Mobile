@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, View, Text } from 'native-base';
 import { Image, TouchableOpacity } from 'react-native';
-import { Base, Nav, I18n, S, SS, images } from '@/common';
-import { useStore } from '@/store';
+import { Base, Nav, I18n, S, SS, images } from '@tangle-pay/common';
+import { useStore } from '@tangle-pay/store';
 
 export const User = () => {
 	useStore('common.lang');

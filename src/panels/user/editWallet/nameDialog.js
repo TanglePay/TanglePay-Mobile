@@ -2,10 +2,10 @@ import React, { useState, useImperativeHandle } from 'react';
 import { View, Text, Form, Item, Input, Label, Button } from 'native-base';
 import { ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
-import { S, SS, I18n, Base } from '@/common';
+import { S, SS, I18n, Base } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useEditWallet } from '@/store/common';
+import { useEditWallet } from '@tangle-pay/store/common';
 
 export const NameDialog = ({ dialogRef, data }) => {
 	const editWallet = useEditWallet();
@@ -54,7 +54,7 @@ export const NameDialog = ({ dialogRef, data }) => {
 								</Item>
 								<View style={[S.marginT(30)]}>
 									<Button block onPress={handleSubmit}>
-										<Text>{I18n.t('assets.comfirm')}</Text>
+										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
 								</View>
 							</Form>

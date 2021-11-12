@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { Container, View, Text, Input, Form, Item, Button, Label, Content } from 'native-base';
 import { StyleSheet, Image } from 'react-native';
-import { Base, S, SS, I18n, Nav1, images, ThemeVar, Toast } from '@/common';
+import { Base, S, SS, I18n, Nav1, images, ThemeVar, Toast } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useStore } from '@/store';
-import { useCreateCheck } from '@/store/common';
+import { useStore } from '@tangle-pay/store';
+import { useCreateCheck } from '@tangle-pay/store/common';
 
 const schema = Yup.object().shape({
 	name: Yup.string().required(),

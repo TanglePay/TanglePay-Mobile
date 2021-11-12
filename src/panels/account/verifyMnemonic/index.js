@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Container, View, Text, Button } from 'native-base';
 import { StyleSheet, Vibration } from 'react-native';
-import { Base, Nav1, S, SS, ThemeVar, I18n } from '@/common';
+import { Base, Nav1, S, SS, ThemeVar, I18n } from '@tangle-pay/common';
 import Carousel from 'react-native-snap-carousel';
 import { useRoute } from '@react-navigation/native';
 
