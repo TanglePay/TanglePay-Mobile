@@ -21,7 +21,12 @@ import { UserEditWallet } from './user/editWallet';
 import { UserBackupWallet } from './user/backupWallet';
 import { UserWalletPassword } from './user/walletPassword';
 import { CommonWebview } from './common/webview';
+import { AccountChangeNode } from './account/changeNode';
 export const panelsList = [
+	{
+        path:"account/changeNode",
+        component:AccountChangeNode,
+    },
 	{
         path:"common/webview",
         component:CommonWebview,

@@ -9,6 +9,7 @@ export const UserAboutUs = () => {
 	var version = DeviceInfo.getVersion();
 	const initList = [
 		{
+			key: 'version',
 			label: I18n.t('user.versionUpdate'),
 			bottom: 10
 		},
@@ -76,6 +77,8 @@ export const UserAboutUs = () => {
 											Clipboard.setString(e.address);
 											Toast.success(I18n.t('assets.copied'));
 										});
+								} else if (e.key === 'version') {
+									Toast.show(I18n.t('user.latestVersion'));
 								}
 							}}
 							style={[

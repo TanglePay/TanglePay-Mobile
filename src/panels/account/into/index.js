@@ -113,6 +113,7 @@ export const AccountInto = () => {
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
+										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 										style={[SS.fz14, SS.pl0]}
 										placeholder={I18n.t(
 											type === 1 ? 'account.intoPasswordTips' : 'account.intoFilePasswordTips'
@@ -121,11 +122,14 @@ export const AccountInto = () => {
 										value={values.password}
 									/>
 								</Item>
+								<Input style={[S.h(1)]} />
 								{type === 1 && (
 									<Item style={[SS.ml0]} error={!!errors.rePassword}>
 										<Input
 											keyboardType='ascii-capable'
-											secureTextEntry={!Base.isIos14}
+											// secureTextEntry={!Base.isIos14}
+											secureTextEntry
+											textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 											style={[SS.fz14, SS.pl0]}
 											placeholder={I18n.t('account.intoRePasswordTips')}
 											onChangeText={handleChange('rePassword')}
@@ -161,8 +165,8 @@ export const AccountInto = () => {
 															onPress={() => {
 																Base.push(
 																	i === 1
-																		? 'http://tanglepay.com/terms.html'
-																		: 'http://tanglepay.com/policy.html'
+																		? 'https://tanglepay.com/terms.html'
+																		: 'https://tanglepay.com/policy.html'
 																);
 															}}
 															key={i}

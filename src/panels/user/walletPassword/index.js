@@ -49,6 +49,7 @@ export const UserWalletPassword = () => {
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
+										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 										style={[SS.fz14]}
 										placeholder={I18n.t('user.oldTips')}
 										onChangeText={handleChange('old')}
@@ -59,17 +60,22 @@ export const UserWalletPassword = () => {
 								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.newPassword}>
 									<Input
 										keyboardType='ascii-capable'
-										secureTextEntry={!Base.isIos14}
+										// secureTextEntry={!Base.isIos14}
+										secureTextEntry
+										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 										style={[SS.fz14]}
 										placeholder={I18n.t('user.newTips')}
 										onChangeText={handleChange('newPassword')}
 										value={values.newPassword}
 									/>
 								</Item>
+								<Input style={[S.h(1)]} />
 								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.rePassword}>
 									<Input
 										keyboardType='ascii-capable'
-										secureTextEntry={!Base.isIos14}
+										// secureTextEntry={!Base.isIos14}
+										secureTextEntry
+										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 										style={[SS.fz14]}
 										placeholder={I18n.t('user.repeatPassword')}
 										onChangeText={handleChange('rePassword')}
