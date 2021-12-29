@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { Container, View, Text, Button } from 'native-base';
-import { Image, StatusBar, ImageBackground } from 'react-native';
+import { StatusBar, ImageBackground } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav1, S, SS, I18n, images, ThemeVar, Toast } from '@tangle-pay/common';
+import { I18n } from '@tangle-pay/common';
 import QRCode from 'react-native-qrcode-svg';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import Share from 'react-native-share';
+import { Nav1, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
+import scan_bg from '@tangle-pay/assets/images/scan_bg.png';
 export const AssetsReceive = () => {
 	const [curWallet] = useGetNodeWallet();
 	useEffect(() => {
@@ -16,13 +18,13 @@ export const AssetsReceive = () => {
 	}, []);
 	return (
 		<Container style={[S.bg('#1F7EFC')]}>
-			<Nav1 title={I18n.t('assets.receiver')} leftIcon={images.com.left_w} titleStyle={{ ...S.cW }} />
+			<Nav1 title={I18n.t('assets.receiver')} leftStyle={{ ...S.cW }} titleStyle={{ ...S.cW }} />
 			<View style={[SS.mh20, SS.mt10, SS.radius10, SS.bgW, SS.ac]}>
 				<View style={[SS.pv20]}>
 					<Text style={[SS.fz16, SS.cS]}>{I18n.t('assets.scanQRcode')}</Text>
 				</View>
 				<View style={[S.border(2, '#ddd', 1), SS.w100, SS.ac, SS.pb20]}>
-					<ImageBackground source={images.com.scan_bg} style={[S.wh(220), SS.c]}>
+					<ImageBackground source={scan_bg} style={[S.wh(220), SS.c]}>
 						{curWallet.address && <QRCode value={curWallet.address} size={200} />}
 					</ImageBackground>
 				</View>
@@ -39,7 +41,7 @@ export const AssetsReceive = () => {
 								Clipboard.setString(curWallet.address);
 								Toast.success(I18n.t('assets.copied'));
 							}}>
-							<Image style={[[S.wh(12.8, 14.3)]]} source={images.com.copy} />
+							<SvgIcon name='copy' size={20} />
 							<Text style={[SS.fz16, SS.pl10, S.color(ThemeVar.textColor)]}>{I18n.t('assets.copy')}</Text>
 						</Button>
 						<Button
@@ -57,7 +59,7 @@ export const AssetsReceive = () => {
 										err && console.log(err);
 									});
 							}}>
-							<Image style={[[S.wh(13, 13)]]} source={images.com.share} />
+							<SvgIcon name='share' size={20} />
 							<Text style={[SS.fz16, SS.pl10, S.color(ThemeVar.textColor)]}>
 								{I18n.t('assets.share')}
 							</Text>

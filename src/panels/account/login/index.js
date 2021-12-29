@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
-import { Container, View, Text, Button, Modal } from 'native-base';
+import { Container, View, Text, Button } from 'native-base';
 import { StyleSheet } from 'react-native';
-import { Base, SS, I18n, Nav, Toast } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { IntoDialog } from './intoDialog';
+import { SS, Nav } from '@/common';
 export const AccountLogin = () => {
 	const dialogRef = useRef();
 	return (

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
-import { StyleSheet, Image, Linking, TouchableOpacity, Platform } from 'react-native';
-import { Nav, S, SS, I18n, images, Toast } from '@tangle-pay/common';
+import { Image, Linking, TouchableOpacity, Platform } from 'react-native';
+import { I18n } from '@tangle-pay/common';
 import DeviceInfo from 'react-native-device-info';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Config from 'react-native-config';
+import { Nav, S, SS, SvgIcon, Toast } from '@/common';
+import logo from '@tangle-pay/assets/images/logo.png';
 export const UserAboutUs = () => {
 	var version = DeviceInfo.getVersion();
 	const initList = [
@@ -53,7 +55,7 @@ export const UserAboutUs = () => {
 			<Nav title={I18n.t('user.aboutUs')} />
 			<Content>
 				<View style={[SS.c, SS.pv30]}>
-					<Image style={[S.wh(65)]} source={images.com.logo} />
+					<Image style={[S.wh(65)]} source={logo} />
 					<Text style={[SS.fz16, SS.mt10]}>TanglePay</Text>
 					<Text style={[SS.fz14, SS.cS, SS.mt10]}>
 						{I18n.t('user.curVersion')}
@@ -96,7 +98,7 @@ export const UserAboutUs = () => {
 							<View style={[SS.row, SS.ac]}>
 								{e.value && <Text style={[SS.fz17, SS.cS, SS.mr10]}>{e.value}</Text>}
 								{e.dot && <View style={[S.wh(6), SS.mr5, S.bg('red'), S.radius(6)]}></View>}
-								<Image style={[S.wh(16)]} source={images.com.right} />
+								<SvgIcon size={14} name='right' />
 							</View>
 						</TouchableOpacity>
 					);
@@ -105,5 +107,3 @@ export const UserAboutUs = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

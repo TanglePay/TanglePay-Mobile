@@ -1,11 +1,11 @@
 import React from 'react';
 import { Container, Content, View, Text, Input, Form, Item, Button, Label } from 'native-base';
-import { StyleSheet } from 'react-native';
-import { Base, S, SS, I18n, Nav, Toast } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useRoute } from '@react-navigation/native';
 import { useEditWallet } from '@tangle-pay/store/common';
+import { S, SS, Nav, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	old: Yup.string().required(),
@@ -115,5 +115,3 @@ export const UserWalletPassword = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

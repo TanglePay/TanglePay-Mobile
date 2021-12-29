@@ -1,11 +1,12 @@
 import React, { useState, useImperativeHandle } from 'react';
-import { View, Text, Form, Item, Input, Label, Button } from 'native-base';
+import { View, Text, Form, Item, Input, Button } from 'native-base';
 import { ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
-import { S, SS, I18n, Base } from '@tangle-pay/common';
+import { I18n } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useEditWallet } from '@tangle-pay/store/common';
+import { S, SS } from '@/common';
 
 export const NameDialog = ({ dialogRef, data }) => {
 	const editWallet = useEditWallet();

@@ -1,19 +1,21 @@
 import React from 'react';
 import { TouchableOpacity, Image } from 'react-native';
-import { Container, Content, View, Text } from 'native-base';
-import { Base, Nav, S, SS, I18n, IotaSDK, images } from '@tangle-pay/common';
+import { Container, View, Text } from 'native-base';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
+import { S, SS, Nav } from '@/common';
+import logo_nobg from '@tangle-pay/assets/images/logo_nobg.png';
 
 export const AccountChangeNode = () => {
 	const [, , dispatch] = useStore('common.curNodeId');
 	const changeNode = useChangeNode(dispatch);
 	return (
 		<Container>
-			<Nav leftIcon={false} />
+			<Nav leftIcon={false} headerStyle={{ borderBottomWidth: 0 }} />
 			<View style={[SS.jsb, SS.column, SS.flex1, SS.pt60]}>
 				<View style={[SS.ph25]}>
-					<Image style={[S.wh(144, 150), SS.mb25]} source={images.com.logo_nobg} />
+					<Image style={[S.wh(144, 150), SS.mb25]} source={logo_nobg} />
 					<View>
 						<Text style={[SS.fz30, SS.fw500, SS.mb20]}>{I18n.t('account.dearFam')}</Text>
 						<Text style={[SS.fz14, S.lineHeight(22)]}>{I18n.t('account.betaReady')}</Text>

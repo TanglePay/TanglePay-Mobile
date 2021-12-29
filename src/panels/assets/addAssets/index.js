@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
-import { StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native';
-import { Base, Nav1, S, SS, I18n, images, Icon } from '@tangle-pay/common';
+import { TextInput, Image } from 'react-native';
+import { Nav1, S, SS, I18n, images, Icon } from '@tangle-pay/common';
 
 const list = [
 	{
@@ -65,5 +65,3 @@ export const AssetsAddAssets = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

@@ -8,8 +8,8 @@ module.exports = {
 				alias: {
 					'@': './src',
 					'#': './native-base-theme',
-					'@tangle-pay/common': 'iota-test/lib/app/common',
-					'@tangle-pay/store': 'iota-test/lib/app/store'
+					'@tangle-pay/common': 'tangle-pay/lib/app/common',
+					'@tangle-pay/store': 'tangle-pay/lib/app/store'
 				}
 			}
 		],

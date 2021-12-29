@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
-import { StyleSheet } from 'react-native';
-import { Base, Nav1, S, SS, I18n, IotaSDK } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
+import { S, SS, Nav1 } from '@/common';
 
 export const AccountMnemonic = () => {
 	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
@@ -60,5 +60,3 @@ export const AccountMnemonic = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

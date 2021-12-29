@@ -1,9 +1,8 @@
 import React, { useState, useImperativeHandle } from 'react';
-import { StyleSheet, Image } from 'react-native';
 import { View, Text, Button } from 'native-base';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
-import { S, SS, I18n, ThemeVar, Base, images } from '@tangle-pay/common';
+import { I18n, Base } from '@tangle-pay/common';
+import { S, SS, SvgIcon, ThemeVar } from '@/common';
 export const TipsDialog = ({ dialogRef }) => {
 	const [isShow, setShow] = useState(false);
 	useImperativeHandle(
@@ -32,9 +31,10 @@ export const TipsDialog = ({ dialogRef }) => {
 			<View style={[SS.c, SS.w100]}>
 				<View style={[SS.ph20, SS.pt50, SS.pb20, SS.w100, SS.radius10, SS.bgS, SS.mt70]}>
 					<View style={[SS.mb20, SS.ac, SS.pv30, SS.ph50, SS.bgW, S.radius(10)]}>
-						<View>
+						{/* <View>
 							<Image style={[S.wh(55)]} source={images.com.no_screenshot} />
-						</View>
+						</View> */}
+						<SvgIcon size={55} name='no_screenshot' />
 						<View style={[SS.mt20]}>
 							<Text style={[SS.fz16, SS.fw500, SS.tc, SS.mb10]}>
 								{I18n.t('account.backupScreenshoptTitle')}

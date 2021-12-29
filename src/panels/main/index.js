@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Text } from 'native-base';
-import { ThemeVar, images, S, I18n, IotaSDK } from '@tangle-pay/common';
+import { I18n, IotaSDK } from '@tangle-pay/common';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Assets } from './assets';
 import { User } from './user';
+import { Staking } from './staking';
 import { useStore } from '@tangle-pay/store';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
+import { SvgIcon, ThemeVar, S } from '@/common';
 
 const Tab = createBottomTabNavigator();
 export const Main = () => {
@@ -16,20 +18,21 @@ export const Main = () => {
 		{
 			key: 'assets',
 			title: I18n.t('assets.assets'),
-			component: Assets,
-			activeIcon: images.com.assets_1,
-			icon: images.com.assets_0
+			component: Assets
 		},
 		{
-			key: 'user',
+			key: 'staking',
+			title: I18n.t('staking.title'),
+			component: Staking
+		},
+		{
+			key: 'me',
 			title: I18n.t('user.me'),
-			component: User,
-			activeIcon: images.com.me_1,
-			icon: images.com.me_0
+			component: User
 		}
 	];
 	useEffect(() => {
-		IotaSDK.setMqtt(curWallet.address, refreshAssets);
+		IotaSDK.setMqtt(curWallet.address);
 	}, [curWallet.address]);
 	return (
 		<Tab.Navigator
@@ -50,7 +53,11 @@ export const Main = () => {
 								<Text style={[focused ? styles.activeLabel : styles.label]}>{e.title}</Text>
 							),
 							tabBarIcon: ({ focused }) => (
-								<Image resizeMode='contain' style={S.wh(25)} source={focused ? e.activeIcon : e.icon} />
+								<SvgIcon
+									name={e.key}
+									size={e.key === 'staking' ? 32 : 25}
+									color={focused ? ThemeVar.brandPrimary : ThemeVar.textColor}
+								/>
 							)
 						}}></Tab.Screen>
 				);

@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
 import { Container, View, Text, Input, Form, Item, Button, Label, Content } from 'native-base';
-import { StyleSheet, Image } from 'react-native';
-import { Base, S, SS, I18n, Nav1, images, ThemeVar, Toast } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useCreateCheck } from '@tangle-pay/store/common';
+import { S, SS, Nav1, ThemeVar, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	name: Yup.string().required(),
@@ -86,9 +86,11 @@ export const AccountRegister = () => {
 									onPress={() => {
 										setFieldValue('agree', !values.agree);
 									}}>
-									<Image
-										source={values.agree ? images.com.checkbox_1 : images.com.checkbox_0}
-										style={[S.wh(15), SS.mr10, S.marginT(3)]}
+									<SvgIcon
+										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
+										size={15}
+										style={[SS.mr10, S.marginT(3)]}
+										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 120)]}>
 										<Text
@@ -137,5 +139,3 @@ export const AccountRegister = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});
