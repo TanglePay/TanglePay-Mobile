@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
-import { Image } from 'react-native';
-import { Base, S, SS, I18n, Nav1, images, ThemeVar, IotaSDK, Toast } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import { useRoute } from '@react-navigation/native';
 import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
+import { S, SS, Nav1, ThemeVar, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -93,7 +93,7 @@ export const AccountInto = () => {
 											SS.c,
 											S.border(4, !errors.mnemonic ? ThemeVar.textColor : ThemeVar.brandDanger)
 										]}>
-										<Image style={[S.wh(42, 49), SS.mb20]} source={images.com.file} />
+										<SvgIcon size={50} name='file' style={[SS.mb20]} />
 										<Text>{I18n.t('account.intoSelectFile')}</Text>
 									</View>
 								)}
@@ -144,9 +144,11 @@ export const AccountInto = () => {
 									onPress={() => {
 										setFieldValue('agree', !values.agree);
 									}}>
-									<Image
-										source={values.agree ? images.com.checkbox_1 : images.com.checkbox_0}
-										style={[S.wh(15), SS.mr10, S.marginT(3)]}
+									<SvgIcon
+										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
+										size={15}
+										style={[SS.mr10, S.marginT(3)]}
+										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
 										<Text

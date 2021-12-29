@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
-import { TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav, S, SS, I18n, images, Toast, Icon } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-// import {useStore} from '@tangle-pay/store'
+import { Nav, S, SS, SvgIcon, Toast } from '@/common';
 
 export const UserWallets = () => {
 	const [_, walletsList] = useGetNodeWallet();
@@ -36,19 +36,18 @@ export const UserWallets = () => {
 									<Text style={[SS.fz17]}>{e.name}</Text>
 									<View style={[SS.mt20, SS.row, SS.ae]}>
 										<Text style={[SS.fz15]}>{Base.handleAddress(e.address)}</Text>
-										<Icon
+										<SvgIcon
 											onPress={() => {
 												Clipboard.setString(e.address);
 												Toast.success(I18n.t('assets.copied'));
 											}}
-											style={[S.wh(20), SS.ml30]}
-											name={images.com.copy}
+											name='copy'
+											size={20}
+											style={[SS.ml30]}
 										/>
 									</View>
 								</View>
-								<View>
-									<Image style={[S.wh(16)]} source={images.com.right} />
-								</View>
+								<SvgIcon size={14} name='right' />
 							</TouchableOpacity>
 						);
 					})}

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Base, Nav, I18n, SS, S } from '@tangle-pay/common';
+import { TouchableOpacity } from 'react-native';
+import { I18n } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
+import { S, SS, Nav } from '@/common';
 
 export const UserLang = () => {
 	const [lang, setLang] = useStore('common.lang');
@@ -30,5 +31,3 @@ export const UserLang = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

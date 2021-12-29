@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
-import { StyleSheet } from 'react-native';
-import { Base, Nav, I18n, S, SS, ThemeVar } from '@tangle-pay/common';
+import { I18n } from '@tangle-pay/common';
+import { Nav, S, SS, ThemeVar } from '@/common';
 
 export const UserBackupWallet = () => {
 	return (
@@ -18,5 +18,3 @@ export const UserBackupWallet = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

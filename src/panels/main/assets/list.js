@@ -1,10 +1,11 @@
-import React, { useState, useImperativeHandle } from 'react';
+import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
-import { S, SS, images, I18n, Base } from '@tangle-pay/common';
+import { I18n, Base } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
+import { S, SS, SvgIcon } from '@/common';
 
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
@@ -21,8 +22,11 @@ export const CoinList = () => {
 							Base.push('assets/send');
 						}}
 						key={e.name}
-						style={[SS.row, SS.as, SS.mb10]}>
-						<Image style={[S.wh(35), S.radius(35), SS.mr25]} source={e.icon} />
+						style={[SS.row, SS.ac, SS.mb10]}>
+						<Image
+							style={[S.wh(45), S.radius(45), SS.mr25, SS.mb10]}
+							source={{ uri: Base.getIcon(e.name) }}
+						/>
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb10]}>
 							<Text style={[SS.fz17]}>{e.name}</Text>
 							{isShowAssets ? (
@@ -61,18 +65,22 @@ export const ActivityList = ({ search }) => {
 	return (
 		<View>
 			{showList.map((e) => {
+				const isOutto = [1, 3].includes(e.type);
+				const isStake = [2, 3].includes(e.type);
 				return (
 					<View key={e.id} style={[SS.row, SS.as, SS.mb20]}>
-						<Image
-							style={[S.wh(25, 32.4), SS.mr25]}
-							source={e.type === 1 ? images.com.outto : images.com.into}
-						/>
+						<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
 							<View>
-								<Text style={[SS.fz17, SS.mb5]}>
-									{e.type === 1 ? 'To' : 'From'} :{' '}
-									{e.address.replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
-								</Text>
+								{isStake ? (
+									<Text style={[SS.fz17, SS.mb5]}>
+										{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}
+									</Text>
+								) : (
+									<Text style={[SS.fz17, SS.mb5]}>
+										{isOutto ? 'To' : 'From'} : {e.address.replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
+									</Text>
+								)}
 								<Text style={[SS.fz15, SS.cS]}>
 									{dayjs(e.timestamp * 1000).format('YYYY-MM-DD HH:mm')}
 								</Text>
@@ -80,7 +88,7 @@ export const ActivityList = ({ search }) => {
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz15, SS.tr, SS.mb5]}>
-										{e.type === 1 ? '-' : '+'} {e.num} {e.coin}
+										{isOutto ? '-' : '+'} {e.num} {e.coin}
 									</Text>
 									<Text style={[SS.fz15, SS.tr, SS.cS]}>$ {e.assets}</Text>
 								</View>

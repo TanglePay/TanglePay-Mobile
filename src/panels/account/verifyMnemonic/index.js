@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { Container, View, Text, Button } from 'native-base';
-import { StyleSheet, Vibration } from 'react-native';
-import { Base, Nav1, S, SS, ThemeVar, I18n } from '@tangle-pay/common';
+import { Vibration } from 'react-native';
+import { Base, I18n } from '@tangle-pay/common';
 import Carousel from 'react-native-snap-carousel';
 import { useRoute } from '@react-navigation/native';
+import { S, SS, Nav1, ThemeVar } from '@/common';
 
 const VerifyItem = ({ setNext, index, word, err, isTop, isLast }) => {
 	const [error, setError] = useState(false);
@@ -66,5 +67,3 @@ export const AccountVerifyMnemonic = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

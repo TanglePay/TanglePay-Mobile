@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, View, Text } from 'native-base';
-import { Image, TouchableOpacity, TextInput, RefreshControl, ScrollView } from 'react-native';
-import { Base, Nav, images, S, SS, I18n, ThemeVar, Icon, Toast } from '@tangle-pay/common';
+import { TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
+import { Base, I18n } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { CoinList, ActivityList } from './list';
 import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/store/common';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
 
 export const Assets = () => {
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
@@ -43,38 +43,17 @@ export const Assets = () => {
 	}, [curTab]);
 	return (
 		<Container>
-			<Nav
-				leftContent={
-					<View style={[SS.row, SS.ac, SS.pl15]}>
-						<TouchableOpacity
-							activeOpacity={0.8}
-							onPress={() => {
-								Base.push('assets/wallets');
-							}}
-							style={[SS.row, SS.ac, S.bg('#1D70F7'), S.radius(20), SS.ph10, SS.pv5]}>
-							<Text numberOfLines={1} ellipsizeMode='tail' style={[SS.fz16, SS.cW, { maxWidth: 120 }]}>
-								{curWallet.name || I18n.t('assets.addWallets')}
-							</Text>
-							<Image style={[S.wh(14), SS.ml10]} resizeMode='contain' source={images.com.right_w} />
-						</TouchableOpacity>
-						{curWallet.address && (
-							<Text
-								onLongPress={() => {
-									Clipboard.setString(curWallet.address);
-									Toast.success(I18n.t('assets.copied'));
-								}}
-								style={[SS.cS, SS.fz14, SS.ml10]}>
-								{Base.handleAddress(curWallet.address)}
-							</Text>
-						)}
-					</View>
+			<AssetsNav
+				right={
+					<SvgIcon
+						onPress={() => {
+							checkPush('assets/scan');
+						}}
+						name='scan'
+						size={24}
+						style={[SS.mr10]}
+					/>
 				}
-				rightIcon={images.com.scan}
-				onRight={() => {
-					checkPush('assets/scan');
-				}}
-				rightStyle={{ ...S.wh(24), ...S.mr5 }}
-				headerStyle={{ borderBottomWidth: 0 }}
 			/>
 			<ScrollView
 				ref={scrollPage}
@@ -97,10 +76,12 @@ export const Assets = () => {
 						<Text style={[SS.fz16, SS.cW]}>
 							{I18n.t('assets.myAssets')}({curLegal.unit || ''})
 						</Text>
-						<Icon
+						<SvgIcon
 							onPress={() => setShowAssets(!isShowAssets)}
-							style={[S.wh(16), SS.ml5]}
-							name={isShowAssets ? images.com.eye_1 : images.com.eye_0}
+							name={isShowAssets ? 'eye_1' : 'eye_0'}
+							size={24}
+							color='#fff'
+							style={[SS.ml5]}
 						/>
 					</View>
 					<View style={[SS.ph20, SS.mt20, SS.mb15]}>

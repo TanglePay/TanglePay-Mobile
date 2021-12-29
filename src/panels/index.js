@@ -22,19 +22,29 @@ import { UserBackupWallet } from './user/backupWallet';
 import { UserWalletPassword } from './user/walletPassword';
 import { CommonWebview } from './common/webview';
 import { AccountChangeNode } from './account/changeNode';
+import { StakingAdd } from './staking/add';
+import { StakingHistory } from './staking/history';
 export const panelsList = [
 	{
-        path:"account/changeNode",
-        component:AccountChangeNode,
-    },
+		path: 'staking/history',
+		component: StakingHistory
+	},
 	{
-        path:"common/webview",
-        component:CommonWebview,
-    },
+		path: 'staking/add',
+		component: StakingAdd
+	},
 	{
-        path:"user/walletPassword",
-        component:UserWalletPassword,
-    },
+		path: 'account/changeNode',
+		component: AccountChangeNode
+	},
+	{
+		path: 'common/webview',
+		component: CommonWebview
+	},
+	{
+		path: 'user/walletPassword',
+		component: UserWalletPassword
+	},
 	{
 		path: 'user/backupWallet',
 		component: UserBackupWallet

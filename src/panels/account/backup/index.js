@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
-import { StyleSheet, Image } from 'react-native';
-import { Base, Nav1, SS, S, I18n, images } from '@tangle-pay/common';
+import { I18n } from '@tangle-pay/common';
 import { TipsDialog } from './tipsDialog';
+import { SS, S, Nav1, SvgIcon, ThemeVar } from '@/common';
 
 export const AccountBackup = () => {
 	const dialogRef = useRef();
@@ -14,7 +14,7 @@ export const AccountBackup = () => {
 			<Nav1 title={I18n.t('account.backupTitle')} />
 			<Content>
 				<View style={[SS.c, SS.pv70]}>
-					<Image style={[S.wh(60, 55)]} source={images.com.encrypt}></Image>
+					<SvgIcon size={70} name='encrypt' />
 				</View>
 				<View style={[SS.ph50, SS.pb30]}>
 					<View style={[SS.mb30]}>
@@ -32,5 +32,3 @@ export const AccountBackup = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

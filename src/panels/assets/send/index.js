@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, Content, View, Text, Form, Item, Input, Button } from 'native-base';
-import { StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Base, Nav1, I18n, images, S, SS, IotaSDK, Toast, ThemeVar } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet, useUpdateBalance } from '@tangle-pay/store/common';
+import { Nav1, S, SS, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -15,6 +15,7 @@ const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
 export const AssetsSend = () => {
+	const [statedAmount] = useStore('staking.statedAmount');
 	const updateBalance = useUpdateBalance();
 	const [assetsList] = useStore('common.assetsList');
 	const { params } = useRoute();
@@ -28,6 +29,10 @@ export const AssetsSend = () => {
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
+	let available = parseFloat(assets.balance - statedAmount) || 0;
+	if (available < 0) {
+		available = 0;
+	}
 	return (
 		<Container>
 			<Nav1 title={I18n.t('assets.send')} />
@@ -44,8 +49,16 @@ export const AssetsSend = () => {
 						if (password !== curWallet.password) {
 							return Toast.error(I18n.t('assets.passwordError'));
 						}
-						if (parseInt(amount) > parseInt(assets.balance)) {
+						let residue = available - parseFloat(amount);
+						residue = residue || 0;
+						if (parseFloat(amount) < 1) {
+							return Toast.error(I18n.t('assets.sendBelow1Tips'));
+						}
+						if (residue < 0) {
 							return Toast.error(I18n.t('assets.balanceError'));
+						}
+						if (residue < 1 && residue != 0) {
+							return Toast.error(I18n.t('assets.residueBelow1Tips'));
 						}
 						Toast.showLoading();
 						try {
@@ -74,14 +87,15 @@ export const AssetsSend = () => {
 								</Item>
 								<View style={[SS.row, SS.ac, SS.jsb, SS.mt25, SS.mb5]}>
 									<Text style={[SS.fz16]}>{I18n.t('assets.receiver')}</Text>
-									<TouchableOpacity
+									<SvgIcon
 										onPress={() => {
 											Base.push('assets/scan', {
 												setReceiver
 											});
-										}}>
-										<Image style={[S.wh(20)]} source={images.com.scan} />
-									</TouchableOpacity>
+										}}
+										name='scan'
+										size={20}
+									/>
 								</View>
 								<Item style={[SS.ml0, { minHeight: 45 }]} stackedLabel error={!!errors.receiver}>
 									<Input
@@ -101,14 +115,14 @@ export const AssetsSend = () => {
 										keyboardType='numeric'
 										style={[SS.fz14, SS.pl0]}
 										placeholder={I18n.t('assets.amountTips')}
-										onChangeText={(e) => {
-											const value = e && parseInt(e) ? parseInt(e).toString() : '';
-											setFieldValue('amount', value);
-										}}
+										onChangeText={handleChange('amount')}
 										value={values.amount}
+										onBlur={() => {
+											setFieldValue('amount', (parseFloat(values.amount) || 0).toString());
+										}}
 									/>
 									<Text style={[SS.fz14, SS.cS]}>
-										{I18n.t('assets.balance')} {assets.balance} {assets.unit}
+										{I18n.t('assets.balance')} {Base.formatNum(available)} {assets.unit}
 									</Text>
 								</Item>
 								{/* <Item
@@ -143,5 +157,3 @@ export const AssetsSend = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

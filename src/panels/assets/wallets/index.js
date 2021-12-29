@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
-import { StyleSheet, InteractionManager, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav1, I18n, S, SS, images, ThemeVar, Toast, Icon, NoData } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { AddDialog } from './addDialog';
 import { useSelectWallet, useGetNodeWallet } from '@tangle-pay/store/common';
+import { S, SS, SvgIcon, Nav1, ThemeVar, NoData, Toast } from '@/common';
 
 export const AssetsWallets = () => {
 	const dialogRef = useRef();
@@ -54,13 +55,15 @@ export const AssetsWallets = () => {
 										<Text style={[isActive && SS.cW, SS.fz15]}>
 											{Base.handleAddress(e.address)}
 										</Text>
-										<Icon
+										<SvgIcon
 											onPress={() => {
 												Clipboard.setString(e.address);
 												Toast.success(I18n.t('assets.copied'));
 											}}
-											style={[S.wh(20), SS.ml30]}
-											name={isActive ? images.com.copy1 : images.com.copy}
+											style={[SS.ml30]}
+											name='copy'
+											size={24}
+											color={isActive ? '#fff' : ThemeVar.textColor}
 										/>
 									</View>
 								</TouchableOpacity>
@@ -85,5 +88,3 @@ export const AssetsWallets = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

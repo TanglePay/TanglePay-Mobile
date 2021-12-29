@@ -1,9 +1,10 @@
 import React from 'react';
-import { Container, Content, View, Text } from 'native-base';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Nav, I18n, SS, S, IotaSDK } from '@tangle-pay/common';
+import { Container, Content, Text } from 'native-base';
+import { TouchableOpacity } from 'react-native';
+import { I18n, IotaSDK } from '@tangle-pay/common';
 import { useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
+import { S, SS, Nav } from '@/common';
 
 export const UserNetwork = () => {
 	const [curNodeId, _, dispatch] = useStore('common.curNodeId');
@@ -29,5 +30,3 @@ export const UserNetwork = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

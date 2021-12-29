@@ -1,11 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Container, Content, View, Text } from 'native-base';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, Nav, S, SS, I18n, Icon, images, Toast, ThemeVar } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';
 import { NameDialog } from './nameDialog';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
+import { Nav, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
 
 export const UserEditWallet = () => {
 	const { params } = useRoute();
@@ -25,28 +26,25 @@ export const UserEditWallet = () => {
 					<View>
 						<View style={[SS.ac, SS.row, SS.mb10]}>
 							<Text style={[SS.fz15, SS.mr10]}>{name}</Text>
-							<Icon
+							<SvgIcon
 								onPress={() => {
 									dialogRef.current.show();
 								}}
-								style={[S.wh(16)]}
-								name={images.com.edit}
+								name='edit'
+								size={20}
 							/>
 						</View>
-						<View style={[SS.ac, SS.row]}>
-							<View style={[S.w(ThemeVar.deviceWidth - 90)]}>
-								<Text style={[SS.fz15, SS.cS]}>
-									{curEdit.address}
-									<Icon
-										onPress={() => {
-											Clipboard.setString(curEdit.address);
-											Toast.success(I18n.t('assets.copied'));
-										}}
-										style={[S.wh(16), SS.ml10]}
-										name={images.com.copy}
-									/>
-								</Text>
-							</View>
+						<View style={[S.w(ThemeVar.deviceWidth - 120)]}>
+							<Text style={[SS.fz15, SS.cS, { lineHeight: 24 }]}>{curEdit.address}</Text>
+							<SvgIcon
+								onPress={() => {
+									Clipboard.setString(curEdit.address);
+									Toast.success(I18n.t('assets.copied'));
+								}}
+								name='copy'
+								size={20}
+								style={[SS.pa, { right: 5, top: 28 }]}
+							/>
 						</View>
 					</View>
 				</View>
@@ -68,12 +66,10 @@ export const UserEditWallet = () => {
 					activeOpacity={0.8}
 					style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
 					<Text style={[SS.fz15]}>{I18n.t('user.resetPassword')}</Text>
-					<Icon style={[S.wh(16)]} name={images.com.right} />
+					<SvgIcon size={14} name='right' />
 				</TouchableOpacity>
 			</Content>
 			<NameDialog dialogRef={dialogRef} data={{ ...curEdit }} />
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});

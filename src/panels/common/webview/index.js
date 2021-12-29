@@ -1,9 +1,8 @@
 import React from 'react';
-import { Container, Content, View, Text } from 'native-base';
-import { StyleSheet } from 'react-native';
-import { Base, Nav, ThemeVar } from '@tangle-pay/common';
+import { Container, Content } from 'native-base';
 import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
+import { Nav, ThemeVar } from '@/common';
 
 export const CommonWebview = () => {
 	const { params } = useRoute();
@@ -17,5 +16,3 @@ export const CommonWebview = () => {
 		</Container>
 	);
 };
-
-const styles = StyleSheet.create({});
