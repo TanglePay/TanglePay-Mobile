@@ -7,6 +7,7 @@ import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet, useUpdateBalance } from '@tangle-pay/store/common';
 import { Nav1, S, SS, SvgIcon, Toast } from '@/common';
+import BigNumber from 'bignumber.js';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -29,10 +30,13 @@ export const AssetsSend = () => {
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
-	let available = parseFloat(assets.balance - statedAmount) || 0;
-	if (available < 0) {
-		available = 0;
+
+	const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
+	let realBalance = BigNumber(assets.realBalance || 0).minus(bigStatedAmount);
+	if (Number(realBalance) < 0) {
+		realBalance = BigNumber(0);
 	}
+	let available = Base.formatNum(realBalance.div(IotaSDK.IOTA_MI));
 	return (
 		<Container>
 			<Nav1 title={I18n.t('assets.send')} />
@@ -45,28 +49,32 @@ export const AssetsSend = () => {
 					validateOnMount={false}
 					validationSchema={schema}
 					onSubmit={async (values) => {
-						const { password, amount, receiver } = values;
+						let { password, amount, receiver } = values;
 						if (password !== curWallet.password) {
 							return Toast.error(I18n.t('assets.passwordError'));
 						}
-						let residue = available - parseFloat(amount);
-						residue = residue || 0;
-						if (parseFloat(amount) < 1) {
+
+						amount = parseFloat(amount) || 0;
+						let sendAmount = Number(BigNumber(amount).times(IotaSDK.IOTA_MI));
+						let residue = Number(realBalance.minus(sendAmount)) || 0;
+						if (sendAmount < IotaSDK.IOTA_MI) {
 							return Toast.error(I18n.t('assets.sendBelow1Tips'));
 						}
 						if (residue < 0) {
 							return Toast.error(I18n.t('assets.balanceError'));
 						}
-						if (residue < 1 && residue != 0) {
+						if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
+							sendAmount = Number(realBalance);
+						} else if (residue < IotaSDK.IOTA_MI && residue != 0) {
 							return Toast.error(I18n.t('assets.residueBelow1Tips'));
 						}
 						Toast.showLoading();
 						try {
-							await IotaSDK.send(curWallet, receiver, amount);
+							await IotaSDK.send(curWallet, receiver, sendAmount);
 							Toast.hideLoading();
 							Toast.success(I18n.t('assets.sendSucc'));
 							Base.goBack();
-							updateBalance((assets.balance - parseInt(amount)) * IotaSDK.IOTA_MI, curWallet.address);
+							updateBalance(Number(bigStatedAmount.plus(residue)), curWallet.address);
 						} catch (error) {
 							console.log(error);
 							Toast.hideLoading();
@@ -118,7 +126,8 @@ export const AssetsSend = () => {
 										onChangeText={handleChange('amount')}
 										value={values.amount}
 										onBlur={() => {
-											setFieldValue('amount', (parseFloat(values.amount) || 0).toString());
+											const str = Base.formatNum(values.amount, 2);
+											setFieldValue('amount', str);
 										}}
 									/>
 									<Text style={[SS.fz14, SS.cS]}>

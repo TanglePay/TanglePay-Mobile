@@ -15,22 +15,23 @@ const schema = Yup.object().shape({
 export const StakingAdd = () => {
 	const alert = useRef();
 	const [assetsList] = useStore('common.assetsList');
-	const [statedAmount] = useStore('staking.statedAmount');
 	const [currency] = useState('IOTA');
 	const [curWallet] = useGetNodeWallet();
 	const { params } = useRoute();
 	const { tokens, type } = params;
 	const assets = assetsList.find((e) => e.name === currency) || {};
-	let available = 0;
+	let available = parseFloat(assets.balance) || 0;
+	const realBalance = assets.realBalance;
 	let titleKey = '';
-	// 3-》unstake 4-》add airdrop
-	if ([3, 4].includes(type)) {
-		available = statedAmount;
-		titleKey = type === 3 ? 'staking.unstake' : 'staking.addAirdropTitle';
-	} else {
+	// 4-》add airdrop
+	if ([4].includes(type)) {
+		titleKey = 'staking.addAirdropTitle';
+	} else if ([1, 2].includes(type)) {
 		// 1-》stake  2-》add amount
-		available = parseFloat(assets.balance - statedAmount) || 0;
 		titleKey = 'staking.stake';
+	} else {
+		// 3-》unstake
+		titleKey = 'staking.unstake';
 	}
 	return (
 		<Container>
@@ -55,7 +56,7 @@ export const StakingAdd = () => {
 							const res = await IotaSDK.handleStake({
 								wallet: curWallet,
 								tokens: requestTokens,
-								amount: available,
+								amount: realBalance,
 								type
 							});
 							Toast.hideLoading();

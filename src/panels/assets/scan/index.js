@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, View, Text } from 'native-base';
 import { StyleSheet, PermissionsAndroid, Animated, Easing, ImageBackground } from 'react-native';
-import { Base, images, I18n } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import { RNCamera } from 'react-native-camera';
 import { useRoute } from '@react-navigation/native';
 import _throttle from 'lodash/throttle';
@@ -9,6 +9,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { readerQR } from 'react-native-lewin-qrcode';
 import _get from 'lodash/get';
 import { Nav, S, SS, ThemeVar, Toast } from '@/common';
+import scan_bg from '@tangle-pay/assets/images/scan_bg.png';
 
 let getDataFlag = false;
 export const AssetsScan = () => {
@@ -114,7 +115,7 @@ export const AssetsScan = () => {
 				/>
 				<View style={[SS.row]}>
 					<View style={{ backgroundColor: 'rgba(0,0,0,0.5)', ...S.wh(200) }} />
-					<ImageBackground source={images.com.scan_bg} style={[S.wh(200)]}>
+					<ImageBackground source={scan_bg} style={[S.wh(200)]}>
 						<Animated.View style={[styles.border, { transform: [{ translateY: moveAnim }] }]} />
 					</ImageBackground>
 					<View style={{ backgroundColor: 'rgba(0,0,0,0.5)', ...S.wh(200) }} />

@@ -32,7 +32,7 @@ const AmountCon = ({ amountList }) => {
 									rounded
 									small
 									light
-									style={[S.border(4, '#d0d1d2'), S.bg('#e2e4e4')]}>
+									style={[S.border(4, e.borderColor), S.bg('#e2e4e4')]}>
 									<Text style={[{ minWidth: 90 }, SS.tc, { opacity: e.btnDis ? 0.3 : 1 }]}>
 										{e.btnStr}
 									</Text>
@@ -180,11 +180,11 @@ const Ended = ({ statedTokens, unStakeTokens }) => {
 	);
 };
 export const StatusCon = () => {
-	const [{ filter }] = useStore('staking.config');
+	const [{ filter, rewards }] = useStore('staking.config');
 	//status: 0-》Ended  1-》Upcoming ，2-》Commencing
 	const [eventInfo, setEventInfo] = useGetParticipationEvents();
 	let { status = 0, list = [], upcomingList = [], commencingList = [] } = eventInfo;
-	const [statedTokens] = useStore('staking.statedTokens');
+	let [statedTokens] = useStore('staking.statedTokens');
 	const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
 	const assets = assetsList.find((e) => e.name === 'IOTA') || {};
@@ -208,33 +208,33 @@ export const StatusCon = () => {
 	}, [startTime, eventInfo]);
 	const unStakeTokens = [];
 	const uncomingTokens = upcomingList.map((e) => {
+		const token = e.payload.symbol;
+		let unit = _get(rewards, `${token}.unit`) || token;
 		return {
-			token: e.payload.symbol,
+			token: unit,
 			eventId: e.id,
 			status: 'uncoming',
 			limit: e.limit
 		};
 	});
-	const rewardsList = [];
+	statedTokens = statedTokens.map((e) => {
+		const token = e.token;
+		let unit = _get(rewards, `${token}.unit`) || token;
+		return { ...e, token: unit };
+	});
 	list.forEach((e) => {
 		const token = e.payload.symbol;
-		let tokenRewards = 0;
-		const tokenInfo = statedTokens.find((e) => e.token === token);
+		const tokenInfo = statedTokens.find((d) => d.eventId === e.id);
 		const commencingInfo = commencingList.find((a) => a.id === e.id);
 		if (!tokenInfo && commencingInfo) {
+			let unit = _get(rewards, `${token}.unit`) || token;
 			unStakeTokens.push({
-				token,
+				token: unit,
 				eventId: e.id,
 				status: 'unstake',
 				limit: e.limit
 			});
-		} else {
-			tokenRewards;
 		}
-		rewardsList.push({
-			token,
-			label: `${Base.formatNum(tokenRewards)} ${token}`
-		});
 	});
 	let available = parseFloat(assets.balance - statedAmount) || 0;
 	if (available < 0) {
@@ -257,7 +257,8 @@ export const StatusCon = () => {
 		{
 			token: 'IOTA',
 			amount: available,
-			statusStr: I18n.t('staking.available')
+			statusStr: I18n.t('staking.available'),
+			borderColor: '#d0d1d2'
 		}
 	];
 	if (status === 3) {
@@ -271,7 +272,8 @@ export const StatusCon = () => {
 			amount: statedAmount,
 			statusStr: I18n.t('staking.staked'),
 			btnStr: I18n.t('staking.unstake'),
-			onPress: handleUnstake
+			onPress: handleUnstake,
+			borderColor: '#e2e4e4'
 		});
 	}
 
