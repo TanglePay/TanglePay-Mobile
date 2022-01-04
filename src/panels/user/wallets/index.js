@@ -35,7 +35,7 @@ export const UserWallets = () => {
 								<View>
 									<Text style={[SS.fz17]}>{e.name}</Text>
 									<View style={[SS.mt20, SS.row, SS.ae]}>
-										<Text style={[SS.fz15]}>{Base.handleAddress(e.address)}</Text>
+										<Text style={[SS.fz13]}>{Base.handleAddress(e.address)}</Text>
 										<SvgIcon
 											onPress={() => {
 												Clipboard.setString(e.address);

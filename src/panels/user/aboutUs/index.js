@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
-import { Image, Linking, TouchableOpacity, Platform } from 'react-native';
-import { I18n } from '@tangle-pay/common';
+import { Image, Linking, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { I18n, API_URL } from '@tangle-pay/common';
 import DeviceInfo from 'react-native-device-info';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Config from 'react-native-config';
@@ -34,7 +34,7 @@ export const UserAboutUs = () => {
 	];
 	const [list, setList] = useState(initList);
 	useEffect(() => {
-		fetch(Config.API_URL.replace(/api$/, 'update.json'))
+		fetch(`${API_URL}/update.json`)
 			.then((res) => res.json())
 			.then((res) => {
 				setList((e) => {

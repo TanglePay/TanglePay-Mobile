@@ -27,6 +27,14 @@ export const UserLang = () => {
 					style={[SS.p20, S.border(2)]}>
 					<Text style={[SS.fz15, lang === 'zh' && SS.cP]}>简体中文</Text>
 				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() => {
+						setLang('de');
+					}}
+					activeOpacity={0.8}
+					style={[SS.p20, S.border(2)]}>
+					<Text style={[SS.fz15, lang === 'de' && SS.cP]}>Deutsch</Text>
+				</TouchableOpacity>
 			</Content>
 		</Container>
 	);

@@ -6,6 +6,7 @@ import { I18n } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import dayjs from 'dayjs';
 import { SvgXml } from 'react-native-svg';
+import _get from 'lodash/get';
 const dotBgDic = {
 	1: '#FCB11D',
 	2: '#13BD00',
@@ -86,7 +87,15 @@ const Item = (props) => {
 
 export const List = () => {
 	const [list] = useStore('staking.historyList');
-	const newList = [...list];
+	const [{ rewards }] = useStore('staking.config');
+	const newList = list.map((e) => {
+		const tokens = e.tokens.map((d) => {
+			const token = d.token;
+			let unit = _get(rewards, `${token}.unit`) || token;
+			return { ...d, token: unit };
+		});
+		return { ...e, tokens };
+	});
 	newList.reverse();
 	return (
 		<View>

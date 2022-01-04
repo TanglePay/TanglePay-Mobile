@@ -43,7 +43,7 @@ export const UserEditWallet = () => {
 								}}
 								name='copy'
 								size={20}
-								style={[SS.pa, { right: 5, top: 28 }]}
+								style={[SS.pa, { right: -20, top: 3 }]}
 							/>
 						</View>
 					</View>

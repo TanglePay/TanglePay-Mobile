@@ -10,6 +10,7 @@ import { S, SS, SvgIcon } from '@/common';
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
 	const [assetsList] = useStore('common.assetsList');
+	const [statedAmount] = useStore('staking.statedAmount');
 	const curLegal = useGetLegal();
 	const [isRequestAssets] = useStore('common.isRequestAssets');
 	return (
@@ -28,7 +29,20 @@ export const CoinList = () => {
 							source={{ uri: Base.getIcon(e.name) }}
 						/>
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb10]}>
-							<Text style={[SS.fz17]}>{e.name}</Text>
+							<View style={[SS.ac, SS.row]}>
+								<Text style={[SS.fz17]}>{e.name}</Text>
+								{statedAmount > 0 && (
+									<View
+										style={[
+											SS.ml20,
+											S.border(4, '#BABABA'),
+											S.radius(4),
+											{ paddingHorizontal: 4, paddingVertical: 0 }
+										]}>
+										<Text style={[SS.fz10, SS.cS]}> {I18n.t('staking.title')}</Text>
+									</View>
+								)}
+							</View>
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz15, SS.tr, SS.mb5]}>
