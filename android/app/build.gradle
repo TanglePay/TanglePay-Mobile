@@ -136,8 +136,8 @@ android {
         applicationId "com.cat.iota"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "1.1.2"
+        versionCode 7
+        versionName "1.1.5"
         
         missingDimensionStrategy 'react-native-camera', 'general'
     }
@@ -151,10 +151,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file('debug.keystore')
-            storePassword '123456'
-            keyAlias 'debug'
-            keyPassword '123456'
+            storeFile file('iota.keystore')
+            storePassword '159753'
+            keyAlias 'iota'
+            keyPassword '159753'
         }
     }
     buildTypes {

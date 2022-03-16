@@ -20,9 +20,9 @@ export default {
 	accordionBorderColor: '#d3d3d3',
 	accordionContentPadding: 10,
 	accordionIconFontSize: 18,
-	contentStyle: '#f5f4f5',
+	contentStyle: '#f5f5f5',
 	expandedIconStyle: '#000',
-	headerStyle: '#edebed',
+	headerStyle: '#ededed',
 	iconStyle: '#000',
 	disableRow: '#a9a9a9',
 
@@ -52,7 +52,7 @@ export default {
 
 	// Button
 	buttonFontFamily: 'System',
-	buttonDisabledBg: '#b5b5b5',
+	buttonDisabledBg: '#CBDCEC',
 	buttonPadding: 6,
 	buttonDefaultActiveOpacity: 0.5,
 	buttonDefaultFlex: 1,

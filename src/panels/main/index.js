@@ -6,19 +6,23 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Assets } from './assets';
 import { User } from './user';
 import { Staking } from './staking';
-import { useStore } from '@tangle-pay/store';
+import { Apps } from './apps';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S } from '@/common';
 
 const Tab = createBottomTabNavigator();
 export const Main = () => {
 	const [curWallet] = useGetNodeWallet();
-	const [_, refreshAssets] = useStore('common.forceRequest');
 	const routes = [
 		{
 			key: 'assets',
 			title: I18n.t('assets.assets'),
 			component: Assets
+		},
+		{
+			key: 'apps',
+			title: I18n.t('apps.title'),
+			component: Apps
 		},
 		{
 			key: 'staking',

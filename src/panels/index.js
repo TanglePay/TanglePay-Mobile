@@ -24,7 +24,12 @@ import { CommonWebview } from './common/webview';
 import { AccountChangeNode } from './account/changeNode';
 import { StakingAdd } from './staking/add';
 import { StakingHistory } from './staking/history';
+import { AppsExecute } from './apps/execute';
 export const panelsList = [
+	{
+        path:"apps/execute",
+        component:AppsExecute,
+    },
 	{
 		path: 'staking/history',
 		component: StakingHistory

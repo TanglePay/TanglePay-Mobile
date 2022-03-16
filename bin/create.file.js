@@ -61,7 +61,7 @@ const getRouterImportTemplate = (fileUrl, componentName) => {
 	const temUrl = lib.getPath(`./bin/template/${type}.js`);
 	switch (type) {
 		case 'panel':
-			if (!fileUrl) throw 'no input file';
+			if (!fileUrl) throw '未输入文件路径';
 			fileUrl = fileUrl.replace(/( |^\/|\/$)/g, '');
 			const urlArr = fileUrl.split('/');
 			const componentName = urlArr.map(lib.firstLetter).join('');
@@ -78,6 +78,7 @@ const getRouterImportTemplate = (fileUrl, componentName) => {
 			lib.exists(path, true);
 			fs.writeFileSync(path, content, { encoding: 'utf-8' });
 
+			// 修改路由
 			const routerPath = lib.getPath(`${viewsPath}index.js`);
 			let routerContent = fs.readFileSync(routerPath, 'utf-8');
 			routerContent = lib.insStrIndex(
@@ -94,10 +95,12 @@ const getRouterImportTemplate = (fileUrl, componentName) => {
 			fs.writeFileSync(routerPath, routerContent, { encoding: 'utf-8' });
 			break;
 		case 'store':
+			// 写入store文件
 			const storePath = `src/store/${fileUrl}.js`;
 			lib.exists(storePath, true);
 			const storeTemContent = fs.readFileSync(temUrl, { encoding: 'utf8' });
 			fs.writeFileSync(storePath, storeTemContent, 'utf8');
+			//修改store/index
 			const storeClassName = `${lib.firstLetter(fileUrl)}Store`;
 			const storeIndexPath = 'src/store/index.js';
 			let storeIndexContent = fs.readFileSync(storeIndexPath, 'utf-8');

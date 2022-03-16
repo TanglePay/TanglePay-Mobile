@@ -10,6 +10,7 @@ import { readerQR } from 'react-native-lewin-qrcode';
 import _get from 'lodash/get';
 import { Nav, S, SS, ThemeVar, Toast } from '@/common';
 import scan_bg from '@tangle-pay/assets/images/scan_bg.png';
+import { Linking } from 'react-native';
 
 let getDataFlag = false;
 export const AssetsScan = () => {
@@ -61,6 +62,11 @@ export const AssetsScan = () => {
 			return;
 		}
 		getDataFlag = true;
+		if (/^tanglepay:\/\//.test(data)) {
+			Linking.openURL(data);
+			Base.goBack();
+			return;
+		}
 		if (params?.setReceiver) {
 			params.setReceiver(data);
 			Base.goBack();

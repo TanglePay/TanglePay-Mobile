@@ -6,6 +6,7 @@ import { ViewProps } from 'react-native';
 import { GProps } from 'react-native-svg';
 
 export { default as About } from './About';
+export { default as Apps } from './Apps';
 export { default as Assets } from './Assets';
 export { default as Checkbox0 } from './Checkbox0';
 export { default as Checkbox1 } from './Checkbox1';
@@ -25,6 +26,7 @@ export { default as Network } from './Network';
 export { default as NoScreenshot } from './NoScreenshot';
 export { default as NoData } from './NoData';
 export { default as Outto } from './Outto';
+export { default as Privacy } from './Privacy';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
 export { default as Set } from './Set';
@@ -34,7 +36,7 @@ export { default as Time } from './Time';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'assets' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'time' | 'wallet';
+  name: 'about' | 'apps' | 'assets' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'time' | 'wallet';
   size?: number;
   color?: string | string[];
 }

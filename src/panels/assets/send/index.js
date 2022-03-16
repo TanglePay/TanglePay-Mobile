@@ -16,6 +16,7 @@ const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
 export const AssetsSend = () => {
+	console.log(IotaSDK.convertUnits(10000, 'i', 'Mi'));
 	const [statedAmount] = useStore('staking.statedAmount');
 	const updateBalance = useUpdateBalance();
 	const [assetsList] = useStore('common.assetsList');
@@ -36,7 +37,7 @@ export const AssetsSend = () => {
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
-	let available = Base.formatNum(realBalance.div(IotaSDK.IOTA_MI));
+	let available = Base.formatNum(realBalance.div(IotaSDK.IOTA_MI), 6);
 	return (
 		<Container>
 			<Nav1 title={I18n.t('assets.send')} />
@@ -126,12 +127,16 @@ export const AssetsSend = () => {
 										onChangeText={handleChange('amount')}
 										value={values.amount}
 										onBlur={() => {
-											const str = Base.formatNum(values.amount, 2);
+											const precision = Math.log10(IotaSDK.IOTA_MI);
+											let str = Base.formatNum(values.amount, precision);
+											if (parseFloat(str) < Math.pow(10, -precision)) {
+												str = String(Math.pow(10, -precision));
+											}
 											setFieldValue('amount', str);
 										}}
 									/>
 									<Text style={[SS.fz14, SS.cS]}>
-										{I18n.t('assets.balance')} {Base.formatNum(available)} {assets.unit}
+										{I18n.t('assets.balance')} {available} {assets.unit}
 									</Text>
 								</Item>
 								{/* <Item
