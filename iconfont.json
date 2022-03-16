@@ -1,0 +1,8 @@
+{
+    "symbol_url": "",
+    "use_typescript": false,
+    "save_dir": "./src/common/assets/icon",
+    "trim_icon_prefix": "",
+    "default_icon_size": 18,
+    "local_svgs": "./node_modules/tanglepay/lib/app/assets/svgs"
+}

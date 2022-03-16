@@ -81,37 +81,49 @@ export const ActivityList = ({ search }) => {
 			{showList.map((e) => {
 				const isOutto = [1, 3].includes(e.type);
 				const isStake = [2, 3].includes(e.type);
+				const isSign = [4].includes(e.type);
+				let FromToEl = null;
+				if (isSign) {
+					FromToEl = <Text style={[SS.fz17, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
+				} else {
+					if (isStake) {
+						FromToEl = (
+							<Text style={[SS.fz17, SS.mb5]}>
+								{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}
+							</Text>
+						);
+					} else {
+						FromToEl = (
+							<Text style={[SS.fz17, SS.mb5]}>
+								{isOutto ? 'To' : 'From'} : {e.address.replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
+							</Text>
+						);
+					}
+				}
+				let AssetsEl = isShowAssets ? (
+					<View>
+						<Text style={[SS.fz15, SS.tr, SS.mb5]}>
+							{isSign ? '' : isOutto ? '-' : '+'} {e.num} {e.coin}
+						</Text>
+						<Text style={[SS.fz15, SS.tr, SS.cS]}>$ {e.assets}</Text>
+					</View>
+				) : (
+					<View>
+						<Text style={[SS.fz15, SS.tr, SS.mb5]}>****</Text>
+						<Text style={[SS.fz15, SS.tr, SS.cS]}>****</Text>
+					</View>
+				);
 				return (
 					<View key={e.id} style={[SS.row, SS.as, SS.mb20]}>
 						<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
 							<View>
-								{isStake ? (
-									<Text style={[SS.fz17, SS.mb5]}>
-										{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}
-									</Text>
-								) : (
-									<Text style={[SS.fz17, SS.mb5]}>
-										{isOutto ? 'To' : 'From'} : {e.address.replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
-									</Text>
-								)}
+								{FromToEl}
 								<Text style={[SS.fz15, SS.cS]}>
 									{dayjs(e.timestamp * 1000).format('YYYY-MM-DD HH:mm')}
 								</Text>
 							</View>
-							{isShowAssets ? (
-								<View>
-									<Text style={[SS.fz15, SS.tr, SS.mb5]}>
-										{isOutto ? '-' : '+'} {e.num} {e.coin}
-									</Text>
-									<Text style={[SS.fz15, SS.tr, SS.cS]}>$ {e.assets}</Text>
-								</View>
-							) : (
-								<View>
-									<Text style={[SS.fz15, SS.tr, SS.mb5]}>****</Text>
-									<Text style={[SS.fz15, SS.tr, SS.cS]}>****</Text>
-								</View>
-							)}
+							{AssetsEl}
 						</View>
 					</View>
 				);

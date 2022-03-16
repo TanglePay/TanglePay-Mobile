@@ -3,11 +3,14 @@ import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { panelsList } from '@/panels';
-import { Base, Theme, Trace } from '@/common';
+import { Base, Trace } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { StoreContext, useStoreReducer } from '@/store';
-import { useChangeNode } from '@/store/common';
+import { StoreContext, useStoreReducer } from '@tangle-pay/store';
+import { useChangeNode } from '@tangle-pay/store/common';
+import { Theme, Toast } from '@/common';
 import _wrap from 'lodash/wrap';
+import { DappDialog } from '@/common/components/DappDialog';
+
 // import SplashScreen from 'react-native-splash-screen'
 const Stack = createStackNavigator();
 
@@ -18,7 +21,7 @@ export default () => {
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
-		const list = ['common.curNodeId', 'common.showAssets', 'common.lang', 'common.price'];
+		const list = ['common.curNodeId', 'common.showAssets', 'common.lang', 'common.price', 'common.disTrace'];
 		const res = await Promise.all(list.map((e) => Base.getLocalData(e)));
 		list.map((e, i) => {
 			switch (e) {
@@ -54,6 +57,11 @@ export default () => {
 		// }, 300)
 	};
 	useEffect(() => {
+		Base.globalInit({
+			store,
+			dispatch,
+			Toast
+		});
 		init();
 	}, []);
 	if (sceneList.length === 0) {
@@ -68,7 +76,10 @@ export default () => {
 				}}>
 				<StyleProvider style={Theme}>
 					<RootSiblingParent>
-						<NavigationContainer ref={(ref) => (Base.navigator = ref)}>
+						<NavigationContainer
+							ref={(ref) => {
+								Base.setNavigator(ref);
+							}}>
 							<Stack.Navigator
 								initialRouteName={store.common.walletsList.length > 0 ? 'main' : 'account/login'}>
 								{sceneList.map((e) => {
@@ -86,6 +97,7 @@ export default () => {
 								})}
 							</Stack.Navigator>
 						</NavigationContainer>
+						<DappDialog />
 					</RootSiblingParent>
 				</StyleProvider>
 			</StoreContext.Provider>
