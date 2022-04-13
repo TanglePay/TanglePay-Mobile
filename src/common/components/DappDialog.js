@@ -68,7 +68,7 @@ export const DappDialog = () => {
 						Toast.error(
 							`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
 								realBalance
-							)}---available:${available}---bigStatedAmount:${bigStatedAmount}`
+							)}---bigStatedAmount:${bigStatedAmount}`
 						);
 					}
 				}
