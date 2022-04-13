@@ -16,7 +16,6 @@ export const CoinList = () => {
 	const [assetsList] = useStore('common.assetsList');
 	const [statedAmount] = useStore('staking.statedAmount');
 	const curLegal = useGetLegal();
-	const [isRequestAssets] = useStore('common.isRequestAssets');
 	return (
 		<View>
 			{assetsList.map((e) => {
@@ -66,12 +65,6 @@ export const CoinList = () => {
 					</TouchableOpacity>
 				);
 			})}
-			{!isRequestAssets && (
-				<View style={[SS.p30, SS.c, SS.row]}>
-					<Spinner size='small' color='gray' />
-					<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
-				</View>
-			)}
 		</View>
 	);
 };
@@ -81,10 +74,14 @@ export const RewardsList = () => {
 	const [curWallet] = useGetNodeWallet();
 	const stakedRewards = useGetRewards(curWallet.address);
 	const [{ rewards }] = useStore('staking.config');
+	const [isRequestAssets] = useStore('common.isRequestAssets');
 	useEffect(() => {
 		const obj = {};
 		for (const i in stakedRewards) {
 			const item = stakedRewards[i];
+			if (item.address !== curWallet?.address) {
+				return;
+			}
 			if (item.amount > 0) {
 				const symbol = item.symbol;
 				obj[symbol] = obj[symbol] || {
@@ -114,34 +111,39 @@ export const RewardsList = () => {
 			}
 		}
 		setList(Object.values(obj));
-	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards)]);
-	if (list.length <= 0) {
-		return null;
-	}
+	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address]);
 	return (
 		<>
-			{list.map((e) => {
-				return (
-					<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
-						<Image
-							style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
-							source={{ uri: Base.getIcon(e.symbol) }}
-						/>
-						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
-							<Text style={[SS.fz17]}>{e.unit}</Text>
-							{isShowAssets ? (
-								<View>
-									<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
+			{list.length <= 0
+				? null
+				: list.map((e) => {
+						return (
+							<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
+								<Image
+									style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
+									source={{ uri: Base.getIcon(e.symbol) }}
+								/>
+								<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+									<Text style={[SS.fz17]}>{e.unit}</Text>
+									{isShowAssets ? (
+										<View>
+											<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
+										</View>
+									) : (
+										<View>
+											<Text style={[SS.fz15, SS.tr]}>****</Text>
+										</View>
+									)}
 								</View>
-							) : (
-								<View>
-									<Text style={[SS.fz15, SS.tr]}>****</Text>
-								</View>
-							)}
-						</View>
-					</View>
-				);
-			})}
+							</View>
+						);
+				  })}
+			{!isRequestAssets && (
+				<View style={[SS.p30, SS.c, SS.row]}>
+					<Spinner size='small' color='gray' />
+					<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
+				</View>
+			)}
 		</>
 	);
 };
