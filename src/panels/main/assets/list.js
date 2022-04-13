@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import { I18n, Base } from '@tangle-pay/common';
@@ -6,6 +6,9 @@ import { useStore } from '@tangle-pay/store';
 import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
 import { S, SS, SvgIcon } from '@/common';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
+import { useGetRewards } from '@tangle-pay/store/staking';
+import _get from 'lodash/get';
 
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
@@ -69,6 +72,76 @@ export const CoinList = () => {
 				</View>
 			)}
 		</View>
+	);
+};
+export const RewardsList = () => {
+	const [isShowAssets] = useStore('common.showAssets');
+	const [list, setList] = useState([]);
+	const [curWallet] = useGetNodeWallet();
+	const stakedRewards = useGetRewards(curWallet.address);
+	const [{ rewards }] = useStore('staking.config');
+	useEffect(() => {
+		const obj = {};
+		for (const i in stakedRewards) {
+			const item = stakedRewards[i];
+			if (item.amount > 0) {
+				const symbol = item.symbol;
+				obj[symbol] = obj[symbol] || {
+					...item,
+					amount: 0
+				};
+				obj[symbol].amount += item.amount;
+				console.log(rewards, '--------');
+				const ratio = _get(rewards, `${symbol}.ratio`) || 0;
+				let unit = _get(rewards, `${symbol}.unit`) || symbol;
+				let total = obj[symbol].amount * ratio || 0;
+				// // 1 = 1000m = 1000000u
+				let preUnit = '';
+				if (total > 0) {
+					if (total <= Math.pow(10, -5)) {
+						total = Math.pow(10, 6) * total;
+						preUnit = 'μ';
+					} else if (total <= Math.pow(10, -2)) {
+						total = Math.pow(10, 3) * total;
+						preUnit = 'm';
+					} else if (total >= Math.pow(10, 4)) {
+						total = Math.pow(10, -3) * total;
+						preUnit = 'k';
+					}
+				}
+				obj[symbol].amountLabel = `${Base.formatNum(total)}${preUnit} ${unit}`;
+			}
+		}
+		setList(Object.values(obj));
+	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards)]);
+	if (list.length <= 0) {
+		return null;
+	}
+	return (
+		<>
+			{list.map((e) => {
+				return (
+					<View key={e.symbol} style={[SS.row, SS.ac, SS.mb10, { opacity: 0.6 }]}>
+						<Image
+							style={[S.wh(45), S.radius(45), SS.mr25, SS.mb10]}
+							source={{ uri: Base.getIcon(e.symbol) }}
+						/>
+						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb10]}>
+							<Text style={[SS.fz17]}>{e.symbol}</Text>
+							{isShowAssets ? (
+								<View>
+									<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
+								</View>
+							) : (
+								<View>
+									<Text style={[SS.fz15, SS.tr]}>****</Text>
+								</View>
+							)}
+						</View>
+					</View>
+				);
+			})}
+		</>
 	);
 };
 export const ActivityList = ({ search }) => {

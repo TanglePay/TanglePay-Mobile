@@ -3,11 +3,13 @@ import { Container, View, Text } from 'native-base';
 import { TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
 import { Base, I18n } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
-import { CoinList, ActivityList } from './list';
+import { CoinList, ActivityList, RewardsList } from './list';
 import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/store/common';
 import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
+import { useGetEventsConfig } from '@tangle-pay/store/staking';
 
 export const Assets = () => {
+	useGetEventsConfig();
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
@@ -153,6 +155,7 @@ export const Assets = () => {
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth - 40)]}>
 						<CoinList />
+						<RewardsList />
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth - 40)]}>
 						<ActivityList search={search} />
