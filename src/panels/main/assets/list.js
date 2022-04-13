@@ -91,7 +91,6 @@ export const RewardsList = () => {
 					amount: 0
 				};
 				obj[symbol].amount += item.amount;
-				console.log(rewards, '--------');
 				const ratio = _get(rewards, `${symbol}.ratio`) || 0;
 				let unit = _get(rewards, `${symbol}.unit`) || symbol;
 				let total = obj[symbol].amount * ratio || 0;
@@ -110,6 +109,7 @@ export const RewardsList = () => {
 					}
 				}
 				obj[symbol].amountLabel = `${Base.formatNum(total)}${preUnit} ${unit}`;
+				obj[symbol].unit = unit;
 			}
 		}
 		setList(Object.values(obj));
@@ -127,7 +127,7 @@ export const RewardsList = () => {
 							source={{ uri: Base.getIcon(e.symbol) }}
 						/>
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb10]}>
-							<Text style={[SS.fz17]}>{e.symbol}</Text>
+							<Text style={[SS.fz17]}>{e.unit}</Text>
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
