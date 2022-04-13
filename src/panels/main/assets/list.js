@@ -10,6 +10,7 @@ import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { useGetRewards } from '@tangle-pay/store/staking';
 import _get from 'lodash/get';
 
+const itemH = 80;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
 	const [assetsList] = useStore('common.assetsList');
@@ -26,12 +27,12 @@ export const CoinList = () => {
 							Base.push('assets/send');
 						}}
 						key={e.name}
-						style={[SS.row, SS.ac, SS.mb10]}>
+						style={[SS.row, SS.ac, { height: itemH }]}>
 						<Image
-							style={[S.wh(45), S.radius(45), SS.mr25, SS.mb10]}
+							style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
 							source={{ uri: Base.getIcon(e.name) }}
 						/>
-						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb10]}>
+						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz17]}>{e.name}</Text>
 								{statedAmount > 0 && (
@@ -121,12 +122,12 @@ export const RewardsList = () => {
 		<>
 			{list.map((e) => {
 				return (
-					<View key={e.symbol} style={[SS.row, SS.ac, SS.mb10, { opacity: 0.6 }]}>
+					<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
 						<Image
-							style={[S.wh(45), S.radius(45), SS.mr25, SS.mb10]}
+							style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
 							source={{ uri: Base.getIcon(e.symbol) }}
 						/>
-						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb10]}>
+						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<Text style={[SS.fz17]}>{e.unit}</Text>
 							{isShowAssets ? (
 								<View>
@@ -189,7 +190,7 @@ export const ActivityList = ({ search }) => {
 				return (
 					<View key={e.id} style={[SS.row, SS.as, SS.mb20]}>
 						<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
-						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
+						<View style={[S.border(2, '#ff0000'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
 							<View>
 								{FromToEl}
 								<Text style={[SS.fz15, SS.cS]}>
