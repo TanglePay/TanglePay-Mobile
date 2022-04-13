@@ -251,14 +251,15 @@ export const StatusCon = () => {
 		Base.push('staking/add', { tokens: statedTokens, type: 3 });
 	};
 
-	let AirdropsItem = [Ended, Upcoming, UnParticipate, Staked][status];
+	let AirdropsItem = [Ended, Upcoming, UnParticipate, Staked][eventInfo.status || 0];
 
 	let amountList = [
 		{
 			token: 'IOTA',
 			amount: available,
 			statusStr: I18n.t('staking.available'),
-			borderColor: '#d0d1d2'
+			borderColor: '#d0d1d2',
+			btnDis: eventInfo.status == 0 // end
 		}
 	];
 	if (status === 3) {
