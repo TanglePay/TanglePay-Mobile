@@ -151,10 +151,12 @@ export const ActivityList = ({ search }) => {
 	const [list] = useStore('common.hisList');
 	const [isShowAssets] = useStore('common.showAssets');
 	const [isRequestHis] = useStore('common.isRequestHis');
-	const showList = list.filter((e) => !search || e.address.toLocaleUpperCase().includes(search.toLocaleUpperCase()));
+	const showList = list.filter(
+		(e) => !search || (e.address || '').toLocaleUpperCase().includes(search.toLocaleUpperCase())
+	);
 	return (
 		<View>
-			{showList.map((e) => {
+			{showList.map((e, j) => {
 				const isOutto = [1, 3].includes(e.type);
 				const isStake = [2, 3].includes(e.type);
 				const isSign = [4].includes(e.type);
@@ -171,7 +173,7 @@ export const ActivityList = ({ search }) => {
 					} else {
 						FromToEl = (
 							<Text style={[SS.fz17, SS.mb5]}>
-								{isOutto ? 'To' : 'From'} : {e.address.replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
+								{isOutto ? 'To' : 'From'} : {(e.address || '').replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
 							</Text>
 						);
 					}
@@ -190,9 +192,9 @@ export const ActivityList = ({ search }) => {
 					</View>
 				);
 				return (
-					<View key={e.id} style={[SS.row, SS.as, SS.mb20]}>
+					<View key={e.id + j} style={[SS.row, SS.as, SS.mb20]}>
 						<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
-						<View style={[S.border(2, '#ff0000'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
+						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
 							<View>
 								{FromToEl}
 								<Text style={[SS.fz15, SS.cS]}>
