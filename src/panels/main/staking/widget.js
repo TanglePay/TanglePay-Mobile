@@ -47,15 +47,18 @@ const AmountCon = ({ amountList }) => {
 };
 
 // Upcoming
-const Upcoming = ({ startTime, uncomingTokens, handleStaking }) => {
+const Upcoming = ({ startTime, commenceTime, uncomingTokens, handleStaking }) => {
 	const timeStr = dayjs(startTime * 1000)
 		.utcOffset(60)
 		.format('HH:mm CET, MMM Do YYYY');
+	const showPre = dayjs(commenceTime * 1000).isBefore(dayjs());
 	return (
 		<View style={[S.bg(ThemeVar.headerStyle), SS.p20, SS.radius10]}>
-			<Button block onPress={() => handleStaking(uncomingTokens, 1)}>
-				<Text>{I18n.t('staking.preStake')}</Text>
-			</Button>
+			{showPre && (
+				<Button block onPress={() => handleStaking(uncomingTokens, 1)}>
+					<Text>{I18n.t('staking.preStake')}</Text>
+				</Button>
+			)}
 			<View>
 				<Text style={[SS.pv15, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
 				<View style={[SS.radius10, SS.bgW, SS.p15]}>
@@ -100,7 +103,7 @@ const UnParticipate = ({ statedTokens, unStakeTokens, handleStaking, uncomingTok
 						{uList.map((d, di) => {
 							return <StakingTokenItem key={di} style={[SS.mr10, SS.mb10]} coin={d.token} />;
 						})}
-						<Text style={[SS.fz12, SS.cS]}>{I18n.t('staking.preStake')}</Text>
+						<Text style={[SS.fz12, SS.cS, SS.mb10]}>{I18n.t('staking.preStake')}</Text>
 					</View>
 				)}
 			</View>
@@ -183,7 +186,7 @@ export const StatusCon = () => {
 	const [{ filter, rewards }] = useStore('staking.config');
 	//status: 0-》Ended  1-》Upcoming ，2-》Commencing
 	const [eventInfo, setEventInfo] = useGetParticipationEvents();
-	let { status = 0, list = [], upcomingList = [], commencingList = [] } = eventInfo;
+	let { status = 0, list = [], upcomingList = [], commencingList = [], endedList = [] } = eventInfo;
 	let [statedTokens] = useStore('staking.statedTokens');
 	const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
@@ -193,6 +196,7 @@ export const StatusCon = () => {
 	}
 	list = list.filter((e) => !filter.includes(e.id));
 	const startTime = upcomingList[upcomingList.length - 1]?.startTime;
+	const commenceTime = upcomingList[upcomingList.length - 1]?.commenceTime;
 	useEffect(() => {
 		let timeHandle = null;
 		if (eventInfo.status === 1) {
@@ -220,7 +224,7 @@ export const StatusCon = () => {
 	statedTokens = statedTokens.map((e) => {
 		const token = e.token;
 		let unit = _get(rewards, `${token}.unit`) || token;
-		return { ...e, token: unit };
+		return { ...e, token: unit, status: endedList.find((a) => a.id === e.eventId) ? 'ended' : '' };
 	});
 	list.forEach((e) => {
 		const token = e.payload.symbol;
@@ -253,19 +257,21 @@ export const StatusCon = () => {
 
 	let AirdropsItem = [Ended, Upcoming, UnParticipate, Staked][eventInfo.status || 0];
 
+	const unEndedStakeTokens = statedTokens.filter((e) => e.status !== 'ended');
 	let amountList = [
 		{
 			token: 'IOTA',
 			amount: available,
 			statusStr: I18n.t('staking.available'),
 			borderColor: '#d0d1d2',
-			btnDis: eventInfo.status == 0 // end
+			btnDis:
+				eventInfo.status == 0 || unEndedStakeTokens.length == 0 || dayjs(commenceTime * 1000).isAfter(dayjs()) // end
 		}
 	];
 	if (status === 3) {
 		amountList[0].btnStr = I18n.t('staking.add');
 		amountList[0].onPress = () => {
-			handleStaking(statedTokens, 2);
+			handleStaking(unEndedStakeTokens, 2);
 		};
 		amountList.push({
 			token: 'IOTA',
@@ -296,6 +302,7 @@ export const StatusCon = () => {
 				unStakeTokens={unStakeTokens}
 				startTime={startTime}
 				statedAmount={statedAmount}
+				commenceTime={commenceTime}
 			/>
 			<AmountCon amountList={amountList} />
 		</View>
