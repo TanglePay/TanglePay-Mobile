@@ -79,7 +79,13 @@ export const AssetsSend = () => {
 						} catch (error) {
 							console.log(error);
 							Toast.hideLoading();
-							Toast.error(I18n.t('assets.sendError'));
+							Toast.error(
+								`${error.toString()}---input:${
+									values.amount
+								}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
+									realBalance
+								)}---available:${available}---bigStatedAmount:${bigStatedAmount}`
+							);
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
