@@ -70,9 +70,10 @@ export const CoinList = () => {
 };
 export const RewardsList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
+	const [stakedRewards] = useStore('staking.stakedRewards');
 	const [list, setList] = useState([]);
 	const [curWallet] = useGetNodeWallet();
-	const stakedRewards = useGetRewards(curWallet.address);
+	useGetRewards(curWallet);
 	const [{ rewards }] = useStore('staking.config');
 	const [isRequestAssets] = useStore('common.isRequestAssets');
 	useEffect(() => {

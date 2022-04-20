@@ -312,7 +312,7 @@ export const StatusCon = () => {
 export const RewardsList = () => {
 	const [curWallet] = useGetNodeWallet();
 	const [statedTokens] = useStore('staking.statedTokens');
-	const stakedRewards = useGetRewards(curWallet.address);
+	const stakedRewards = useGetRewards(curWallet);
 	const [{ rewards }] = useStore('staking.config');
 	const list = statedTokens.map((e) => {
 		const { token, eventId } = e;
