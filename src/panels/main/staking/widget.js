@@ -288,7 +288,6 @@ export const StatusCon = () => {
 	const handleHis = () => {
 		Base.push('staking/history');
 	};
-	const 
 	return (
 		<View style={[S.bg(ThemeVar.contentStyle), SS.radius10]}>
 			<View style={[SS.row, SS.je]}>
