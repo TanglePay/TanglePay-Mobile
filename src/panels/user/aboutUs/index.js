@@ -34,7 +34,7 @@ export const UserAboutUs = () => {
 	];
 	const [list, setList] = useState(initList);
 	useEffect(() => {
-		fetch(`${API_URL}/update.json`)
+		fetch(`${API_URL}/update.json?v=${new Date().getTime()}`)
 			.then((res) => res.json())
 			.then((res) => {
 				setList((e) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, Button } from 'native-base';
 import { TouchableOpacity, Image } from 'react-native';
 import { S, SS, SvgIcon, ThemeVar, StakingTokenItem, Toast } from '@/common';
@@ -182,6 +182,7 @@ const Ended = ({ statedTokens, unStakeTokens }) => {
 		</View>
 	);
 };
+
 export const StatusCon = () => {
 	const [{ filter, rewards }] = useStore('staking.config');
 	//status: 0-》Ended  1-》Upcoming ，2-》Commencing
@@ -312,7 +313,7 @@ export const StatusCon = () => {
 export const RewardsList = () => {
 	const [curWallet] = useGetNodeWallet();
 	const [statedTokens] = useStore('staking.statedTokens');
-	const stakedRewards = useGetRewards(curWallet.address);
+	const stakedRewards = useGetRewards(curWallet);
 	const [{ rewards }] = useStore('staking.config');
 	const list = statedTokens.map((e) => {
 		const { token, eventId } = e;
@@ -338,46 +339,50 @@ export const RewardsList = () => {
 			label: `${Base.formatNum(total)}${preUnit} ${unit}`
 		};
 	});
+	const ListEl = useMemo(() => {
+		return list.map((e, i) => {
+			return <StakingTokenItem key={i} style={[SS.mr10, SS.mb10]} coin={e.token} label={e.label} />;
+		});
+	}, [JSON.stringify(list)]);
 	if (list.length <= 0) {
 		return null;
 	}
 	return (
 		<View style={[SS.mt25]}>
 			<Text style={[SS.cS, SS.fz16]}>{I18n.t('staking.estimatedReceived')}</Text>
-			<View style={[SS.row, SS.pv10, { flexWrap: 'wrap' }]}>
-				{list.map((e, i) => {
-					return <StakingTokenItem key={i} style={[SS.mr10, SS.mb10]} coin={e.token} label={e.label} />;
-				})}
-			</View>
+			<View style={[SS.row, SS.pv10, { flexWrap: 'wrap' }]}>{ListEl}</View>
 		</View>
 	);
 };
 
 export const AirdopsList = () => {
 	const [{ airdrops }] = useStore('staking.config');
+	const ListEl = useMemo(() => {
+		return airdrops.map((e, i) => {
+			return (
+				<TouchableOpacity
+					key={i}
+					style={[SS.mb10, SS.bgS, S.radius(8), SS.row, SS.jsb, SS.ac, SS.p10]}
+					onPress={() => {
+						Base.push(e.link, { title: e.token });
+					}}
+					activeOpacity={0.8}>
+					<View style={[SS.row, SS.ac]}>
+						<Image style={[S.wh(24), SS.mr10]} source={{ uri: Base.getIcon(e.token) }} />
+						<Text style={[SS.fz12]}>{e.desc}</Text>
+					</View>
+					<SvgIcon name='right' size={14} />
+				</TouchableOpacity>
+			);
+		});
+	}, [JSON.stringify(airdrops)]);
 	if (airdrops.length === 0) {
 		return null;
 	}
 	return (
 		<View style={[SS.mt15]}>
 			<Text style={[SS.cS, SS.fz16, SS.mb10]}>{I18n.t('staking.airdropsList')}</Text>
-			{airdrops.map((e, i) => {
-				return (
-					<TouchableOpacity
-						key={i}
-						style={[SS.mb10, SS.bgS, S.radius(8), SS.row, SS.jsb, SS.ac, SS.p10]}
-						onPress={() => {
-							Base.push(e.link, { title: e.token });
-						}}
-						activeOpacity={0.8}>
-						<View style={[SS.row, SS.ac]}>
-							<Image style={[S.wh(24), SS.mr10]} source={{ uri: Base.getIcon(e.token) }} />
-							<Text style={[SS.fz12]}>{e.desc}</Text>
-						</View>
-						<SvgIcon name='right' size={14} />
-					</TouchableOpacity>
-				);
-			})}
+			{ListEl}
 		</View>
 	);
 };

@@ -62,7 +62,9 @@ export const AssetsSend = () => {
 							return Toast.error(I18n.t('assets.sendBelow1Tips'));
 						}
 						if (residue < 0) {
-							return Toast.error(I18n.t('assets.balanceError'));
+							return Toast.error(
+								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
+							);
 						}
 						if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
 							sendAmount = Number(realBalance);

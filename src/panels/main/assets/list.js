@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import { I18n, Base } from '@tangle-pay/common';
@@ -7,12 +7,12 @@ import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
 import { S, SS, SvgIcon } from '@/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { useGetRewards } from '@tangle-pay/store/staking';
 import _get from 'lodash/get';
 
 const itemH = 80;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
+	const [needRestake] = useStore('staking.needRestake');
 	const [assetsList] = useStore('common.assetsList');
 	const [statedAmount] = useStore('staking.statedAmount');
 	const curLegal = useGetLegal();
@@ -34,7 +34,7 @@ export const CoinList = () => {
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz17]}>{e.name}</Text>
-								{statedAmount > 0 && (
+								{statedAmount > 0 && !needRestake && (
 									<View
 										style={[
 											SS.ml20,
@@ -70,9 +70,9 @@ export const CoinList = () => {
 };
 export const RewardsList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
+	const [stakedRewards] = useStore('staking.stakedRewards');
 	const [list, setList] = useState([]);
 	const [curWallet] = useGetNodeWallet();
-	const stakedRewards = useGetRewards(curWallet.address);
 	const [{ rewards }] = useStore('staking.config');
 	const [isRequestAssets] = useStore('common.isRequestAssets');
 	useEffect(() => {
@@ -112,32 +112,33 @@ export const RewardsList = () => {
 		}
 		setList(Object.values(obj));
 	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address]);
+	const ListEl = useMemo(() => {
+		return list.map((e) => {
+			return (
+				<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
+					<Image
+						style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
+						source={{ uri: Base.getIcon(e.symbol) }}
+					/>
+					<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+						<Text style={[SS.fz17]}>{e.unit}</Text>
+						{isShowAssets ? (
+							<View>
+								<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
+							</View>
+						) : (
+							<View>
+								<Text style={[SS.fz15, SS.tr]}>****</Text>
+							</View>
+						)}
+					</View>
+				</View>
+			);
+		});
+	}, [JSON.stringify(list), isShowAssets]);
 	return (
 		<>
-			{list.length <= 0
-				? null
-				: list.map((e) => {
-						return (
-							<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
-								<Image
-									style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
-									source={{ uri: Base.getIcon(e.symbol) }}
-								/>
-								<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
-									<Text style={[SS.fz17]}>{e.unit}</Text>
-									{isShowAssets ? (
-										<View>
-											<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
-										</View>
-									) : (
-										<View>
-											<Text style={[SS.fz15, SS.tr]}>****</Text>
-										</View>
-									)}
-								</View>
-							</View>
-						);
-				  })}
+			{list.length <= 0 ? null : ListEl}
 			{!isRequestAssets && (
 				<View style={[SS.p30, SS.c, SS.row]}>
 					<Spinner size='small' color='gray' />
@@ -154,58 +155,57 @@ export const ActivityList = ({ search }) => {
 	const showList = list.filter(
 		(e) => !search || (e.address || '').toLocaleUpperCase().includes(search.toLocaleUpperCase())
 	);
+	const ListEl = useMemo(() => {
+		return showList.map((e, j) => {
+			const isOutto = [1, 3].includes(e.type);
+			const isStake = [2, 3].includes(e.type);
+			const isSign = [4].includes(e.type);
+			let FromToEl = null;
+			if (isSign) {
+				FromToEl = <Text style={[SS.fz17, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
+			} else {
+				if (isStake) {
+					FromToEl = (
+						<Text style={[SS.fz17, SS.mb5]}>{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}</Text>
+					);
+				} else {
+					FromToEl = (
+						<Text style={[SS.fz17, SS.mb5]}>
+							{isOutto ? 'To' : 'From'} : {(e.address || '').replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
+						</Text>
+					);
+				}
+			}
+			let AssetsEl = isShowAssets ? (
+				<View>
+					<Text style={[SS.fz15, SS.tr, SS.mb5]}>
+						{isSign ? '' : isOutto ? '-' : '+'} {e.num} {e.coin}
+					</Text>
+					<Text style={[SS.fz15, SS.tr, SS.cS]}>$ {e.assets}</Text>
+				</View>
+			) : (
+				<View>
+					<Text style={[SS.fz15, SS.tr, SS.mb5]}>****</Text>
+					<Text style={[SS.fz15, SS.tr, SS.cS]}>****</Text>
+				</View>
+			);
+			return (
+				<View key={e.id + j} style={[SS.row, SS.as, SS.mb20]}>
+					<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
+					<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
+						<View>
+							{FromToEl}
+							<Text style={[SS.fz15, SS.cS]}>{dayjs(e.timestamp * 1000).format('YYYY-MM-DD HH:mm')}</Text>
+						</View>
+						{AssetsEl}
+					</View>
+				</View>
+			);
+		});
+	}, [JSON.stringify(showList), isShowAssets]);
 	return (
 		<View>
-			{showList.map((e, j) => {
-				const isOutto = [1, 3].includes(e.type);
-				const isStake = [2, 3].includes(e.type);
-				const isSign = [4].includes(e.type);
-				let FromToEl = null;
-				if (isSign) {
-					FromToEl = <Text style={[SS.fz17, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
-				} else {
-					if (isStake) {
-						FromToEl = (
-							<Text style={[SS.fz17, SS.mb5]}>
-								{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}
-							</Text>
-						);
-					} else {
-						FromToEl = (
-							<Text style={[SS.fz17, SS.mb5]}>
-								{isOutto ? 'To' : 'From'} : {(e.address || '').replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
-							</Text>
-						);
-					}
-				}
-				let AssetsEl = isShowAssets ? (
-					<View>
-						<Text style={[SS.fz15, SS.tr, SS.mb5]}>
-							{isSign ? '' : isOutto ? '-' : '+'} {e.num} {e.coin}
-						</Text>
-						<Text style={[SS.fz15, SS.tr, SS.cS]}>$ {e.assets}</Text>
-					</View>
-				) : (
-					<View>
-						<Text style={[SS.fz15, SS.tr, SS.mb5]}>****</Text>
-						<Text style={[SS.fz15, SS.tr, SS.cS]}>****</Text>
-					</View>
-				);
-				return (
-					<View key={e.id + j} style={[SS.row, SS.as, SS.mb20]}>
-						<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
-						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
-							<View>
-								{FromToEl}
-								<Text style={[SS.fz15, SS.cS]}>
-									{dayjs(e.timestamp * 1000).format('YYYY-MM-DD HH:mm')}
-								</Text>
-							</View>
-							{AssetsEl}
-						</View>
-					</View>
-				);
-			})}
+			{ListEl}
 			{!isRequestHis && (
 				<View style={[SS.p30, SS.c, SS.row]}>
 					<Spinner size='small' color='gray' />

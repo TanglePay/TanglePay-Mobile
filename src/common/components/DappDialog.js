@@ -7,7 +7,6 @@ import { SS, ThemeVar, Toast } from '@/common';
 import { useGetNodeWallet, useChangeNode, useUpdateBalance } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
@@ -51,7 +50,9 @@ export const DappDialog = () => {
 							return Toast.error(I18n.t('assets.sendBelow1Tips'));
 						}
 						if (residue < 0) {
-							return Toast.error(I18n.t('assets.balanceError'));
+							return Toast.error(
+								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
+							);
 						}
 						if (residue < IotaSDK.IOTA_MI && residue != 0) {
 							return Toast.error(I18n.t('assets.residueBelow1Tips'));
@@ -63,6 +64,8 @@ export const DappDialog = () => {
 						Toast.success(I18n.t('assets.sendSucc'));
 						hide();
 						updateBalance(residue, curWallet.address);
+						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+						await sleep(2000);
 					} catch (error) {
 						setLoading(false);
 						Toast.error(
@@ -77,7 +80,9 @@ export const DappDialog = () => {
 				try {
 					const residue = Number(assets.realBalance || 0);
 					if (residue < IotaSDK.IOTA_MI) {
-						return Toast.error(I18n.t('assets.balanceError'));
+						return Toast.error(
+							I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
+						);
 					}
 					setLoading(true);
 					const res = await IotaSDK.sign(content, curWallet, residue);
@@ -95,7 +100,6 @@ export const DappDialog = () => {
 			return_url = decodeURIComponent(return_url);
 			const url = `${return_url}${/\?/.test(return_url) ? '&' : '?'}message_id=${messageId}`;
 			const route = Base.navigator?.getCurrentRoute();
-			Clipboard.setString(url);
 			if (route?.params?.setWebviewUrl) {
 				route?.params?.setWebviewUrl(url);
 			} else {
