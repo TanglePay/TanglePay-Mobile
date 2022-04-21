@@ -7,12 +7,12 @@ import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
 import { S, SS, SvgIcon } from '@/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { useGetRewards } from '@tangle-pay/store/staking';
 import _get from 'lodash/get';
 
 const itemH = 80;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
+	const [needRestake] = useStore('staking.needRestake');
 	const [assetsList] = useStore('common.assetsList');
 	const [statedAmount] = useStore('staking.statedAmount');
 	const curLegal = useGetLegal();
@@ -34,7 +34,7 @@ export const CoinList = () => {
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz17]}>{e.name}</Text>
-								{statedAmount > 0 && (
+								{statedAmount > 0 && !needRestake && (
 									<View
 										style={[
 											SS.ml20,
@@ -73,7 +73,6 @@ export const RewardsList = () => {
 	const [stakedRewards] = useStore('staking.stakedRewards');
 	const [list, setList] = useState([]);
 	const [curWallet] = useGetNodeWallet();
-	// useGetRewards(curWallet);
 	const [{ rewards }] = useStore('staking.config');
 	const [isRequestAssets] = useStore('common.isRequestAssets');
 	useEffect(() => {
