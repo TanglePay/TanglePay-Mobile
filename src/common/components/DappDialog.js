@@ -7,7 +7,6 @@ import { SS, ThemeVar, Toast } from '@/common';
 import { useGetNodeWallet, useChangeNode, useUpdateBalance } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
@@ -65,6 +64,8 @@ export const DappDialog = () => {
 						Toast.success(I18n.t('assets.sendSucc'));
 						hide();
 						updateBalance(residue, curWallet.address);
+						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+						await sleep(2000);
 					} catch (error) {
 						setLoading(false);
 						Toast.error(
@@ -99,7 +100,6 @@ export const DappDialog = () => {
 			return_url = decodeURIComponent(return_url);
 			const url = `${return_url}${/\?/.test(return_url) ? '&' : '?'}message_id=${messageId}`;
 			const route = Base.navigator?.getCurrentRoute();
-			Clipboard.setString(url);
 			if (route?.params?.setWebviewUrl) {
 				route?.params?.setWebviewUrl(url);
 			} else {
