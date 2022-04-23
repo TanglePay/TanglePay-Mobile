@@ -24,7 +24,8 @@ export const Toast = {
 		NativeBaseToast.show({
 			text,
 			type: 'danger',
-			...config
+			...config,
+			duration: 10000
 		});
 	},
 	warning(text) {
