@@ -5,9 +5,11 @@ import { I18n, Base } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
-import { S, SS, SvgIcon } from '@/common';
+import { S, SS, SvgIcon, Theme, ThemeVar } from '@/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import _get from 'lodash/get';
+import { useGetNftList } from '@tangle-pay/store/nft';
+import ImageView from 'react-native-image-view';
 
 const itemH = 80;
 export const CoinList = () => {
@@ -214,4 +216,85 @@ export const ActivityList = ({ search }) => {
 			)}
 		</View>
 	);
+};
+
+const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
+const CollectiblesItem = ({ name, list }) => {
+	const [isOpen, setOpen] = useState(false);
+	const [imgIndex, setImgIndex] = useState(0);
+	const [isShowPre, setIsShowPre] = useState(false);
+	const images = list.map((e) => {
+		return {
+			...e,
+			source: {
+				url: e.media
+			},
+			width: ThemeVar.deviceWidth,
+			height: ThemeVar.deviceWidth
+		};
+	});
+	return (
+		<View>
+			<TouchableOpacity
+				onPress={() => {
+					setOpen(!isOpen);
+				}}
+				activeOpacity={0.7}
+				style={[SS.row, SS.ac, S.h(64)]}>
+				<SvgIcon size={14} name='up' style={[isOpen && { transform: [{ rotate: '180deg' }] }]} />
+				<Image style={[S.wh(32), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon('SMR') }} />
+				<Text>{name}</Text>
+				<View style={[SS.bgS, SS.ml10, SS.ph5, S.paddingV(3), S.radius(4)]}>
+					<Text style={[SS.fz12]}>{list.length}</Text>
+				</View>
+			</TouchableOpacity>
+			{isOpen && (
+				<View style={[SS.row, SS.ac, { flexWrap: 'wrap' }]}>
+					{list.map((e, i) => {
+						return (
+							<TouchableOpacity
+								key={`${e.uid}_${i}`}
+								activeOpacity={0.7}
+								onPress={() => {
+									setImgIndex(i);
+									setIsShowPre(true);
+								}}>
+								<Image
+									style={[
+										S.radius(8),
+										S.wh(imgW),
+										S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+										S.marginB(15)
+									]}
+									source={{ uri: e.media }}
+								/>
+							</TouchableOpacity>
+						);
+					})}
+				</View>
+			)}
+			<ImageView
+				glideAlways
+				images={images}
+				imageIndex={imgIndex}
+				animationType='fade'
+				isVisible={isShowPre}
+				onClose={() => setIsShowPre(false)}
+				onImageChange={(index) => {
+					setImgIndex(index);
+				}}
+			/>
+		</View>
+	);
+};
+export const CollectiblesList = () => {
+	const [curWallet] = useGetNodeWallet();
+	useGetNftList(curWallet);
+	const [list] = useStore('nft.list');
+	const ListEl = useMemo(() => {
+		return list.map((e) => {
+			return <CollectiblesItem {...e} />;
+		});
+	}, [JSON.stringify(list)]);
+	return <View>{ListEl}</View>;
 };

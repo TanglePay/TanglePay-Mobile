@@ -30,6 +30,7 @@ import Set from './Set';
 import Share from './Share';
 import Staking from './Staking';
 import Time from './Time';
+import Up from './Up';
 import Wallet from './Wallet';
 export { default as About } from './About';
 export { default as Apps } from './Apps';
@@ -59,6 +60,7 @@ export { default as Set } from './Set';
 export { default as Share } from './Share';
 export { default as Staking } from './Staking';
 export { default as Time } from './Time';
+export { default as Up } from './Up';
 export { default as Wallet } from './Wallet';
 
 let IconFont = ({ name, ...rest }) => {
@@ -119,8 +121,10 @@ let IconFont = ({ name, ...rest }) => {
       return <Staking key="L27" {...rest} />;
     case 'time':
       return <Time key="L28" {...rest} />;
+    case 'up':
+      return <Up key="L29" {...rest} />;
     case 'wallet':
-      return <Wallet key="L29" {...rest} />;
+      return <Wallet key="L30" {...rest} />;
   }
 
   return null;

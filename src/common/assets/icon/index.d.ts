@@ -33,10 +33,11 @@ export { default as Set } from './Set';
 export { default as Share } from './Share';
 export { default as Staking } from './Staking';
 export { default as Time } from './Time';
+export { default as Up } from './Up';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'apps' | 'assets' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'time' | 'wallet';
+  name: 'about' | 'apps' | 'assets' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'time' | 'up' | 'wallet';
   size?: number;
   color?: string | string[];
 }
