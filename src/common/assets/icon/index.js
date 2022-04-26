@@ -5,6 +5,7 @@ import React from 'react';
 import About from './About';
 import Apps from './Apps';
 import Assets from './Assets';
+import Cache from './Cache';
 import Checkbox0 from './Checkbox0';
 import Checkbox1 from './Checkbox1';
 import Copy from './Copy';
@@ -35,6 +36,7 @@ import Wallet from './Wallet';
 export { default as About } from './About';
 export { default as Apps } from './Apps';
 export { default as Assets } from './Assets';
+export { default as Cache } from './Cache';
 export { default as Checkbox0 } from './Checkbox0';
 export { default as Checkbox1 } from './Checkbox1';
 export { default as Copy } from './Copy';
@@ -71,60 +73,62 @@ let IconFont = ({ name, ...rest }) => {
       return <Apps key="L2" {...rest} />;
     case 'assets':
       return <Assets key="L3" {...rest} />;
+    case 'cache':
+      return <Cache key="L4" {...rest} />;
     case 'checkbox_0':
-      return <Checkbox0 key="L4" {...rest} />;
+      return <Checkbox0 key="L5" {...rest} />;
     case 'checkbox_1':
-      return <Checkbox1 key="L5" {...rest} />;
+      return <Checkbox1 key="L6" {...rest} />;
     case 'copy':
-      return <Copy key="L6" {...rest} />;
+      return <Copy key="L7" {...rest} />;
     case 'down':
-      return <Down key="L7" {...rest} />;
+      return <Down key="L8" {...rest} />;
     case 'edit':
-      return <Edit key="L8" {...rest} />;
+      return <Edit key="L9" {...rest} />;
     case 'encrypt':
-      return <Encrypt key="L9" {...rest} />;
+      return <Encrypt key="L10" {...rest} />;
     case 'eye_0':
-      return <Eye0 key="L10" {...rest} />;
+      return <Eye0 key="L11" {...rest} />;
     case 'eye_1':
-      return <Eye1 key="L11" {...rest} />;
+      return <Eye1 key="L12" {...rest} />;
     case 'file':
-      return <File key="L12" {...rest} />;
+      return <File key="L13" {...rest} />;
     case 'history':
-      return <History key="L13" {...rest} />;
+      return <History key="L14" {...rest} />;
     case 'into':
-      return <Into key="L14" {...rest} />;
+      return <Into key="L15" {...rest} />;
     case 'lang':
-      return <Lang key="L15" {...rest} />;
+      return <Lang key="L16" {...rest} />;
     case 'left':
-      return <Left key="L16" {...rest} />;
+      return <Left key="L17" {...rest} />;
     case 'me':
-      return <Me key="L17" {...rest} />;
+      return <Me key="L18" {...rest} />;
     case 'network':
-      return <Network key="L18" {...rest} />;
+      return <Network key="L19" {...rest} />;
     case 'no_screenshot':
-      return <NoScreenshot key="L19" {...rest} />;
+      return <NoScreenshot key="L20" {...rest} />;
     case 'noData':
-      return <NoData key="L20" {...rest} />;
+      return <NoData key="L21" {...rest} />;
     case 'outto':
-      return <Outto key="L21" {...rest} />;
+      return <Outto key="L22" {...rest} />;
     case 'privacy':
-      return <Privacy key="L22" {...rest} />;
+      return <Privacy key="L23" {...rest} />;
     case 'right':
-      return <Right key="L23" {...rest} />;
+      return <Right key="L24" {...rest} />;
     case 'scan':
-      return <Scan key="L24" {...rest} />;
+      return <Scan key="L25" {...rest} />;
     case 'set':
-      return <Set key="L25" {...rest} />;
+      return <Set key="L26" {...rest} />;
     case 'share':
-      return <Share key="L26" {...rest} />;
+      return <Share key="L27" {...rest} />;
     case 'staking':
-      return <Staking key="L27" {...rest} />;
+      return <Staking key="L28" {...rest} />;
     case 'time':
-      return <Time key="L28" {...rest} />;
+      return <Time key="L29" {...rest} />;
     case 'up':
-      return <Up key="L29" {...rest} />;
+      return <Up key="L30" {...rest} />;
     case 'wallet':
-      return <Wallet key="L30" {...rest} />;
+      return <Wallet key="L31" {...rest} />;
   }
 
   return null;
