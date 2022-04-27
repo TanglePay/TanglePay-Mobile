@@ -152,7 +152,7 @@ export const RewardsList = () => {
 		</>
 	);
 };
-export const ActivityList = ({ search }) => {
+export const ActivityList = ({ search, setHeight }) => {
 	const [list] = useStore('common.hisList');
 	const [isShowAssets] = useStore('common.showAssets');
 	const [isRequestHis] = useStore('common.isRequestHis');
@@ -208,7 +208,10 @@ export const ActivityList = ({ search }) => {
 		});
 	}, [JSON.stringify(showList), isShowAssets]);
 	return (
-		<View>
+		<View
+			onLayout={(e) => {
+				setHeight(e.nativeEvent.layout.height);
+			}}>
 			{ListEl}
 			{!isRequestHis && (
 				<View style={[SS.p30, SS.c, SS.row]}>
@@ -221,19 +224,19 @@ export const ActivityList = ({ search }) => {
 };
 
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
-const CollectiblesItem = ({ name, list }) => {
+const CollectiblesItem = ({ name, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
 	const [imgIndex, setImgIndex] = useState(0);
 	const [isShowPre, setIsShowPre] = useState(false);
 	const cacheList = ImageCache.get().cache || [];
-	const images = list.map((e) => {
+	const images = list.map((e, i) => {
 		return {
 			...e,
 			source: {
 				url: cacheList[e.media]?.path || e.media
 			},
 			width: ThemeVar.deviceWidth,
-			height: ThemeVar.deviceWidth
+			height: ThemeVar.deviceHeight
 		};
 	});
 	return (
@@ -251,31 +254,46 @@ const CollectiblesItem = ({ name, list }) => {
 					<Text style={[SS.fz12]}>{list.length}</Text>
 				</View>
 			</TouchableOpacity>
-			{isOpen && (
-				<View style={[SS.row, SS.ac, { flexWrap: 'wrap' }]}>
-					{list.map((e, i) => {
-						return (
-							<TouchableOpacity
-								key={`${e.uid}_${i}`}
-								activeOpacity={0.7}
+			{isOpen &&
+				(list.length > 0 ? (
+					<View style={[SS.row, SS.ac, { flexWrap: 'wrap' }, S.border(2)]}>
+						{list.map((e, i) => {
+							return (
+								<TouchableOpacity
+									key={`${e.uid}_${i}`}
+									activeOpacity={0.7}
+									onPress={() => {
+										setImgIndex(i);
+										setIsShowPre(true);
+									}}>
+									<CachedImage
+										style={[
+											S.radius(8),
+											S.wh(imgW),
+											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+											S.marginB(15)
+										]}
+										resizeMode='contain'
+										source={{ uri: e.media }}
+									/>
+								</TouchableOpacity>
+							);
+						})}
+					</View>
+				) : (
+					<View style={[SS.c, SS.pb25, SS.pt10, S.border(2)]}>
+						<Text style={[SS.fz15, SS.cS]}>
+							{I18n.t('nft.zeroTips').replace('{name}', name)}{' '}
+							<Text
+								style={[SS.cP]}
 								onPress={() => {
-									setImgIndex(i);
-									setIsShowPre(true);
+									Base.push(link);
 								}}>
-								<CachedImage
-									style={[
-										S.radius(8),
-										S.wh(imgW),
-										S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
-										S.marginB(15)
-									]}
-									source={{ uri: e.media }}
-								/>
-							</TouchableOpacity>
-						);
-					})}
-				</View>
-			)}
+								{I18n.t('nft.goBuy')}
+							</Text>
+						</Text>
+					</View>
+				))}
 			<ImageView
 				glideAlways
 				images={images}
@@ -290,14 +308,21 @@ const CollectiblesItem = ({ name, list }) => {
 		</View>
 	);
 };
-export const CollectiblesList = () => {
+export const CollectiblesList = ({ setHeight }) => {
 	const [curWallet] = useGetNodeWallet();
 	useGetNftList(curWallet);
 	const [list] = useStore('nft.list');
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
-			return <CollectiblesItem key={e.collection} {...e} />;
+			return <CollectiblesItem key={e.space} {...e} />;
 		});
 	}, [JSON.stringify(list)]);
-	return <View>{ListEl}</View>;
+	return (
+		<View
+			onLayout={(e) => {
+				setHeight(e.nativeEvent.layout.height);
+			}}>
+			{ListEl}
+		</View>
+	);
 };

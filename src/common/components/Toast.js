@@ -25,7 +25,6 @@ export const Toast = {
 			text,
 			type: 'danger',
 			...config,
-			duration: 10000
 		});
 	},
 	warning(text) {

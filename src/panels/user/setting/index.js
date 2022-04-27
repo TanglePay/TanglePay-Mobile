@@ -25,7 +25,7 @@ export const UserSetting = () => {
 		},
 		{
 			icon: 'cache',
-			label: '清理缓存',
+			label: I18n.t('nft.clearCache'),
 			value: cache,
 			onPress: () => {
 				ImageCache.get().clear();

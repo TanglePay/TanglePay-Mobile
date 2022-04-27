@@ -8,8 +8,10 @@ import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/sto
 import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
 import { useGetEventsConfig } from '@tangle-pay/store/staking';
 
+const hScroll = ThemeVar.deviceHeight - 200;
 export const Assets = () => {
 	useGetEventsConfig();
+	const [heightInfo, setHeightInfo] = useState({ 0: hScroll, 1: undefined, 2: undefined });
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
@@ -77,7 +79,7 @@ export const Assets = () => {
 				// style={{ height: curTab === 0 ? 600 : undefined }}
 				// scrollEnabled={curTab === 1}
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={[{ height: curTab === 0 ? ThemeVar.deviceHeight - 200 : undefined }]}
+				contentContainerStyle={[{ height: heightInfo[curTab] || hScroll }]}
 				refreshControl={
 					<RefreshControl
 						refreshing={false}
@@ -146,7 +148,7 @@ export const Assets = () => {
 										S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
 										SS.fz17
 									]}>
-									{I18n.t('nft.collectibles')}
+									Collectibles
 								</Text>
 							</TouchableOpacity>
 						</View>
@@ -182,10 +184,19 @@ export const Assets = () => {
 						<RewardsList />
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph20]}>
-						<CollectiblesList />
+						<CollectiblesList
+							setHeight={(e) => {
+								setHeightInfo({ ...heightInfo, 1: e + 300 });
+							}}
+						/>
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph20]}>
-						<ActivityList search={search} />
+						<ActivityList
+							search={search}
+							setHeight={(e) => {
+								setHeightInfo({ ...heightInfo, 2: e + 300 });
+							}}
+						/>
 					</View>
 				</ScrollView>
 			</ScrollView>
