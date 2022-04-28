@@ -2,6 +2,7 @@
 
 import React, { Component, type Node, type ComponentType } from 'react';
 import { ActivityIndicator, Animated, Dimensions, FlatList, Modal, Platform, View, SafeAreaView } from 'react-native';
+import { CustomCachedImage } from 'react-native-img-cache';
 
 import {
 	type ControlType,
@@ -657,16 +658,16 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	renderImage = ({ item: image, index }: { item: *, index: number }): * => {
 		const loaded = image.loaded && image.width && image.height;
-
+		console.log(image.source, '----------');
 		return (
 			<View style={styles.imageContainer} onStartShouldSetResponder={(): boolean => true}>
-				<Animated.Image
+				<CustomCachedImage
+					component={Animated.Image}
 					resizeMode='contain'
 					source={image.source}
 					style={this.getImageStyle(image, index)}
 					onLoad={(): void => this.onImageLoaded(index)}
-					{...this.panResponder.panHandlers}
-				/>
+					{...this.panResponder.panHandlers}></CustomCachedImage>
 				{!loaded && <ActivityIndicator style={styles.loading} />}
 			</View>
 		);

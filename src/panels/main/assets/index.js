@@ -148,7 +148,7 @@ export const Assets = () => {
 										S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
 										SS.fz17
 									]}>
-									Collectibles
+									{I18n.t('nft.collectibles')}
 								</Text>
 							</TouchableOpacity>
 						</View>

@@ -11,7 +11,6 @@ import _get from 'lodash/get';
 import { useGetNftList } from '@tangle-pay/store/nft';
 import ImageView from 'react-native-image-view';
 import { CachedImage } from 'react-native-img-cache';
-import { ImageCache } from 'react-native-img-cache';
 
 const itemH = 80;
 export const CoinList = () => {
@@ -224,16 +223,15 @@ export const ActivityList = ({ search, setHeight }) => {
 };
 
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
-const CollectiblesItem = ({ name, link, list }) => {
+const CollectiblesItem = ({ logo, name, isPreview, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
 	const [imgIndex, setImgIndex] = useState(0);
 	const [isShowPre, setIsShowPre] = useState(false);
-	const cacheList = ImageCache.get().cache || [];
-	const images = list.map((e, i) => {
+	const images = list.map((e) => {
 		return {
 			...e,
 			source: {
-				url: cacheList[e.media]?.path || e.media
+				uri: e.media
 			},
 			width: ThemeVar.deviceWidth,
 			height: ThemeVar.deviceHeight
@@ -248,7 +246,7 @@ const CollectiblesItem = ({ name, link, list }) => {
 				activeOpacity={0.7}
 				style={[SS.row, SS.ac, S.h(64)]}>
 				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />
-				<Image style={[S.wh(32), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon('SMR') }} />
+				<Image style={[S.wh(32), S.radius(4), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon(logo) }} />
 				<Text>{name}</Text>
 				<View style={[SS.bgS, SS.ml10, SS.ph5, S.paddingV(3), S.radius(4)]}>
 					<Text style={[SS.fz12]}>{list.length}</Text>
@@ -274,7 +272,7 @@ const CollectiblesItem = ({ name, link, list }) => {
 											S.marginB(15)
 										]}
 										resizeMode='contain'
-										source={{ uri: e.media }}
+										source={{ uri: e.preView || e.media }}
 									/>
 								</TouchableOpacity>
 							);
