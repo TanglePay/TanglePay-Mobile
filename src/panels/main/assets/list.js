@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import { I18n, Base } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
@@ -223,7 +223,7 @@ export const ActivityList = ({ search, setHeight }) => {
 };
 
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
-const CollectiblesItem = ({ logo, name, isPreview, link, list }) => {
+const CollectiblesItem = ({ logo, name, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
 	const [imgIndex, setImgIndex] = useState(0);
 	const [isShowPre, setIsShowPre] = useState(false);
@@ -246,7 +246,7 @@ const CollectiblesItem = ({ logo, name, isPreview, link, list }) => {
 				activeOpacity={0.7}
 				style={[SS.row, SS.ac, S.h(64)]}>
 				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />
-				<Image style={[S.wh(32), S.radius(4), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon(logo) }} />
+				<CachedImage style={[S.wh(32), S.radius(4), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon(logo) }} />
 				<Text>{name}</Text>
 				<View style={[SS.bgS, SS.ml10, SS.ph5, S.paddingV(3), S.radius(4)]}>
 					<Text style={[SS.fz12]}>{list.length}</Text>
@@ -307,6 +307,19 @@ const CollectiblesItem = ({ logo, name, isPreview, link, list }) => {
 	);
 };
 export const CollectiblesList = ({ setHeight }) => {
+	useEffect(() => {
+		const requestCameraPermission = async () => {
+			if (ThemeVar.platform === 'android') {
+				try {
+					const granteds = await PermissionsAndroid.requestMultiple([
+						PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+						PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+					]);
+				} catch (err) {}
+			}
+		};
+		requestCameraPermission();
+	}, []);
 	const [curWallet] = useGetNodeWallet();
 	useGetNftList(curWallet);
 	const [list] = useStore('nft.list');

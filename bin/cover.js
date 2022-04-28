@@ -12,4 +12,3 @@ const imageViewPath = path.join(__dirname, './template/ImageView.js');
 const libImageViewPath = path.join(__dirname, '../node_modules/react-native-image-view/src/ImageView.js');
 
 fs.copyFileSync(imageViewPath, libImageViewPath);
-console.log('=========');

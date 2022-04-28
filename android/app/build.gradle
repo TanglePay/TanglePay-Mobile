@@ -201,6 +201,12 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
+    // gif,webp,animated-webpweb
+    implementation("com.facebook.fresco:fresco:2.0.0")
+    implementation 'com.facebook.fresco:animated-gif:2.0.0'
+    implementation 'com.facebook.fresco:webpsupport:2.1.0'
+    implementation 'com.facebook.fresco:animated-webp:2.1.0'
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
