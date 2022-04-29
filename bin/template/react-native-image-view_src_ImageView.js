@@ -658,7 +658,6 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	renderImage = ({ item: image, index }: { item: *, index: number }): * => {
 		const loaded = image.loaded && image.width && image.height;
-		console.log(image.source, '----------');
 		return (
 			<View style={styles.imageContainer} onStartShouldSetResponder={(): boolean => true}>
 				<CustomCachedImage

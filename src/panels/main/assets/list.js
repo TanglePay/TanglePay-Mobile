@@ -272,7 +272,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											S.marginB(15)
 										]}
 										resizeMode='contain'
-										source={{ uri: e.preView || e.media }}
+										source={{ uri: e.thumbnailImage || e.media }}
 									/>
 								</TouchableOpacity>
 							);
