@@ -73,11 +73,13 @@ export const AssetsSend = () => {
 						}
 						Toast.showLoading();
 						try {
-							await IotaSDK.send(curWallet, receiver, sendAmount);
+							const res = await IotaSDK.send(curWallet, receiver, sendAmount);
 							Toast.hideLoading();
-							Toast.success(I18n.t('assets.sendSucc'));
-							Base.goBack();
-							updateBalance(Number(bigStatedAmount.plus(residue)), curWallet.address);
+							if (res) {
+								Toast.success(I18n.t('assets.sendSucc'));
+								Base.goBack();
+								updateBalance(Number(bigStatedAmount.plus(residue)), curWallet.address);
+							}
 						} catch (error) {
 							console.log(error);
 							Toast.hideLoading();
@@ -86,7 +88,10 @@ export const AssetsSend = () => {
 									values.amount
 								}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
 									realBalance
-								)}---available:${available}---bigStatedAmount:${bigStatedAmount}`
+								)}---available:${available}---bigStatedAmount:${bigStatedAmount}`,
+								{
+									duration: 5000
+								}
 							);
 						}
 					}}>
