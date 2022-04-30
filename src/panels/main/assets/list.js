@@ -320,8 +320,7 @@ export const CollectiblesList = ({ setHeight }) => {
 		};
 		requestCameraPermission();
 	}, []);
-	const [curWallet] = useGetNodeWallet();
-	useGetNftList(curWallet);
+	useGetNftList();
 	const [list] = useStore('nft.list');
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
