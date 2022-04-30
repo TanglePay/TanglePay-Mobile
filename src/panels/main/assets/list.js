@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import { I18n, Base } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
-import { S, SS, SvgIcon } from '@/common';
+import { S, SS, SvgIcon, Theme, ThemeVar } from '@/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import _get from 'lodash/get';
+import { useGetNftList } from '@tangle-pay/store/nft';
+import ImageView from 'react-native-image-view';
+import { CachedImage } from 'react-native-img-cache';
 
 const itemH = 80;
 export const CoinList = () => {
@@ -148,7 +151,7 @@ export const RewardsList = () => {
 		</>
 	);
 };
-export const ActivityList = ({ search }) => {
+export const ActivityList = ({ search, setHeight }) => {
 	const [list] = useStore('common.hisList');
 	const [isShowAssets] = useStore('common.showAssets');
 	const [isRequestHis] = useStore('common.isRequestHis');
@@ -204,7 +207,10 @@ export const ActivityList = ({ search }) => {
 		});
 	}, [JSON.stringify(showList), isShowAssets]);
 	return (
-		<View>
+		<View
+			onLayout={(e) => {
+				setHeight(e.nativeEvent.layout.height);
+			}}>
 			{ListEl}
 			{!isRequestHis && (
 				<View style={[SS.p30, SS.c, SS.row]}>
@@ -212,6 +218,121 @@ export const ActivityList = ({ search }) => {
 					<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestHis')}</Text>
 				</View>
 			)}
+		</View>
+	);
+};
+
+const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
+const CollectiblesItem = ({ logo, name, link, list }) => {
+	const [isOpen, setOpen] = useState(false);
+	const [imgIndex, setImgIndex] = useState(0);
+	const [isShowPre, setIsShowPre] = useState(false);
+	const images = list.map((e) => {
+		return {
+			...e,
+			source: {
+				uri: e.media
+			},
+			width: ThemeVar.deviceWidth,
+			height: ThemeVar.deviceHeight
+		};
+	});
+	return (
+		<View>
+			<TouchableOpacity
+				onPress={() => {
+					setOpen(!isOpen);
+				}}
+				activeOpacity={0.7}
+				style={[SS.row, SS.ac, S.h(64)]}>
+				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />
+				<CachedImage style={[S.wh(32), S.radius(4), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon(logo) }} />
+				<Text>{name}</Text>
+				<View style={[SS.bgS, SS.ml10, SS.ph5, S.paddingV(3), S.radius(4)]}>
+					<Text style={[SS.fz12]}>{list.length}</Text>
+				</View>
+			</TouchableOpacity>
+			{isOpen &&
+				(list.length > 0 ? (
+					<View style={[SS.row, SS.ac, { flexWrap: 'wrap' }, S.border(2)]}>
+						{list.map((e, i) => {
+							return (
+								<TouchableOpacity
+									key={`${e.uid}_${i}`}
+									activeOpacity={0.7}
+									onPress={() => {
+										setImgIndex(i);
+										setIsShowPre(true);
+									}}>
+									<CachedImage
+										style={[
+											S.radius(8),
+											S.wh(imgW),
+											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+											S.marginB(15)
+										]}
+										resizeMode='contain'
+										source={{ uri: e.thumbnailImage || e.media }}
+									/>
+								</TouchableOpacity>
+							);
+						})}
+					</View>
+				) : (
+					<View style={[SS.c, SS.pb25, SS.pt10, S.border(2)]}>
+						<Text style={[SS.fz15, SS.cS]}>
+							{I18n.t('nft.zeroTips').replace('{name}', name)}{' '}
+							<Text
+								style={[SS.cP]}
+								onPress={() => {
+									Base.push(link);
+								}}>
+								{I18n.t('nft.goBuy')}
+							</Text>
+						</Text>
+					</View>
+				))}
+			<ImageView
+				glideAlways
+				images={images}
+				imageIndex={imgIndex}
+				animationType='fade'
+				isVisible={isShowPre}
+				onClose={() => setIsShowPre(false)}
+				onImageChange={(index) => {
+					setImgIndex(index);
+				}}
+			/>
+		</View>
+	);
+};
+export const CollectiblesList = ({ setHeight }) => {
+	useEffect(() => {
+		const requestCameraPermission = async () => {
+			if (ThemeVar.platform === 'android') {
+				try {
+					const granteds = await PermissionsAndroid.requestMultiple([
+						PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+						PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+					]);
+				} catch (err) {}
+			}
+		};
+		requestCameraPermission();
+	}, []);
+	useGetNftList();
+	const [list] = useStore('nft.list');
+	const ListEl = useMemo(() => {
+		return list.map((e) => {
+			return <CollectiblesItem key={e.space} {...e} />;
+		});
+	}, [JSON.stringify(list)]);
+	return (
+		<View
+			onLayout={(e) => {
+				setHeight(e.nativeEvent.layout.height);
+			}}>
+			{ListEl}
 		</View>
 	);
 };

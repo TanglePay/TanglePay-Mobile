@@ -59,6 +59,10 @@ export const DappDialog = () => {
 						}
 						setLoading(true);
 						const res = await IotaSDK.send(curWallet, address, amount);
+						if (!res) {
+							setLoading(false);
+							return;
+						}
 						messageId = res.messageId;
 						setLoading(false);
 						Toast.success(I18n.t('assets.sendSucc'));
@@ -71,7 +75,10 @@ export const DappDialog = () => {
 						Toast.error(
 							`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
 								realBalance
-							)}---bigStatedAmount:${bigStatedAmount}`
+							)}---bigStatedAmount:${bigStatedAmount}`,
+							{
+								duration: 5000
+							}
 						);
 					}
 				}
@@ -90,7 +97,9 @@ export const DappDialog = () => {
 					setLoading(false);
 				} catch (error) {
 					setLoading(false);
-					Toast.error(error.toString());
+					Toast.error(error.toString(), {
+						duration: 5000
+					});
 				}
 				break;
 			default:
