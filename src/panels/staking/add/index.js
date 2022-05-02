@@ -23,14 +23,14 @@ export const StakingAdd = () => {
 	let available = parseFloat(assets.balance) || 0;
 	const realBalance = assets.realBalance;
 	let titleKey = '';
-	// 4-》add airdrop
+	// 4->add airdrop
 	if ([4].includes(type)) {
 		titleKey = 'staking.addAirdropTitle';
 	} else if ([1, 2].includes(type)) {
-		// 1-》stake  2-》add amount
+		// 1->stake  2->add amount
 		titleKey = 'staking.stake';
 	} else {
-		// 3-》unstake
+		// 3->unstake
 		titleKey = 'staking.unstake';
 	}
 	return (
