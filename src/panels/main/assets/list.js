@@ -1,16 +1,17 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import { I18n, Base } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
-import { S, SS, SvgIcon, Theme, ThemeVar } from '@/common';
+import { S, SS, SvgIcon, ThemeVar } from '@/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import _get from 'lodash/get';
 import { useGetNftList } from '@tangle-pay/store/nft';
 import ImageView from 'react-native-image-view';
-import { CachedImage } from 'react-native-img-cache';
+import { CachedImage, ImageCache } from 'react-native-img-cache';
+import CameraRoll from '@react-native-community/cameraroll';
 
 const itemH = 80;
 export const CoinList = () => {
@@ -222,6 +223,71 @@ export const ActivityList = ({ search, setHeight }) => {
 	);
 };
 
+const ViewFooter = (data) => {
+	const [isShow, setShow] = useState(true);
+	const [showTips, setShowTips] = useState('');
+	const timeHandler = useRef();
+	const saveHandler = useRef();
+	useEffect(() => {
+		if (showTips) {
+			setShow(true);
+			timeHandler.current = setTimeout(() => {
+				setShowTips('');
+			}, 3000);
+		}
+	}, [showTips]);
+	useEffect(() => {
+		return () => {
+			clearTimeout(timeHandler.current);
+			clearTimeout(saveHandler.current);
+		};
+	}, []);
+	if (!isShow) {
+		return null;
+	}
+	return (
+		<View style={{ paddingBottom: ThemeVar.Inset.portrait.bottomInset + 40 }}>
+			{!showTips ? (
+				<TouchableOpacity
+					hitSlop={{ top: 15, left: 15, right: 15, bottom: 15 }}
+					style={{
+						position: 'absolute',
+						zIndex: 100,
+						right: 10,
+						height: 40,
+						width: 40,
+						borderRadius: 20,
+						backgroundColor: 'rgba(255,255,255,0.2)',
+						alignItems: 'center',
+						justifyContent: 'center'
+					}}
+					onPress={() => {
+						setShow(false);
+						const save = () => {
+							const cache = ImageCache.get()?.cache;
+							const cachePath = cache?.[data.media]?.path;
+							const downloading = cache?.[data.media]?.downloading;
+							if (!cachePath || downloading) {
+								saveHandler.current = setTimeout(save, 3000);
+								return;
+							}
+							CameraRoll.save(cachePath, { type: 'photo', album: 'tanglepay' }).then(() => {
+								setShowTips(I18n.t('nft.saved'));
+							});
+						};
+						save();
+					}}>
+					<Image style={{ width: 20, height: 20 }} source={require('./download.png')} />
+				</TouchableOpacity>
+			) : (
+				<View style={{ position: 'absolute', zIndex: 100, right: 10, marginTop: 10 }}>
+					<Text style={{ color: '#fff' }}>{showTips}</Text>
+				</View>
+			)}
+		</View>
+	);
+};
+
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
 const CollectiblesItem = ({ logo, name, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
@@ -281,14 +347,14 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 				) : (
 					<View style={[SS.c, SS.pb25, SS.pt10, S.border(2)]}>
 						<Text style={[SS.fz15, SS.cS]}>
-							{I18n.t('nft.zeroTips').replace('{name}', name)}{' '}
-							<Text
+							{I18n.t('nft.zeroTips').replace('{name}', name)}
+							{/* {' '}<Text
 								style={[SS.cP]}
 								onPress={() => {
 									Base.push(link);
 								}}>
 								{I18n.t('nft.goBuy')}
-							</Text>
+							</Text> */}
 						</Text>
 					</View>
 				))}
@@ -299,6 +365,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 				animationType='fade'
 				isVisible={isShowPre}
 				onClose={() => setIsShowPre(false)}
+				renderFooter={(data) => <ViewFooter {...data} />}
 				onImageChange={(index) => {
 					setImgIndex(index);
 				}}
@@ -307,6 +374,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 	);
 };
 export const CollectiblesList = ({ setHeight }) => {
+	const [isRequestNft] = useStore('nft.isRequestNft');
 	useEffect(() => {
 		const requestCameraPermission = async () => {
 			if (ThemeVar.platform === 'android') {
@@ -333,6 +401,12 @@ export const CollectiblesList = ({ setHeight }) => {
 				setHeight(e.nativeEvent.layout.height);
 			}}>
 			{ListEl}
+			{!isRequestNft && (
+				<View style={[SS.c, SS.row]}>
+					<Spinner size='small' color='gray' />
+					<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
+				</View>
+			)}
 		</View>
 	);
 };
