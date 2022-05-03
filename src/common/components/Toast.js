@@ -20,12 +20,12 @@ export const Toast = {
 			...config
 		});
 	},
-	error(text) {
+	error(text, params = {}) {
 		NativeBaseToast.show({
 			text,
 			type: 'danger',
 			...config,
-			duration: 10000
+			...params
 		});
 	},
 	warning(text) {
