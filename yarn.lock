@@ -1483,6 +1483,11 @@
   dependencies:
     deep-assign "^3.0.0"
 
+"@react-native-community/cameraroll@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.npmjs.org/@react-native-community/cameraroll/-/cameraroll-4.1.2.tgz#489c6bb6137571540d93c543d5fcf8c652b548ec"
+  integrity sha512-jkdhMByMKD2CZ/5MPeBieYn8vkCfC4MOTouPpBpps3I8N6HUYJk+1JnDdktVYl2WINnqXpQptDA2YptVyifYAg==
+
 "@react-native-community/cli-debugger-ui@^6.0.0-rc.0":
   version "6.0.0-rc.0"
   resolved "https://registry.nlark.com/@react-native-community/cli-debugger-ui/download/@react-native-community/cli-debugger-ui-6.0.0-rc.0.tgz?cache=0&sync_timestamp=1623145359166&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40react-native-community%2Fcli-debugger-ui%2Fdownload%2F%40react-native-community%2Fcli-debugger-ui-6.0.0-rc.0.tgz#774378626e4b70f5e1e2e54910472dcbaffa1536"
@@ -8172,10 +8177,10 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-soonaverse@^0.1.13:
-  version "0.1.13"
-  resolved "https://registry.npmjs.org/soonaverse/-/soonaverse-0.1.13.tgz#437ab4ca8ec102c7e787bb125e61ea2b4d97338f"
-  integrity sha512-z1DSyIHxMfL7dyTg8jPPArio4Ouu52HvCQS+L1ta583Tw0PLZW7xKRKNbd52corTw4xvhteX/ufMcdSqh5M5Bw==
+soonaverse@^0.1.14:
+  version "0.1.14"
+  resolved "https://registry.npmjs.org/soonaverse/-/soonaverse-0.1.14.tgz#cffb3bd0f372e8e1ad56a9cbf04bfa5da166ae81"
+  integrity sha512-n/en+HtnTppZtb220/lo/hLqE97DHF1RJ3jF9W+DRVO1RnBMplaau2KBPDAMsKPB5rL2WI9LCOESi0KZP36jNg==
   dependencies:
     firebase "^9.6.11"
     rxjs "6.5.4"
@@ -8502,10 +8507,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^1.3.7:
-  version "1.3.7"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.3.7.tgz#d9d437380d61eaabaa7c5bea3e43ebad62886720"
-  integrity sha512-znrXqqj3zh+0kb5RVwpziMeAbRhqwENV3+EDUflTrWwZwVljXtlTwonT83NVN0bnQqGAg6dv6Yswj9orUVFHxw==
+tanglepay@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.4.1.tgz#26257686cb67427175abe20188d3f656fdb5bf98"
+  integrity sha512-pQhf7rL1Un2HA1Vv6Mv5YHkg1qyUfVD5SUxxnADpp2sdyjfRp8usZQ3cOkP1oi7JMb/4GqUElUARW2ZX4qMBbg==
 
 temp@0.8.3:
   version "0.8.3"
