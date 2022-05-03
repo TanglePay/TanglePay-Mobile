@@ -185,7 +185,7 @@ const Ended = ({ statedTokens, unStakeTokens }) => {
 
 export const StatusCon = () => {
 	const [{ filter, rewards }] = useStore('staking.config');
-	//status: 0-》Ended  1-》Upcoming ，2-》Commencing
+	//status: 0->Ended  1->Upcoming ，2->Commencing
 	const [eventInfo, setEventInfo] = useGetParticipationEvents();
 	let { status = 0, list = [], upcomingList = [], commencingList = [], endedList = [] } = eventInfo;
 	let [statedTokens] = useStore('staking.statedTokens');
