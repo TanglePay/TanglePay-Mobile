@@ -21,6 +21,16 @@ export const Bridge = {
         `;
 		this.injectJavaScript && this.injectJavaScript(injectJavaScriptStr);
 	},
+	callSDKFunc(func, params) {
+		const injectJavaScriptStr = `
+            (
+                function(){
+                    window.${func}(${JSON.stringify(params)})
+                }
+            )()
+        `;
+		this.injectJavaScript && this.injectJavaScript(injectJavaScriptStr);
+	},
 	async onMessage(e) {
 		let data = e?.nativeEvent?.data || {};
 		try {
@@ -82,7 +92,7 @@ export const Bridge = {
 		const res = await IotaSDK.iota_sign(curWallet, content, origin);
 		if (res) {
 			this.sendMessage('iota_sign', res);
-			this.cacheBgData(`${origin}_iota_sign_${curWallet.address}`, res, expires);
+			// this.cacheBgData(`${origin}_iota_sign_${curWallet.address}`, res, expires);
 		} else {
 			this.sendErrorMessage('iota_sign', {
 				msg: 'fail'
@@ -177,6 +187,17 @@ export const Bridge = {
 				msg: error.toString()
 			});
 		}
+	},
+	accountsChanged(address) {
+		// if(this.curTanglePayAddress!==address){
+		// 	this.callSDKFunc('iota_event_accountsChanged',{
+		// 		address
+		// 	})
+		// }
+		// this.curTanglePayAddress = address;
+		this.callSDKFunc('iota_event_accountsChanged', {
+			address
+		});
 	},
 	sendMessage(method, response) {
 		this.sendToSDK({

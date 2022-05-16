@@ -5,9 +5,10 @@ import { WebView } from 'react-native-webview';
 import { Nav, ThemeVar } from '@/common';
 import { Base } from '@tangle-pay/common';
 import { Bridge } from '@/common/bridge';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
 
 export const CommonWebview = () => {
-	const dappDialog = useRef();
+	const [curWallet] = useGetNodeWallet();
 	const { params } = useRoute();
 	const webview = useRef();
 	const [url, setWebviewUrl] = useState(params.url);
@@ -17,8 +18,12 @@ export const CommonWebview = () => {
 			setWebviewUrl
 		});
 		Bridge.injectJavaScript = (e) => webview.current.injectJavaScript(e);
-		// Bridge.dappDialog = dappDialog.current;
 	}, []);
+	useEffect(() => {
+		if (curWallet.address) {
+			Bridge.accountsChanged(curWallet.address);
+		}
+	}, [curWallet.address]);
 	return (
 		<>
 			<Container>
