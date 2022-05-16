@@ -8507,10 +8507,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^1.4.3:
-  version "1.4.3"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.4.3.tgz#f3b0c118af8d6e603649bdee81e2a41e46988575"
-  integrity sha512-mq7hW70nWC00FS/wf9ODkM2fpb7pUuOJ4p3tq9vsyg1m3x+UIe6+zfo93wZ2ftuzSvkjqBlFdWWXaLBR8BIThw==
+tanglepay@^1.4.4:
+  version "1.4.4"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.4.4.tgz#7bfd7163c4ce57be709eb6d57c79de8675905fbf"
+  integrity sha512-8GPw44G3+Qwq4TvOPo8gzFBDvt+3DLzR+h2AekIHhjPMbRuXraE1FRk2Q3VcE3FI17Omdd2/k5umsmnB56KSIg==
 
 temp@0.8.3:
   version "0.8.3"

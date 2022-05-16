@@ -89,7 +89,7 @@ export const Bridge = {
 	},
 	async iota_sign(origin, expires, content) {
 		const curWallet = await this.getCurWallet();
-		const res = await IotaSDK.iota_sign(curWallet, content, origin);
+		const res = await IotaSDK.iota_sign(curWallet, content);
 		if (res) {
 			this.sendMessage('iota_sign', res);
 			// this.cacheBgData(`${origin}_iota_sign_${curWallet.address}`, res, expires);
