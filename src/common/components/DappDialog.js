@@ -7,6 +7,7 @@ import { SS, ThemeVar, Toast } from '@/common';
 import { useGetNodeWallet, useChangeNode, useUpdateBalance } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
+import { Bridge } from '@/common/bridge';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
@@ -33,8 +34,21 @@ export const DappDialog = () => {
 		setShow(false);
 		setLoading(false);
 	};
-	const onExecute = async ({ address, return_url, content, type, amount }) => {
-		if (password !== curWallet.password) {
+	const onHandleCancel = async ({ type }) => {
+		switch (type) {
+			case 'iota_sign':
+			case 'iota_connect':
+				Bridge.sendErrorMessage(type, {
+					msg: 'cancel'
+				});
+				break;
+
+			default:
+				break;
+		}
+	};
+	const onExecute = async ({ address, return_url, content, type, amount, origin, expires }) => {
+		if (password !== curWallet.password && type !== 'iota_connect') {
 			return Toast.error(I18n.t('assets.passwordError'));
 		}
 		let messageId = '';
@@ -102,6 +116,16 @@ export const DappDialog = () => {
 					});
 				}
 				break;
+			case 'iota_connect':
+				{
+					await Bridge.iota_connect(origin, expires);
+				}
+				break;
+			case 'iota_sign':
+				{
+					await Bridge.iota_sign(origin, expires, content);
+				}
+				break;
 			default:
 				break;
 		}
@@ -130,7 +154,17 @@ export const DappDialog = () => {
 	const handleUrl = async (url) => {
 		if (!url) return;
 		const res = Base.handlerParams(url);
-		let { network, value, unit, return_url, item_desc = '', merchant = '', content = '' } = res;
+		let {
+			network,
+			value,
+			unit,
+			return_url,
+			item_desc = '',
+			merchant = '',
+			content = '',
+			origin = '',
+			expires = ''
+		} = res;
 		unit = unit || 'i';
 		const toNetId = IotaSDK.nodes.find((e) => e.apiPath === network)?.id;
 		if (toNetId && parseInt(toNetId) !== parseInt(curNodeId)) {
@@ -189,7 +223,6 @@ export const DappDialog = () => {
 						break;
 					case 'sign':
 						{
-							console.log(content, '======');
 							if (!content) {
 								Toast.error('Required: content');
 							}
@@ -207,6 +240,52 @@ export const DappDialog = () => {
 								return_url,
 								type,
 								content
+							});
+							show();
+						}
+						break;
+					case 'iota_connect': // sdk connect
+						{
+							let str = I18n.t('apps.connect')
+								.trim()
+								.replace('#origin#', origin || '')
+								.replace('#address#', curWallet?.address);
+							const texts = [
+								{
+									text: str
+								}
+							];
+							setDappData({
+								texts,
+								return_url,
+								type,
+								origin,
+								expires
+							});
+							show();
+						}
+						break;
+					case 'iota_sign': // sdk sign
+						{
+							if (!content) {
+								return Toast.error('Required: content');
+							}
+							let str = I18n.t('apps.sign')
+								.trim()
+								.replace('#merchant#', origin ? '\n' + origin : '')
+								.replace('#content#', content);
+							const texts = [
+								{
+									text: str
+								}
+							];
+							setDappData({
+								texts,
+								return_url,
+								type,
+								content,
+								origin,
+								expires
 							});
 							show();
 						}
@@ -262,14 +341,16 @@ export const DappDialog = () => {
 								})}
 							</Text>
 						</View>
-						<Item inlineLabel>
-							<Input
-								keyboardType='ascii-capable'
-								secureTextEntry
-								onChangeText={setPassword}
-								placeholder={I18n.t('assets.passwordTips')}
-							/>
-						</Item>
+						{dappData.type !== 'iota_connect' && (
+							<Item inlineLabel>
+								<Input
+									keyboardType='ascii-capable'
+									secureTextEntry
+									onChangeText={setPassword}
+									placeholder={I18n.t('assets.passwordTips')}
+								/>
+							</Item>
+						)}
 						<View style={[SS.row, SS.jsb, SS.ac, SS.mt25, SS.pb20]}>
 							<Button
 								onPress={() => {
@@ -279,14 +360,19 @@ export const DappDialog = () => {
 								rounded
 								primary
 								style={[{ width: ThemeVar.deviceWidth / 2 - 40 }, SS.c]}>
-								<Text>{I18n.t('apps.execute')}</Text>
+								<Text>
+									{I18n.t(dappData.type !== 'iota_connect' ? 'apps.execute' : 'apps.ConnectBtn')}
+								</Text>
 							</Button>
 							<Button
 								small
 								bordered
 								rounded
 								dark
-								onPress={hide}
+								onPress={() => {
+									onHandleCancel(dappData);
+									hide();
+								}}
 								style={[
 									SS.bgS,
 									{ width: ThemeVar.deviceWidth / 2 - 40, borderColor: '#D0D1D2' },
