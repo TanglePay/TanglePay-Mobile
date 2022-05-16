@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 export const Bridge = {
 	injectedJavaScript: `
         (function(){
-            window.TanglePayEnv = 'app';
+			window.TanglePayEnv = 'app';
         })()
     `,
 	injectJavaScript: null,
@@ -25,7 +25,9 @@ export const Bridge = {
 		const injectJavaScriptStr = `
             (
                 function(){
-                    window.${func}(${JSON.stringify(params)})
+					if(window.${func}){
+						window.${func}(${JSON.stringify(params)})
+					}
                 }
             )()
         `;
@@ -189,12 +191,6 @@ export const Bridge = {
 		}
 	},
 	accountsChanged(address) {
-		// if(this.curTanglePayAddress!==address){
-		// 	this.callSDKFunc('iota_event_accountsChanged',{
-		// 		address
-		// 	})
-		// }
-		// this.curTanglePayAddress = address;
 		this.callSDKFunc('iota_event_accountsChanged', {
 			address
 		});
