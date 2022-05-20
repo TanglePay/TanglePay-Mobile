@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Linking, KeyboardAvoidingView } from 'react-native';
+import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native';
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
@@ -38,8 +38,10 @@ export const DappDialog = () => {
 		switch (type) {
 			case 'iota_sign':
 			case 'iota_connect':
-				Bridge.sendErrorMessage(type, {
-					msg: 'cancel'
+				InteractionManager.runAfterInteractions(() => {
+					Bridge.sendErrorMessage(type, {
+						msg: 'cancel'
+					});
 				});
 				break;
 
@@ -118,12 +120,16 @@ export const DappDialog = () => {
 				break;
 			case 'iota_connect':
 				{
-					await Bridge.iota_connect(origin, expires);
+					InteractionManager.runAfterInteractions(async () => {
+						await Bridge.iota_connect(origin, expires);
+					});
 				}
 				break;
 			case 'iota_sign':
 				{
-					await Bridge.iota_sign(origin, expires, content);
+					InteractionManager.runAfterInteractions(async () => {
+						await Bridge.iota_sign(origin, expires, content);
+					});
 				}
 				break;
 			default:
@@ -359,7 +365,7 @@ export const DappDialog = () => {
 								small
 								rounded
 								primary
-								style={[{ width: ThemeVar.deviceWidth / 2 - 40 }, SS.c]}>
+								style={[{ width: ThemeVar.deviceWidth / 2 - 40, height: 40 }, SS.c]}>
 								<Text>
 									{I18n.t(dappData.type !== 'iota_connect' ? 'apps.execute' : 'apps.ConnectBtn')}
 								</Text>
@@ -375,7 +381,7 @@ export const DappDialog = () => {
 								}}
 								style={[
 									SS.bgS,
-									{ width: ThemeVar.deviceWidth / 2 - 40, borderColor: '#D0D1D2' },
+									{ width: ThemeVar.deviceWidth / 2 - 40, height: 40, borderColor: '#D0D1D2' },
 									SS.c
 								]}>
 								<Text>{I18n.t('apps.cancel')}</Text>
