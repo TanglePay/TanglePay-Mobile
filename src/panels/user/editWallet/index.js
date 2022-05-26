@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';
 import { NameDialog } from './nameDialog';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
@@ -46,6 +46,12 @@ export const UserEditWallet = () => {
 								style={[SS.pa, { right: -20, top: 3 }]}
 							/>
 						</View>
+						<View style={[SS.row, SS.ac, SS.mt10]}>
+							<View style={[S.radius(10), S.wh(10, 10), S.bg('#4E9B45')]}></View>
+							<Text style={[SS.fz15, SS.ml5]}>
+								{IotaSDK.nodes.find((e) => e.id == curEdit.nodeId)?.name}
+							</Text>
+						</View>
 					</View>
 				</View>
 				{/* <TouchableOpacity
@@ -68,6 +74,19 @@ export const UserEditWallet = () => {
 					<Text style={[SS.fz15]}>{I18n.t('user.resetPassword')}</Text>
 					<SvgIcon size={14} name='right' />
 				</TouchableOpacity>
+				{curEdit.nodeId == 2 && (
+					<TouchableOpacity
+						onPress={() => {
+							Base.push('user/privateKey', {
+								...curEdit
+							});
+						}}
+						activeOpacity={0.8}
+						style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+						<Text style={[SS.fz15]}>{I18n.t('account.exportKey')}</Text>
+						<SvgIcon size={14} name='right' />
+					</TouchableOpacity>
+				)}
 			</Content>
 			<NameDialog dialogRef={dialogRef} data={{ ...curEdit }} />
 		</Container>

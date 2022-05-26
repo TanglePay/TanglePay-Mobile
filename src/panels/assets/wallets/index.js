@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { AddDialog } from './addDialog';
 import { useSelectWallet, useGetNodeWallet } from '@tangle-pay/store/common';
 import { S, SS, SvgIcon, Nav1, ThemeVar, NoData, Toast } from '@/common';
@@ -33,14 +33,14 @@ export const AssetsWallets = () => {
 											return;
 										}
 										setActive(e.id);
-										Toast.showLoading();
+										// Toast.showLoading();
 										setTimeout(() => {
 											selectWallet(e.id);
 										}, 20);
 										Base.goBack();
-										setTimeout(() => {
-											Toast.hideLoading();
-										}, 100);
+										// setTimeout(() => {
+										// 	Toast.hideLoading();
+										// }, 100);
 									}}
 									key={e.id}
 									style={[
@@ -50,7 +50,12 @@ export const AssetsWallets = () => {
 										SS.pv15,
 										SS.mt20
 									]}>
-									<Text style={[SS.fz17, isActive && SS.cW]}>{e.name}</Text>
+									<View style={[SS.row, SS.ac, SS.jsb]}>
+										<Text style={[SS.fz17, isActive && SS.cW]}>{e.name}</Text>
+										<Text style={[SS.fz17, isActive && SS.cW]}>
+											{IotaSDK.nodes.find((d) => d.id === e.nodeId)?.name}
+										</Text>
+									</View>
 									<View style={[SS.mt20, SS.row, SS.ae]}>
 										<Text style={[isActive && SS.cW, SS.fz15]}>
 											{Base.handleAddress(e.address)}

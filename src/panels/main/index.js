@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'native-base';
 import { I18n, IotaSDK } from '@tangle-pay/common';
@@ -11,33 +11,42 @@ import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S } from '@/common';
 
 const Tab = createBottomTabNavigator();
+const initRoutes = [
+	{
+		key: 'assets',
+		title: I18n.t('assets.assets'),
+		component: Assets
+	},
+	{
+		key: 'apps',
+		title: I18n.t('apps.title'),
+		component: Apps
+	},
+	{
+		key: 'staking',
+		title: I18n.t('staking.title'),
+		component: Staking
+	},
+	{
+		key: 'me',
+		title: I18n.t('user.me'),
+		component: User
+	}
+];
 export const Main = () => {
 	const [curWallet] = useGetNodeWallet();
-	const routes = [
-		{
-			key: 'assets',
-			title: I18n.t('assets.assets'),
-			component: Assets
-		},
-		{
-			key: 'apps',
-			title: I18n.t('apps.title'),
-			component: Apps
-		},
-		{
-			key: 'staking',
-			title: I18n.t('staking.title'),
-			component: Staking
-		},
-		{
-			key: 'me',
-			title: I18n.t('user.me'),
-			component: User
-		}
-	];
+	const [routes, setRoutes] = useState([...initRoutes]);
 	useEffect(() => {
 		IotaSDK.setMqtt(curWallet.address);
 	}, [curWallet.address]);
+	useEffect(() => {
+		const type = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.type;
+		if (type === 1) {
+			setRoutes([...initRoutes]);
+		} else {
+			setRoutes([...initRoutes.filter((e) => e.key !== 'staking')]);
+		}
+	}, [curWallet.nodeId]);
 	return (
 		<Tab.Navigator
 			initialRouteName='assets'

@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, SvgIcon, Toast } from '@/common';
 
@@ -32,8 +32,13 @@ export const UserWallets = () => {
 									Base.push('user/editWallet', { id: e.id });
 								}}
 								key={e.id}>
-								<View>
-									<Text style={[SS.fz17]}>{e.name}</Text>
+								<View style={[SS.flex1]}>
+									<View style={[SS.row, SS.ac, SS.jsb, SS.mr20]}>
+										<Text style={[SS.fz17]}>{e.name}</Text>
+										<Text style={[SS.fz17]}>
+											{IotaSDK.nodes.find((d) => d.id === e.nodeId)?.name}
+										</Text>
+									</View>
 									<View style={[SS.mt20, SS.row, SS.ae]}>
 										<Text style={[SS.fz13]}>{Base.handleAddress(e.address)}</Text>
 										<SvgIcon
