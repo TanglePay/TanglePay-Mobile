@@ -8,7 +8,7 @@
     "file": "node ./bin/create.file.js",
     "test": "jest",
     "lint": "eslint .",
-    "postinstall": "node ./bin/cover.js && node_modules/.bin/rn-nodeify --install process,crypto,assert,url,stream,events --hack",
+    "postinstall": "node ./bin/cover.js && node_modules/.bin/rn-nodeify --install os,https,http,process,crypto,assert,url,stream,events --hack",
     "icon": "npx iconfont-rn"
   },
   "license": "Apache-2.0",
@@ -22,12 +22,17 @@
     "@react-navigation/bottom-tabs": "^6.0.5",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.0.7",
+    "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.1.1",
     "bignumber.js": "^9.0.1",
+    "bip39": "^3.0.4",
     "bitcore-lib": "^8.25.10",
     "crypto-js": "^4.1.1",
+    "ethereumjs-util": "^7.1.4",
+    "ethereumjs-wallet": "^1.0.2",
     "events": "^1.0.0",
     "formik": "^2.2.9",
+    "https-browserify": "0.0.1",
     "i18n-js": "^3.8.0",
     "native-base": "^2.15.2",
     "process": "^0.11.0",
@@ -47,6 +52,7 @@
     "react-native-lewin-qrcode": "^1.1.0",
     "react-native-localize": "^2.1.5",
     "react-native-modal": "^13.0.0",
+    "react-native-os": "^1.0.1",
     "react-native-qrcode-svg": "^6.1.1",
     "react-native-randombytes": "^3.0.0",
     "react-native-root-siblings": "^4.1.1",
@@ -66,6 +72,7 @@
     "tanglepay": "^1.4.4",
     "unorm": "^1.6.0",
     "url": "^0.10.3",
+    "web3": "^1.7.3",
     "yup": "^0.32.9"
   },
   "devDependencies": {
@@ -98,7 +105,10 @@
     "_stream_writable": "readable-stream/writable",
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
+    "stream": "stream-browserify",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os"
   },
   "browser": {
     "crypto": "react-native-crypto",
@@ -107,6 +117,9 @@
     "_stream_writable": "readable-stream/writable",
     "_stream_duplex": "readable-stream/duplex",
     "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
+    "stream": "stream-browserify",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os"
   }
 }

@@ -385,6 +385,8 @@ PODS:
     - React-Core
   - RNLocalize (2.1.5):
     - React-Core
+  - RNOS (1.2.6):
+    - React
   - RNScreens (3.8.0):
     - React-Core
     - React-RCTImage
@@ -468,13 +470,14 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../node_modules/react-native-localize`)
+  - RNOS (from `../node_modules/react-native-os`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  trunk:
+  https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git:
     - boost-for-react-native
     - CocoaAsyncSocket
     - Flipper
@@ -583,6 +586,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
+  RNOS:
+    :path: "../node_modules/react-native-os"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNShare:
@@ -652,6 +657,7 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 55175b0bd852c1c5d70d76efc04ed77799cef638
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: 74b82db20cc3895ccc25af992c644879bcec2815
+  RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
   RNShare: 0fec82bd2e67d09f895937ccb4f5a097e714dec2
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
@@ -660,6 +666,6 @@ SPEC CHECKSUMS:
   Yoga: aa0cb45287ebe1004c02a13f279c55a95f1572f4
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 884041c98a5bf245444f39b09dfc30a481842065
+PODFILE CHECKSUM: 04b717a1ca384ee5a9311e44570fcac8ca8bddbe
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.3

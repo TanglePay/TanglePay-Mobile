@@ -5,7 +5,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
+import { Nav, S, SS, Toast } from '@/common';
 
 export const PrivateKey = () => {
 	const { params } = useRoute();
@@ -34,12 +34,20 @@ export const PrivateKey = () => {
 						</Text>
 						{!keyStr ? (
 							<Input
+								secureTextEntry
 								value={password}
 								onChangeText={setPassword}
 								style={[S.border(2, '#ddd', 1), SS.mt15]}
 							/>
 						) : (
-							<Text style={[SS.fz14, SS.pt20, S.lineHeight(24)]}>{keyStr}</Text>
+							<Text
+								onPress={() => {
+									Clipboard.setString(keyStr);
+									Toast.success(I18n.t('assets.copied'));
+								}}
+								style={[SS.fz14, SS.pt20, SS.fw500, S.lineHeight(24)]}>
+								{keyStr}
+							</Text>
 						)}
 					</View>
 					<View style={[SS.mv20, S.bg('rgba(213, 53, 84, 0.05)'), SS.radius10, SS.p10]}>
@@ -52,9 +60,12 @@ export const PrivateKey = () => {
 							</Button>
 							<Button
 								onPress={() => {
-									setKeyStr(
-										'iota1qrwtezshk7eqp2c0kr7v8wyp70gk995xm62vxddu9cx5z24alundxs3m7zliota1qrwtezshk7eqp2c0kr7v8wyp70gk995xm62vxddu9cx5z24alundxs3m7zl'
-									);
+									try {
+										const privateKeyStr = IotaSDK.getPrivateKey(curEdit.seed, password);
+										setKeyStr(privateKeyStr);
+									} catch (error) {
+										return Toast.error(I18n.t('assets.passwordError'));
+									}
 								}}
 								style={[SS.flex1, SS.ml10, S.h(44), SS.radius10]}
 								disabled={!password}
@@ -70,7 +81,7 @@ export const PrivateKey = () => {
 								}}
 								style={[SS.flex1, S.h(44), SS.radius10]}
 								block>
-								<Text>{I18n.t('apps.execute')}</Text>
+								<Text>{I18n.t('account.done')}</Text>
 							</Button>
 						</View>
 					)}

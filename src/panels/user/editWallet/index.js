@@ -74,7 +74,7 @@ export const UserEditWallet = () => {
 					<Text style={[SS.fz15]}>{I18n.t('user.resetPassword')}</Text>
 					<SvgIcon size={14} name='right' />
 				</TouchableOpacity>
-				{curEdit.nodeId == 2 && (
+				{curEdit.nodeId == 3 && (
 					<TouchableOpacity
 						onPress={() => {
 							Base.push('user/privateKey', {

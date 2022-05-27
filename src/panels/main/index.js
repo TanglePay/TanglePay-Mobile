@@ -11,29 +11,29 @@ import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S } from '@/common';
 
 const Tab = createBottomTabNavigator();
-const initRoutes = [
-	{
-		key: 'assets',
-		title: I18n.t('assets.assets'),
-		component: Assets
-	},
-	{
-		key: 'apps',
-		title: I18n.t('apps.title'),
-		component: Apps
-	},
-	{
-		key: 'staking',
-		title: I18n.t('staking.title'),
-		component: Staking
-	},
-	{
-		key: 'me',
-		title: I18n.t('user.me'),
-		component: User
-	}
-];
 export const Main = () => {
+	const initRoutes = [
+		{
+			key: 'assets',
+			title: I18n.t('assets.assets'),
+			component: Assets
+		},
+		{
+			key: 'apps',
+			title: I18n.t('apps.title'),
+			component: Apps
+		},
+		{
+			key: 'staking',
+			title: I18n.t('staking.title'),
+			component: Staking
+		},
+		{
+			key: 'me',
+			title: I18n.t('user.me'),
+			component: User
+		}
+	];
 	const [curWallet] = useGetNodeWallet();
 	const [routes, setRoutes] = useState([...initRoutes]);
 	useEffect(() => {
@@ -44,7 +44,7 @@ export const Main = () => {
 		if (type === 1) {
 			setRoutes([...initRoutes]);
 		} else {
-			setRoutes([...initRoutes.filter((e) => e.key !== 'staking')]);
+			setRoutes([...initRoutes.filter((e) => !['staking', 'apps'].includes(e.key))]);
 		}
 	}, [curWallet.nodeId]);
 	return (
