@@ -4,7 +4,7 @@ import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
 import { SS, ThemeVar, Toast } from '@/common';
-import { useGetNodeWallet, useChangeNode, useUpdateBalance } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
 import { Bridge } from '@/common/bridge';
@@ -19,7 +19,6 @@ export const DappDialog = () => {
 	const [deepLink, setDeepLink] = useState('');
 	const selectTimeHandler = useRef();
 	const [curWallet] = useGetNodeWallet();
-	const updateBalance = useUpdateBalance();
 	const [assetsList] = useStore('common.assetsList');
 	const assets = assetsList.find((e) => e.name === 'IOTA') || {};
 	const [statedAmount] = useStore('staking.statedAmount');
@@ -83,7 +82,6 @@ export const DappDialog = () => {
 						setLoading(false);
 						Toast.success(I18n.t('assets.sendSucc'));
 						hide();
-						updateBalance(residue, curWallet.address);
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
 					} catch (error) {

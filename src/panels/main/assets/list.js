@@ -3,10 +3,9 @@ import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
 import { I18n, Base } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
-import { useGetLegal } from '@tangle-pay/store/common';
+import { useGetLegal, useGetNodeWallet } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
 import { S, SS, SvgIcon, ThemeVar } from '@/common';
-import { useGetNodeWallet } from '@tangle-pay/store/common';
 import _get from 'lodash/get';
 import { useGetNftList } from '@tangle-pay/store/nft';
 import ImageView from 'react-native-image-view';
@@ -27,7 +26,7 @@ export const CoinList = () => {
 					<TouchableOpacity
 						activeOpacity={0.8}
 						onPress={() => {
-							Base.push('assets/send');
+							Base.push('assets/send', { currency: e.name });
 						}}
 						key={e.name}
 						style={[SS.row, SS.ac, { height: itemH }]}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, View, Text } from 'native-base';
 import { TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { CoinList, ActivityList, CollectiblesList, RewardsList } from './list';
 import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/store/common';
@@ -9,8 +9,10 @@ import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
 import { useGetEventsConfig } from '@tangle-pay/store/staking';
 
 const hScroll = ThemeVar.deviceHeight - 200;
+const initAsssetsTab = ['stake', 'soonaverse', 'contract'];
 export const Assets = () => {
 	useGetEventsConfig();
+	const [assetsTab, setAssetsTab] = useState([]);
 	const [heightInfo, setHeightInfo] = useState({ 0: hScroll, 1: undefined, 2: undefined });
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
@@ -60,6 +62,10 @@ export const Assets = () => {
 				break;
 		}
 	}, [curTab]);
+	useEffect(() => {
+		const filterAssetsList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterAssetsList || [];
+		setAssetsTab([...initAsssetsTab.filter((e) => !filterAssetsList.includes(e))]);
+	}, [curWallet.nodeId]);
 	return (
 		<Container>
 			<AssetsNav
@@ -142,15 +148,17 @@ export const Assets = () => {
 									{I18n.t('assets.assets')}
 								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => setTab(1)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
-								<Text
-									style={[
-										S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
-										SS.fz17
-									]}>
-									{I18n.t('nft.collectibles')}
-								</Text>
-							</TouchableOpacity>
+							{assetsTab.includes('soonaverse') && (
+								<TouchableOpacity onPress={() => setTab(1)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
+									<Text
+										style={[
+											S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
+											SS.fz17
+										]}>
+										{I18n.t('nft.collectibles')}
+									</Text>
+								</TouchableOpacity>
+							)}
 						</View>
 						<TouchableOpacity onPress={() => setTab(2)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
 							<Text style={[S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz17]}>
@@ -181,7 +189,7 @@ export const Assets = () => {
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph20]}>
 						<CoinList />
-						<RewardsList />
+						{assetsTab.includes('stake') && <RewardsList />}
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph20]}>
 						<CollectiblesList
