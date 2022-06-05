@@ -9,6 +9,7 @@ import { Staking } from './staking';
 import { Apps } from './apps';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S } from '@/common';
+import { useStore } from '@tangle-pay/store';
 
 const Tab = createBottomTabNavigator();
 export const Main = () => {
@@ -34,15 +35,19 @@ export const Main = () => {
 			component: User
 		}
 	];
+	const [lang] = useStore('common.lang');
 	const [curWallet] = useGetNodeWallet();
 	const [routes, setRoutes] = useState([...initRoutes]);
 	useEffect(() => {
+		IotaSDK.changeNodesLang(lang);
+	}, [lang]);
+	useEffect(() => {
 		IotaSDK.setMqtt(curWallet.address);
-	}, [curWallet.address]);
+	}, [curWallet.address + curWallet.nodeId]);
 	useEffect(() => {
 		const filterMenuList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterMenuList || [];
 		setRoutes([...initRoutes.filter((e) => !filterMenuList.includes(e.key))]);
-	}, [curWallet.nodeId]);
+	}, [curWallet.nodeId, JSON.stringify(initRoutes)]);
 	return (
 		<Tab.Navigator
 			initialRouteName='assets'

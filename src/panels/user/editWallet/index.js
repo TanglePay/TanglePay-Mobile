@@ -46,12 +46,12 @@ export const UserEditWallet = () => {
 								style={[SS.pa, { right: -20, top: 3 }]}
 							/>
 						</View>
-						<View style={[SS.row, SS.ac, SS.mt10]}>
+						{/* <View style={[SS.row, SS.ac, SS.mt10]}>
 							<View style={[S.radius(10), S.wh(10, 10), S.bg('#4E9B45')]}></View>
 							<Text style={[SS.fz15, SS.ml5]}>
 								{IotaSDK.nodes.find((e) => e.id == curEdit.nodeId)?.name}
 							</Text>
-						</View>
+						</View> */}
 					</View>
 				</View>
 				{/* <TouchableOpacity
@@ -74,7 +74,7 @@ export const UserEditWallet = () => {
 					<Text style={[SS.fz15]}>{I18n.t('user.resetPassword')}</Text>
 					<SvgIcon size={14} name='right' />
 				</TouchableOpacity>
-				{curEdit.nodeId == 3 && (
+				{IotaSDK.nodes.find((d) => d.id === curEdit.nodeId)?.type == 2 && (
 					<TouchableOpacity
 						onPress={() => {
 							Base.push('user/privateKey', {

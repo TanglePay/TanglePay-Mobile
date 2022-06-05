@@ -74,18 +74,7 @@ export const Apps = () => {
 	}, [JSON.stringify(dapps)]);
 	return (
 		<Container>
-			<AssetsNav
-				right={
-					<SvgIcon
-						onPress={() => {
-							checkPush('assets/scan');
-						}}
-						name='scan'
-						size={24}
-						style={[SS.mr10]}
-					/>
-				}
-			/>
+			<AssetsNav hasScan />
 			<Content contentContainerStyle={[SS.ph20]}>
 				<Item inlineLabel>
 					<Input value={searchStr} onChangeText={setSearch} onBlur={onBlur} placeholder='Search Dapp' />

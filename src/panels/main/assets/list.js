@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
-import { I18n, Base } from '@tangle-pay/common';
+import { I18n, Base, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal, useGetNodeWallet } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
@@ -16,9 +16,18 @@ const itemH = 80;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
 	const [needRestake] = useStore('staking.needRestake');
-	const [assetsList] = useStore('common.assetsList');
 	const [statedAmount] = useStore('staking.statedAmount');
+	let [assetsList] = useStore('common.assetsList');
 	const curLegal = useGetLegal();
+	const contractList = IotaSDK.curNode?.contractList || [];
+	assetsList = assetsList.filter((e) => {
+		const { name } = e;
+		if (!e.contract) {
+			return true;
+		}
+		const contract = contractList.find((e) => e.token === name)?.contract;
+		return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
+	});
 	return (
 		<View>
 			{assetsList.map((e) => {
@@ -37,7 +46,7 @@ export const CoinList = () => {
 						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz17]}>{e.name}</Text>
-								{statedAmount > 0 && !needRestake && (
+								{!IotaSDK.isWeb3Node && statedAmount > 0 && !needRestake && (
 									<View
 										style={[
 											SS.ml20,
@@ -52,7 +61,7 @@ export const CoinList = () => {
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz15, SS.tr, SS.mb5]}>
-										{e.balance} {e.unit}
+										{e.balance} {e.unit || e.name}
 									</Text>
 									<Text style={[SS.fz15, SS.tr, SS.cS]}>
 										{curLegal.unit} {e.assets}
@@ -82,10 +91,7 @@ export const RewardsList = () => {
 		const obj = {};
 		for (const i in stakedRewards) {
 			const item = stakedRewards[i];
-			if (item.address !== curWallet?.address) {
-				return;
-			}
-			if (item.amount > 0) {
+			if (item.amount > 0 && item.minimumReached) {
 				const symbol = item.symbol;
 				obj[symbol] = obj[symbol] || {
 					...item,
@@ -114,7 +120,7 @@ export const RewardsList = () => {
 			}
 		}
 		setList(Object.values(obj));
-	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address]);
+	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return (
@@ -193,7 +199,13 @@ export const ActivityList = ({ search, setHeight }) => {
 				</View>
 			);
 			return (
-				<View key={e.id + j} style={[SS.row, SS.as, SS.mb20]}>
+				<TouchableOpacity
+					activeOpacity={e.viewUrl ? 0.8 : 1}
+					key={e.id + j}
+					style={[SS.row, SS.as, SS.mb20]}
+					onPress={() => {
+						e.viewUrl && Base.push(e.viewUrl);
+					}}>
 					<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
 					<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
 						<View>
@@ -202,7 +214,7 @@ export const ActivityList = ({ search, setHeight }) => {
 						</View>
 						{AssetsEl}
 					</View>
-				</View>
+				</TouchableOpacity>
 			);
 		});
 	}, [JSON.stringify(showList), isShowAssets]);

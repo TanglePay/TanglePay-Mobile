@@ -30,7 +30,7 @@ export const PrivateKey = () => {
 					</View>
 					<View>
 						<Text style={[SS.fz14]}>
-							{I18n.t(keyStr ? 'account.copyKeyTips' : 'account.showKeyInputPassword')}
+							{I18n.t(keyStr ? 'account.copyKeyTips' : 'assets.passwordTips').replace('{name}', name)}
 						</Text>
 						{!keyStr ? (
 							<Input
@@ -55,19 +55,16 @@ export const PrivateKey = () => {
 					</View>
 					{!keyStr ? (
 						<View style={[SS.row, SS.jsb]}>
-							<Button style={[SS.flex1, SS.mr10, S.h(44), SS.radius10]} block bordered>
-								<Text>{I18n.t('apps.cancel')}</Text>
-							</Button>
 							<Button
 								onPress={() => {
 									try {
 										const privateKeyStr = IotaSDK.getPrivateKey(curEdit.seed, password);
-										setKeyStr(privateKeyStr);
+										setKeyStr(privateKeyStr.replace(/^0x/, ''));
 									} catch (error) {
 										return Toast.error(I18n.t('assets.passwordError'));
 									}
 								}}
-								style={[SS.flex1, SS.ml10, S.h(44), SS.radius10]}
+								style={[SS.flex1, S.h(44), SS.radius10]}
 								disabled={!password}
 								block>
 								<Text>{I18n.t('apps.execute')}</Text>

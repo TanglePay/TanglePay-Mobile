@@ -4,7 +4,7 @@ import { TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { CoinList, ActivityList, CollectiblesList, RewardsList } from './list';
-import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useGetAssetsList, useGetLegal, useChangeNode } from '@tangle-pay/store/common';
 import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
 import { useGetEventsConfig } from '@tangle-pay/store/staking';
 
@@ -16,6 +16,7 @@ export const Assets = () => {
 	const [heightInfo, setHeightInfo] = useState({ 0: hScroll, 1: undefined, 2: undefined });
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
+	const changeNode = useChangeNode();
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
 	const [___, refreshAssets] = useStore('common.forceRequest');
 	const [curWallet] = useGetNodeWallet();
@@ -68,18 +69,7 @@ export const Assets = () => {
 	}, [curWallet.nodeId]);
 	return (
 		<Container>
-			<AssetsNav
-				right={
-					<SvgIcon
-						onPress={() => {
-							checkPush('assets/scan');
-						}}
-						name='scan'
-						size={24}
-						style={[SS.mr10]}
-					/>
-				}
-			/>
+			<AssetsNav hasChangeNode hasViewExplorer hasScan />
 			<ScrollView
 				ref={scrollPage}
 				// style={{ height: curTab === 0 ? 600 : undefined }}

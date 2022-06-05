@@ -6,12 +6,13 @@ import { useChangeNode } from '@tangle-pay/store/common';
 import { I18n, Base, IotaSDK } from '@tangle-pay/common';
 import { S, SS, ThemeVar, Toast } from '@/common';
 import { useStore } from '@tangle-pay/store';
-export const AddDialog = ({ dialogRef }) => {
+export const AddDialog = ({ dialogRef, nodeId }) => {
 	const [isShow, setShow] = useState(false);
 	const [isShowNode, setShowNode] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [, , dispatch] = useStore('common.curNodeId');
-	const changeNode = useChangeNode(dispatch);
+	const [curNodeId] = useStore('common.curNodeId');
+	const curNode = IotaSDK.nodes.find((e) => e.id == curNodeId) || {};
+	const changeNode = useChangeNode();
 	useImperativeHandle(
 		dialogRef,
 		() => {
@@ -22,7 +23,12 @@ export const AddDialog = ({ dialogRef }) => {
 		[]
 	);
 	const show = () => {
-		setShowNode(true);
+		if (nodeId) {
+			setShowNode(false);
+			changeNode(parseInt(nodeId));
+		} else {
+			setShowNode(true);
+		}
 		setLoading(false);
 		setShow(true);
 	};
@@ -93,16 +99,29 @@ export const AddDialog = ({ dialogRef }) => {
 								style={[SS.pv30, SS.c]}>
 								<Text style={[SS.fz18]}>{I18n.t('account.intoTitle1')}</Text>
 							</TouchableOpacity>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								onPress={() => {
-									hide();
-									Toast.show(I18n.t('account.unopen'));
-									// Base.push('account/into', { type: 2 });
-								}}
-								style={[SS.pv30, SS.c, S.border(0)]}>
-								<Text style={[SS.fz18]}>{I18n.t('account.intoTitle2')}</Text>
-							</TouchableOpacity>
+							{curNode?.type == 1 && (
+								<TouchableOpacity
+									activeOpacity={0.8}
+									onPress={() => {
+										hide();
+										Toast.show(I18n.t('account.unopen'));
+										// Base.push('account/into', { type: 2 });
+									}}
+									style={[SS.pv30, SS.c, S.border(0)]}>
+									<Text style={[SS.fz18]}>{I18n.t('account.intoTitle2')}</Text>
+								</TouchableOpacity>
+							)}
+							{curNode?.type == 2 && (
+								<TouchableOpacity
+									activeOpacity={0.8}
+									onPress={() => {
+										hide();
+										Base.push('account/into/privateKey');
+									}}
+									style={[SS.pv30, SS.c, S.border(0)]}>
+									<Text style={[SS.fz18]}>{I18n.t('account.privateKeyImport')}</Text>
+								</TouchableOpacity>
+							)}
 						</View>
 					</>
 				)}

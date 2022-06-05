@@ -23,6 +23,7 @@ export { default as Into } from './Into';
 export { default as Lang } from './Lang';
 export { default as Left } from './Left';
 export { default as Me } from './Me';
+export { default as More } from './More';
 export { default as Network } from './Network';
 export { default as NoScreenshot } from './NoScreenshot';
 export { default as NoData } from './NoData';
@@ -33,12 +34,14 @@ export { default as Scan } from './Scan';
 export { default as Set } from './Set';
 export { default as Share } from './Share';
 export { default as Staking } from './Staking';
+export { default as Tick } from './Tick';
 export { default as Time } from './Time';
 export { default as Up } from './Up';
+export { default as View } from './View';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'apps' | 'assets' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'time' | 'up' | 'wallet';
+  name: 'about' | 'apps' | 'assets' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'tick' | 'time' | 'up' | 'view' | 'wallet';
   size?: number;
   color?: string | string[];
 }

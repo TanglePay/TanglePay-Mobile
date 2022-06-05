@@ -26,7 +26,12 @@ import { StakingAdd } from './staking/add';
 import { StakingHistory } from './staking/history';
 import { AppsExecute } from './apps/execute';
 import { PrivateKey } from './user/privateKey';
+import { AccountIntoPrivateKey } from './account/into/privateKey';
 export const panelsList = [
+	{
+		path: 'account/into/privateKey',
+		component: AccountIntoPrivateKey
+	},
 	{
 		path: 'user/privateKey',
 		component: PrivateKey
