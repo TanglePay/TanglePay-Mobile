@@ -178,7 +178,7 @@ export const DappDialog = () => {
 			return;
 		} else if (!curWallet.address) {
 			selectTimeHandler.current = setTimeout(() => {
-				Base.push('/assets/wallets', { nodeId: toNetId || '' });
+				Base.push('assets/wallets', { nodeId: toNetId || '' });
 			}, 500);
 		} else {
 			setDeepLink('');
@@ -231,7 +231,7 @@ export const DappDialog = () => {
 									text: texts[0]
 								},
 								{
-									text: IotaSDK.convertUnits(value, unit, 'Mi'),
+									text: showValue,
 									isBold: true
 								},
 								{
