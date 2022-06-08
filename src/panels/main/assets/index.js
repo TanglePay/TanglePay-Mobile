@@ -5,7 +5,7 @@ import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { CoinList, ActivityList, CollectiblesList, RewardsList } from './list';
 import { useGetNodeWallet, useGetAssetsList, useGetLegal, useChangeNode } from '@tangle-pay/store/common';
-import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
+import { AssetsNav, SvgIcon, S, SS, ThemeVar, Toast } from '@/common';
 import { useGetEventsConfig } from '@tangle-pay/store/staking';
 
 const hScroll = ThemeVar.deviceHeight - 200;
@@ -30,6 +30,10 @@ export const Assets = () => {
 	const checkPush = (path) => {
 		if (!curWallet.address) {
 			Base.push('account/register');
+			return;
+		}
+		if (!IotaSDK.client) {
+			Toast.error(I18n.t('user.nodeError'));
 			return;
 		}
 		Base.push(path);
