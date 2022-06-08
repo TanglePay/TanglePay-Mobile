@@ -21,7 +21,7 @@ export const AssetsSend = () => {
 	const { params } = useRoute();
 	const form = useRef();
 	let currency = params?.currency;
-	currency = currency || assetsList[0].name;
+	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
 	const assets = assetsList.find((e) => e.name === currency) || {};
 	const setReceiver = (receiver) => {
@@ -83,7 +83,13 @@ export const AssetsSend = () => {
 							});
 							Toast.hideLoading();
 							if (res) {
-								Toast.success(I18n.t('assets.sendSucc'));
+								Toast.success(
+									I18n.t(
+										IotaSDK.checkWeb3Node(curWallet.nodeId)
+											? 'assets.sendSucc'
+											: 'assets.sendSuccRestake'
+									)
+								);
 								Base.goBack();
 							}
 						} catch (error) {

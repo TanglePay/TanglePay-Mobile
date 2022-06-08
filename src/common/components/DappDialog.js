@@ -88,7 +88,11 @@ export const DappDialog = () => {
 						}
 						messageId = res.messageId;
 						setLoading(false);
-						Toast.success(I18n.t('assets.sendSucc'));
+						Toast.success(
+							I18n.t(
+								IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'assets.sendSucc' : 'assets.sendSuccRestake'
+							)
+						);
 						hide();
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
