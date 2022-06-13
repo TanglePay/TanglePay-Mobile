@@ -84,7 +84,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 						</TouchableOpacity>
 					)}
 				</Left>
-				{(hasScan || hasViewExplorer) && (
+				{curWallet.address && (hasScan || hasViewExplorer) && (
 					<Right style={{ flex: undefined }}>
 						<SvgIcon
 							onPress={() => {
@@ -110,8 +110,10 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 							style={{
 								position: 'absolute',
 								backgroundColor: '#fff',
-								top: 58 + ThemeVar.Inset.portrait.topInset,
-								left: 0,
+								top:
+									ThemeVar.toolbarHeight -
+									(ThemeVar.platform === 'ios' ? 0 : ThemeVar.Inset.portrait.topInset),
+								left: -2,
 								shadowColor: '#000',
 								shadowOffset: { width: 0, height: 2 },
 								shadowOpacity: 0.1,
@@ -154,8 +156,10 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 							style={{
 								position: 'absolute',
 								backgroundColor: '#fff',
-								top: 58 + ThemeVar.Inset.portrait.topInset,
-								right: 0,
+								top:
+									ThemeVar.toolbarHeight -
+									(ThemeVar.platform === 'ios' ? 0 : ThemeVar.Inset.portrait.topInset),
+								right: -2,
 								shadowColor: '#000',
 								shadowOffset: { width: 0, height: 2 },
 								shadowOpacity: 0.1,

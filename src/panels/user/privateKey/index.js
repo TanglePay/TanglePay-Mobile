@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container, Content, View, Text, Input, Button } from 'native-base';
-import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';

@@ -87,6 +87,15 @@ export const UserEditWallet = () => {
 						<SvgIcon size={14} name='right' />
 					</TouchableOpacity>
 				)}
+				<TouchableOpacity
+					onPress={() => {
+						Base.push('user/removeWallet', { id });
+					}}
+					activeOpacity={0.8}
+					style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+					<Text style={[SS.fz15]}>{I18n.t('account.removeTitle')}</Text>
+					<SvgIcon size={14} name='right' />
+				</TouchableOpacity>
 			</Content>
 			<NameDialog dialogRef={dialogRef} data={{ ...curEdit }} />
 		</Container>

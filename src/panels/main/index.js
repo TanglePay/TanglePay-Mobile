@@ -5,7 +5,7 @@ import { I18n, IotaSDK } from '@tangle-pay/common';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Assets } from './assets';
 import { User } from './user';
-import { Staking } from './staking';
+import { Discover } from './discover';
 import { Apps } from './apps';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S } from '@/common';
@@ -26,8 +26,8 @@ export const Main = () => {
 		},
 		{
 			key: 'staking',
-			title: I18n.t('staking.title'),
-			component: Staking
+			title: I18n.t('discover.title'),
+			component: Discover
 		},
 		{
 			key: 'me',

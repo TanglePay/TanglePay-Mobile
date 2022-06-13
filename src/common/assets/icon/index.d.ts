@@ -8,9 +8,11 @@ import { GProps } from 'react-native-svg';
 export { default as About } from './About';
 export { default as Apps } from './Apps';
 export { default as Assets } from './Assets';
+export { default as Buy } from './Buy';
 export { default as Cache } from './Cache';
 export { default as Checkbox0 } from './Checkbox0';
 export { default as Checkbox1 } from './Checkbox1';
+export { default as Close } from './Close';
 export { default as Copy } from './Copy';
 export { default as Down } from './Down';
 export { default as Edit } from './Edit';
@@ -29,10 +31,12 @@ export { default as NoScreenshot } from './NoScreenshot';
 export { default as NoData } from './NoData';
 export { default as Outto } from './Outto';
 export { default as Privacy } from './Privacy';
+export { default as Remove } from './Remove';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
 export { default as Set } from './Set';
 export { default as Share } from './Share';
+export { default as Stake } from './Stake';
 export { default as Staking } from './Staking';
 export { default as Tick } from './Tick';
 export { default as Time } from './Time';
@@ -41,7 +45,7 @@ export { default as View } from './View';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'apps' | 'assets' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'right' | 'scan' | 'set' | 'share' | 'staking' | 'tick' | 'time' | 'up' | 'view' | 'wallet';
+  name: 'about' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'remove' | 'right' | 'scan' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'up' | 'view' | 'wallet';
   size?: number;
   color?: string | string[];
 }

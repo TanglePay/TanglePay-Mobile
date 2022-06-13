@@ -137,7 +137,8 @@ export const Assets = () => {
 								<Text
 									style={[
 										S.color(curTab === 0 ? ThemeVar.brandPrimary : ThemeVar.textColor),
-										SS.fz17
+										SS.fz17,
+										curTab === 0 && SS.fw600
 									]}>
 									{I18n.t('assets.assets')}
 								</Text>
@@ -147,7 +148,8 @@ export const Assets = () => {
 									<Text
 										style={[
 											S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
-											SS.fz17
+											SS.fz17,
+											curTab === 1 && SS.fw600
 										]}>
 										{I18n.t('nft.collectibles')}
 									</Text>
@@ -155,7 +157,12 @@ export const Assets = () => {
 							)}
 						</View>
 						<TouchableOpacity onPress={() => setTab(2)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
-							<Text style={[S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz17]}>
+							<Text
+								style={[
+									S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor),
+									SS.fz17,
+									curTab === 2 && SS.fw600
+								]}>
 								{I18n.t('assets.activity')}
 							</Text>
 						</TouchableOpacity>

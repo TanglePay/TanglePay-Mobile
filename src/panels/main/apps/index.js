@@ -105,7 +105,7 @@ export const Apps = () => {
 										onPress={() => {
 											setCurTab(e.label);
 										}}>
-										<Text style={[SS.fz12, SS.mr10, !cur && SS.cS, cur && SS.fw600]}>
+										<Text style={[SS.fz15, SS.mr10, !cur && SS.cB, cur && SS.fw600, cur && SS.cP]}>
 											{e.label}
 										</Text>
 									</TouchableOpacity>
