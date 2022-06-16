@@ -42,6 +42,9 @@ export const Bridge = {
 		}
 		const cmd = (data?.cmd || '').replace('injectToContent##', '');
 		switch (cmd) {
+			case 'goBack':
+				Base.goBack();
+				break;
 			case 'getTanglePayInfo':
 				{
 					this.sendToSDK({

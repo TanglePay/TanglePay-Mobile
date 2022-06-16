@@ -28,7 +28,8 @@ export const Discover = () => {
 				<TouchableOpacity
 					activeOpacity={0.8}
 					onPress={() => {
-						const url = 'http://larashop.aicode.org.cn/simplex/index.html?crypto=MIOTA';
+						const url = 'https://tanglepay.com/simplex.html?crypto=MIOTA';
+						// const url = 'https://tanglepay.com/simplex-staging.html?crypto=MIOTA';
 						if (curWallet.address) {
 							Clipboard.setString(curWallet.address);
 							Toast.success(I18n.t('discover.addressCopy'));

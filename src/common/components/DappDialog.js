@@ -334,10 +334,14 @@ export const DappDialog = () => {
 	}, [curWallet.address, deepLink]);
 	useEffect(() => {
 		Linking.getInitialURL().then((url) => {
-			setDeepLink(url);
+			if (/^tanglepay:\/\/.+/.test(url)) {
+				setDeepLink(url);
+			}
 		});
 		Linking.addEventListener('url', ({ url }) => {
-			setDeepLink(url);
+			if (/^tanglepay:\/\/.+/.test(url)) {
+				setDeepLink(url);
+			}
 		});
 	}, []);
 	return (
