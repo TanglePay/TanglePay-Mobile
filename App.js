@@ -65,7 +65,6 @@ export default () => {
 	const initChangeNode = async () => {
 		// changeNode after get walletsList
 		const res = await Base.getLocalData('common.curNodeId');
-		dispatch({ type: 'common.curNodeId', data: res });
 		changeNode(res || 1);
 	};
 	const init = async () => {
