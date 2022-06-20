@@ -292,56 +292,61 @@ export const StatusCon = () => {
 		Base.push('staking/history');
 	};
 	return (
-		<View style={[S.bg(ThemeVar.contentStyle), SS.radius10]}>
-			<View style={[SS.row, SS.je]}>
-				<View style={[SS.row, SS.ac, SS.p15]}>
-					<Text style={[SS.fz14, SS.mr10]}>{I18n.t('staking.his')}</Text>
-					<SvgIcon onPress={handleHis} name='history' size={20} />
+		<>
+			<View style={[S.bg(ThemeVar.contentStyle), SS.radius10]}>
+				<View style={[SS.row, SS.je]}>
+					<View style={[SS.row, SS.ac, SS.p15]}>
+						<Text style={[SS.fz14, SS.mr10]}>{I18n.t('staking.his')}</Text>
+						<SvgIcon onPress={handleHis} name='history' size={20} />
+					</View>
 				</View>
+				<AirdropsItem
+					uncomingTokens={uncomingTokens}
+					statedTokens={statedTokens}
+					handleStaking={handleStaking}
+					unStakeTokens={unStakeTokens}
+					startTime={startTime}
+					statedAmount={statedAmount}
+					commenceTime={commenceTime}
+				/>
+				<AmountCon amountList={amountList} />
 			</View>
-			<AirdropsItem
-				uncomingTokens={uncomingTokens}
-				statedTokens={statedTokens}
-				handleStaking={handleStaking}
-				unStakeTokens={unStakeTokens}
-				startTime={startTime}
-				statedAmount={statedAmount}
-				commenceTime={commenceTime}
-			/>
-			<AmountCon amountList={amountList} />
-		</View>
+			<RewardsList endedList={endedList} />
+		</>
 	);
 };
 
-export const RewardsList = () => {
+export const RewardsList = ({ endedList }) => {
 	const [curWallet] = useGetNodeWallet();
 	const [statedTokens] = useStore('staking.statedTokens');
 	const stakedRewards = useGetRewards(curWallet);
 	const [{ rewards }] = useStore('staking.config');
-	const list = statedTokens.map((e) => {
-		const { token, eventId } = e;
-		const ratio = _get(rewards, `${token}.ratio`) || 0;
-		let unit = _get(rewards, `${token}.unit`) || token;
-		let total = _get(stakedRewards, `${eventId}.amount`) * ratio || 0;
-		// 1 = 1000m = 1000000u
-		let preUnit = '';
-		if (total > 0) {
-			if (total <= Math.pow(10, -5)) {
-				total = Math.pow(10, 6) * total;
-				preUnit = 'μ';
-			} else if (total <= Math.pow(10, -2)) {
-				total = Math.pow(10, 3) * total;
-				preUnit = 'm';
-			} else if (total >= Math.pow(10, 4)) {
-				total = Math.pow(10, -3) * total;
-				preUnit = 'k';
+	const list = statedTokens
+		.filter((d) => !endedList.find((e) => e.id === d.eventId))
+		.map((e) => {
+			const { token, eventId } = e;
+			const ratio = _get(rewards, `${token}.ratio`) || 0;
+			let unit = _get(rewards, `${token}.unit`) || token;
+			let total = _get(stakedRewards, `${eventId}.amount`) * ratio || 0;
+			// 1 = 1000m = 1000000u
+			let preUnit = '';
+			if (total > 0) {
+				if (total <= Math.pow(10, -5)) {
+					total = Math.pow(10, 6) * total;
+					preUnit = 'μ';
+				} else if (total <= Math.pow(10, -2)) {
+					total = Math.pow(10, 3) * total;
+					preUnit = 'm';
+				} else if (total >= Math.pow(10, 4)) {
+					total = Math.pow(10, -3) * total;
+					preUnit = 'k';
+				}
 			}
-		}
-		return {
-			token,
-			label: `${Base.formatNum(total)}${preUnit} ${unit}`
-		};
-	});
+			return {
+				token,
+				label: `${Base.formatNum(total)}${preUnit} ${unit}`
+			};
+		});
 	const ListEl = useMemo(() => {
 		return list.map((e, i) => {
 			return <StakingTokenItem key={i} style={[SS.mr10, SS.mb10]} coin={e.token} label={e.label} />;

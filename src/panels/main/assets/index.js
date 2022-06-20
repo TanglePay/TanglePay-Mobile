@@ -1,19 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, View, Text } from 'native-base';
 import { TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { CoinList, ActivityList, CollectiblesList, RewardsList } from './list';
-import { useGetNodeWallet, useGetAssetsList, useGetLegal } from '@tangle-pay/store/common';
-import { AssetsNav, SvgIcon, S, SS, ThemeVar } from '@/common';
+import { useGetNodeWallet, useGetAssetsList, useGetLegal, useChangeNode } from '@tangle-pay/store/common';
+import { AssetsNav, SvgIcon, S, SS, ThemeVar, Toast } from '@/common';
 import { useGetEventsConfig } from '@tangle-pay/store/staking';
 
 const hScroll = ThemeVar.deviceHeight - 200;
+const initAsssetsTab = ['stake', 'soonaverse', 'contract'];
 export const Assets = () => {
 	useGetEventsConfig();
+	const [assetsTab, setAssetsTab] = useState([]);
 	const [heightInfo, setHeightInfo] = useState({ 0: hScroll, 1: undefined, 2: undefined });
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
+	const changeNode = useChangeNode();
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
 	const [___, refreshAssets] = useStore('common.forceRequest');
 	const [curWallet] = useGetNodeWallet();
@@ -27,6 +30,10 @@ export const Assets = () => {
 	const checkPush = (path) => {
 		if (!curWallet.address) {
 			Base.push('account/register');
+			return;
+		}
+		if (!IotaSDK.client) {
+			Toast.error(I18n.t('user.nodeError'));
 			return;
 		}
 		Base.push(path);
@@ -60,20 +67,13 @@ export const Assets = () => {
 				break;
 		}
 	}, [curTab]);
+	useEffect(() => {
+		const filterAssetsList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterAssetsList || [];
+		setAssetsTab([...initAsssetsTab.filter((e) => !filterAssetsList.includes(e))]);
+	}, [curWallet.nodeId]);
 	return (
 		<Container>
-			<AssetsNav
-				right={
-					<SvgIcon
-						onPress={() => {
-							checkPush('assets/scan');
-						}}
-						name='scan'
-						size={24}
-						style={[SS.mr10]}
-					/>
-				}
-			/>
+			<AssetsNav hasChangeNode hasViewExplorer hasScan />
 			<ScrollView
 				ref={scrollPage}
 				// style={{ height: curTab === 0 ? 600 : undefined }}
@@ -137,23 +137,32 @@ export const Assets = () => {
 								<Text
 									style={[
 										S.color(curTab === 0 ? ThemeVar.brandPrimary : ThemeVar.textColor),
-										SS.fz17
+										SS.fz17,
+										curTab === 0 && SS.fw600
 									]}>
 									{I18n.t('assets.assets')}
 								</Text>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => setTab(1)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
-								<Text
-									style={[
-										S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
-										SS.fz17
-									]}>
-									{I18n.t('nft.collectibles')}
-								</Text>
-							</TouchableOpacity>
+							{assetsTab.includes('soonaverse') && (
+								<TouchableOpacity onPress={() => setTab(1)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
+									<Text
+										style={[
+											S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
+											SS.fz17,
+											curTab === 1 && SS.fw600
+										]}>
+										{I18n.t('nft.collectibles')}
+									</Text>
+								</TouchableOpacity>
+							)}
 						</View>
 						<TouchableOpacity onPress={() => setTab(2)} activeOpacity={0.8} style={[SS.c, SS.pv20]}>
-							<Text style={[S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz17]}>
+							<Text
+								style={[
+									S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor),
+									SS.fz17,
+									curTab === 2 && SS.fw600
+								]}>
 								{I18n.t('assets.activity')}
 							</Text>
 						</TouchableOpacity>
@@ -181,7 +190,7 @@ export const Assets = () => {
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph20]}>
 						<CoinList />
-						<RewardsList />
+						{assetsTab.includes('stake') && <RewardsList />}
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph20]}>
 						<CollectiblesList

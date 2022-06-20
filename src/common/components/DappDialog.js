@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Linking, KeyboardAvoidingView } from 'react-native';
+import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native';
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
 import { SS, ThemeVar, Toast } from '@/common';
-import { useGetNodeWallet, useChangeNode, useUpdateBalance } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
+import { Bridge } from '@/common/bridge';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
@@ -18,12 +19,10 @@ export const DappDialog = () => {
 	const [deepLink, setDeepLink] = useState('');
 	const selectTimeHandler = useRef();
 	const [curWallet] = useGetNodeWallet();
-	const updateBalance = useUpdateBalance();
 	const [assetsList] = useStore('common.assetsList');
-	const assets = assetsList.find((e) => e.name === 'IOTA') || {};
 	const [statedAmount] = useStore('staking.statedAmount');
-	const [curNodeId, , dispatch] = useStore('common.curNodeId');
-	const changeNode = useChangeNode(dispatch);
+	const [curNodeId] = useStore('common.curNodeId');
+	const changeNode = useChangeNode();
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -33,41 +32,68 @@ export const DappDialog = () => {
 		setShow(false);
 		setLoading(false);
 	};
-	const onExecute = async ({ address, return_url, content, type, amount }) => {
-		if (password !== curWallet.password) {
+	const onHandleCancel = async ({ type }) => {
+		switch (type) {
+			case 'iota_sign':
+			case 'iota_connect':
+				InteractionManager.runAfterInteractions(() => {
+					Bridge.sendErrorMessage(type, {
+						msg: 'cancel'
+					});
+				});
+				break;
+
+			default:
+				break;
+		}
+	};
+	const onExecute = async ({ address, return_url, content, type, amount, origin, expires }) => {
+		if (password !== curWallet.password && type !== 'iota_connect') {
 			return Toast.error(I18n.t('assets.passwordError'));
 		}
 		let messageId = '';
 		switch (type) {
 			case 'send':
 				{
+					const assets = assetsList.find((e) => e.name === IotaSDK.curNode?.token) || {};
 					let realBalance = BigNumber(assets.realBalance || 0);
 					const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 					realBalance = realBalance.minus(bigStatedAmount);
 					let residue = Number(realBalance.minus(amount)) || 0;
+					const decimal = Math.pow(10, assets.decimal);
 					try {
-						if (amount < IotaSDK.IOTA_MI) {
-							return Toast.error(I18n.t('assets.sendBelow1Tips'));
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+							if (amount < decimal) {
+								return Toast.error(I18n.t('assets.sendBelow1Tips'));
+							}
 						}
 						if (residue < 0) {
 							return Toast.error(
 								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
 							);
 						}
-						if (residue < IotaSDK.IOTA_MI && residue != 0) {
-							return Toast.error(I18n.t('assets.residueBelow1Tips'));
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+							if (residue < decimal && residue != 0) {
+								return Toast.error(I18n.t('assets.residueBelow1Tips'));
+							}
 						}
 						setLoading(true);
-						const res = await IotaSDK.send(curWallet, address, amount);
+						const res = await IotaSDK.send(curWallet, address, amount, {
+							contract: assets?.contract,
+							token: assets?.name
+						});
 						if (!res) {
 							setLoading(false);
 							return;
 						}
 						messageId = res.messageId;
 						setLoading(false);
-						Toast.success(I18n.t('assets.sendSucc'));
+						Toast.success(
+							I18n.t(
+								IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'assets.sendSucc' : 'assets.sendSuccRestake'
+							)
+						);
 						hide();
-						updateBalance(residue, curWallet.address);
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
 					} catch (error) {
@@ -85,20 +111,26 @@ export const DappDialog = () => {
 				break;
 			case 'sign':
 				try {
-					const residue = Number(assets.realBalance || 0);
-					if (residue < IotaSDK.IOTA_MI) {
-						return Toast.error(
-							I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
-						);
-					}
-					setLoading(true);
-					const res = await IotaSDK.sign(content, curWallet, residue);
-					messageId = res.messageId;
+					messageId = await IotaSDK.iota_sign(curWallet, content);
 					setLoading(false);
 				} catch (error) {
 					setLoading(false);
 					Toast.error(error.toString(), {
 						duration: 5000
+					});
+				}
+				break;
+			case 'iota_connect':
+				{
+					InteractionManager.runAfterInteractions(async () => {
+						await Bridge.iota_connect(origin, expires);
+					});
+				}
+				break;
+			case 'iota_sign':
+				{
+					InteractionManager.runAfterInteractions(async () => {
+						await Bridge.iota_sign(origin, expires, content);
 					});
 				}
 				break;
@@ -130,15 +162,27 @@ export const DappDialog = () => {
 	const handleUrl = async (url) => {
 		if (!url) return;
 		const res = Base.handlerParams(url);
-		let { network, value, unit, return_url, item_desc = '', merchant = '', content = '' } = res;
-		unit = unit || 'i';
-		const toNetId = IotaSDK.nodes.find((e) => e.apiPath === network)?.id;
+		let {
+			network,
+			value,
+			unit,
+			return_url,
+			item_desc = '',
+			merchant = '',
+			content = '',
+			origin = '',
+			expires = ''
+		} = res;
+		let toNetId;
+		if (network) {
+			toNetId = IotaSDK.nodes.find((e) => e.network === network)?.id;
+		}
 		if (toNetId && parseInt(toNetId) !== parseInt(curNodeId)) {
 			await changeNode(toNetId);
 			return;
 		} else if (!curWallet.address) {
 			selectTimeHandler.current = setTimeout(() => {
-				Base.push('assets/wallets');
+				Base.push('assets/wallets', { nodeId: toNetId || '' });
 			}, 500);
 		} else {
 			setDeepLink('');
@@ -156,11 +200,34 @@ export const DappDialog = () => {
 							if (!address) {
 								Toast.error('Required: address');
 							}
+
+							let showValue = '';
+							let showUnit = '';
+							let sendAmount = 0;
+							if (IotaSDK.checkWeb3Node(toNetId)) {
+								unit = unit || 'wei';
+								if (IotaSDK.client?.utils) {
+									sendAmount = IotaSDK.client.utils.toWei(String(value), unit);
+									showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
+									showUnit = IotaSDK.curNode?.token;
+								} else {
+									showValue = value;
+									showUnit = unit;
+									sendAmount = value;
+								}
+							} else {
+								unit = unit || 'i';
+								showValue = IotaSDK.convertUnits(value, unit, 'Mi');
+								sendAmount = IotaSDK.convertUnits(value, unit, 'i');
+								showUnit = 'MIOTA';
+							}
+
 							let str = I18n.t('apps.send');
 							let fromStr = I18n.t('apps.sendFrom');
 							let forStr = I18n.t('apps.sendFor');
 							str = str.replace('#merchant#', merchant ? fromStr + merchant : '');
 							str = str.replace('#item_desc#', item_desc ? forStr + item_desc : '');
+							str = str.replace('#unit#', showUnit);
 							let texts = str.trim().replace('#address#', address);
 							texts = texts.split('#amount#');
 							texts = [
@@ -168,7 +235,7 @@ export const DappDialog = () => {
 									text: texts[0]
 								},
 								{
-									text: IotaSDK.convertUnits(value, unit, 'Mi'),
+									text: showValue,
 									isBold: true
 								},
 								{
@@ -179,7 +246,7 @@ export const DappDialog = () => {
 								texts,
 								return_url,
 								type,
-								amount: IotaSDK.convertUnits(value, unit, 'i'),
+								amount: sendAmount,
 								address
 							});
 							show();
@@ -189,7 +256,6 @@ export const DappDialog = () => {
 						break;
 					case 'sign':
 						{
-							console.log(content, '======');
 							if (!content) {
 								Toast.error('Required: content');
 							}
@@ -211,6 +277,52 @@ export const DappDialog = () => {
 							show();
 						}
 						break;
+					case 'iota_connect': // sdk connect
+						{
+							let str = I18n.t('apps.connect')
+								.trim()
+								.replace('#origin#', origin || '')
+								.replace('#address#', curWallet?.address);
+							const texts = [
+								{
+									text: str
+								}
+							];
+							setDappData({
+								texts,
+								return_url,
+								type,
+								origin,
+								expires
+							});
+							show();
+						}
+						break;
+					case 'iota_sign': // sdk sign
+						{
+							if (!content) {
+								return Toast.error('Required: content');
+							}
+							let str = I18n.t('apps.sign')
+								.trim()
+								.replace('#merchant#', origin ? '\n' + origin : '')
+								.replace('#content#', content);
+							const texts = [
+								{
+									text: str
+								}
+							];
+							setDappData({
+								texts,
+								return_url,
+								type,
+								content,
+								origin,
+								expires
+							});
+							show();
+						}
+						break;
 					default:
 						break;
 				}
@@ -222,10 +334,14 @@ export const DappDialog = () => {
 	}, [curWallet.address, deepLink]);
 	useEffect(() => {
 		Linking.getInitialURL().then((url) => {
-			setDeepLink(url);
+			if (/^tanglepay:\/\/.+/.test(url)) {
+				setDeepLink(url);
+			}
 		});
 		Linking.addEventListener('url', ({ url }) => {
-			setDeepLink(url);
+			if (/^tanglepay:\/\/.+/.test(url)) {
+				setDeepLink(url);
+			}
 		});
 	}, []);
 	return (
@@ -262,14 +378,16 @@ export const DappDialog = () => {
 								})}
 							</Text>
 						</View>
-						<Item inlineLabel>
-							<Input
-								keyboardType='ascii-capable'
-								secureTextEntry
-								onChangeText={setPassword}
-								placeholder={I18n.t('assets.passwordTips')}
-							/>
-						</Item>
+						{dappData.type !== 'iota_connect' && (
+							<Item inlineLabel>
+								<Input
+									keyboardType='ascii-capable'
+									secureTextEntry
+									onChangeText={setPassword}
+									placeholder={I18n.t('assets.passwordTips')}
+								/>
+							</Item>
+						)}
 						<View style={[SS.row, SS.jsb, SS.ac, SS.mt25, SS.pb20]}>
 							<Button
 								onPress={() => {
@@ -278,18 +396,23 @@ export const DappDialog = () => {
 								small
 								rounded
 								primary
-								style={[{ width: ThemeVar.deviceWidth / 2 - 40 }, SS.c]}>
-								<Text>{I18n.t('apps.execute')}</Text>
+								style={[{ width: ThemeVar.deviceWidth / 2 - 40, height: 40 }, SS.c]}>
+								<Text>
+									{I18n.t(dappData.type !== 'iota_connect' ? 'apps.execute' : 'apps.ConnectBtn')}
+								</Text>
 							</Button>
 							<Button
 								small
 								bordered
 								rounded
 								dark
-								onPress={hide}
+								onPress={() => {
+									onHandleCancel(dappData);
+									hide();
+								}}
 								style={[
 									SS.bgS,
-									{ width: ThemeVar.deviceWidth / 2 - 40, borderColor: '#D0D1D2' },
+									{ width: ThemeVar.deviceWidth / 2 - 40, height: 40, borderColor: '#D0D1D2' },
 									SS.c
 								]}>
 								<Text>{I18n.t('apps.cancel')}</Text>

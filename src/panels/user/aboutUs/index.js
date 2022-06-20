@@ -12,7 +12,15 @@ export const UserAboutUs = () => {
 	const initList = [
 		{
 			key: 'version',
-			label: I18n.t('user.versionUpdate'),
+			label: I18n.t('user.versionUpdate')
+		},
+		{
+			label: I18n.t('account.term'),
+			url: 'https://tanglepay.com/terms.html'
+		},
+		{
+			label: I18n.t('account.policy'),
+			url: 'https://tanglepay.com/policy.html',
 			bottom: 10
 		},
 		{
@@ -41,7 +49,7 @@ export const UserAboutUs = () => {
 					const newVersion = res[Platform.OS];
 					const url = res[`${Platform.OS}Url`];
 					e[0].value = `${I18n.t('user.versionNew')} ${newVersion}`;
-					if (newVersion !== version) {
+					if (parseInt(newVersion.replace(/\./g, '')) > parseInt(version.replace(/\./g, ''))) {
 						e[0].url = url;
 						e[0].dot = true;
 					}

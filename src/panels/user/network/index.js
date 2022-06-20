@@ -7,8 +7,8 @@ import { useStore } from '@tangle-pay/store';
 import { S, SS, Nav } from '@/common';
 
 export const UserNetwork = () => {
-	const [curNodeId, _, dispatch] = useStore('common.curNodeId');
-	const setCurNodeId = useChangeNode(dispatch);
+	const [curNodeId] = useStore('common.curNodeId');
+	const setCurNodeId = useChangeNode();
 	return (
 		<Container>
 			<Nav title={I18n.t('user.network')} />

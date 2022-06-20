@@ -92,5 +92,6 @@ export const Nav1 = (props) => {
 		<View style={[S.paddingT(ThemeVar.nav1ToolbarTop), SS.ph20]}>
 			<Nav headerStyle={{ borderBottomWidth: 0 }} {...props} />
 		</View>
+		// <Nav {...props} />
 	);
 };

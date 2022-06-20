@@ -18,11 +18,11 @@ export const UserSetting = () => {
 			label: I18n.t('user.language'),
 			path: 'user/lang'
 		},
-		{
-			icon: 'network',
-			label: I18n.t('user.network'),
-			path: 'user/network'
-		},
+		// {
+		// 	icon: 'network',
+		// 	label: I18n.t('user.network'),
+		// 	path: 'user/network'
+		// },
 		{
 			icon: 'cache',
 			label: I18n.t('nft.clearCache'),

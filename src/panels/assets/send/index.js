@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
-import { useGetNodeWallet, useUpdateBalance } from '@tangle-pay/store/common';
+import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav1, S, SS, SvgIcon, Toast } from '@/common';
 import BigNumber from 'bignumber.js';
 
@@ -16,13 +16,12 @@ const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
 export const AssetsSend = () => {
-	console.log(IotaSDK.convertUnits(10000, 'i', 'Mi'));
 	const [statedAmount] = useStore('staking.statedAmount');
-	const updateBalance = useUpdateBalance();
 	const [assetsList] = useStore('common.assetsList');
 	const { params } = useRoute();
 	const form = useRef();
-	const [currency] = useState('IOTA');
+	let currency = params?.currency;
+	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
 	const assets = assetsList.find((e) => e.name === currency) || {};
 	const setReceiver = (receiver) => {
@@ -37,7 +36,7 @@ export const AssetsSend = () => {
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
-	let available = Base.formatNum(realBalance.div(IotaSDK.IOTA_MI), 6);
+	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
 	return (
 		<Container>
 			<Nav1 title={I18n.t('assets.send')} />
@@ -56,29 +55,42 @@ export const AssetsSend = () => {
 						}
 
 						amount = parseFloat(amount) || 0;
-						let sendAmount = Number(BigNumber(amount).times(IotaSDK.IOTA_MI));
+						const decimal = Math.pow(10, assets.decimal);
+						let sendAmount = Number(BigNumber(amount).times(decimal));
 						let residue = Number(realBalance.minus(sendAmount)) || 0;
-						if (sendAmount < IotaSDK.IOTA_MI) {
-							return Toast.error(I18n.t('assets.sendBelow1Tips'));
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+							if (sendAmount < IotaSDK.IOTA_MI) {
+								return Toast.error(I18n.t('assets.sendBelow1Tips'));
+							}
 						}
 						if (residue < 0) {
 							return Toast.error(
 								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
 							);
 						}
-						if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
-							sendAmount = Number(realBalance);
-						} else if (residue < IotaSDK.IOTA_MI && residue != 0) {
-							return Toast.error(I18n.t('assets.residueBelow1Tips'));
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+							if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
+								sendAmount = Number(realBalance);
+							} else if (residue < IotaSDK.IOTA_MI && residue != 0) {
+								return Toast.error(I18n.t('assets.residueBelow1Tips'));
+							}
 						}
 						Toast.showLoading();
 						try {
-							const res = await IotaSDK.send(curWallet, receiver, sendAmount);
+							const res = await IotaSDK.send(curWallet, receiver, sendAmount, {
+								contract: assets?.contract,
+								token: assets?.name
+							});
 							Toast.hideLoading();
 							if (res) {
-								Toast.success(I18n.t('assets.sendSucc'));
+								Toast.success(
+									I18n.t(
+										IotaSDK.checkWeb3Node(curWallet.nodeId)
+											? 'assets.sendSucc'
+											: 'assets.sendSuccRestake'
+									)
+								);
 								Base.goBack();
-								updateBalance(Number(bigStatedAmount.plus(residue)), curWallet.address);
 							}
 						} catch (error) {
 							console.log(error);
@@ -103,7 +115,7 @@ export const AssetsSend = () => {
 									error={!!errors.currency}>
 									<Text>{I18n.t('assets.currency')}</Text>
 									<View style={[SS.row, SS.ac]}>
-										<Text style={[SS.fz14, SS.cS]}>IOTA</Text>
+										<Text style={[SS.fz14, SS.cS]}>{currency}</Text>
 										{/* <Image style={[S.wh(16), SS.ml10]} source={images.com.right} /> */}
 									</View>
 								</Item>
@@ -140,7 +152,10 @@ export const AssetsSend = () => {
 										onChangeText={handleChange('amount')}
 										value={values.amount}
 										onBlur={() => {
-											const precision = Math.log10(IotaSDK.IOTA_MI);
+											let precision = assets.decimal;
+											if (precision > 6) {
+												precision = 6;
+											}
 											let str = Base.formatNum(values.amount, precision);
 											if (parseFloat(str) < Math.pow(10, -precision)) {
 												str = String(Math.pow(10, -precision));

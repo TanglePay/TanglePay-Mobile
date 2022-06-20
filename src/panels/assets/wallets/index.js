@@ -2,16 +2,21 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { AddDialog } from './addDialog';
+import { useRoute } from '@react-navigation/native';
 import { useSelectWallet, useGetNodeWallet } from '@tangle-pay/store/common';
 import { S, SS, SvgIcon, Nav1, ThemeVar, NoData, Toast } from '@/common';
 
 export const AssetsWallets = () => {
 	const dialogRef = useRef();
 	const selectWallet = useSelectWallet();
-	const [_, walletsList] = useGetNodeWallet();
+	let [_, walletsList] = useGetNodeWallet();
 	const [curActive, setActive] = useState('');
+	const { params } = useRoute();
+	if (params?.nodeId) {
+		walletsList = walletsList.filter((e) => e.nodeId == params.nodeId);
+	}
 	useEffect(() => {
 		const id = (walletsList.find((e) => e.isSelected) || {}).id;
 		setActive(id || '');
@@ -24,6 +29,7 @@ export const AssetsWallets = () => {
 					<View style={[SS.mb20]}>
 						{walletsList.map((e) => {
 							const isActive = curActive === e.id;
+							const curNode = IotaSDK.nodes.find((d) => d.id === e.nodeId) || {};
 							return (
 								<TouchableOpacity
 									activeOpacity={0.8}
@@ -33,14 +39,14 @@ export const AssetsWallets = () => {
 											return;
 										}
 										setActive(e.id);
-										Toast.showLoading();
+										// Toast.showLoading();
 										setTimeout(() => {
 											selectWallet(e.id);
 										}, 20);
 										Base.goBack();
-										setTimeout(() => {
-											Toast.hideLoading();
-										}, 100);
+										// setTimeout(() => {
+										// 	Toast.hideLoading();
+										// }, 100);
 									}}
 									key={e.id}
 									style={[
@@ -50,7 +56,12 @@ export const AssetsWallets = () => {
 										SS.pv15,
 										SS.mt20
 									]}>
-									<Text style={[SS.fz17, isActive && SS.cW]}>{e.name}</Text>
+									<View style={[SS.row, SS.ac, SS.jsb]}>
+										<Text style={[SS.fz17, isActive && SS.cW]}>{e.name}</Text>
+										<Text style={[SS.fz17, isActive && SS.cW]}>
+											{curNode?.type == 2 ? 'EVM' : curNode?.name}
+										</Text>
+									</View>
 									<View style={[SS.mt20, SS.row, SS.ae]}>
 										<Text style={[isActive && SS.cW, SS.fz15]}>
 											{Base.handleAddress(e.address)}
@@ -84,7 +95,7 @@ export const AssetsWallets = () => {
 					<Text style={[S.color(ThemeVar.textColor)]}>+　{I18n.t('assets.addWallets')}</Text>
 				</Button>
 			</View>
-			<AddDialog dialogRef={dialogRef} />
+			<AddDialog dialogRef={dialogRef} nodeId={params?.nodeId} />
 		</Container>
 	);
 };

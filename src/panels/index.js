@@ -25,11 +25,31 @@ import { AccountChangeNode } from './account/changeNode';
 import { StakingAdd } from './staking/add';
 import { StakingHistory } from './staking/history';
 import { AppsExecute } from './apps/execute';
+import { PrivateKey } from './user/privateKey';
+import { AccountIntoPrivateKey } from './account/into/privateKey';
+import { Staking } from './main/staking';
+import { RemoveWallet } from './user/editWallet/removeWallet';
 export const panelsList = [
 	{
-        path:"apps/execute",
-        component:AppsExecute,
-    },
+		path: 'user/removeWallet',
+		component: RemoveWallet
+	},
+	{
+		path: 'stake/index',
+		component: Staking
+	},
+	{
+		path: 'account/into/privateKey',
+		component: AccountIntoPrivateKey
+	},
+	{
+		path: 'user/privateKey',
+		component: PrivateKey
+	},
+	{
+		path: 'apps/execute',
+		component: AppsExecute
+	},
 	{
 		path: 'staking/history',
 		component: StakingHistory
