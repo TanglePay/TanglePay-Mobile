@@ -1,19 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'native-base';
 import { I18n, IotaSDK } from '@tangle-pay/common';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Assets } from './assets';
 import { User } from './user';
-import { Staking } from './staking';
+import { Discover } from './discover';
 import { Apps } from './apps';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S } from '@/common';
+import { useStore } from '@tangle-pay/store';
 
 const Tab = createBottomTabNavigator();
 export const Main = () => {
-	const [curWallet] = useGetNodeWallet();
-	const routes = [
+	const initRoutes = [
 		{
 			key: 'assets',
 			title: I18n.t('assets.assets'),
@@ -26,8 +26,8 @@ export const Main = () => {
 		},
 		{
 			key: 'staking',
-			title: I18n.t('staking.title'),
-			component: Staking
+			title: I18n.t('discover.title'),
+			component: Discover
 		},
 		{
 			key: 'me',
@@ -35,9 +35,19 @@ export const Main = () => {
 			component: User
 		}
 	];
+	const [lang] = useStore('common.lang');
+	const [curWallet] = useGetNodeWallet();
+	const [routes, setRoutes] = useState([...initRoutes]);
+	useEffect(() => {
+		IotaSDK.changeNodesLang(lang);
+	}, [lang]);
 	useEffect(() => {
 		IotaSDK.setMqtt(curWallet.address);
-	}, [curWallet.address]);
+	}, [curWallet.address + curWallet.nodeId]);
+	useEffect(() => {
+		const filterMenuList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterMenuList || [];
+		setRoutes([...initRoutes.filter((e) => !filterMenuList.includes(e.key))]);
+	}, [curWallet.nodeId, JSON.stringify(initRoutes)]);
 	return (
 		<Tab.Navigator
 			initialRouteName='assets'

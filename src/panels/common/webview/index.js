@@ -21,9 +21,9 @@ export const CommonWebview = () => {
 	}, []);
 	useEffect(() => {
 		if (curWallet.address) {
-			Bridge.accountsChanged(curWallet.address);
+			Bridge.accountsChanged(curWallet.address, curWallet.nodeId);
 		}
-	}, [curWallet.address]);
+	}, [curWallet.address + curWallet.nodeId]);
 	return (
 		<>
 			<Container>

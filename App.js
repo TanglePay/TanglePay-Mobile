@@ -3,7 +3,7 @@ import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { panelsList } from '@/panels';
-import { Base, Trace } from '@tangle-pay/common';
+import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { StoreContext, useStoreReducer } from '@tangle-pay/store';
 import { useChangeNode } from '@tangle-pay/store/common';
@@ -16,7 +16,7 @@ const Stack = createStackNavigator();
 
 export default () => {
 	const [store, dispatch] = useStoreReducer();
-	const changeNode = useChangeNode(dispatch);
+	const changeNode = useChangeNode();
 	const [sceneList, setSceneList] = useState([]);
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
@@ -47,10 +47,35 @@ export default () => {
 			});
 		}
 		Base.setLocalData(installedKey, 1);
+
+		// changeNode after get walletsList
+		const list2 = ['common.curNodeId'];
+		const res2 = await Promise.all(list2.map((e) => Base.getLocalData(e)));
+		list2.forEach((e, i) => {
+			switch (e) {
+				case 'common.curNodeId':
+					changeNode(res2[i] || 1);
+					break;
+				default:
+					dispatch({ type: e, data: res2[i] });
+					break;
+			}
+		});
+	};
+	const initChangeNode = async () => {
+		// changeNode after get walletsList
+		const res = await Base.getLocalData('common.curNodeId');
+		changeNode(res || 1);
 	};
 	const init = async () => {
 		Trace.login();
+		try {
+			await IotaSDK.getNodes();
+		} catch (error) {
+			console.log(error);
+		}
 		await getLocalInfo();
+		await initChangeNode();
 		setSceneList(panelsList);
 		// setTimeout(() => {
 		//     SplashScreen.hide()
@@ -81,7 +106,7 @@ export default () => {
 								Base.setNavigator(ref);
 							}}>
 							<Stack.Navigator
-								initialRouteName={store.common.walletsList.length > 0 ? 'main' : 'account/login'}>
+								initialRouteName={store.common.walletsList.length > 0 ? 'main' : 'account/changeNode'}>
 								{sceneList.map((e) => {
 									return (
 										<Stack.Screen

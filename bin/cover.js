@@ -17,3 +17,7 @@ const cachePath = path.join(__dirname, './template/react-native-img-cache_index.
 const libCachePath = path.join(__dirname, '../node_modules/react-native-img-cache/build/index.js');
 
 fs.copyFileSync(cachePath, libCachePath);
+const txPath = path.join(__dirname, './template/@ethereumjs-tx-dist.browser-transactionFactory.js');
+const libTxPath = path.join(__dirname, '../node_modules/@ethereumjs/tx/dist.browser/transactionFactory.js');
+
+fs.copyFileSync(txPath, libTxPath);

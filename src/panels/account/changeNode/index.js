@@ -9,11 +9,11 @@ import logo_nobg from '@tangle-pay/assets/images/logo_nobg.png';
 
 export const AccountChangeNode = () => {
 	const [, , dispatch] = useStore('common.curNodeId');
-	const changeNode = useChangeNode(dispatch);
+	const changeNode = useChangeNode();
 	return (
 		<Container>
 			<Nav leftIcon={false} headerStyle={{ borderBottomWidth: 0 }} />
-			<View style={[SS.jsb, SS.column, SS.flex1, SS.pt60]}>
+			<View style={[SS.jsb, SS.column, SS.flex1, SS.pt30]}>
 				<View style={[SS.ph25]}>
 					<Image style={[S.wh(144, 150), SS.mb25]} source={logo_nobg} />
 					<View>
@@ -29,7 +29,7 @@ export const AccountChangeNode = () => {
 							return (
 								<TouchableOpacity
 									key={e.id}
-									style={[SS.pv20, SS.c, i === 0 && S.border(2)]}
+									style={[SS.pv20, SS.c, i != 0 && S.border(0)]}
 									activeOpacity={0.8}
 									onPress={async () => {
 										await changeNode(e.id);

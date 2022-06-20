@@ -74,18 +74,7 @@ export const Apps = () => {
 	}, [JSON.stringify(dapps)]);
 	return (
 		<Container>
-			<AssetsNav
-				right={
-					<SvgIcon
-						onPress={() => {
-							checkPush('assets/scan');
-						}}
-						name='scan'
-						size={24}
-						style={[SS.mr10]}
-					/>
-				}
-			/>
+			<AssetsNav hasScan />
 			<Content contentContainerStyle={[SS.ph20]}>
 				<Item inlineLabel>
 					<Input value={searchStr} onChangeText={setSearch} onBlur={onBlur} placeholder='Search Dapp' />
@@ -116,7 +105,7 @@ export const Apps = () => {
 										onPress={() => {
 											setCurTab(e.label);
 										}}>
-										<Text style={[SS.fz12, SS.mr10, !cur && SS.cS, cur && SS.fw600]}>
+										<Text style={[SS.fz15, SS.mr10, !cur && SS.cB, cur && SS.fw600, cur && SS.cP]}>
 											{e.label}
 										</Text>
 									</TouchableOpacity>
