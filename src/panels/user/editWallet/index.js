@@ -3,18 +3,19 @@ import { Container, Content, View, Text } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
-import { useRoute } from '@react-navigation/native';
 import { NameDialog } from './nameDialog';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
 
 export const UserEditWallet = () => {
-	const { params } = useRoute();
-	const id = params.id;
-	const [_, walletsList] = useGetNodeWallet();
-	const curEdit = walletsList.find((e) => e.id === id) || {};
+	// const { params } = useRoute();
+	const [curEdit] = useGetNodeWallet();
+	const id = curEdit.id;
+	// const [_, walletsList] = useGetNodeWallet();
+	// const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
 	const dialogRef = useRef();
+	const curNode = IotaSDK.nodes.find((d) => d.id === curEdit.nodeId);
 	return (
 		<Container>
 			<Nav title={I18n.t('user.manage')} />
@@ -63,6 +64,17 @@ export const UserEditWallet = () => {
 					<Text style={[SS.fz15]}>{I18n.t('user.backupWallet')}</Text>
 					<Icon style={[S.wh(16)]} name={images.com.right} />
 				</TouchableOpacity> */}
+				{curNode?.type != 2 ? (
+					<TouchableOpacity
+						onPress={() => {
+							Base.push('user/walletDetail');
+						}}
+						activeOpacity={0.8}
+						style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+						<Text style={[SS.fz15]}>{I18n.t('account.walletDetail')}</Text>
+						<SvgIcon size={14} name='right' />
+					</TouchableOpacity>
+				) : null}
 				<TouchableOpacity
 					onPress={() => {
 						Base.push('user/walletPassword', {
@@ -74,7 +86,7 @@ export const UserEditWallet = () => {
 					<Text style={[SS.fz15]}>{I18n.t('user.resetPassword')}</Text>
 					<SvgIcon size={14} name='right' />
 				</TouchableOpacity>
-				{IotaSDK.nodes.find((d) => d.id === curEdit.nodeId)?.type == 2 && (
+				{curNode?.type == 2 ? (
 					<TouchableOpacity
 						onPress={() => {
 							Base.push('user/privateKey', {
@@ -86,7 +98,7 @@ export const UserEditWallet = () => {
 						<Text style={[SS.fz15]}>{I18n.t('account.exportKey')}</Text>
 						<SvgIcon size={14} name='right' />
 					</TouchableOpacity>
-				)}
+				) : null}
 				<TouchableOpacity
 					onPress={() => {
 						Base.push('user/removeWallet', { id });

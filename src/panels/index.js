@@ -29,7 +29,17 @@ import { PrivateKey } from './user/privateKey';
 import { AccountIntoPrivateKey } from './account/into/privateKey';
 import { Staking } from './main/staking';
 import { RemoveWallet } from './user/editWallet/removeWallet';
+import { WalletDetail } from './user/walletDetail';
+import { WalletCollection } from './user/walletDetail/collection';
 export const panelsList = [
+	{
+		path: 'user/WalletCollection',
+		component: WalletCollection
+	},
+	{
+		path: 'user/walletDetail',
+		component: WalletDetail
+	},
 	{
 		path: 'user/removeWallet',
 		component: RemoveWallet

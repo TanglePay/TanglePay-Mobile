@@ -34,6 +34,9 @@ export const RemoveWallet = () => {
 						onPress={() => {
 							removeWallet(id);
 							Base.goBack(2);
+							setTimeout(() => {
+								Base.push('assets/wallets');
+							}, 0);
 						}}
 						style={[SS.flex1, S.h(44), SS.radius10]}
 						block>
