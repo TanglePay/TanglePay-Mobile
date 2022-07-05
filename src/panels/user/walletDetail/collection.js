@@ -16,16 +16,14 @@ export const WalletCollection = () => {
 	const totalNum = totalInfo?.outputIds?.length || 0;
 	handeNum = handeNum <= totalNum ? handeNum : totalNum;
 	const handleStop = async () => {
-		Toast.show(I18n.t('account.collectSuccTips'));
+		Toast.success(I18n.t('account.collectSuccTips'));
 		stop();
 		setShow(false);
-		Toast.showLoading();
-		await getInfo();
-		Toast.hideLoading();
+		getInfo();
 		Base.goBack();
 	};
 	useEffect(() => {
-		if (handeNum >= totalNum) {
+		if (handeNum >= totalNum && handeNum > 0) {
 			handleStop();
 		}
 	}, [handeNum, totalNum]);

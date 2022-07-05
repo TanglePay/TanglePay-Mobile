@@ -15,6 +15,11 @@ export const WalletDetail = () => {
 			Toast.hideLoading();
 		};
 	}, [loading]);
+	useEffect(() => {
+		return () => {
+			Toast.hideLoading();
+		};
+	}, []);
 	return (
 		<Container>
 			{/* <AssetsNav /> */}
