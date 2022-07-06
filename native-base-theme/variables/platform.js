@@ -121,14 +121,14 @@ export default {
 	CheckboxIconSize: 19,
 	CheckboxIconMarginTop: undefined,
 	CheckboxFontSize: 12,
-	checkboxBgColor: '#0099ED',
+	checkboxBgColor: '#3671ee',
 	checkboxSize: 20,
 	checkboxTickColor: '#fff',
 	checkboxDefaultColor: 'transparent',
 	checkboxTextShadowRadius: 0,
 
 	// Color
-	brandPrimary: '#0099ED',
+	brandPrimary: '#3671ee',
 	brandInfo: '#62B1F6',
 	brandSuccess: '#5cb85c',
 	brandDanger: '#d9534f',
@@ -188,20 +188,20 @@ export default {
 	// FooterTab
 	tabBarTextColor: '#6b6b6b',
 	tabBarTextSize: 14,
-	activeTab: '#0099ED',
-	sTabBarActiveTextColor: '#0099ED',
-	tabBarActiveTextColor: '#0099ED',
+	activeTab: '#3671ee',
+	sTabBarActiveTextColor: '#3671ee',
+	tabBarActiveTextColor: '#3671ee',
 	tabActiveBgColor: '#fff',
 
 	// Header
-	toolbarBtnColor: '#0099ED',
+	toolbarBtnColor: '#3671ee',
 	toolbarDefaultBg: '#fff',
 	toolbarHeight: platform === PLATFORM.IOS ? 64 : 56,
 	toolbarSearchIconSize: 23,
 	toolbarInputColor: '#CECDD2',
 	searchBarHeight: platform === PLATFORM.IOS ? 30 : 40,
 	searchBarInputHeight: platform === PLATFORM.IOS ? 30 : 50,
-	toolbarBtnTextColor: '#0099ED',
+	toolbarBtnTextColor: '#3671ee',
 	toolbarDefaultBorder: '#a7a6ab',
 	iosStatusbar: 'dark-content',
 	get statusBarColor() {
@@ -235,7 +235,7 @@ export default {
 	lineHeightH2: 27,
 	lineHeightH3: 25,
 	lineHeight: 20,
-	listItemSelected: '#0099ED',
+	listItemSelected: '#3671ee',
 
 	// List
 	listBg: 'transparent',
@@ -252,7 +252,7 @@ export default {
 
 	// Radio Button
 	radioBtnSize: 25,
-	radioSelectedColorAndroid: '#0099ED',
+	radioSelectedColorAndroid: '#3671ee',
 	radioBtnLineHeight: 29,
 	get radioColor() {
 		return this.brandPrimary;
@@ -260,10 +260,10 @@ export default {
 
 	// Segment
 	segmentBackgroundColor: '#F8F8F8',
-	segmentActiveBackgroundColor: '#0099ED',
-	segmentTextColor: '#0099ED',
+	segmentActiveBackgroundColor: '#3671ee',
+	segmentTextColor: '#3671ee',
 	segmentActiveTextColor: '#fff',
-	segmentBorderColor: '#0099ED',
+	segmentBorderColor: '#3671ee',
 	segmentBorderColorMain: '#a7a6ab',
 
 	// Spinner
@@ -274,9 +274,9 @@ export default {
 	tabBarDisabledTextColor: '#BDBDBD',
 	tabDefaultBg: '#F8F8F8',
 	topTabBarTextColor: '#6b6b6b',
-	topTabBarActiveTextColor: '#0099ED',
+	topTabBarActiveTextColor: '#3671ee',
 	topTabBarBorderColor: '#a7a6ab',
-	topTabBarActiveBorderColor: '#0099ED',
+	topTabBarActiveBorderColor: '#3671ee',
 
 	// Tabs
 	tabBgColor: '#F8F8F8',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text, Input, Item } from 'native-base';
-import { TouchableOpacity, ScrollView } from 'react-native';
-import { AssetsNav, SvgIcon, SS } from '@/common';
+import { TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { AssetsNav, SvgIcon, SS, ThemeVar } from '@/common';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { List } from './list';
 import { Base } from '@tangle-pay/common';
@@ -74,8 +74,12 @@ export const Apps = () => {
 	}, [JSON.stringify(dapps)]);
 	return (
 		<Container>
-			<AssetsNav hasScan />
-			<Content contentContainerStyle={[SS.ph20]}>
+			{/* <AssetsNav hasScan /> */}
+			<Content
+				contentContainerStyle={[
+					SS.ph20,
+					{ paddingTop: ThemeVar.platform === 'android' ? StatusBar.currentHeight + 24 : 24 }
+				]}>
 				<Item inlineLabel>
 					<Input value={searchStr} onChangeText={setSearch} onBlur={onBlur} placeholder='Search Dapp' />
 				</Item>

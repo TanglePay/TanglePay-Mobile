@@ -7861,6 +7861,11 @@ number-to-bn@1.7.0:
     bn.js "4.11.6"
     strip-hex-prefix "1.0.0"
 
+numeral@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.npmjs.org/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
+  integrity sha512-qaKRmtYPZ5qdw4jWJD6bxEf1FJEqllJrwxCLIm0sQU/A7v2/czigzOb+C2uSiFsa9lBUzeH7M1oK+Q+OLxL3kA==
+
 nwsapi@^2.2.0:
   version "2.2.0"
   resolved "https://registry.nlark.com/nwsapi/download/nwsapi-2.2.0.tgz#204879a9e3d068ff2a55139c2c772780681a38b7"
@@ -10106,10 +10111,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.5.1.tgz#6cece53fec595ae9605c3bbd3a00facef896ca7c"
-  integrity sha512-5YhCkl7icYqdMJ/fWOWStoX+sRdCg3dCnpuiBbqYycs5zb7bPHRmKKadddzpWsvictDOO97hEePqjpR7K5AiRw==
+tanglepay@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.5.4.tgz#290611e5669fdd4fcc759e60002933dcc84f6021"
+  integrity sha512-Use3/vThmCbH8uBgQJuF/jgBdXrUPhvOjL34lb2dF7cyl34ZgHzXxll4NvQNUdk+mJAi+r+ChqT/pSTE5rPT5w==
 
 tar@^4.0.2:
   version "4.4.19"

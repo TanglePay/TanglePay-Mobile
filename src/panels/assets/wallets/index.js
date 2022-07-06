@@ -63,7 +63,7 @@ export const AssetsWallets = () => {
 										</Text>
 									</View>
 									<View style={[SS.mt20, SS.row, SS.ae]}>
-										<Text style={[isActive && SS.cW, SS.fz15]}>
+										<Text style={[isActive && SS.cW, SS.fz15, { minWidth: 85 }]}>
 											{Base.handleAddress(e.address)}
 										</Text>
 										<SvgIcon

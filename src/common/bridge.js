@@ -1,6 +1,6 @@
 import DeviceInfo from 'react-native-device-info';
 import { Linking } from 'react-native';
-import { Base, IotaSDK, API_URL } from '@tangle-pay/common';
+import { Base, IotaSDK, API_URL, Trace } from '@tangle-pay/common';
 import BigNumber from 'bignumber.js';
 
 export const Bridge = {
@@ -113,6 +113,8 @@ export const Bridge = {
 			});
 			const key = `${origin}_iota_connect_${curWallet.address}_${curWallet.nodeId}`;
 			this.cacheBgData(key, 1, expires);
+
+			Trace.dappConnect(origin.replace(/.+\/\//, ''), curWallet.address, curWallet.nodeId, IotaSDK.curNode.token);
 		}
 	},
 	async evm_getBalance(origin, { assetsList, addressList }) {
