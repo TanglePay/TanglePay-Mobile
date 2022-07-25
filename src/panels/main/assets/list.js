@@ -308,7 +308,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 		return {
 			...e,
 			source: {
-				uri: e.media
+				uri: e.imageType === 'mp4' ? e.thumbnailImage : e.media
 			},
 			width: ThemeVar.deviceWidth,
 			height: ThemeVar.deviceHeight
