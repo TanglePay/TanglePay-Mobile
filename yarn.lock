@@ -10111,11 +10111,6 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^1.5.5:
-  version "1.5.5"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.5.5.tgz#e20cfe38ca062c71fff045e97c1e3dfc8c3ee292"
-  integrity sha512-aJuvhf7GdK4zlQHExYzdavFLZXkrn3gCM4r6Ukr5Vl1a/XtMq5E9N7Ar/Q3k22G52uIE/zP6vMxuhjmdDz1pnw==
-
 tar@^4.0.2:
   version "4.4.19"
   resolved "https://registry.npmjs.org/tar/-/tar-4.4.19.tgz#2e4d7263df26f2b914dee10c825ab132123742f3"
