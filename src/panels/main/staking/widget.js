@@ -248,7 +248,7 @@ export const StatusCon = () => {
 	}
 
 	const handleStaking = (tokens, type) => {
-		if (available < 1) {
+		if (available < 1 && type != 3) {
 			return Toast.error(I18n.t('staking.noAvailableTips'));
 		}
 		Base.push('staking/add', { tokens, type });
