@@ -84,6 +84,9 @@ const styleObj = {
 	radius10: {
 		borderRadius: 10
 	},
+	radius8: {
+		borderRadius: 8
+	},
 	tr: {
 		textAlign: 'right'
 	},
@@ -119,7 +122,7 @@ for (let n = 0; n <= 80; n += 5) {
 		};
 	});
 }
-for (let n = 0; n <= 32; n += 8) {
+for (let n = 0; n <= 32; n += 4) {
 	['Horizontal', 'Vertical', 'Top', 'Bottom', 'Left', 'Right', ''].forEach((k) => {
 		const key = `${(k[0] || '').toLocaleLowerCase()}${n}`;
 		styleObj[`p${key}`] = {
@@ -150,7 +153,7 @@ export const S = {
 		return { color: s_color };
 	},
 	// borderline stype, n_type:0->top，1->right，2->bottom，3->left，4->all
-	border(n_type = 0, s_color = '#ddd', n_borderWidth) {
+	border(n_type = 0, s_color = '#eee', n_borderWidth) {
 		let types = ['Top', 'Right', 'Bottom', 'Left'];
 		let s_type = types[n_type] || '';
 		return {

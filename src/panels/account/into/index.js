@@ -22,6 +22,7 @@ export const AccountInto = () => {
 	});
 	const { params } = useRoute();
 	const type = params.type;
+	const from = params.from;
 	const addWallet = useAddWallet();
 	return (
 		<Container>
@@ -52,8 +53,14 @@ export const AccountInto = () => {
 							addWallet({
 								...res
 							});
-							Base.popToTop();
-							Base.replace('main');
+							if (from === 'smr') {
+								Base.replace('assets/claimReward/claimSMR', {
+									id: res.id
+								});
+							} else {
+								Base.popToTop();
+								Base.replace('main');
+							}
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (

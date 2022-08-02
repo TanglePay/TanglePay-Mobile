@@ -45,7 +45,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 			isVisible={isShow}>
 			<View style={[SS.ph20, SS.w100, SS.radius10, SS.bgS, SS.pr]}>
 				<View style={[SS.c, SS.pv15]}>
-					<Text style={[SS.fz16, SS.cS]}>{I18n.t('assets.addWallets')}</Text>
+					<Text style={[SS.fz16, SS.fw600]}>{I18n.t('assets.addWallets')}</Text>
 				</View>
 				{isShowNode ? (
 					<>
@@ -65,7 +65,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 											setLoading(false);
 											setShowNode(false);
 										}}
-										style={[SS.pv30, SS.jc, SS.pl30, S.border(0, '#ddd', i == 0 ? 0 : 1)]}>
+										style={[SS.pv24, SS.jc, SS.pl24, S.border(0, '#ddd', i == 0 ? 0 : 1)]}>
 										<Text style={[SS.fz18]}>{e.name}</Text>
 									</TouchableOpacity>
 								);
@@ -79,15 +79,28 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 					</>
 				) : (
 					<>
-						<TouchableOpacity
-							activeOpacity={0.8}
-							onPress={() => {
-								hide();
-								Base.push('account/register');
-							}}
-							style={[SS.pv30, SS.c, SS.bgW, SS.radius10]}>
-							<Text style={[SS.fz18]}>{I18n.t('account.createTitle')}</Text>
-						</TouchableOpacity>
+						<View style={[SS.bgS, SS.radius10]}>
+							<TouchableOpacity
+								activeOpacity={0.8}
+								onPress={() => {
+									hide();
+									Base.push('account/register');
+								}}
+								style={[SS.pv24, SS.c]}>
+								<Text style={[SS.fz18]}>{I18n.t('account.createTitle')}</Text>
+							</TouchableOpacity>
+							{(curNode?.type == 1 || curNode?.type == 3) && (
+								<TouchableOpacity
+									activeOpacity={0.8}
+									onPress={() => {
+										hide();
+										Base.push('assets/claimReward');
+									}}
+									style={[SS.pv24, SS.c]}>
+									<Text style={[SS.fz18]}>{I18n.t('account.createTitle')}</Text>
+								</TouchableOpacity>
+							)}
+						</View>
 						<Text style={[SS.fz16, SS.cS, SS.mt20, SS.mb10]}>{I18n.t('account.intoBtn')}</Text>
 						<View style={[SS.mb50, SS.bgW, SS.radius10]}>
 							<TouchableOpacity
@@ -96,10 +109,10 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 									hide();
 									Base.push('account/into', { type: 1 });
 								}}
-								style={[SS.pv30, SS.c]}>
+								style={[SS.pv24, SS.c]}>
 								<Text style={[SS.fz18]}>{I18n.t('account.intoTitle1')}</Text>
 							</TouchableOpacity>
-							{curNode?.type == 1 && (
+							{(curNode?.type == 1 || curNode?.type == 3) && (
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
@@ -107,7 +120,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 										Toast.show(I18n.t('account.unopen'));
 										// Base.push('account/into', { type: 2 });
 									}}
-									style={[SS.pv30, SS.c, S.border(0)]}>
+									style={[SS.pv24, SS.c, S.border(0)]}>
 									<Text style={[SS.fz18]}>{I18n.t('account.intoTitle2')}</Text>
 								</TouchableOpacity>
 							)}
@@ -118,7 +131,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 										hide();
 										Base.push('account/into/privateKey');
 									}}
-									style={[SS.pv30, SS.c, S.border(0)]}>
+									style={[SS.pv24, SS.c, S.border(0)]}>
 									<Text style={[SS.fz18]}>{I18n.t('account.privateKeyImport')}</Text>
 								</TouchableOpacity>
 							)}

@@ -1363,6 +1363,14 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@iota/crypto.js-next@npm:@iota/crypto.js@next", "@iota/crypto.js@^1.9.0-stardust.6":
+  version "1.9.0-stardust.6"
+  resolved "https://registry.npmjs.org/@iota/crypto.js/-/crypto.js-1.9.0-stardust.6.tgz#a17c277e97b72352fb83d02c67a9e38220e14dd9"
+  integrity sha512-jbruSRXlEKW2dgfPFG7e42ODBp4dVu2/CAh/oZrzMjehPdyF2tgAeN1woOqOAmVONWoGVV9GViZti3nShhGF1g==
+  dependencies:
+    "@iota/util.js" "^1.9.0-stardust.5"
+    big-integer "^1.6.51"
+
 "@iota/crypto.js@^1.8.6":
   version "1.8.6"
   resolved "https://registry.npmjs.org/@iota/crypto.js/-/crypto.js-1.8.6.tgz#ce480bdecc3e1a43ac701453c20f533b9472d4e7"
@@ -1371,7 +1379,17 @@
     "@iota/util.js" "^1.8.6"
     big-integer "^1.6.51"
 
-"@iota/iota.js@^1.8.4", "@iota/iota.js@^1.8.6":
+"@iota/iota.js-next@npm:@iota/iota.js@next", "@iota/iota.js@^1.9.0-stardust.22":
+  version "1.9.0-stardust.22"
+  resolved "https://registry.npmjs.org/@iota/iota.js/-/iota.js-1.9.0-stardust.22.tgz#cb8897d33429dc11c177541fb7e0169d1da2785b"
+  integrity sha512-20hKTqKZ8Gvpe7sQG4k8lEwxbe60/amCCeX/rMuvIb5RAuv4yikl9WFcgRXd9UTQr8D7Pj0rxpMMLZPGa+MGew==
+  dependencies:
+    "@iota/crypto.js" "^1.9.0-stardust.6"
+    "@iota/util.js" "^1.9.0-stardust.5"
+    big-integer "^1.6.51"
+    node-fetch "2.6.7"
+
+"@iota/iota.js@^1.8.6":
   version "1.8.6"
   resolved "https://registry.npmjs.org/@iota/iota.js/-/iota.js-1.8.6.tgz#ab28513afa825e4e115a3b1fb572cd40e494816f"
   integrity sha512-KkUgYS+bde2v5ThjQsVWOECdRH1ym0atUod6TPk9YR05xNpVFq/kt4N/QBKqYv0ysLCL/EjR6mVZCrc5mE6CHA==
@@ -1381,7 +1399,16 @@
     big-integer "^1.6.51"
     node-fetch "2.6.7"
 
-"@iota/mqtt.js@^1.8.2":
+"@iota/mqtt.js-next@npm:@iota/mqtt.js@next":
+  version "1.9.0-stardust.15"
+  resolved "https://registry.npmjs.org/@iota/mqtt.js/-/mqtt.js-1.9.0-stardust.15.tgz#a1308f8c14d85eeebb28330c8834dedab9384a91"
+  integrity sha512-WCe4+nQR7nP2XZ+MPGDkVVlRERx7XYf0Kb2fk4RBMgEnr8APQZM0hHqNaz++HBeG3qEHo0tDmKpZDNcJqbzhqQ==
+  dependencies:
+    "@iota/iota.js" "^1.9.0-stardust.22"
+    "@iota/util.js" "^1.9.0-stardust.5"
+    mqtt "^4.3.5"
+
+"@iota/mqtt.js@^1.8.6":
   version "1.8.6"
   resolved "https://registry.npmjs.org/@iota/mqtt.js/-/mqtt.js-1.8.6.tgz#2ef3fd996b59eb870c70e7cb7f47ed777488dd11"
   integrity sha512-5KHFOEVc30B/fNPj6GGnAdrYIVEsW/RUZeMLhFoOzzMOjUCZlRG3srkjlzUMZzDP1Wqo66LytGD6CUpeWLFFvQ==
@@ -1397,6 +1424,13 @@
   dependencies:
     "@types/bignumber.js" "^5.0.0"
     bignumber.js "^7.2.1"
+
+"@iota/util.js-next@npm:@iota/util.js@next", "@iota/util.js@^1.9.0-stardust.5":
+  version "1.9.0-stardust.5"
+  resolved "https://registry.npmjs.org/@iota/util.js/-/util.js-1.9.0-stardust.5.tgz#7278841687d8b3c6bc6b8d449ac78593c199a645"
+  integrity sha512-BGXzzjUQQYaV/H0bXJYKW+Zgd9PIN+HLPH8BcYhubI65X4G2ID23/osmpK/za+Ds6t/MkpdPKIiBwZPGXuCUBw==
+  dependencies:
+    big-integer "^1.6.51"
 
 "@iota/util.js@^1.8.6":
   version "1.8.6"
@@ -7522,6 +7556,29 @@ mqtt@^4.3.4:
   version "4.3.6"
   resolved "https://registry.npmjs.org/mqtt/-/mqtt-4.3.6.tgz#4d4aa66a09058ca0b764299b96b636d8da832d75"
   integrity sha512-1dgQbkbh1Bba9iAGDNIrhSZ4nLDjbhmNHjOEvsmKI1Bb+2orj0gHwjqUKJ5CKUMKBYbkQYRM1fy+N1/2iZOj5w==
+  dependencies:
+    commist "^1.0.0"
+    concat-stream "^2.0.0"
+    debug "^4.1.1"
+    duplexify "^4.1.1"
+    help-me "^3.0.0"
+    inherits "^2.0.3"
+    lru-cache "^6.0.0"
+    minimist "^1.2.5"
+    mqtt-packet "^6.8.0"
+    number-allocator "^1.0.9"
+    pump "^3.0.0"
+    readable-stream "^3.6.0"
+    reinterval "^1.1.0"
+    rfdc "^1.3.0"
+    split2 "^3.1.0"
+    ws "^7.5.5"
+    xtend "^4.0.2"
+
+mqtt@^4.3.5:
+  version "4.3.7"
+  resolved "https://registry.npmjs.org/mqtt/-/mqtt-4.3.7.tgz#42985ca490ea25d2c12c119d83c632db6dc9d589"
+  integrity sha512-ew3qwG/TJRorTz47eW46vZ5oBw5MEYbQZVaEji44j5lAUSQSqIEoul7Kua/BatBW0H0kKQcC9kwUHa1qzaWHSw==
   dependencies:
     commist "^1.0.0"
     concat-stream "^2.0.0"

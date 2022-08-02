@@ -64,7 +64,7 @@ export const UserEditWallet = () => {
 					<Text style={[SS.fz15]}>{I18n.t('user.backupWallet')}</Text>
 					<Icon style={[S.wh(16)]} name={images.com.right} />
 				</TouchableOpacity> */}
-				{curNode?.type != 2 ? (
+				{curNode?.type == 1 ? (
 					<TouchableOpacity
 						onPress={() => {
 							Base.push('user/walletDetail');

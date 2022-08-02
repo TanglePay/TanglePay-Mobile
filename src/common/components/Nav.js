@@ -78,7 +78,7 @@ export const Nav = ({
 			style={{ ...S.border(2), ...headerStyle }}>
 			{left}
 			<Body style={{ flex: 4, ...bodyStyle }}>
-				<Text numberOfLines={1} style={{ ...S.font(17), ...S.fw500, ...titleStyle }}>
+				<Text numberOfLines={1} style={{ ...S.font(18), ...titleStyle }}>
 					{title}
 				</Text>
 			</Body>
