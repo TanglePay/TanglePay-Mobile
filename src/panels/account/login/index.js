@@ -10,10 +10,23 @@ export const AccountLogin = () => {
 		<Container>
 			<Nav title='' headerStyle={{ borderBottomWidth: 0 }} />
 			<View style={[SS.flex1, SS.ac, SS.je]}>
-				<View style={[SS.mb40, SS.ph60, SS.w100]}>
-					<Text style={[SS.fz26, SS.fw500, SS.mb20, SS.tc]}>{I18n.t('account.title')}</Text>
-					<Text style={titleStyle}>{I18n.t('account.subTitle')}</Text>
-					<View style={[SS.mt70, SS.pt60, SS.pb70]}>
+				<View style={[SS.ph24, SS.w100, SS.flex1]}>
+					<View style={[SS.flex1, SS.c]}>
+						<Text style={[SS.fz32, SS.fw600, SS.mb32, SS.tc]}>
+							{I18n.t('account.title')
+								.split('##')
+								.filter((e) => !!e)
+								.map((e, i) => {
+									return (
+										<Text key={i} style={[{ fontSize: 32 }, SS.fw600, i == 0 ? SS.cP : SS.cB]}>
+											{e}
+										</Text>
+									);
+								})}
+						</Text>
+						<Text style={titleStyle}>{I18n.t('account.subTitle')}</Text>
+					</View>
+					<View style={[{ marginBottom: 128 }]}>
 						<Button
 							block
 							onPress={() => {
@@ -39,10 +52,10 @@ export const AccountLogin = () => {
 };
 
 const titleStyle = StyleSheet.flatten([
-	SS.fz15,
+	SS.fz14,
 	SS.tc,
 	{
 		color: '#333',
-		lineHeight: 24
+		lineHeight: 18
 	}
 ]);

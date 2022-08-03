@@ -5836,6 +5836,7 @@
 	exports.IMMUTABLE_ALIAS_UNLOCK_CONDITION_TYPE = IMMUTABLE_ALIAS_UNLOCK_CONDITION_TYPE;
 	exports.INPUTS_COMMITMENT_SIZE = INPUTS_COMMITMENT_SIZE;
 	exports.IOTA_BIP44_BASE_PATH = IOTA_BIP44_BASE_PATH;
+	exports.setIotaBip44BasePath = setIotaBip44BasePath;
 	exports.ISSUER_FEATURE_TYPE = ISSUER_FEATURE_TYPE;
 	exports.IndexerPluginClient = IndexerPluginClient;
 	exports.LocalPowProvider = LocalPowProvider;

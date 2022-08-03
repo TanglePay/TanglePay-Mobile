@@ -49,7 +49,7 @@ export const AccountRegister = () => {
 								<Item style={[SS.mt10, SS.ml0]} stackedLabel error={!!errors.name}>
 									<Label style={[SS.fz14]}>{I18n.t('account.intoName')}</Label>
 									<Input
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoNameTips')}
 										onChangeText={handleChange('name')}
 										value={values.name}
@@ -61,7 +61,7 @@ export const AccountRegister = () => {
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoPasswordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
@@ -75,7 +75,7 @@ export const AccountRegister = () => {
 										// secureTextEntry={!Base.isIos14}
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoRePasswordTips')}
 										onChangeText={handleChange('rePassword')}
 										value={values.rePassword}
@@ -89,13 +89,14 @@ export const AccountRegister = () => {
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
 										size={15}
-										style={[SS.mr10, S.marginT(3)]}
+										style={[SS.mr8, S.marginT(3)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 120)]}>
 										<Text
 											style={[
-												SS.fz14,
+												SS.fz12,
+												SS.fw600,
 												S.tl,
 												S.lineHeight(22),
 												S.color(
@@ -116,7 +117,7 @@ export const AccountRegister = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP]}>
+															style={[SS.cP, SS.fw600]}>
 															{e}
 														</Text>
 													) : (

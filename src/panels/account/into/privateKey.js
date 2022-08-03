@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
-import { S, SS, Nav1, ThemeVar, SvgIcon, Toast } from '@/common';
+import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	privateKey: Yup.string().required(),
@@ -22,7 +22,7 @@ export const AccountIntoPrivateKey = () => {
 	const addWallet = useAddWallet();
 	return (
 		<Container>
-			<Nav1 title={I18n.t('account.privateKeyImport')} />
+			<Nav title={I18n.t('account.intoBtn')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -51,11 +51,14 @@ export const AccountIntoPrivateKey = () => {
 						Base.replace('main');
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.ph20, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
 							<Form>
 								<View>
 									<View>
-										<Text style={[SS.fz14, SS.pb10, SS.tc, SS.cS]}>
+										<Text style={[SS.fz24, SS.fw600, SS.mb8]}>
+											{I18n.t('account.privateKeyImport')}
+										</Text>
+										<Text style={[SS.fz14, SS.pb16, SS.cS]}>
 											{I18n.t('account.inputPrivateKey')}
 										</Text>
 									</View>
@@ -64,31 +67,36 @@ export const AccountIntoPrivateKey = () => {
 										returnKeyType='done'
 										bordered
 										style={[
-											S.border(4, !errors.privateKey ? ThemeVar.textColor : ThemeVar.brandDanger),
-											S.radius(10),
-											SS.fz14
+											{ borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0 },
+											S.border(2, !errors.privateKey ? '#eee' : ThemeVar.brandDanger, 1),
+											SS.fz14,
+											SS.ph0,
+											SS.pl0,
+											SS.mt0,
+											SS.pt0,
+											SS.pb8
 										]}
-										rowSpan={5}
+										rowSpan={2}
 										onChangeText={handleChange('privateKey')}
 										value={values.privateKey}
 									/>
 								</View>
-								<Item style={[SS.mt15, SS.ml0]} stackedLabel error={!!errors.name}>
+								<Item style={[SS.mt24, SS.ml0]} stackedLabel error={!!errors.name}>
 									<Label style={[SS.fz14]}>{I18n.t('account.intoName')}</Label>
 									<Input
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoNameTips')}
 										onChangeText={handleChange('name')}
 										value={values.name}
 									/>
 								</Item>
-								<Item style={[SS.mt15, SS.ml0]} stackedLabel error={!!errors.password}>
+								<Item style={[SS.mt24, SS.ml0]} stackedLabel error={!!errors.password}>
 									<Label style={[SS.fz14]}>{I18n.t('account.intoPassword')}</Label>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoPasswordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
@@ -101,7 +109,7 @@ export const AccountIntoPrivateKey = () => {
 										// secureTextEntry={!Base.isIos14}
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoRePasswordTips')}
 										onChangeText={handleChange('rePassword')}
 										value={values.rePassword}
@@ -117,13 +125,14 @@ export const AccountIntoPrivateKey = () => {
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
 										size={15}
-										style={[SS.mr10, S.marginT(3)]}
+										style={[SS.mr8, S.marginT(3)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
 										<Text
 											style={[
-												SS.fz14,
+												SS.fz12,
+												SS.fw600,
 												S.tl,
 												S.lineHeight(22),
 												S.color(!errors.agree ? ThemeVar.textColor : ThemeVar.brandDanger)
@@ -142,7 +151,7 @@ export const AccountIntoPrivateKey = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP]}>
+															style={[SS.cP, SS.fw600]}>
 															{e}
 														</Text>
 													) : (

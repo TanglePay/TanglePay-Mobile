@@ -78,6 +78,9 @@ const styleObj = {
 	cP: {
 		color: ThemeVar.brandPrimary
 	},
+	cB: {
+		color: ThemeVar.textColor
+	},
 	cR: {
 		color: ThemeVar.brandDanger
 	},

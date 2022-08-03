@@ -26,10 +26,7 @@ export const AccountInto = () => {
 	const addWallet = useAddWallet();
 	return (
 		<Container>
-			<Nav
-				headerStyle={{ borderBottomWidth: 0 }}
-				title={I18n.t(type === 1 ? 'account.intoTitle1' : 'account.intoTitle2')}
-			/>
+			<Nav title={I18n.t('account.intoBtn')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -67,12 +64,15 @@ export const AccountInto = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.ph20, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
 							<Form>
 								{type === 1 ? (
 									<View>
 										<View>
-											<Text style={[SS.fz14, SS.pb10, SS.tc, SS.cS]}>
+											<Text style={[SS.fz24, SS.fw600, SS.mb8]}>
+												{I18n.t(type === 1 ? 'account.intoTitle1' : 'account.intoTitle2')}
+											</Text>
+											<Text style={[SS.fz14, SS.pb16, SS.cS]}>
 												{I18n.t('account.mnemonicTips')}
 											</Text>
 										</View>
@@ -81,14 +81,16 @@ export const AccountInto = () => {
 											returnKeyType='done'
 											bordered
 											style={[
-												S.border(
-													4,
-													!errors.mnemonic ? ThemeVar.textColor : ThemeVar.brandDanger
-												),
-												S.radius(10),
-												SS.fz14
+												{ borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0 },
+												S.border(2, !errors.mnemonic ? '#eee' : ThemeVar.brandDanger, 1),
+												SS.fz14,
+												SS.ph0,
+												SS.pl0,
+												SS.mt0,
+												SS.pt0,
+												SS.pb8
 											]}
-											rowSpan={5}
+											rowSpan={3}
 											onChangeText={handleChange('mnemonic')}
 											value={values.mnemonic}
 										/>
@@ -96,27 +98,26 @@ export const AccountInto = () => {
 								) : (
 									<View
 										style={[
-											S.border(4, ThemeVar.textColor),
 											SS.radius10,
 											SS.mt10,
 											S.h(140),
 											SS.c,
-											S.border(4, !errors.mnemonic ? ThemeVar.textColor : ThemeVar.brandDanger)
+											S.border(4, !errors.mnemonic ? '#eee' : ThemeVar.brandDanger)
 										]}>
 										<SvgIcon size={50} name='file' style={[SS.mb20]} />
 										<Text>{I18n.t('account.intoSelectFile')}</Text>
 									</View>
 								)}
-								<Item style={[SS.mt15, SS.ml0]} stackedLabel error={!!errors.name}>
+								<Item style={[SS.mt24, SS.ml0]} stackedLabel error={!!errors.name}>
 									<Label style={[SS.fz14]}>{I18n.t('account.intoName')}</Label>
 									<Input
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('account.intoNameTips')}
 										onChangeText={handleChange('name')}
 										value={values.name}
 									/>
 								</Item>
-								<Item style={[SS.mt15, SS.ml0]} stackedLabel error={!!errors.password}>
+								<Item style={[SS.mt24, SS.ml0]} stackedLabel error={!!errors.password}>
 									<Label style={[SS.fz14]}>
 										{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
 									</Label>
@@ -124,7 +125,7 @@ export const AccountInto = () => {
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t(
 											type === 1 ? 'account.intoPasswordTips' : 'account.intoFilePasswordTips'
 										)}
@@ -140,7 +141,7 @@ export const AccountInto = () => {
 											// secureTextEntry={!Base.isIos14}
 											secureTextEntry
 											textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-											style={[SS.fz14, SS.pl0]}
+											style={[SS.fz14, SS.pl0, SS.pv32]}
 											placeholder={I18n.t('account.intoRePasswordTips')}
 											onChangeText={handleChange('rePassword')}
 											value={values.rePassword}
@@ -157,16 +158,17 @@ export const AccountInto = () => {
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
 										size={15}
-										style={[SS.mr10, S.marginT(3)]}
+										style={[SS.mr8, S.marginT(3)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
 										<Text
 											style={[
-												SS.fz14,
+												SS.fz12,
 												S.tl,
 												S.lineHeight(22),
-												S.color(!errors.agree ? ThemeVar.textColor : ThemeVar.brandDanger)
+												SS.fw600,
+												S.color(!errors.agree ? '#eee' : ThemeVar.brandDanger)
 											]}>
 											{I18n.t('account.intoAgree')
 												.split('##')
@@ -182,7 +184,7 @@ export const AccountInto = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP]}>
+															style={[SS.cP, SS.fw600]}>
 															{e}
 														</Text>
 													) : (

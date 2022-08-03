@@ -41,13 +41,13 @@ export const AccountChangeNode = () => {
 						S.bg(ThemeVar.brandPrimary),
 						{ borderTopLeftRadius: 24, borderTopRightRadius: 24 }
 					]}>
-					<Text style={[SS.fz14, SS.tc, SS.cW]}>{I18n.t('account.changeTips')}</Text>
+					<Text style={[SS.fz14, SS.cW, { lineHeight: 18 }]}>{I18n.t('account.changeTips')}</Text>
 					<View style={[SS.mt20, S.radius(16), SS.bgW]}>
 						{IotaSDK.nodes.map((e, i) => {
 							return (
 								<TouchableOpacity
 									key={e.id}
-									style={[{ height: 64 }, SS.c, i != 0 && S.border(0)]}
+									style={[{ height: 64 }, SS.pl24, SS.row, SS.ac, i != 0 && S.border(0)]}
 									activeOpacity={0.8}
 									onPress={async () => {
 										await changeNode(e.id);

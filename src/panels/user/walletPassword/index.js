@@ -50,7 +50,7 @@ export const UserWalletPassword = () => {
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pv4]}
+										style={[SS.fz14, SS.pv32]}
 										placeholder={I18n.t('user.oldTips')}
 										onChangeText={handleChange('old')}
 										value={values.old}
@@ -63,7 +63,7 @@ export const UserWalletPassword = () => {
 										// secureTextEntry={!Base.isIos14}
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pv4]}
+										style={[SS.fz14, SS.pv32]}
 										placeholder={I18n.t('user.newTips')}
 										onChangeText={handleChange('newPassword')}
 										value={values.newPassword}
@@ -76,7 +76,7 @@ export const UserWalletPassword = () => {
 										// secureTextEntry={!Base.isIos14}
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14]}
+										style={[SS.fz14, SS.pv32]}
 										placeholder={I18n.t('user.repeatPassword')}
 										onChangeText={handleChange('rePassword')}
 										value={values.rePassword}

@@ -137,7 +137,7 @@ export const AssetsSend = () => {
 										multiline
 										blurOnSubmit={true}
 										returnKeyType='done'
-										style={[SS.fz14, SS.pl0, SS.pb0]}
+										style={[SS.fz14, SS.pl0, SS.pb0, SS.pv32]}
 										placeholder={I18n.t('assets.receiverTips')}
 										onChangeText={handleChange('receiver')}
 										value={values.receiver}
@@ -147,7 +147,7 @@ export const AssetsSend = () => {
 								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.amount}>
 									<Input
 										keyboardType='numeric'
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('assets.amountTips')}
 										onChangeText={handleChange('amount')}
 										value={values.amount}
@@ -180,7 +180,7 @@ export const AssetsSend = () => {
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, SS.pv32]}
 										placeholder={I18n.t('assets.passwordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
