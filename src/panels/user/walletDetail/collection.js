@@ -74,9 +74,7 @@ export const WalletCollection = () => {
 						style={[
 							SS.bgW,
 							{
-								borderRadius: 16,
-								marginLeft: 8,
-								marginRight: 8
+								borderRadius: 16
 							}
 						]}>
 						<View style={[S.border(2), SS.ph16, SS.pv12]}>
