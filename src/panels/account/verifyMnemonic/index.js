@@ -4,7 +4,7 @@ import { Vibration } from 'react-native';
 import { Base, I18n } from '@tangle-pay/common';
 import Carousel from 'react-native-snap-carousel';
 import { useRoute } from '@react-navigation/native';
-import { S, SS, Nav1, ThemeVar } from '@/common';
+import { S, SS, Nav, ThemeVar } from '@/common';
 
 const VerifyItem = ({ setNext, index, word, err, isTop, isLast }) => {
 	const [error, setError] = useState(false);
@@ -44,7 +44,7 @@ export const AccountVerifyMnemonic = () => {
 	};
 	return (
 		<Container>
-			<Nav1 title={I18n.t('account.testBackup')} />
+			<Nav title={I18n.t('account.testBackup')} />
 			<Carousel
 				ref={carousel}
 				layout='stack'

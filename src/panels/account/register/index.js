@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useCreateCheck } from '@tangle-pay/store/common';
-import { S, SS, Nav1, ThemeVar, SvgIcon, Toast } from '@/common';
+import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	name: Yup.string().required(),
@@ -21,7 +21,7 @@ export const AccountRegister = () => {
 	});
 	return (
 		<Container>
-			<Nav1 title={I18n.t('account.createTitle')} />
+			<Nav title={I18n.t('account.createTitle')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -44,7 +44,7 @@ export const AccountRegister = () => {
 						Base.push('account/backup');
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.ph50, SS.pt30]}>
+						<View style={[SS.p16]}>
 							<Form>
 								<Item style={[SS.mt10, SS.ml0]} stackedLabel error={!!errors.name}>
 									<Label style={[SS.fz14]}>{I18n.t('account.intoName')}</Label>

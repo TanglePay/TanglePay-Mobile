@@ -11,7 +11,7 @@ export const Staking = () => {
 	return (
 		<Container>
 			<Nav title={I18n.t('staking.title')} />
-			<Content contentContainerStyle={[SS.ph20]}>
+			<Content contentContainerStyle={[SS.ph15, SS.pt15]}>
 				<StatusCon />
 				<AirdopsList />
 			</Content>

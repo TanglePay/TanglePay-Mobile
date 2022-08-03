@@ -42,28 +42,28 @@ export const UserWalletPassword = () => {
 						Base.goBack();
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.p20]}>
+						<View style={[SS.ph16, SS.pv32]}>
 							<Form>
-								<Text style={[SS.fz16, SS.mt25]}>{I18n.t('user.old')}</Text>
+								<Text style={[SS.fz16, SS.mt32]}>{I18n.t('user.old')}</Text>
 								<Item style={[SS.ml0, { minHeight: 50 }]} stackedLabel error={!!errors.old}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14]}
+										style={[SS.fz14, SS.pv4]}
 										placeholder={I18n.t('user.oldTips')}
 										onChangeText={handleChange('old')}
 										value={values.old}
 									/>
 								</Item>
-								<Text style={[SS.fz16, SS.mt25]}>{I18n.t('user.new')}</Text>
+								<Text style={[SS.fz16, SS.mt32]}>{I18n.t('user.new')}</Text>
 								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.newPassword}>
 									<Input
 										keyboardType='ascii-capable'
 										// secureTextEntry={!Base.isIos14}
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14]}
+										style={[SS.fz14, SS.pv4]}
 										placeholder={I18n.t('user.newTips')}
 										onChangeText={handleChange('newPassword')}
 										value={values.newPassword}

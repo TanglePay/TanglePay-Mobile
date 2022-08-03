@@ -17,26 +17,28 @@ export const ClaimSMR = () => {
 	const form = useRef();
 	const [isShow, setShow] = useState(false);
 	let { params } = useRoute();
-	params = Base.handlerParams(params.search);
 	const id = params.id;
 	const [_, walletsList] = useGetNodeWallet();
 	const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
 	const addWallet = useAddWallet();
 	const changeNode = useChangeNode();
+	const hide = () => {
+		setShow(false);
+	};
 	return (
 		<Container>
 			<Nav title={name} />
 			<Content style={[SS.ph16]}>
-				<View style={[SS.pv16, SS.ph16]}>
+				<View style={[SS.pv24]}>
 					<View style={[S.border(4), SS.radius8, SS.p8]}>
-						<Text style={[SS.fz16, SS.cS, { lineHeight: 20, wordBreak: 'break-all' }]}>
+						<Text style={[SS.fz14, SS.cS, { lineHeight: 20, wordBreak: 'break-all' }]}>
 							{curEdit.address}
 						</Text>
 					</View>
 				</View>
-				<View style={[SS.c, SS.pt8, SS.pb16]}>
-					<Text style={[SS.fz18, SS.fw600]}>Claim Shimmer Staking Rewards</Text>
+				<View style={[SS.c, SS.pb16]}>
+					<Text style={[SS.fz16, SS.fw600]}>Claim Shimmer Staking Rewards</Text>
 				</View>
 				<Formik
 					innerRef={form}
@@ -46,7 +48,7 @@ export const ClaimSMR = () => {
 					validateOnMount={false}
 					validationSchema={schema}
 					onSubmit={async (values) => {
-						setShow(true);
+						// setShow(true);
 						// await changeNode(IotaSDK.SMR_NODE_ID)
 						// const { password } = values
 						// if (!Base.checkPassword(password)) {
@@ -77,13 +79,13 @@ export const ClaimSMR = () => {
 						//     Base.goBack()
 						// }
 
-						// Base.replace('/assets/claimReward/claimResult', { id })
+						Base.replace('assets/claimReward/claimResult', { id });
 					}}>
 					{({ handleChange, handleSubmit, values, errors }) => (
-						<View style={[SS.ph16]}>
+						<View>
 							<Form>
-								<Item style={[SS.mb16, SS.pl0, S.border(2)]} error={!!errors.password}>
-									<View style={[SS.fz16, SS.mb16]}>{I18n.t('account.intoPassword')}</View>
+								<Text style={[SS.fz14, SS.mb16]}>{I18n.t('account.intoPassword')}</Text>
+								<Item style={[SS.mb16, SS.pl0, SS.ml0, S.border(2)]} error={!!errors.password}>
 									<Input
 										style={[SS.fz16]}
 										type='password'
@@ -94,13 +96,8 @@ export const ClaimSMR = () => {
 									/>
 								</Item>
 							</Form>
-							<View style={[SS.row, SS.ac, SS.jsb, { marginTop: 100 }]}>
-								<Button
-									onPress={handleSubmit}
-									disabled={!values.password}
-									style={{ height: 48 }}
-									color='primary'
-									block>
+							<View style={[{ marginTop: 100 }]}>
+								<Button onPress={handleSubmit} disabled={!values.password} color='primary' block>
 									<Text>Claim</Text>
 								</Button>
 							</View>
@@ -109,13 +106,13 @@ export const ClaimSMR = () => {
 				</Formik>
 			</Content>
 			<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={hide} onBackdropPress={hide} isVisible={isShow}>
-				<View style={{ width: contentW - 60 }} className='radius10 bgW pa-c'>
-					<View className='pv12 ph16 fz18 fw600 border-b'>Claiming Failed </View>
-					<Text style={[SS.p16, SS.fz16]}>
-						您的IOTA钱包{' '}
-						<Text style={[SS.fw600]}>
+				<View style={[SS.radius10, SS.bgW, SS.pa]}>
+					<Text style={[SS.pv12, SS.ph16, SS.fz16, SS.fw600, S.border(2)]}>Claiming Failed</Text>
+					<Text style={[SS.p16, SS.fz16, { lineHeight: 24 }]}>
+						您的IOTA钱包
+						<Text style={[SS.fw600, SS.cP]}>
 							{curEdit.name} {Base.handleAddress(curEdit.address)}
-						</Text>{' '}
+						</Text>
 						中没有可以Claim的Shimmer Staking Rewards
 					</Text>
 					<View style={[SS.ph16, SS.pb16]}>
@@ -123,7 +120,6 @@ export const ClaimSMR = () => {
 							onPress={() => {
 								setShow(false);
 							}}
-							style={{ height: 48 }}
 							color='primary'
 							block>
 							<Text>I Understand</Text>

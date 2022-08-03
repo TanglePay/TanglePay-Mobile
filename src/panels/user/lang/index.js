@@ -16,7 +16,7 @@ export const UserLang = () => {
 						setLang('en');
 					}}
 					activeOpacity={0.8}
-					style={[SS.p20, S.border(2)]}>
+					style={[SS.p16, S.border(2)]}>
 					<Text style={[SS.fz15, lang === 'en' && SS.cP]}>English</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -24,7 +24,7 @@ export const UserLang = () => {
 						setLang('zh');
 					}}
 					activeOpacity={0.8}
-					style={[SS.p20, S.border(2)]}>
+					style={[SS.p16, S.border(2)]}>
 					<Text style={[SS.fz15, lang === 'zh' && SS.cP]}>繁體中文</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
@@ -32,7 +32,7 @@ export const UserLang = () => {
 						setLang('de');
 					}}
 					activeOpacity={0.8}
-					style={[SS.p20, S.border(2)]}>
+					style={[SS.p16, S.border(2)]}>
 					<Text style={[SS.fz15, lang === 'de' && SS.cP]}>Deutsch</Text>
 				</TouchableOpacity>
 			</Content>

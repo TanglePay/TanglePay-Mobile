@@ -24,25 +24,25 @@ export const WalletDetail = () => {
 		<Container>
 			{/* <AssetsNav /> */}
 			<Nav title={I18n.t('account.walletDetail')} />
-			<Content contentContainerStyle={[SS.ph16, SS.pt10]}>
-				<View style={[{ height: 60 }, SS.row, SS.jsb]}>
+			<Content contentContainerStyle={[SS.ph16]}>
+				<View style={[{ height: 60 }, SS.row, SS.ac, SS.jsb]}>
 					<Text style={[SS.fz16]}>{I18n.t('account.seedAddresses')}</Text>
 				</View>
 				{list.slice(0, 3).length > 0 ? (
 					<View style={[SS.pt8]}>
 						<View style={[{ height: 30 }, SS.ac, SS.jsb, SS.row, SS.mb8]}>
-							<Text style={[SS.flex1, SS.fz16]}>{I18n.t('account.address')}</Text>
-							<Text style={[SS.flex1, SS.tr, SS.fz16]}>{I18n.t('account.outputNum')}</Text>
-							<Text style={[SS.flex1, SS.tr, SS.fz16]}>{I18n.t('account.iotaNum')}</Text>
+							<Text style={[SS.flex1, SS.fz14]}>{I18n.t('account.address')}</Text>
+							<Text style={[SS.flex1, SS.tr, SS.fz14]}>{I18n.t('account.outputNum')}</Text>
+							<Text style={[SS.flex1, SS.tr, SS.fz14]}>{I18n.t('account.iotaNum')}</Text>
 						</View>
 						{list.map((e, i) => {
 							return (
 								<View key={i} style={[{ height: 30 }, SS.ac, SS.jsb, SS.row, SS.mb8]}>
-									<Text style={[SS.flex1, SS.fz16]}>
+									<Text style={[SS.flex1, SS.fz14]}>
 										{(e.address || '').replace(/(^.{8})(.+)(.{4}$)/, '$1...$3')}
 									</Text>
-									<Text style={[SS.flex1, SS.tr, SS.fz16]}>{e.outputIds.length}</Text>
-									<Text style={[SS.flex1, SS.tr, SS.fz16]}>
+									<Text style={[SS.flex1, SS.tr, SS.fz14]}>{e.outputIds.length}</Text>
+									<Text style={[SS.flex1, SS.tr, SS.fz14]}>
 										{numeral(e.balanceMIOTA).format('0,0.0000')}
 									</Text>
 								</View>
@@ -50,13 +50,13 @@ export const WalletDetail = () => {
 						})}
 						{list.length > 3 ? (
 							<View style={[{ height: 30 }, SS.c]}>
-								<Text style={[SS.fz16]}>......</Text>
+								<Text style={[SS.fz14]}>......</Text>
 							</View>
 						) : null}
 						<View style={[{ height: 30 }, SS.ac, SS.jsb, SS.row, SS.mb8]}>
-							<Text style={[SS.flex1, SS.fz16]}>{I18n.t('account.totalNum')}</Text>
-							<Text style={[SS.flex1, SS.tr, SS.fz16]}>{totalInfo?.outputIds?.length || 0}</Text>
-							<Text style={[SS.flex1, SS.tr, SS.fz16]}>
+							<Text style={[SS.flex1, SS.fz14]}>{I18n.t('account.totalNum')}</Text>
+							<Text style={[SS.flex1, SS.tr, SS.fz14]}>{totalInfo?.outputIds?.length || 0}</Text>
+							<Text style={[SS.flex1, SS.tr, SS.fz14]}>
 								{numeral(totalInfo?.balanceMIOTA || 0).format('0,0.0000')}
 							</Text>
 						</View>
@@ -73,7 +73,7 @@ export const WalletDetail = () => {
 					<Text>{I18n.t('account.outputCollect')}</Text>
 				</Button>
 				{/* ) : null} */}
-				<Text style={[SS.fz16, SS.cS, { lineHeight: 26 }]}>{I18n.t('account.collectTips')}</Text>
+				<Text style={[SS.fz14, SS.cS, { lineHeight: 26 }]}>{I18n.t('account.collectTips')}</Text>
 			</Content>
 		</Container>
 	);

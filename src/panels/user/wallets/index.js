@@ -51,7 +51,7 @@ export const UserWallets = () => {
 										/>
 									</View>
 								</View>
-								<SvgIcon size={14} name='right' />
+								<SvgIcon size={16} name='right' />
 							</TouchableOpacity>
 						);
 					})}

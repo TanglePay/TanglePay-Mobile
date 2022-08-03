@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
-import { S, SS, Nav1, ThemeVar, SvgIcon, Toast } from '@/common';
+import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -26,7 +26,10 @@ export const AccountInto = () => {
 	const addWallet = useAddWallet();
 	return (
 		<Container>
-			<Nav1 title={I18n.t(type === 1 ? 'account.intoTitle1' : 'account.intoTitle2')} />
+			<Nav
+				headerStyle={{ borderBottomWidth: 0 }}
+				title={I18n.t(type === 1 ? 'account.intoTitle1' : 'account.intoTitle2')}
+			/>
 			<Content>
 				<Formik
 					innerRef={form}

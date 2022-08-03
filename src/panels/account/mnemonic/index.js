@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
-import { S, SS, Nav1 } from '@/common';
+import { S, SS, Nav } from '@/common';
 
 export const AccountMnemonic = () => {
 	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
@@ -17,8 +17,8 @@ export const AccountMnemonic = () => {
 	}, []);
 	return (
 		<Container>
-			<Nav1 title={I18n.t('account.mnemonicTitle')} />
-			<Content contentContainerStyle={[SS.ph50, SS.pb50]}>
+			<Nav title={I18n.t('account.mnemonicTitle')} />
+			<Content contentContainerStyle={[SS.ph16, SS.pb50, SS.pt16]}>
 				<View style={[SS.mb10]}>
 					<Text style={[SS.cS, SS.fz14]}>{I18n.t('account.mnemonicSubTitle')}</Text>
 				</View>
@@ -39,11 +39,11 @@ export const AccountMnemonic = () => {
 						);
 					})}
 				</View>
-				<View style={[SS.mb10, SS.mt20, SS.as, SS.row]}>
+				<View style={[SS.mb10, SS.mt20, SS.as, SS.row, SS.mr24]}>
 					<Text style={[SS.mr20, { fontSize: 6 }, SS.mt5]}>●</Text>
 					<Text style={[SS.fz14, SS.cS]}>{I18n.t('account.mnemonicPhraseTips1')}</Text>
 				</View>
-				<View style={[SS.mb10, SS.as, SS.row]}>
+				<View style={[SS.mb10, SS.as, SS.row, SS.mr24]}>
 					<Text style={[SS.mr20, { fontSize: 6 }, SS.mt5]}>●</Text>
 					<Text style={[SS.fz14, SS.cS]}>{I18n.t('account.mnemonicPhraseTips2')}</Text>
 				</View>

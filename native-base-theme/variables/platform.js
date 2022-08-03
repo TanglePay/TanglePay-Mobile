@@ -52,7 +52,7 @@ export default {
 
 	// Button
 	buttonFontFamily: 'Open Sans',
-	buttonDisabledBg: '#CBDCEC',
+	buttonDisabledBg: 'rgba(149, 149, 149,0.5)',
 	buttonPadding: 6,
 	buttonDefaultActiveOpacity: 0.5,
 	buttonDefaultFlex: 1,
@@ -138,7 +138,7 @@ export default {
 
 	// Container
 	containerBgColor: '#fff',
-	secondBgColor: '#F2F2F2',
+	secondBgColor: '#F5F5F5',
 
 	// Date Picker
 	datePickerFlex: 1,

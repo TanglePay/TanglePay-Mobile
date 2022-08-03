@@ -20,13 +20,13 @@ export const UserEditWallet = () => {
 		<Container>
 			<Nav title={I18n.t('user.manage')} />
 			<Content>
-				<View style={[SS.row, SS.p20, SS.ac, S.border(2)]}>
-					<View style={[SS.c, S.wh(40), S.radius(40), SS.mr15, S.bg(ThemeVar.brandPrimary)]}>
+				<View style={[SS.row, SS.pv20, SS.ph16, SS.ac, S.border(2)]}>
+					<View style={[SS.c, S.wh(40), S.radius(40), SS.mr16, S.bg(ThemeVar.brandPrimary)]}>
 						<Text style={[SS.cW, SS.fz15]}>{name[0] || ''}</Text>
 					</View>
 					<View>
 						<View style={[SS.ac, SS.row, SS.mb10]}>
-							<Text style={[SS.fz15, SS.mr10]}>{name}</Text>
+							<Text style={[SS.fz14, SS.mr10, SS.fw600]}>{name}</Text>
 							<SvgIcon
 								onPress={() => {
 									dialogRef.current.show();
@@ -36,7 +36,7 @@ export const UserEditWallet = () => {
 							/>
 						</View>
 						<View style={[S.w(ThemeVar.deviceWidth - 120)]}>
-							<Text style={[SS.fz15, SS.cS, { lineHeight: 24 }]}>{curEdit.address}</Text>
+							<Text style={[SS.fz14, SS.cS, { lineHeight: 24 }]}>{curEdit.address}</Text>
 							<SvgIcon
 								onPress={() => {
 									Clipboard.setString(curEdit.address);
@@ -49,7 +49,7 @@ export const UserEditWallet = () => {
 						</View>
 						{/* <View style={[SS.row, SS.ac, SS.mt10]}>
 							<View style={[S.radius(10), S.wh(10, 10), S.bg('#4E9B45')]}></View>
-							<Text style={[SS.fz15, SS.ml5]}>
+							<Text style={[SS.fz14, SS.ml5]}>
 								{IotaSDK.nodes.find((e) => e.id == curEdit.nodeId)?.name}
 							</Text>
 						</View> */}
@@ -61,7 +61,7 @@ export const UserEditWallet = () => {
 					}}
 					activeOpacity={0.8}
 					style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-					<Text style={[SS.fz15]}>{I18n.t('user.backupWallet')}</Text>
+					<Text style={[SS.fz14]}>{I18n.t('user.backupWallet')}</Text>
 					<Icon style={[S.wh(16)]} name={images.com.right} />
 				</TouchableOpacity> */}
 				{curNode?.type == 1 ? (
@@ -70,9 +70,9 @@ export const UserEditWallet = () => {
 							Base.push('user/walletDetail');
 						}}
 						activeOpacity={0.8}
-						style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-						<Text style={[SS.fz15]}>{I18n.t('account.walletDetail')}</Text>
-						<SvgIcon size={14} name='right' />
+						style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+						<Text style={[SS.fz14]}>{I18n.t('account.walletDetail')}</Text>
+						<SvgIcon size={16} name='right' />
 					</TouchableOpacity>
 				) : null}
 				<TouchableOpacity
@@ -82,9 +82,9 @@ export const UserEditWallet = () => {
 						});
 					}}
 					activeOpacity={0.8}
-					style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-					<Text style={[SS.fz15]}>{I18n.t('user.resetPassword')}</Text>
-					<SvgIcon size={14} name='right' />
+					style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+					<Text style={[SS.fz14]}>{I18n.t('user.resetPassword')}</Text>
+					<SvgIcon size={16} name='right' />
 				</TouchableOpacity>
 				{curNode?.type == 2 ? (
 					<TouchableOpacity
@@ -94,9 +94,9 @@ export const UserEditWallet = () => {
 							});
 						}}
 						activeOpacity={0.8}
-						style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-						<Text style={[SS.fz15]}>{I18n.t('account.exportKey')}</Text>
-						<SvgIcon size={14} name='right' />
+						style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+						<Text style={[SS.fz14]}>{I18n.t('account.exportKey')}</Text>
+						<SvgIcon size={16} name='right' />
 					</TouchableOpacity>
 				) : null}
 				<TouchableOpacity
@@ -104,9 +104,9 @@ export const UserEditWallet = () => {
 						Base.push('user/removeWallet', { id });
 					}}
 					activeOpacity={0.8}
-					style={[SS.p20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-					<Text style={[SS.fz15]}>{I18n.t('account.removeTitle')}</Text>
-					<SvgIcon size={14} name='right' />
+					style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+					<Text style={[SS.fz14]}>{I18n.t('account.removeTitle')}</Text>
+					<SvgIcon size={16} name='right' />
 				</TouchableOpacity>
 			</Content>
 			<NameDialog dialogRef={dialogRef} data={{ ...curEdit }} />

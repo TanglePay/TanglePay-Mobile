@@ -18,14 +18,14 @@ export const PrivateKey = () => {
 		<Container>
 			<Nav title={name} />
 			<Content>
-				<View style={[SS.p20, S.border(2)]}>
-					<View style={[S.border(4), SS.radius10, SS.p10]}>
-						<Text style={[SS.fz13, SS.cS, S.lineHeight(20)]}>{curEdit.address}</Text>
+				<View style={[SS.p16]}>
+					<View style={[S.border(4), SS.radius8, SS.p8]}>
+						<Text style={[SS.fz14, S.lineHeight(18)]}>{curEdit.address}</Text>
 					</View>
 				</View>
-				<View style={[SS.ph20]}>
-					<View style={[SS.c, SS.pv20]}>
-						<Text style={[SS.fz18]}>{I18n.t('account.showKey')}</Text>
+				<View style={[SS.ph15]}>
+					<View style={[SS.c, SS.pv24]}>
+						<Text style={[SS.fz16, SS.fw600]}>{I18n.t('account.showKey')}</Text>
 					</View>
 					<View>
 						<Text style={[SS.fz14]}>
@@ -36,7 +36,7 @@ export const PrivateKey = () => {
 								secureTextEntry
 								value={password}
 								onChangeText={setPassword}
-								style={[S.border(2, '#ddd', 1), SS.mt15]}
+								style={[S.border(2, '#ddd', 1), SS.mt15, SS.mb8]}
 							/>
 						) : (
 							<Text
@@ -44,12 +44,12 @@ export const PrivateKey = () => {
 									Clipboard.setString(keyStr);
 									Toast.success(I18n.t('assets.copied'));
 								}}
-								style={[SS.fz14, SS.pt20, SS.fw500, S.lineHeight(24)]}>
+								style={[SS.fz14, SS.pt8, SS.fw600, S.lineHeight(18)]}>
 								{keyStr}
 							</Text>
 						)}
 					</View>
-					<View style={[SS.mv20, S.bg('rgba(213, 53, 84, 0.05)'), SS.radius10, SS.p10]}>
+					<View style={[SS.mt16, SS.mb32, S.bg('rgba(213, 53, 84, 0.05)'), SS.radius10, SS.p10]}>
 						<Text style={[SS.fz14, S.color('#D53554')]}>{I18n.t('account.showKeyTips')}</Text>
 					</View>
 					{!keyStr ? (
