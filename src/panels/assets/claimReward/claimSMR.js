@@ -27,7 +27,7 @@ export const ClaimSMR = () => {
 	return (
 		<Container>
 			<Nav title={name} />
-			<Content>
+			<Content style={[SS.ph16]}>
 				<View style={[SS.pv16, SS.ph16]}>
 					<View style={[S.border(4), SS.radius8, SS.p8]}>
 						<Text style={[SS.fz16, SS.cS, { lineHeight: 20, wordBreak: 'break-all' }]}>

@@ -18,7 +18,7 @@ export const ClaimReward = () => {
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.myWallets')} />
-			<Content>
+			<Content style={[SS.ph16]}>
 				<View style={{ overflowY: 'scroll', height: contentH - 48 - 60 }} className='ph20'>
 					<Text style={[SS.fz17, SS.pt16]}>
 						Choose a Wallet to <Text style={[SS.cP]}>Claim SMR Staking Rewards</Text>

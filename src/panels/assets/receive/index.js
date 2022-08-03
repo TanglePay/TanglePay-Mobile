@@ -6,7 +6,7 @@ import { I18n } from '@tangle-pay/common';
 import QRCode from 'react-native-qrcode-svg';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import Share from 'react-native-share';
-import { Nav1, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
+import { Nav, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
 import scan_bg from '@tangle-pay/assets/images/scan_bg.png';
 export const AssetsReceive = () => {
 	const [curWallet] = useGetNodeWallet();
@@ -18,7 +18,12 @@ export const AssetsReceive = () => {
 	}, []);
 	return (
 		<Container style={[S.bg('#1F7EFC')]}>
-			<Nav1 title={I18n.t('assets.receiver')} leftStyle={{ ...S.cW }} titleStyle={{ ...S.cW }} />
+			<Nav
+				headerStyle={{ borderBottomWidth: 0 }}
+				title={I18n.t('assets.receiver')}
+				leftStyle={{ ...S.cW }}
+				titleStyle={{ ...S.cW }}
+			/>
 			<View style={[SS.mh20, SS.mt10, SS.radius10, SS.bgW, SS.ac]}>
 				<View style={[SS.pv20]}>
 					<Text style={[SS.fz16, SS.cS]}>{I18n.t('assets.scanQRcode')}</Text>

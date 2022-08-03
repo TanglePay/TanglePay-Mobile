@@ -51,7 +51,7 @@ export default {
 	badgePadding: 3,
 
 	// Button
-	buttonFontFamily: 'System',
+	buttonFontFamily: 'Open Sans',
 	buttonDisabledBg: '#CBDCEC',
 	buttonPadding: 6,
 	buttonDefaultActiveOpacity: 0.5,
@@ -292,7 +292,7 @@ export default {
 	},
 
 	// Title
-	titleFontfamily: 'System',
+	titleFontfamily: 'Open Sans',
 	titleFontSize: 17,
 	subTitleFontSize: 11,
 	subtitleColor: '#8e8e93',

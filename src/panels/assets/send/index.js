@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav1, S, SS, SvgIcon, Toast } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast } from '@/common';
 import BigNumber from 'bignumber.js';
 
 const schema = Yup.object().shape({
@@ -39,7 +39,7 @@ export const AssetsSend = () => {
 	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
 	return (
 		<Container>
-			<Nav1 title={I18n.t('assets.send')} />
+			<Nav title={I18n.t('assets.send')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -108,7 +108,7 @@ export const AssetsSend = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.ph50, SS.pt30]}>
+						<View style={[SS.p16]}>
 							<Form>
 								<Item
 									style={[SS.ml0, SS.row, SS.ac, SS.jsb, { minHeight: 40 }]}

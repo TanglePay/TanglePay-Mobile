@@ -97,6 +97,12 @@ const styleObj = {
 		textAlign: 'center'
 	},
 	// bold
+	fw300: {
+		fontWeight: '300'
+	},
+	fw400: {
+		fontWeight: '400'
+	},
 	fw500: {
 		fontWeight: '500'
 	},
