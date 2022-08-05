@@ -86,7 +86,7 @@ export const Bridge = {
 						break;
 					case 'iota_changeAccount':
 						{
-							const { network = '' } = requestParams;
+							const { network = '' } = params;
 							const url = `tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&network=${network}`;
 							Linking.openURL(url);
 						}

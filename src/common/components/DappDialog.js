@@ -130,7 +130,6 @@ export const DappDialog = () => {
 			case 'iota_changeAccount':
 				{
 					await Bridge.sendMessage(type, {
-						code: 200,
 						address: curWallet.address,
 						nodeId: curWallet.nodeId,
 						network: IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.network
@@ -355,8 +354,8 @@ export const DappDialog = () => {
 		}
 	};
 	useEffect(() => {
-		handleUrl(deepLink);
-	}, [curWallet.address, deepLink]);
+		handleUrl(deepLink, curWallet.password);
+	}, [JSON.stringify(curWallet), deepLink, curNodeId]);
 	useEffect(() => {
 		Linking.getInitialURL().then((url) => {
 			if (/^tanglepay:\/\/.+/.test(url)) {
