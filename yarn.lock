@@ -1364,6 +1364,7 @@
     "@hapi/hoek" "^9.0.0"
 
 "@iota/crypto.js-next@npm:@iota/crypto.js@next", "@iota/crypto.js@^1.9.0-stardust.6":
+  name "@iota/crypto.js-next"
   version "1.9.0-stardust.6"
   resolved "https://registry.npmjs.org/@iota/crypto.js/-/crypto.js-1.9.0-stardust.6.tgz#a17c277e97b72352fb83d02c67a9e38220e14dd9"
   integrity sha512-jbruSRXlEKW2dgfPFG7e42ODBp4dVu2/CAh/oZrzMjehPdyF2tgAeN1woOqOAmVONWoGVV9GViZti3nShhGF1g==
@@ -1380,6 +1381,7 @@
     big-integer "^1.6.51"
 
 "@iota/iota.js-next@npm:@iota/iota.js@next", "@iota/iota.js@^1.9.0-stardust.22":
+  name "@iota/iota.js-next"
   version "1.9.0-stardust.22"
   resolved "https://registry.npmjs.org/@iota/iota.js/-/iota.js-1.9.0-stardust.22.tgz#cb8897d33429dc11c177541fb7e0169d1da2785b"
   integrity sha512-20hKTqKZ8Gvpe7sQG4k8lEwxbe60/amCCeX/rMuvIb5RAuv4yikl9WFcgRXd9UTQr8D7Pj0rxpMMLZPGa+MGew==
@@ -2270,9 +2272,9 @@ absolute-path@^0.0.0:
   resolved "https://registry.npm.taobao.org/absolute-path/download/absolute-path-0.0.0.tgz#a78762fbdadfb5297be99b15d35a785b2f095bf7"
   integrity sha1-p4di+9rftSl76ZsV01p4Wy8JW/c=
 
-accepts@^1.3.7, accepts@~1.3.5, accepts@~1.3.7:
-  version "1.3.7"
-  resolved "https://registry.npm.taobao.org/accepts/download/accepts-1.3.7.tgz#531bc726517a3b2b41f850021c6cc15eaab507cd"
+accepts@^1.3.8, accepts@~1.3.5, accepts@~1.3.8:
+  version "1.3.8"
+  resolved "https://registry.npm.taobao.org/accepts/download/accepts-1.3.8.tgz#531bc726517a3b2b41f850021c6cc15eaab507cd"
   integrity sha1-UxvHJlF6OytB+FACHGzBXqq1B80=
   dependencies:
     mime-types "~2.1.24"
@@ -4236,7 +4238,7 @@ errorhandler@^1.5.0:
   resolved "https://registry.npm.taobao.org/errorhandler/download/errorhandler-1.5.1.tgz#b9ba5d17cf90744cd1e851357a6e75bf806a9a91"
   integrity sha1-ubpdF8+QdEzR6FE1em51v4BqmpE=
   dependencies:
-    accepts "~1.3.7"
+    accepts "~1.3.8"
     escape-html "~1.0.3"
 
 es-abstract@^1.19.0, es-abstract@^1.19.1:
@@ -7321,7 +7323,7 @@ metro@0.66.2, metro@^0.66.1:
     "@babel/traverse" "^7.14.0"
     "@babel/types" "^7.0.0"
     absolute-path "^0.0.0"
-    accepts "^1.3.7"
+    accepts "^1.3.8"
     async "^2.4.0"
     chalk "^4.0.0"
     ci-info "^2.0.0"
@@ -10168,10 +10170,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^1.5.6:
-  version "1.5.6"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.5.6.tgz#16ccd9145966e333871b4f66ba635fa72aa225ea"
-  integrity sha512-7VkVfb7UVP/X/Dw0eZ7W1SOM1CZ2dKgPzGiGialf9hhZM/rZ9zjDmBBfTadx+ydh+sw4X4W48ohV1cjcDuwG+g==
+tanglepay@^1.5.7:
+  version "1.5.7"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.5.7.tgz#f5ecbc72fcf4aaf6916d12b3a399f94918c95c64"
+  integrity sha512-DoE28Nbe07jzfoIwLxh25Gd+05kgKImuKzocqFjNifYzJsGLnP7CtTS4BBTYXDYWgB8TxlhwYDlDBy8wh+oScA==
 
 tar@^4.0.2:
   version "4.4.19"

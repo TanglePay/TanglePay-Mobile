@@ -48,12 +48,13 @@ export const DappDialog = () => {
 		}
 	};
 	const onExecute = async ({ address, return_url, content, type, amount, origin, expires }) => {
-		if (password !== curWallet.password && type !== 'iota_connect') {
+		if (password !== curWallet.password && type !== 'iota_connect' && type !== 'iota_changeAccount') {
 			return Toast.error(I18n.t('assets.passwordError'));
 		}
 		let messageId = '';
 		switch (type) {
 			case 'send':
+			case 'iota_sendTransaction':
 				{
 					const assets = assetsList.find((e) => e.name === IotaSDK.curNode?.token) || {};
 					let realBalance = BigNumber(assets.realBalance || 0);
@@ -87,6 +88,9 @@ export const DappDialog = () => {
 							return;
 						}
 						messageId = res.messageId;
+						if (type === 'iota_sendTransaction') {
+							Bridge.sendMessage(type, res);
+						}
 						setLoading(false);
 						Toast.success(
 							I18n.t(
@@ -97,6 +101,9 @@ export const DappDialog = () => {
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
 					} catch (error) {
+						if (type === 'iota_sendTransaction') {
+							Bridge.sendErrorMessage(type, error);
+						}
 						setLoading(false);
 						Toast.error(
 							`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
@@ -118,6 +125,17 @@ export const DappDialog = () => {
 					Toast.error(error.toString(), {
 						duration: 5000
 					});
+				}
+				break;
+			case 'iota_changeAccount':
+				{
+					await Bridge.sendMessage(type, {
+						code: 200,
+						address: curWallet.address,
+						nodeId: curWallet.nodeId,
+						network: IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.network
+					});
+					Toast.hideLoading();
 				}
 				break;
 			case 'iota_connect':
@@ -192,6 +210,7 @@ export const DappDialog = () => {
 				const [type, address] = path.split('/');
 				switch (type) {
 					case 'send':
+					case 'iota_sendTransaction':
 						{
 							value = parseFloat(value) || 0;
 							if (!value) {
@@ -275,6 +294,12 @@ export const DappDialog = () => {
 								content
 							});
 							show();
+						}
+						break;
+					case 'iota_changeAccount':
+						{
+							Toast.showLoading();
+							onExecute({ type });
 						}
 						break;
 					case 'iota_connect': // sdk connect

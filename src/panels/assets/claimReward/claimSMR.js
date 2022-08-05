@@ -12,7 +12,6 @@ import Modal from 'react-native-modal';
 const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
-const contentW = ThemeVar.deviceWidth;
 export const ClaimSMR = () => {
 	const form = useRef();
 	const [isShow, setShow] = useState(false);
@@ -48,38 +47,22 @@ export const ClaimSMR = () => {
 					validateOnMount={false}
 					validationSchema={schema}
 					onSubmit={async (values) => {
-						// setShow(true);
-						// await changeNode(IotaSDK.SMR_NODE_ID)
-						// const { password } = values
-						// if (!Base.checkPassword(password)) {
-						//     return Toast.error(I18n.t('account.intoPasswordTips'))
-						// }
-						// const res = await IotaSDK.claimSMR({ ...curEdit, password })
-						// console.log(res, '-------------------------')
-						// const seed = curEdit.seed
-						// const res = await IotaSDK.importSMRBySeed(seed, password)
-						// addWallet({
-						//     ...res
-						// })
-						// IotaSDK.claimSMR(curEdit, res.address)
-
-						// const sendRes = await IotaSDK.send(curEdit.address, res.address, sendAmount, {
-						//     contract: assets?.contract,
-						//     token: assets?.name
-						// })
-						// if (res) {
-						//     Toast.hideLoading()
-						//     Toast.success(
-						//         I18n.t(
-						//             IotaSDK.checkWeb3Node(curWallet.nodeId)
-						//                 ? 'assets.sendSucc'
-						//                 : 'assets.sendSuccRestake'
-						//         )
-						//     )
-						//     Base.goBack()
-						// }
-
-						Base.replace('assets/claimReward/claimResult', { id });
+						const { password } = values;
+						if (!Base.checkPassword(password)) {
+							return Toast.error(I18n.t('account.intoPasswordTips'));
+						}
+						await changeNode(IotaSDK.SMR_NODE_ID);
+						const res = await IotaSDK.claimSMR({ ...curEdit, password });
+						if (res.code > 0) {
+							if (res.code === 200) {
+								addWallet({
+									...res.addressInfo
+								});
+								Base.replace('assets/claimReward/claimResult', { id, amount: res.amount });
+							} else {
+								setShow(true);
+							}
+						}
 					}}>
 					{({ handleChange, handleSubmit, values, errors }) => (
 						<View>

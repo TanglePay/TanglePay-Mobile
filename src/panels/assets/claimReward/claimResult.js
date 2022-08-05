@@ -2,16 +2,13 @@ import React from 'react';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Base, I18n } from '@tangle-pay/common';
 import { Nav, SS } from '@/common';
-import * as Yup from 'yup';
 import { View, Text, Button, Container, Content } from 'native-base';
 import { useRoute } from '@react-navigation/native';
 
-const schema = Yup.object().shape({
-	password: Yup.string().required()
-});
 export const ClaimResult = () => {
 	const { params } = useRoute();
 	const id = params.id;
+	const amount = params.amount;
 	const [_, walletsList] = useGetNodeWallet();
 	const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
@@ -21,7 +18,7 @@ export const ClaimResult = () => {
 			<Content style={[SS.p16]}>
 				<Text style={[SS.fz16, SS.fw600, SS.pb16, { lineHeight: 24 }]}>Shimmer Staking Rewards Claimed</Text>
 				<Text style={[SS.fz16, SS.fw600, SS.pb16, { lineHeight: 24 }]}>
-					SMR数量：<Text style={[SS.cP]}>32983</Text>
+					SMR数量：<Text style={[SS.cP]}>{amount}</Text>
 				</Text>
 				<Text style={[SS.fz16, SS.pb16, { lineHeight: 24 }]}>
 					新创建的Shimmer钱包助记词与初始密码与您的IOTA钱包{' '}
