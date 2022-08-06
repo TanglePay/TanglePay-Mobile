@@ -19,9 +19,18 @@ export const ClaimReward = () => {
 		<Container>
 			<Nav title={I18n.t('assets.myWallets')} />
 			<Content style={[SS.ph16]}>
-				<View style={{ overflowY: 'scroll', height: contentH - 48 - 60 }} className='ph20'>
+				<View style={{ overflowY: 'scroll', height: contentH - 48 - 60 }}>
 					<Text style={[SS.fz16, SS.pt16]}>
-						Choose a Wallet to <Text style={[SS.cP]}>Claim SMR Staking Rewards</Text>
+						{I18n.t('shimmer.chooseAWallet')
+							.split('##')
+							.filter((e) => !!e)
+							.map((e, i) => {
+								return (
+									<Text key={i} style={[i == 1 ? SS.cP : null]}>
+										{e}
+									</Text>
+								);
+							})}
 					</Text>
 					{walletsList.length > 0 ? (
 						<View style={[SS.mb16]}>
@@ -45,20 +54,29 @@ export const ClaimReward = () => {
 							})}
 						</View>
 					) : (
-						<View className='mt60'>
+						<View style={[SS.mt60]}>
 							<NoData />
 						</View>
 					)}
 					<Text style={[SS.fz16, { lineHeight: 24 }]}>
-						<Text>如果你要Claim收益的IOTA钱包不在列表内，请先在Tanglepay中 </Text>
-						<Text
-							style={[SS.cP]}
-							onPress={async () => {
-								await changeNode(IotaSDK.IOTA_NODE_ID);
-								Base.push('account/into', { type: 1, from: 'smr' });
-							}}>
-							导入IOTA钱包
-						</Text>
+						{I18n.t('shimmer.importTips')
+							.split('##')
+							.filter((e) => !!e)
+							.map((e, i) => {
+								return (
+									<Text
+										key={i}
+										style={[i == 1 ? SS.cP : null]}
+										onClick={async () => {
+											if (i == 1) {
+												await changeNode(IotaSDK.IOTA_NODE_ID);
+												Base.push('/account/into', { type: 1, from: 'smr' });
+											}
+										}}>
+										{e}
+									</Text>
+								);
+							})}
 					</Text>
 				</View>
 			</Content>

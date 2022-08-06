@@ -178,7 +178,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 									}}
 									style={[SS.row, SS.ac, SS.ph15, { height: 44, minWidth: 260 }]}>
 									<SvgIcon name='view' color='black' size='20' />
-									<View style={[SS.ml10]} className='ml10 fz14 fw500'>
+									<View style={[SS.ml10]}>
 										<Text style={[SS.fz14, SS.fw500]}>{I18n.t('account.viewInExplorer')}</Text>
 									</View>
 								</TouchableOpacity>
@@ -192,7 +192,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 									}}
 									style={[SS.row, SS.ac, SS.ph15, { height: 44, minWidth: 260 }]}>
 									<SvgIcon name='scan' color='black' size='20' />
-									<View style={[SS.ml10]} className='ml10 fz14 fw500'>
+									<View style={[SS.ml10]}>
 										<Text style={[SS.fz14, SS.fw500]}>{I18n.t('assets.scanTitle')}</Text>
 									</View>
 								</TouchableOpacity>

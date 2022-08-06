@@ -37,7 +37,7 @@ export const ClaimSMR = () => {
 					</View>
 				</View>
 				<View style={[SS.c, SS.pb16]}>
-					<Text style={[SS.fz16, SS.fw600]}>Claim Shimmer Staking Rewards</Text>
+					<Text style={[SS.fz16, SS.fw600]}>{I18n.t('shimmer.claimStakingRewards')}</Text>
 				</View>
 				<Formik
 					innerRef={form}
@@ -81,7 +81,7 @@ export const ClaimSMR = () => {
 							</Form>
 							<View style={[{ marginTop: 100 }]}>
 								<Button onPress={handleSubmit} disabled={!values.password} color='primary' block>
-									<Text>Claim</Text>
+									<Text>{I18n.t('shimmer.claim')}</Text>
 								</Button>
 							</View>
 						</View>
@@ -90,13 +90,22 @@ export const ClaimSMR = () => {
 			</Content>
 			<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={hide} onBackdropPress={hide} isVisible={isShow}>
 				<View style={[SS.radius10, SS.bgW, SS.pa]}>
-					<Text style={[SS.pv12, SS.ph16, SS.fz16, SS.fw600, S.border(2)]}>Claiming Failed</Text>
+					<Text style={[SS.pv12, SS.ph16, SS.fz16, SS.fw600, S.border(2)]}>
+						{I18n.t('shimmer.claimingFailed')}
+					</Text>
 					<Text style={[SS.p16, SS.fz16, { lineHeight: 24 }]}>
-						您的IOTA钱包
-						<Text style={[SS.fw600, SS.cP]}>
-							{curEdit.name} {Base.handleAddress(curEdit.address)}
-						</Text>
-						中没有可以Claim的Shimmer Staking Rewards
+						{I18n.t('shimmer.claimingFailedTips')
+							.replace('{name}', curEdit.name)
+							.replace('{address}', Base.handleAddress(curEdit.address))
+							.split('##')
+							.filter((e) => !!e)
+							.map((e, i) => {
+								return (
+									<Text style={i === 1 ? [SS.fw600, SS.cP] : []} key={i}>
+										{e}
+									</Text>
+								);
+							})}
 					</Text>
 					<View style={[SS.ph16, SS.pb16]}>
 						<Button
@@ -105,7 +114,7 @@ export const ClaimSMR = () => {
 							}}
 							color='primary'
 							block>
-							<Text>I Understand</Text>
+							<Text>{I18n.t('shimmer.understand')}</Text>
 						</Button>
 					</View>
 				</View>

@@ -16,20 +16,28 @@ export const ClaimResult = () => {
 		<Container>
 			<Nav title={name} />
 			<Content style={[SS.p16]}>
-				<Text style={[SS.fz16, SS.fw600, SS.pb16, { lineHeight: 24 }]}>Shimmer Staking Rewards Claimed</Text>
 				<Text style={[SS.fz16, SS.fw600, SS.pb16, { lineHeight: 24 }]}>
-					SMR数量：<Text style={[SS.cP]}>{amount}</Text>
+					{I18n.t('shimmer.smrClaimStakingReward')}
+				</Text>
+				<Text style={[SS.fz16, SS.fw600, SS.pb16, { lineHeight: 24 }]}>
+					{I18n.t('shimmer.smrAmount')}
+					<Text style={[SS.cP]}>{amount}</Text>
 				</Text>
 				<Text style={[SS.fz16, SS.pb16, { lineHeight: 24 }]}>
-					新创建的Shimmer钱包助记词与初始密码与您的IOTA钱包{' '}
-					<Text style={[SS.fw600]}>
-						{name} {Base.handleAddress(curEdit.address)}
-					</Text>
-					一致
+					{I18n.t('shimmer.createTips')
+						.replace('{name}', name)
+						.replace('{address}', Base.handleAddress(curEdit.address))
+						.split('##')
+						.filter((e) => !!e)
+						.map((e, i) => {
+							return (
+								<Text style={[i === 1 ? SS.fw600 : null]} key={i}>
+									{e}
+								</Text>
+							);
+						})}
 				</Text>
-				<Text style={[SS.fz16, SS.mb16, { lineHeight: 24 }]}>
-					为了您的资产安全，建议您修改钱包密码或者将资产转移到全新的Shimmer钱包
-				</Text>
+				<Text style={[SS.fz16, SS.mb16, { lineHeight: 24 }]}>{I18n.t('shimmer.createSuccTips')}</Text>
 				<View style={[{ marginTop: 138 }]}>
 					<Button
 						onPress={() => {
@@ -38,7 +46,7 @@ export const ClaimResult = () => {
 						}}
 						color='primary'
 						block>
-						<Text>I Understand</Text>
+						<Text>{I18n.t('shimmer.understand')}</Text>
 					</Button>
 				</View>
 			</Content>

@@ -97,6 +97,18 @@ export const Bridge = {
 							this[method](origin, params);
 						}
 						break;
+					case 'iota_getPublicKey':
+						try {
+							const curWallet = await this.getCurWallet();
+							const baseSeed = IotaSDK.getSeed(curWallet.seed, curWallet.password);
+							const addressKeyPair = IotaSDK.getPair(baseSeed);
+							this.sendMessage('iota_getPublicKey', IotaSDK.bytesToHex(addressKeyPair.publicKey));
+						} catch (error) {
+							this.sendErrorMessage('iota_getPublicKey', {
+								msg: error.toString()
+							});
+						}
+						break;
 					default:
 						break;
 				}
@@ -133,7 +145,7 @@ export const Bridge = {
 			Trace.dappConnect(origin.replace(/.+\/\//, ''), curWallet.address, curWallet.nodeId, IotaSDK.curNode.token);
 		}
 	},
-	async evm_getBalance(origin, { assetsList, addressList }) {
+	async eth_getBalance(origin, { assetsList, addressList }) {
 		try {
 			// iota
 			assetsList = assetsList || [];
@@ -152,11 +164,11 @@ export const Bridge = {
 				amount
 			};
 			const curWallet = await this.getCurWallet();
-			const key = `${origin}_evm_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
-			this.sendMessage('evm_getBalance', assetsData);
+			const key = `${origin}_eth_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
+			this.sendMessage('eth_getBalance', assetsData);
 		} catch (error) {
 			Toast.hideLoading();
-			this.sendErrorMessage('evm_getBalance', {
+			this.sendErrorMessage('eth_getBalance', {
 				msg: error.toString()
 			});
 		}

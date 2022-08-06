@@ -160,6 +160,9 @@ export const AssetsSend = () => {
 											if (parseFloat(str) < Math.pow(10, -precision)) {
 												str = String(Math.pow(10, -precision));
 											}
+											if (curWallet.nodeId === IotaSDK.SMR_NODE_ID) {
+												str = String(parseInt(str));
+											}
 											setFieldValue('amount', str);
 										}}
 									/>

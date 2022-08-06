@@ -69,7 +69,6 @@ export const Assets = () => {
 	}, [curTab]);
 	useEffect(() => {
 		let filterAssetsList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterAssetsList || [];
-		filterAssetsList = filterAssetsList.filter((e) => e !== 'soonaverse');
 		setAssetsTab([...initAsssetsTab.filter((e) => !filterAssetsList.includes(e))]);
 	}, [curWallet.nodeId]);
 	return (

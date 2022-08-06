@@ -48,7 +48,8 @@ export const DappDialog = () => {
 		}
 	};
 	const onExecute = async ({ address, return_url, content, type, amount, origin, expires }) => {
-		if (password !== curWallet.password && type !== 'iota_connect' && type !== 'iota_changeAccount') {
+		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
+		if (password !== curWallet.password && !noPassword.includes(type)) {
 			return Toast.error(I18n.t('assets.passwordError'));
 		}
 		let messageId = '';
