@@ -26,7 +26,7 @@ export const ClaimReward = () => {
 							.filter((e) => !!e)
 							.map((e, i) => {
 								return (
-									<Text key={i} style={[i == 1 ? SS.cP : null]}>
+									<Text key={i} style={[i == 1 ? SS.fw600 : null]}>
 										{e}
 									</Text>
 								);
@@ -67,10 +67,10 @@ export const ClaimReward = () => {
 									<Text
 										key={i}
 										style={[i == 1 ? SS.cP : null]}
-										onClick={async () => {
+										onPress={async () => {
 											if (i == 1) {
 												await changeNode(IotaSDK.IOTA_NODE_ID);
-												Base.push('/account/into', { type: 1, from: 'smr' });
+												Base.push('account/into', { type: 1, from: 'smr' });
 											}
 										}}>
 										{e}

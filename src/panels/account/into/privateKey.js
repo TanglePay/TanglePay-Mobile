@@ -81,35 +81,35 @@ export const AccountIntoPrivateKey = () => {
 										value={values.privateKey}
 									/>
 								</View>
-								<Item style={[SS.mt24, SS.ml0]} stackedLabel error={!!errors.name}>
-									<Label style={[SS.fz14]}>{I18n.t('account.intoName')}</Label>
+								<Text style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoName')}</Text>
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.name}>
 									<Input
-										style={[SS.fz14, SS.pl0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('account.intoNameTips')}
 										onChangeText={handleChange('name')}
 										value={values.name}
 									/>
 								</Item>
-								<Item style={[SS.mt24, SS.ml0]} stackedLabel error={!!errors.password}>
-									<Label style={[SS.fz14]}>{I18n.t('account.intoPassword')}</Label>
+								<Text style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoPassword')}</Text>
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('account.intoPasswordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
 									/>
 								</Item>
 								<Input style={[S.h(1)]} />
-								<Item style={[SS.ml0]} error={!!errors.rePassword}>
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.rePassword}>
 									<Input
 										keyboardType='ascii-capable'
 										// secureTextEntry={!Base.isIos14}
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('account.intoRePasswordTips')}
 										onChangeText={handleChange('rePassword')}
 										value={values.rePassword}

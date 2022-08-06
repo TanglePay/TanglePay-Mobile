@@ -119,7 +119,7 @@ export const AssetsSend = () => {
 										{/* <Image style={[S.wh(16), SS.ml10]} source={images.com.right} /> */}
 									</View>
 								</Item>
-								<View style={[SS.row, SS.ac, SS.jsb, SS.mt25, SS.mb5]}>
+								<View style={[SS.row, SS.ac, SS.jsb, SS.mt24]}>
 									<Text style={[SS.fz16]}>{I18n.t('assets.receiver')}</Text>
 									<SvgIcon
 										onPress={() => {
@@ -131,23 +131,23 @@ export const AssetsSend = () => {
 										size={20}
 									/>
 								</View>
-								<Item style={[SS.ml0, { minHeight: 45 }]} stackedLabel error={!!errors.receiver}>
+								<Item style={[SS.ml0, SS.mt8]} stackedLabel error={!!errors.receiver}>
 									<Input
 										numberOfLines={2}
 										multiline
 										blurOnSubmit={true}
 										returnKeyType='done'
-										style={[SS.fz14, SS.pl0, SS.pb0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, SS.pb0, S.h(44)]}
 										placeholder={I18n.t('assets.receiverTips')}
 										onChangeText={handleChange('receiver')}
 										value={values.receiver}
 									/>
 								</Item>
-								<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.amount')}</Text>
-								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.amount}>
+								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.amount')}</Text>
+								<Item style={[SS.ml0, SS.mt8]} error={!!errors.amount}>
 									<Input
 										keyboardType='numeric'
-										style={[SS.fz14, SS.pl0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.amountTips')}
 										onChangeText={handleChange('amount')}
 										value={values.amount}
@@ -178,12 +178,12 @@ export const AssetsSend = () => {
 										{assets.balance} {assets.unit} IOTA
 									</Text>
 								</Item> */}
-								<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.password')}</Text>
-								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
+								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.password')}</Text>
+								<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
-										style={[SS.fz14, SS.pl0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.passwordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}

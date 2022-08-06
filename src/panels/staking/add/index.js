@@ -90,12 +90,12 @@ export const StakingAdd = () => {
 					{({ handleChange, handleSubmit, values, errors }) => (
 						<View style={[SS.ph16, SS.pv24]}>
 							<Form>
-								<Text style={[SS.fz16, SS.mt25, SS.fw600]}>{I18n.t('assets.password')}</Text>
-								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
+								<Text style={[SS.fz16, SS.mt10, SS.fw600]}>{I18n.t('assets.password')}</Text>
+								<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
-										style={[SS.fz14, SS.pl0, SS.pv32]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.passwordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}

@@ -12,7 +12,6 @@ export const AccountMnemonic = () => {
 		const code = IotaSDK.getMnemonic();
 		setList(code.toString().split(' '));
 		setErrList(IotaSDK.getMnemonic().toString().split(' '));
-		console.log(code);
 		setRegisterInfo({ ...registerInfo, mnemonic: code });
 	}, []);
 	return (
