@@ -83,7 +83,7 @@ export const Apps = () => {
 				<View style={[{ height: 36, padding: 6 }, SS.row, SS.ac, SS.bgS, SS.radius10]}>
 					<SvgIcon name='search' color='#ccc' size='20' />
 					<Input
-						style={[SS.fz16, SS.fw400, { height: 24 }]}
+						style={[SS.fz16, SS.fw400, { height: 24 }, SS.pv0]}
 						value={searchStr}
 						onChangeText={setSearch}
 						onBlur={onBlur}

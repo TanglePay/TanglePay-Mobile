@@ -190,7 +190,13 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 										hideModal();
 										Base.push(`assets/scan`);
 									}}
-									style={[SS.row, SS.ac, SS.ph15, { height: 44, minWidth: 260 }]}>
+									style={[
+										SS.row,
+										SS.ac,
+										SS.mh15,
+										{ height: 44, minWidth: 260 },
+										S.border(0, '#eee', 1)
+									]}>
 									<SvgIcon name='scan' color='black' size='20' />
 									<View style={[SS.ml10]}>
 										<Text style={[SS.fz14, SS.fw500]}>{I18n.t('assets.scanTitle')}</Text>

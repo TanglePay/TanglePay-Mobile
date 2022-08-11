@@ -22,7 +22,7 @@ export const AccountIntoPrivateKey = () => {
 	const addWallet = useAddWallet();
 	return (
 		<Container>
-			<Nav title={I18n.t('account.intoBtn')} />
+			<Nav title={I18n.t('account.privateKeyImport')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -55,10 +55,7 @@ export const AccountIntoPrivateKey = () => {
 							<Form>
 								<View>
 									<View>
-										<Text style={[SS.fz24, SS.fw600, SS.mb8]}>
-											{I18n.t('account.privateKeyImport')}
-										</Text>
-										<Text style={[SS.fz14, SS.pb16, SS.cS]}>
+										<Text style={[SS.fz14, SS.pb10, SS.cS]}>
 											{I18n.t('account.inputPrivateKey')}
 										</Text>
 									</View>
@@ -67,16 +64,11 @@ export const AccountIntoPrivateKey = () => {
 										returnKeyType='done'
 										bordered
 										style={[
-											{ borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0 },
-											S.border(2, !errors.privateKey ? '#eee' : ThemeVar.brandDanger, 1),
-											SS.fz14,
-											SS.ph0,
-											SS.pl0,
-											SS.mt0,
-											SS.pt0,
-											SS.pb8
+											S.border(4, !errors.privateKey ? ThemeVar.textColor : ThemeVar.brandDanger),
+											S.radius(10),
+											SS.fz14
 										]}
-										rowSpan={2}
+										rowSpan={5}
 										onChangeText={handleChange('privateKey')}
 										value={values.privateKey}
 									/>

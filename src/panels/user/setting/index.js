@@ -70,8 +70,8 @@ export const UserSetting = () => {
 								key={i}
 								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
 								<View style={[SS.row, SS.ac]}>
-									<SvgIcon name={e.icon} size={20} />
-									<Text style={[SS.fz16, SS.ml16]}>{e.label}</Text>
+									<SvgIcon name={e.icon} size={24} />
+									<Text style={[SS.fz16, SS.ml12]}>{e.label}</Text>
 									{e.tips && <Text style={[SS.fz11, SS.ml10, SS.cS, SS.mt5]}>{e.tips}</Text>}
 								</View>
 								{e.type === 'switch' ? (

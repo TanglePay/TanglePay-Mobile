@@ -53,7 +53,8 @@ export const AssetsWallets = () => {
 									style={[
 										isActive ? S.bg(ThemeVar.brandPrimary) : S.border(4, '#000', 1),
 										SS.radius8,
-										SS.p16,
+										SS.ph16,
+										SS.pv12,
 										SS.mt16
 									]}>
 									<View style={[SS.row, SS.ac, SS.jsb]}>
@@ -62,7 +63,7 @@ export const AssetsWallets = () => {
 											{curNode?.type == 2 ? 'EVM' : curNode?.name}
 										</Text>
 									</View>
-									<View style={[SS.mt8, SS.row, SS.ae]}>
+									<View style={[SS.mt5, SS.row, SS.ae]}>
 										<Text style={[isActive && SS.cW, SS.fz14, { minWidth: 85 }]}>
 											{Base.handleAddress(e.address)}
 										</Text>
@@ -91,7 +92,7 @@ export const AssetsWallets = () => {
 					onPress={() => {
 						dialogRef.current.show();
 					}}>
-					<Text style={[SS.cP, SS.fz16, SS.fw600]}>+　{I18n.t('assets.addWallets')}</Text>
+					<Text style={[SS.cP, SS.fz16, SS.fw600, SS.mb10]}>+　{I18n.t('assets.addWallets')}</Text>
 				</TouchableOpacity>
 			</Shadow>
 			<AddDialog dialogRef={dialogRef} nodeId={params?.nodeId} />

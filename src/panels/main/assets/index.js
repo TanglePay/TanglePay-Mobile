@@ -91,7 +91,7 @@ export const Assets = () => {
 					/>
 				}>
 				<View style={[SS.ph16]}>
-					<View style={[SS.pt20, S.bg('#1D70F7'), SS.mv8, SS.radius8, { overflow: 'hidden' }]}>
+					<View style={[SS.pt20, S.bg(ThemeVar.brandPrimary), SS.mv8, SS.radius8, { overflow: 'hidden' }]}>
 						<View style={[SS.ph16, SS.row, SS.ac]}>
 							<Text style={[SS.fz14, SS.cW]}>
 								{I18n.t('assets.myAssets')}({curLegal.unit || ''})
@@ -107,7 +107,7 @@ export const Assets = () => {
 						<View style={[SS.ph16, SS.mt10, SS.mb16]}>
 							<Text style={[SS.cW, SS.fz24]}>{isShowAssets ? totalAssets.assets || '0.00' : '****'}</Text>
 						</View>
-						<View style={[SS.row, SS.pv8, S.bg('rgba(0,0,0,0.08)')]}>
+						<View style={[SS.row, SS.pv8, S.bg('rgba(255,255,255,0.08)')]}>
 							<TouchableOpacity
 								onPress={() => {
 									checkPush('assets/send');
