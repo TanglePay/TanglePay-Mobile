@@ -58,7 +58,7 @@ export const AssetsWallets = () => {
 										SS.mt16
 									]}>
 									<View style={[SS.row, SS.ac, SS.jsb]}>
-										<Text style={[SS.fz14, SS.fw600, isActive && SS.cW]}>{e.name}</Text>
+										<Text style={[SS.fz16, SS.fw600, isActive && SS.cW]}>{e.name}</Text>
 										<Text style={[SS.fz14, SS.cS, isActive && SS.cW]}>
 											{curNode?.type == 2 ? 'EVM' : curNode?.name}
 										</Text>
@@ -73,7 +73,7 @@ export const AssetsWallets = () => {
 												Toast.success(I18n.t('assets.copied'));
 											}}
 											name='copy'
-											size={20}
+											size={16}
 											color={isActive ? '#fff' : ThemeVar.textColor}
 										/>
 									</View>
