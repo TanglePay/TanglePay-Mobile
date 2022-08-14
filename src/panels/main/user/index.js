@@ -43,7 +43,7 @@ export const User = () => {
 								}
 							}}
 							key={e.path}
-							style={[SS.row, SS.ac, SS.jsb, SS.ph16, SS.pv20, S.border(2)]}>
+							style={[SS.row, SS.ac, SS.jsb, SS.ph16, { height: 60 }, S.border(2)]}>
 							<View style={[SS.row, SS.ac]}>
 								<SvgIcon size={24} name={e.icon} color={ThemeVar.brandPrimary} />
 								<Text style={[SS.fz16, SS.ml16]}>{e.label}</Text>
