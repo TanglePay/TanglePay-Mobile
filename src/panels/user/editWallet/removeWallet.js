@@ -16,13 +16,13 @@ export const RemoveWallet = () => {
 		<Container>
 			<Nav title={name} />
 			<Content>
-				<View style={[SS.p20]}>
-					<View style={[S.border(4), SS.radius10, SS.p10]}>
-						<Text style={[SS.fz13, SS.cS, S.lineHeight(20)]}>{curEdit.address}</Text>
+				<View style={[SS.p16]}>
+					<View style={[S.border(4), SS.radius10, SS.p8]}>
+						<Text style={[SS.fz14, SS.cS, S.lineHeight(20)]}>{curEdit.address}</Text>
 					</View>
 				</View>
 				<View style={[SS.ph20]}>
-					<View style={[SS.c, SS.pv20]}>
+					<View style={[SS.row, SS.c, SS.pb16, SS.mt8]}>
 						<Text style={[SS.fz18, SS.fw600]}>{I18n.t('account.removeTitle')}</Text>
 					</View>
 					<View style={[SS.mb20, S.bg('rgba(213, 53, 84, 0.05)'), SS.radius10, SS.p10]}>

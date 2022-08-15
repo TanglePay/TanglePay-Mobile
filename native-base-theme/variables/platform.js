@@ -9,9 +9,7 @@ const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 const platform = Platform.OS;
 const platformStyle = undefined;
-const isIphoneX =
-	platform === PLATFORM.IOS &&
-	(deviceHeight === 812 || deviceWidth === 812 || deviceHeight === 896 || deviceWidth === 896);
+const isIphoneX = platform === PLATFORM.IOS && (deviceHeight >= 780 || deviceWidth >= 780);
 export default {
 	platformStyle,
 	platform,
@@ -51,8 +49,8 @@ export default {
 	badgePadding: 3,
 
 	// Button
-	buttonFontFamily: 'System',
-	buttonDisabledBg: '#CBDCEC',
+	buttonFontFamily: 'Open Sans',
+	buttonDisabledBg: 'rgba(149, 149, 149,0.5)',
 	buttonPadding: 6,
 	buttonDefaultActiveOpacity: 0.5,
 	buttonDefaultFlex: 1,
@@ -138,7 +136,7 @@ export default {
 
 	// Container
 	containerBgColor: '#fff',
-	secondBgColor: '#F2F2F2',
+	secondBgColor: '#F5F5F5',
 
 	// Date Picker
 	datePickerFlex: 1,
@@ -292,7 +290,7 @@ export default {
 	},
 
 	// Title
-	titleFontfamily: 'System',
+	titleFontfamily: 'Open Sans',
 	titleFontSize: 17,
 	subTitleFontSize: 11,
 	subtitleColor: '#8e8e93',

@@ -21,7 +21,7 @@ export const UserAboutUs = () => {
 		{
 			label: I18n.t('account.policy'),
 			url: 'https://tanglepay.com/policy.html',
-			bottom: 10
+			bottom: 4
 		},
 		{
 			label: I18n.t('user.website'),
@@ -62,13 +62,15 @@ export const UserAboutUs = () => {
 		<Container>
 			<Nav title={I18n.t('user.aboutUs')} />
 			<Content>
-				<View style={[SS.c, SS.pv30]}>
-					<Image style={[S.wh(65)]} source={logo} />
-					<Text style={[SS.fz16, SS.mt10]}>TanglePay</Text>
-					<Text style={[SS.fz14, SS.cS, SS.mt10]}>
-						{I18n.t('user.curVersion')}
-						{version}
-					</Text>
+				<View style={[SS.c, SS.row, SS.pv40]}>
+					<Image style={[S.wh(43, 40), SS.mr15]} source={logo} />
+					<View>
+						<Text style={[SS.fz24, { fontWeight: '700' }, SS.cP]}>TANGLEPAY</Text>
+						<Text style={[SS.fz14, SS.cS]}>
+							{I18n.t('user.curVersion')}
+							{version}
+						</Text>
+					</View>
 				</View>
 				{list.map((e, i) => {
 					return (
@@ -95,18 +97,18 @@ export const UserAboutUs = () => {
 								SS.row,
 								SS.ac,
 								SS.jsb,
-								SS.ph20,
+								SS.ph16,
 								SS.pv20,
 								i === 0 && S.border(0),
-								S.border(2, e.bottom ? '#f5f5f5' : '#ddd', e.bottom || StyleSheet.hairlineWidth)
+								S.border(2, e.bottom ? '#f5f5f5' : '#f5f5f5', e.bottom || StyleSheet.hairlineWidth)
 							]}>
 							<View style={[SS.row, SS.ac]}>
-								<Text style={[SS.fz17, SS.ml10]}>{e.label}</Text>
+								<Text style={[SS.fz16, SS.ml10]}>{e.label}</Text>
 							</View>
 							<View style={[SS.row, SS.ac]}>
-								{e.value && <Text style={[SS.fz17, SS.cS, SS.mr10]}>{e.value}</Text>}
+								{e.value && <Text style={[SS.fz16, SS.cS, SS.mr10]}>{e.value}</Text>}
 								{e.dot && <View style={[S.wh(6), SS.mr5, S.bg('red'), S.radius(6)]}></View>}
-								<SvgIcon size={14} name='right' />
+								<SvgIcon size={16} name='right' />
 							</View>
 						</TouchableOpacity>
 					);

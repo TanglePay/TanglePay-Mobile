@@ -29,7 +29,7 @@ export const NameDialog = ({ dialogRef, data }) => {
 	return (
 		<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={hide} onBackdropPress={hide} isVisible={isShow}>
 			<View style={[SS.w100, SS.radius10, SS.bgW]}>
-				<ScrollView contentContainerStyle={[SS.p20]}>
+				<ScrollView contentContainerStyle={[SS.p16]}>
 					<Formik
 						initialValues={{
 							name: data.name
@@ -44,16 +44,16 @@ export const NameDialog = ({ dialogRef, data }) => {
 						}}>
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<Form>
-								<Text style={[SS.mt10, SS.fz20]}>{I18n.t('account.intoName')}</Text>
+								<Text style={[SS.fz16, SS.fw600]}>{I18n.t('account.intoName')}</Text>
 								<Item style={[SS.mt10, SS.ml0, { minHeight: 50 }]} stackedLabel error={!!errors.name}>
 									<Input
-										style={[SS.fz16]}
+										style={[SS.fz14]}
 										placeholder={I18n.t('account.intoNameTips')}
 										onChangeText={handleChange('name')}
 										value={values.name}
 									/>
 								</Item>
-								<View style={[S.marginT(30)]}>
+								<View style={[S.marginT(24)]}>
 									<Button block onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>

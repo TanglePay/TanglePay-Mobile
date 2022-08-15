@@ -32,16 +32,17 @@ export const IntoDialog = ({ dialogRef }) => {
 			onBackButtonPress={hide}
 			onBackdropPress={hide}
 			isVisible={isShow}>
-			<View style={[SS.p30, SS.w100, SS.radius10, SS.bgS]}>
-				<View style={[SS.mv20, SS.bgW, SS.radius10]}>
+			<View style={[SS.p24, SS.w100, { borderTopLeftRadius: 24, borderTopRightRadius: 24 }, SS.bgS]}>
+				<Text style={[SS.fz16, SS.fw600, SS.tc]}>{I18n.t('account.intoBtn')}</Text>
+				<View style={[SS.mt24, SS.bgW, SS.radius10]}>
 					<TouchableOpacity
 						activeOpacity={0.9}
 						onPress={() => {
 							hide();
 							Base.push('account/into', { type: 1 });
 						}}
-						style={[SS.pv30, SS.c]}>
-						<Text style={[SS.fz17]}>{I18n.t('account.intoTitle1')}</Text>
+						style={[SS.pl24, SS.row, SS.ac, { height: 70 }]}>
+						<Text style={[SS.fz16]}>{I18n.t('account.intoTitle1')}</Text>
 					</TouchableOpacity>
 					{curNode?.type == 1 && (
 						<TouchableOpacity
@@ -51,8 +52,8 @@ export const IntoDialog = ({ dialogRef }) => {
 								Toast.show(I18n.t('account.unopen'));
 								// Base.push('account/into', { type: 2 });
 							}}
-							style={[SS.pv30, SS.c, S.border(0)]}>
-							<Text style={[SS.fz17]}>{I18n.t('account.intoTitle2')}</Text>
+							style={[SS.pl24, SS.row, SS.ac, { height: 70 }, S.border(0)]}>
+							<Text style={[SS.fz16]}>{I18n.t('account.intoTitle2')}</Text>
 						</TouchableOpacity>
 					)}
 					{curNode?.type == 2 && (
@@ -62,7 +63,7 @@ export const IntoDialog = ({ dialogRef }) => {
 								hide();
 								Base.push('account/into/privateKey');
 							}}
-							style={[SS.pv30, SS.c, S.border(0)]}>
+							style={[SS.pl24, SS.row, SS.ac, { height: 70 }, S.border(0)]}>
 							<Text style={[SS.fz17]}>{I18n.t('account.privateKeyImport')}</Text>
 						</TouchableOpacity>
 					)}

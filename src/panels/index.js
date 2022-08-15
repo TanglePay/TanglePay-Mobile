@@ -31,7 +31,22 @@ import { Staking } from './main/staking';
 import { RemoveWallet } from './user/editWallet/removeWallet';
 import { WalletDetail } from './user/walletDetail';
 import { WalletCollection } from './user/walletDetail/collection';
+import { ClaimReward } from './assets/claimReward/index';
+import { ClaimSMR } from './assets/claimReward/claimSMR';
+import { ClaimResult } from './assets/claimReward/claimResult';
 export const panelsList = [
+	{
+		path: 'assets/claimReward/claimResult',
+		component: ClaimResult
+	},
+	{
+		path: 'assets/claimReward/claimSMR',
+		component: ClaimSMR
+	},
+	{
+		path: 'assets/claimReward',
+		component: ClaimReward
+	},
 	{
 		path: 'user/WalletCollection',
 		component: WalletCollection

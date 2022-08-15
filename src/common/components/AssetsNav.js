@@ -27,7 +27,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 		<>
 			<Header transparent style={{ borderBottomWidth: 0 }}>
 				<Left style={[SS.row, SS.ac]}>
-					<View style={[SS.row, SS.ac, SS.pl15]}>
+					<View style={[SS.row, SS.ac, SS.pl10]}>
 						<TouchableOpacity
 							activeOpacity={0.8}
 							onPress={() => {
@@ -37,7 +37,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 							<Text
 								numberOfLines={1}
 								ellipsizeMode='tail'
-								style={[SS.fz16, SS.cW, SS.fw500, { maxWidth: 80 }]}>
+								style={[SS.fz16, SS.cW, SS.fw600, { maxWidth: 80 }]}>
 								{curWallet.name || I18n.t('assets.addWallets')}
 							</Text>
 							{curWallet.address && (
@@ -46,7 +46,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 									// 	Clipboard.setString(curWallet.address);
 									// 	Toast.success(I18n.t('assets.copied'));
 									// }}
-									style={[SS.cW, SS.fz14, SS.ml10]}>
+									style={[SS.cW, SS.fz14, SS.fw300, SS.ml10]}>
 									{Base.handleAddress(curWallet.address)}
 								</Text>
 							)}
@@ -91,8 +91,8 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 								setOpenMore(!isOpenMore);
 							}}
 							name='more'
-							size={26}
-							style={[SS.ac, SS.je]}
+							size={30}
+							style={[SS.ac, SS.je, SS.mr4]}
 						/>
 					</Right>
 				)}
@@ -178,7 +178,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 									}}
 									style={[SS.row, SS.ac, SS.ph15, { height: 44, minWidth: 260 }]}>
 									<SvgIcon name='view' color='black' size='20' />
-									<View style={[SS.ml10]} className='ml10 fz14 fw500'>
+									<View style={[SS.ml10]}>
 										<Text style={[SS.fz14, SS.fw500]}>{I18n.t('account.viewInExplorer')}</Text>
 									</View>
 								</TouchableOpacity>
@@ -190,9 +190,15 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 										hideModal();
 										Base.push(`assets/scan`);
 									}}
-									style={[SS.row, SS.ac, SS.ph15, { height: 44, minWidth: 260 }]}>
+									style={[
+										SS.row,
+										SS.ac,
+										SS.mh15,
+										{ height: 44, minWidth: 260 },
+										S.border(0, '#eee', 1)
+									]}>
 									<SvgIcon name='scan' color='black' size='20' />
-									<View style={[SS.ml10]} className='ml10 fz14 fw500'>
+									<View style={[SS.ml10]}>
 										<Text style={[SS.fz14, SS.fw500]}>{I18n.t('assets.scanTitle')}</Text>
 									</View>
 								</TouchableOpacity>
