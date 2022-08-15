@@ -98,8 +98,9 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
-										hide();
-										Base.push('assets/claimReward');
+										// hide();
+										Toast.show(I18n.t('account.unopen'));
+										// Base.push('assets/claimReward');
 									}}
 									style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
 									<Text style={[SS.fz16]}>{I18n.t('shimmer.claimStakingReward')}</Text>
