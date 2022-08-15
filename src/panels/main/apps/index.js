@@ -77,41 +77,46 @@ export const Apps = () => {
 			{/* <AssetsNav hasScan /> */}
 			<Content
 				contentContainerStyle={[
-					SS.ph20,
+					SS.ph16,
 					{ paddingTop: ThemeVar.platform === 'android' ? StatusBar.currentHeight + 24 : 24 }
 				]}>
-				<Item inlineLabel>
-					<Input value={searchStr} onChangeText={setSearch} onBlur={onBlur} placeholder='Search Dapp' />
-				</Item>
-				<View style={[SS.row, SS.ac, SS.pt20, SS.jsb, { flexWrap: 'wrap' }]}>
+				<View style={[{ height: 36, padding: 6 }, SS.row, SS.ac, SS.bgS, SS.radius10]}>
+					<SvgIcon name='search' color='#ccc' size='20' />
+					<Input
+						style={[SS.fz16, SS.fw400, { height: 24 }, SS.pv0]}
+						value={searchStr}
+						onChangeText={setSearch}
+						onBlur={onBlur}
+						placeholder='Search Dapp'
+					/>
+				</View>
+				<View style={[SS.row, SS.ac, SS.pt16, SS.jsb, { flexWrap: 'wrap' }]}>
 					{keywords.map((e) => {
 						return (
 							<TouchableOpacity
 								activeOpacity={0.8}
 								onPress={() => setSearch(e.url)}
 								key={e.label}
-								style={[SS.p10, SS.mb10, SS.bgS, SS.radius10]}>
-								<Text style={[SS.fz12]}>{e.label}</Text>
+								style={[SS.ph16, SS.pv8, SS.mb10, SS.bgS, SS.radius10]}>
+								<Text style={[SS.fz14]}>{e.label}</Text>
 							</TouchableOpacity>
 						);
 					})}
 				</View>
 				<View>
 					<ScrollView scrollEnabled horizontal showsHorizontalScrollIndicator={false}>
-						<View style={[SS.ac, SS.row, SS.pt30, SS.pb15]}>
+						<View style={[SS.ac, SS.row, SS.pt5, SS.pb10]}>
 							{tabs.map((e) => {
 								const cur = curTab === e.label;
 								return (
 									<TouchableOpacity
 										activeOpacity={0.8}
-										style={[SS.pv10, SS.pr10]}
+										style={[{ height: 44 }, SS.jc]}
 										key={e.label}
 										onPress={() => {
 											setCurTab(e.label);
 										}}>
-										<Text style={[SS.fz15, SS.mr10, !cur && SS.cB, cur && SS.fw600, cur && SS.cP]}>
-											{e.label}
-										</Text>
+										<Text style={[SS.fz14, SS.mr24, !cur ? SS.cB : SS.cP]}>{e.label}</Text>
 									</TouchableOpacity>
 								);
 							})}

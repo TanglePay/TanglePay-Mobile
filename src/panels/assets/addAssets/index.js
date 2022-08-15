@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Content, View, Text } from 'native-base';
 import { TextInput, Image } from 'react-native';
-import { Nav1, S, SS, I18n, images, Icon } from '@tangle-pay/common';
+import { Nav, S, SS, I18n, images, Icon } from '@tangle-pay/common';
 
 const list = [
 	{
@@ -22,7 +22,7 @@ export const AssetsAddAssets = () => {
 	const [search, setSearch] = useState('');
 	return (
 		<Container>
-			<Nav1 title={I18n.t('assets.addAssets')} />
+			<Nav title={I18n.t('assets.addAssets')} />
 			<Content>
 				<View
 					style={[

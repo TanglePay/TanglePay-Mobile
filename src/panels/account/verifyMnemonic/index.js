@@ -1,13 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Container, View, Text, Button } from 'native-base';
 import { Vibration } from 'react-native';
 import { Base, I18n } from '@tangle-pay/common';
 import Carousel from 'react-native-snap-carousel';
 import { useRoute } from '@react-navigation/native';
-import { S, SS, Nav1, ThemeVar } from '@/common';
+import { S, SS, Nav, ThemeVar } from '@/common';
 
-const VerifyItem = ({ setNext, index, word, err, isTop, isLast }) => {
+const VerifyItem = ({ setNext, index, word, err, isLast }) => {
 	const [error, setError] = useState(false);
+	const [topStr, setTop] = useState('');
+	const [bottomStr, setBottom] = useState('');
 	const handleVerify = (curWord) => {
 		if (word === curWord) {
 			isLast ? Base.push('account/verifySucc') : setNext();
@@ -16,8 +18,13 @@ const VerifyItem = ({ setNext, index, word, err, isTop, isLast }) => {
 		}
 		setError(word !== curWord);
 	};
-	const topStr = isTop ? word : err;
-	const bottomStr = isTop ? err : word;
+	useEffect(() => {
+		const isTop = Math.random() >= 0.5;
+		let top = isTop ? word : err;
+		let bottom = isTop ? err : word;
+		setTop(top);
+		setBottom(bottom);
+	}, [index, word, err]);
 	return (
 		<View style={[SS.ph50, SS.bgW]}>
 			<View style={[S.marginV(120)]}>
@@ -44,7 +51,7 @@ export const AccountVerifyMnemonic = () => {
 	};
 	return (
 		<Container>
-			<Nav1 title={I18n.t('account.testBackup')} />
+			<Nav title={I18n.t('account.testBackup')} />
 			<Carousel
 				ref={carousel}
 				layout='stack'
@@ -57,7 +64,6 @@ export const AccountVerifyMnemonic = () => {
 						word={item}
 						err={errList[index]}
 						index={index}
-						isTop={Math.random() >= 0.5}
 						isLast={index === list.length - 1}
 					/>
 				)}

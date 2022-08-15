@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { SS, S, Nav1, AlertDialog, Toast } from '@/common';
+import { SS, S, Nav, AlertDialog, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	// amount: Yup.number().positive().required(),
@@ -35,7 +35,7 @@ export const StakingAdd = () => {
 	}
 	return (
 		<Container>
-			<Nav1 title={I18n.t(titleKey).replace(/\{name\}/, tokens.map((e) => e.token).join(' , '))} />
+			<Nav title={I18n.t(titleKey).replace(/\{name\}/, tokens.map((e) => e.token).join(' , '))} />
 			<Content>
 				<Formik
 					initialValues={{}}
@@ -88,14 +88,14 @@ export const StakingAdd = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, values, errors }) => (
-						<View style={[SS.ph50, SS.pt10]}>
+						<View style={[SS.ph16, SS.pv24]}>
 							<Form>
-								<Text style={[SS.fz16, SS.mt25, SS.fw600]}>{I18n.t('assets.password')}</Text>
-								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
+								<Text style={[SS.fz16, SS.mt10, SS.fw600]}>{I18n.t('assets.password')}</Text>
+								<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.passwordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}

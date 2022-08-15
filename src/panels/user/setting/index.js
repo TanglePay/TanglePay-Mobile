@@ -50,7 +50,6 @@ export const UserSetting = () => {
 		}
 		const list = await Promise.all(requestList);
 		const totalSize = _sumBy(list, 'size');
-		console.log(totalSize, '------');
 		setCache(Base.formatNum(totalSize / 1024 / 1024) + ' M');
 	};
 	useEffect(() => {
@@ -69,10 +68,10 @@ export const UserSetting = () => {
 									e.onPress ? e.onPress() : Base.push(e.path);
 								}}
 								key={i}
-								style={[SS.row, SS.ac, SS.jsb, SS.ph30, SS.pv20, S.border(2)]}>
+								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
 								<View style={[SS.row, SS.ac]}>
-									<SvgIcon name={e.icon} size={20} />
-									<Text style={[SS.fz17, SS.ml10]}>{e.label}</Text>
+									<SvgIcon name={e.icon} size={24} />
+									<Text style={[SS.fz16, SS.ml12]}>{e.label}</Text>
 									{e.tips && <Text style={[SS.fz11, SS.ml10, SS.cS, SS.mt5]}>{e.tips}</Text>}
 								</View>
 								{e.type === 'switch' ? (
@@ -80,7 +79,7 @@ export const UserSetting = () => {
 								) : (
 									<View style={[SS.row, SS.ac]}>
 										{e.value && <Text style={[SS.fz11, SS.mr10, SS.cS]}>{e.value}</Text>}
-										<SvgIcon size={14} name='right' />
+										<SvgIcon size={16} name='right' />
 									</View>
 								)}
 							</TouchableOpacity>

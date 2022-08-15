@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Container, Content, View, Text, Button } from 'native-base';
+import { Container, Content, View, Text, Button, Image } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { AddDialog } from './addDialog';
 import { useRoute } from '@react-navigation/native';
 import { useSelectWallet, useGetNodeWallet } from '@tangle-pay/store/common';
-import { S, SS, SvgIcon, Nav1, ThemeVar, NoData, Toast } from '@/common';
+import { S, SS, SvgIcon, Nav, ThemeVar, NoData, Toast } from '@/common';
+import Shadow from '@/common/components/Shadow';
 
 export const AssetsWallets = () => {
 	const dialogRef = useRef();
@@ -23,10 +24,10 @@ export const AssetsWallets = () => {
 	}, [walletsList]);
 	return (
 		<Container>
-			<Nav1 title={I18n.t('assets.myWallets')} />
-			<Content contentContainerStyle={[SS.ph20]}>
+			<Nav title={I18n.t('assets.myWallets')} headerStyle={{ borderBottomWidth: ThemeVar.borderWidth }} />
+			<Content contentContainerStyle={[SS.ph16]}>
 				{walletsList.length > 0 ? (
-					<View style={[SS.mb20]}>
+					<View style={[SS.mb16]}>
 						{walletsList.map((e) => {
 							const isActive = curActive === e.id;
 							const curNode = IotaSDK.nodes.find((d) => d.id === e.nodeId) || {};
@@ -50,20 +51,20 @@ export const AssetsWallets = () => {
 									}}
 									key={e.id}
 									style={[
-										isActive ? S.bg('#1D70F7') : S.border(4, '#000', 1),
-										SS.radius10,
-										SS.ph20,
-										SS.pv15,
-										SS.mt20
+										isActive ? S.bg(ThemeVar.brandPrimary) : S.border(4, '#000', 1),
+										SS.radius8,
+										SS.ph16,
+										SS.pv12,
+										SS.mt16
 									]}>
 									<View style={[SS.row, SS.ac, SS.jsb]}>
-										<Text style={[SS.fz17, isActive && SS.cW]}>{e.name}</Text>
-										<Text style={[SS.fz17, isActive && SS.cW]}>
+										<Text style={[SS.fz16, SS.fw600, isActive && SS.cW]}>{e.name}</Text>
+										<Text style={[SS.fz14, SS.cS, isActive && SS.cW]}>
 											{curNode?.type == 2 ? 'EVM' : curNode?.name}
 										</Text>
 									</View>
-									<View style={[SS.mt20, SS.row, SS.ae]}>
-										<Text style={[isActive && SS.cW, SS.fz15, { minWidth: 85 }]}>
+									<View style={[SS.mt5, SS.row, SS.ae]}>
+										<Text style={[isActive && SS.cW, SS.fz14, { minWidth: 85 }]}>
 											{Base.handleAddress(e.address)}
 										</Text>
 										<SvgIcon
@@ -71,9 +72,8 @@ export const AssetsWallets = () => {
 												Clipboard.setString(e.address);
 												Toast.success(I18n.t('assets.copied'));
 											}}
-											style={[SS.ml30]}
 											name='copy'
-											size={24}
+											size={16}
 											color={isActive ? '#fff' : ThemeVar.textColor}
 										/>
 									</View>
@@ -85,16 +85,16 @@ export const AssetsWallets = () => {
 					<NoData />
 				)}
 			</Content>
-			<View style={[SS.pv10, S.border(0)]}>
-				<Button
-					block
-					transparent
+			<Shadow>
+				<TouchableOpacity
+					activeOpacity={0.8}
+					style={[{ height: 70 }, SS.c]}
 					onPress={() => {
 						dialogRef.current.show();
 					}}>
-					<Text style={[S.color(ThemeVar.textColor)]}>+　{I18n.t('assets.addWallets')}</Text>
-				</Button>
-			</View>
+					<Text style={[SS.cP, SS.fz16, SS.fw600, SS.mb10]}>+　{I18n.t('assets.addWallets')}</Text>
+				</TouchableOpacity>
+			</Shadow>
 			<AddDialog dialogRef={dialogRef} nodeId={params?.nodeId} />
 		</Container>
 	);

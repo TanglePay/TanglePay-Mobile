@@ -15,14 +15,14 @@ dayjs.extend(utc);
 
 const AmountCon = ({ amountList }) => {
 	return (
-		<View style={[SS.p20]}>
+		<View style={[SS.ph16, SS.pb24]}>
 			<Text style={[SS.fz14, SS.fw600]}>{I18n.t('staking.amount')}</Text>
 			{amountList.map((e, i) => {
 				return (
-					<View key={i} style={[SS.row, SS.jsb, SS.ac, SS.mt15]}>
+					<View key={i} style={[SS.row, SS.jsb, SS.ac, SS.mt12]}>
 						<View style={[SS.row, SS.ac]}>
 							<StakingTokenItem coin={e.token} label={`${Base.formatNum(e.amount)}Mi`} />
-							<Text style={[SS.fz12, SS.ml5, SS.cS]}>{e.statusStr}</Text>
+							<Text style={[SS.fz14, SS.ml5, SS.cS]}>{e.statusStr}</Text>
 						</View>
 						{!!e.onPress && (
 							<View>
@@ -33,7 +33,7 @@ const AmountCon = ({ amountList }) => {
 									small
 									light
 									style={[S.border(4, e.borderColor), S.bg('#e2e4e4')]}>
-									<Text style={[{ minWidth: 90 }, SS.tc, { opacity: e.btnDis ? 0.3 : 1 }]}>
+									<Text style={[{ minWidth: 90 }, SS.fz14, SS.tc, { opacity: e.btnDis ? 0.3 : 1 }]}>
 										{e.btnStr}
 									</Text>
 								</Button>
@@ -53,18 +53,18 @@ const Upcoming = ({ startTime, commenceTime, uncomingTokens, handleStaking }) =>
 		.format('HH:mm CET, MMM Do YYYY');
 	const showPre = dayjs(commenceTime * 1000).isBefore(dayjs());
 	return (
-		<View style={[S.bg(ThemeVar.headerStyle), SS.p20, SS.radius10]}>
+		<View style={[SS.p16, SS.radius10, SS.bgS]}>
 			{showPre && (
 				<Button block onPress={() => handleStaking(uncomingTokens, 1)}>
 					<Text>{I18n.t('staking.preStake')}</Text>
 				</Button>
 			)}
 			<View>
-				<Text style={[SS.pv15, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
+				<Text style={[SS.pv16, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
 				<View style={[SS.radius10, SS.bgW, SS.p15]}>
 					<View style={[SS.row, SS.c]}>
 						<SvgIcon name='time' size={14} color={ThemeVar.secondTextColor} />
-						<Text style={[SS.font12, SS.fw500, SS.ml5, SS.cS]}>{I18n.t('staking.startAt')}</Text>
+						<Text style={[SS.fz14, SS.fw500, SS.ml5, SS.cS]}>{I18n.t('staking.startAt')}</Text>
 					</View>
 					<View style={[SS.c, SS.mt10]}>
 						<Text style={[SS.fz23, SS.fw500]}>{timeStr}</Text>
@@ -86,24 +86,24 @@ const Upcoming = ({ startTime, commenceTime, uncomingTokens, handleStaking }) =>
 const UnParticipate = ({ statedTokens, unStakeTokens, handleStaking, uncomingTokens }) => {
 	const uList = uncomingTokens.filter((e) => !statedTokens.find((d) => d.eventId === e.eventId));
 	return (
-		<View style={[S.bg(ThemeVar.headerStyle), SS.p20, SS.pb10, SS.radius10]}>
+		<View style={[SS.p16, SS.radius10.alignContent, SS.bgS]}>
 			<Button block onPress={() => handleStaking([...unStakeTokens, ...uList], 1)}>
 				<Text>{I18n.t('staking.stake')}</Text>
 			</Button>
 			<View>
-				<Text style={[SS.pv15, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
+				<Text style={[SS.pv16, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
 				<View style={[SS.row, SS.ac, SS.mb10, { flexWrap: 'wrap' }]}>
 					{unStakeTokens.map((d, di) => {
 						return <StakingTokenItem key={di} style={[SS.mr10, SS.mb10]} coin={d.token} />;
 					})}
-					<Text style={[SS.fz12, SS.cS, SS.mb10]}>{I18n.t('staking.availableToStake')}</Text>
+					<Text style={[SS.fz14, SS.cS, SS.mb10]}>{I18n.t('staking.availableToStake')}</Text>
 				</View>
 				{uList.length > 0 && (
 					<View style={[SS.row, SS.ac, SS.mb10, { flexWrap: 'wrap' }]}>
 						{uList.map((d, di) => {
 							return <StakingTokenItem key={di} style={[SS.mr10, SS.mb10]} coin={d.token} />;
 						})}
-						<Text style={[SS.fz12, SS.cS, SS.mb10]}>{I18n.t('staking.preStake')}</Text>
+						<Text style={[SS.fz14, SS.cS, SS.mb10]}>{I18n.t('staking.preStake')}</Text>
 					</View>
 				)}
 			</View>
@@ -119,7 +119,7 @@ const Staked = ({ statedTokens, unStakeTokens, uncomingTokens, statedAmount, end
 	const stakingTokenList = statedTokens.filter((e) => !endedList.find((d) => d.id === e.eventId));
 	const uList = uncomingTokens.filter((e) => !statedTokens.find((d) => d.eventId === e.eventId));
 	return (
-		<View style={[S.bg(ThemeVar.headerStyle), SS.p20, SS.pb10, SS.radius10]}>
+		<View style={[SS.ph16, SS.pb10, SS.radius10, SS.bgS]}>
 			<Text style={[SS.fw600, SS.fz24, SS.tc]}>{I18n.t('staking.title')}</Text>
 			<View>
 				<Text style={[SS.pv15, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
@@ -128,7 +128,7 @@ const Staked = ({ statedTokens, unStakeTokens, uncomingTokens, statedAmount, end
 						{stakingTokenList.map((d, di) => {
 							return <StakingTokenItem key={di} style={[SS.mr10, SS.mb10]} coin={d.token} />;
 						})}
-						<Text style={[SS.fz12, SS.cS, SS.mb10]}>{I18n.t('staking.title')}</Text>
+						<Text style={[SS.fz14, SS.cS, SS.mb10]}>{I18n.t('staking.title')}</Text>
 					</View>
 				</View>
 				{unStakeTokens.length > 0 && (
@@ -137,11 +137,11 @@ const Staked = ({ statedTokens, unStakeTokens, uncomingTokens, statedAmount, end
 							{unStakeTokens.map((d, di) => {
 								return <StakingTokenItem key={di} style={[SS.mr10, SS.mb10]} coin={d.token} />;
 							})}
-							<Text style={[SS.fz12, SS.cS, SS.mb10]}>{I18n.t('staking.available')}</Text>
+							<Text style={[SS.fz14, SS.cS, SS.mb10]}>{I18n.t('staking.available')}</Text>
 						</View>
 						<View style={[SS.mb5, SS.ml20]}>
 							<Button onPress={() => handleStake(unStakeTokens)} rounded small>
-								<Text style={[{ minWidth: 90 }, SS.tc]}>{I18n.t('staking.stake')}</Text>
+								<Text style={[{ minWidth: 90 }, SS.fz14, SS.tc]}>{I18n.t('staking.stake')}</Text>
 							</Button>
 						</View>
 					</View>
@@ -152,11 +152,11 @@ const Staked = ({ statedTokens, unStakeTokens, uncomingTokens, statedAmount, end
 							{uList.map((d, di) => {
 								return <StakingTokenItem key={di} style={[SS.mr10, SS.mb10]} coin={d.token} />;
 							})}
-							<Text style={[SS.fz12, SS.cS, SS.mb10]}>{I18n.t('staking.soon')}</Text>
+							<Text style={[SS.fz14, SS.cS, SS.mb10]}>{I18n.t('staking.soon')}</Text>
 						</View>
 						<View style={[SS.mb5, SS.ml20]}>
 							<Button onPress={() => handleStake(uList)} rounded small>
-								<Text style={[{ minWidth: 90 }, SS.tc]}>{I18n.t('staking.preStake')}</Text>
+								<Text style={[{ minWidth: 90 }, SS.fz14, SS.tc]}>{I18n.t('staking.preStake')}</Text>
 							</Button>
 						</View>
 					</View>
@@ -168,10 +168,10 @@ const Staked = ({ statedTokens, unStakeTokens, uncomingTokens, statedAmount, end
 // Ended
 const Ended = ({ statedTokens, unStakeTokens }) => {
 	return (
-		<View style={[S.bg(ThemeVar.headerStyle), SS.p20, SS.pb10, SS.radius10]}>
+		<View style={[SS.p16, SS.pb10, SS.radius10, SS.bgS]}>
 			<Text style={[SS.fw600, SS.fz24, SS.tc]}>{` `}</Text>
 			<View>
-				<Text style={[SS.pv15, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
+				<Text style={[SS.pv16, SS.fw600, SS.fz14]}>{I18n.t('staking.airdrops')}</Text>
 				<View style={[SS.row, SS.ac, SS.jsb, SS.mb10]}>
 					<View style={[SS.row, SS.ac, { flexWrap: 'wrap' }]}>
 						{[...statedTokens, ...unStakeTokens].map((d, di) => {
@@ -248,7 +248,7 @@ export const StatusCon = () => {
 	}
 
 	const handleStaking = (tokens, type) => {
-		if (available < 1) {
+		if (available < 1 && type != 3) {
 			return Toast.error(I18n.t('staking.noAvailableTips'));
 		}
 		Base.push('staking/add', { tokens, type });
@@ -294,7 +294,7 @@ export const StatusCon = () => {
 	};
 	return (
 		<>
-			<View style={[S.bg(ThemeVar.contentStyle), SS.radius10]}>
+			<View style={[SS.bgS, SS.radius10, SS.mb24]}>
 				<View style={[SS.row, SS.je]}>
 					<View style={[SS.row, SS.ac, SS.p15]}>
 						<Text style={[SS.fz14, SS.mr10]}>{I18n.t('staking.his')}</Text>
@@ -362,9 +362,9 @@ export const RewardsList = ({ endedList }) => {
 		return null;
 	}
 	return (
-		<View style={[SS.mt25]}>
+		<View style={[SS.mt24]}>
 			<Text style={[SS.cS, SS.fz16]}>{I18n.t('staking.estimatedReceived')}</Text>
-			<View style={[SS.row, SS.pv10, { flexWrap: 'wrap' }]}>{ListEl}</View>
+			<View style={[SS.row, SS.pt10, { flexWrap: 'wrap' }]}>{ListEl}</View>
 		</View>
 	);
 };
@@ -383,9 +383,9 @@ export const AirdopsList = () => {
 					activeOpacity={0.8}>
 					<View style={[SS.row, SS.ac]}>
 						<Image style={[S.wh(24), SS.mr10]} source={{ uri: Base.getIcon(e.token) }} />
-						<Text style={[SS.fz12]}>{e.desc}</Text>
+						<Text style={[SS.fz14]}>{e.desc}</Text>
 					</View>
-					<SvgIcon name='right' size={14} />
+					<SvgIcon name='right' size={16} />
 				</TouchableOpacity>
 			);
 		});
@@ -394,7 +394,7 @@ export const AirdopsList = () => {
 		return null;
 	}
 	return (
-		<View style={[SS.mt15]}>
+		<View style={[SS.mt12]}>
 			<Text style={[SS.cS, SS.fz16, SS.mb10]}>{I18n.t('staking.airdropsList')}</Text>
 			{ListEl}
 		</View>

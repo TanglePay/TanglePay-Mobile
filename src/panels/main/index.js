@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Text } from 'native-base';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View } from 'native-base';
 import { I18n, IotaSDK } from '@tangle-pay/common';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Assets } from './assets';
@@ -8,8 +8,59 @@ import { User } from './user';
 import { Discover } from './discover';
 import { Apps } from './apps';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { SvgIcon, ThemeVar, S } from '@/common';
+import { SvgIcon, ThemeVar, S, SS, Theme } from '@/common';
 import { useStore } from '@tangle-pay/store';
+import Shadow from '@/common/components/Shadow';
+
+const bottom = ThemeVar.isIphoneX ? 10 : 0;
+const MyTabBar = ({ state, descriptors, navigation }) => {
+	return (
+		<Shadow>
+			<View
+				style={{
+					flexDirection: 'row',
+					alignItems: 'center',
+					height: 64 + bottom,
+					backgroundColor: '#fff',
+					paddingBottom: bottom + 10
+				}}>
+				{state.routes.map((route, index) => {
+					const { options } = descriptors[route.key];
+					const Label = options.tabBarLabel;
+					const Icon = options.tabBarIcon;
+					const isFocused = state.index === index;
+					const onPress = () => {
+						const event = navigation.emit({
+							type: 'tabPress',
+							target: route.key,
+							canPreventDefault: true
+						});
+						if (!isFocused && !event.defaultPrevented) {
+							navigation.navigate({ name: route.name, merge: true });
+						}
+					};
+					const onLongPress = () => {
+						navigation.emit({
+							type: 'tabLongPress',
+							target: route.key
+						});
+					};
+					return (
+						<TouchableOpacity
+							activeOpacity={0.8}
+							key={route.key}
+							onPress={onPress}
+							onLongPress={onLongPress}
+							style={[SS.flex1, SS.ac]}>
+							<Icon focused={isFocused} />
+							<Label focused={isFocused} />
+						</TouchableOpacity>
+					);
+				})}
+			</View>
+		</Shadow>
+	);
+};
 
 const Tab = createBottomTabNavigator();
 export const Main = () => {
@@ -54,22 +105,24 @@ export const Main = () => {
 			inactiveColor={ThemeVar.textColor}
 			activeColor={ThemeVar.textColor}
 			barStyle={{ backgroundColor: ThemeVar.cardDefaultBg }}
+			tabBar={(props) => <MyTabBar {...props} />}
 			shifting={false}>
 			{routes.map((e) => {
 				return (
 					<Tab.Screen
 						key={e.key}
 						name={e.key}
+						title={e.title}
 						component={e.component}
 						options={{
 							headerShown: false,
 							tabBarLabel: ({ focused }) => (
-								<Text style={[focused ? styles.activeLabel : styles.label]}>{e.title}</Text>
+								<Text style={[SS.fz10, focused ? styles.activeLabel : styles.label]}>{e.title}</Text>
 							),
 							tabBarIcon: ({ focused }) => (
 								<SvgIcon
 									name={e.key}
-									size={e.key === 'staking' ? 32 : 25}
+									size={34}
 									color={focused ? ThemeVar.brandPrimary : ThemeVar.textColor}
 								/>
 							)

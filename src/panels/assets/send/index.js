@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav1, S, SS, SvgIcon, Toast } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast } from '@/common';
 import BigNumber from 'bignumber.js';
 
 const schema = Yup.object().shape({
@@ -39,7 +39,7 @@ export const AssetsSend = () => {
 	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
 	return (
 		<Container>
-			<Nav1 title={I18n.t('assets.send')} />
+			<Nav title={I18n.t('assets.send')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -108,7 +108,7 @@ export const AssetsSend = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.ph50, SS.pt30]}>
+						<View style={[SS.p16]}>
 							<Form>
 								<Item
 									style={[SS.ml0, SS.row, SS.ac, SS.jsb, { minHeight: 40 }]}
@@ -119,7 +119,7 @@ export const AssetsSend = () => {
 										{/* <Image style={[S.wh(16), SS.ml10]} source={images.com.right} /> */}
 									</View>
 								</Item>
-								<View style={[SS.row, SS.ac, SS.jsb, SS.mt25, SS.mb5]}>
+								<View style={[SS.row, SS.ac, SS.jsb, SS.mt24]}>
 									<Text style={[SS.fz16]}>{I18n.t('assets.receiver')}</Text>
 									<SvgIcon
 										onPress={() => {
@@ -131,23 +131,23 @@ export const AssetsSend = () => {
 										size={20}
 									/>
 								</View>
-								<Item style={[SS.ml0, { minHeight: 45 }]} stackedLabel error={!!errors.receiver}>
+								<Item style={[SS.ml0, SS.mt8]} stackedLabel error={!!errors.receiver}>
 									<Input
 										numberOfLines={2}
 										multiline
 										blurOnSubmit={true}
 										returnKeyType='done'
-										style={[SS.fz14, SS.pl0, SS.pb0]}
+										style={[SS.fz14, SS.pl0, SS.pb0, S.h(44)]}
 										placeholder={I18n.t('assets.receiverTips')}
 										onChangeText={handleChange('receiver')}
 										value={values.receiver}
 									/>
 								</Item>
-								<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.amount')}</Text>
-								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.amount}>
+								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.amount')}</Text>
+								<Item style={[SS.ml0, SS.mt8]} error={!!errors.amount}>
 									<Input
 										keyboardType='numeric'
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.amountTips')}
 										onChangeText={handleChange('amount')}
 										value={values.amount}
@@ -159,6 +159,9 @@ export const AssetsSend = () => {
 											let str = Base.formatNum(values.amount, precision);
 											if (parseFloat(str) < Math.pow(10, -precision)) {
 												str = String(Math.pow(10, -precision));
+											}
+											if (curWallet.nodeId === IotaSDK.SMR_NODE_ID) {
+												str = String(parseInt(str));
 											}
 											setFieldValue('amount', str);
 										}}
@@ -175,21 +178,27 @@ export const AssetsSend = () => {
 										{assets.balance} {assets.unit} IOTA
 									</Text>
 								</Item> */}
-								<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.password')}</Text>
-								<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
+								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.password')}</Text>
+								<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.passwordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
 									/>
 								</Item>
 								<View style={[S.marginT(100), SS.pb30]}>
-									<Button block onPress={handleSubmit}>
+									<Button
+										disabled={curWallet.nodeId === IotaSDK.SMR_NODE_ID}
+										block
+										onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
+									{curWallet.nodeId === IotaSDK.SMR_NODE_ID ? (
+										<Text style={[SS.fz10, SS.cS, SS.mt12]}>{I18n.t('shimmer.sendTips')}</Text>
+									) : null}
 								</View>
 							</Form>
 						</View>

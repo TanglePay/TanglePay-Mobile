@@ -32,20 +32,20 @@ export const WalletCollection = () => {
 			<Container>
 				<Nav title={curWallet.name} />
 				<Content>
-					<View style={[S.border(2), SS.p16]}>
+					<View style={[SS.p16]}>
 						<View style={[S.border(4), SS.p8, { borderRadius: 8 }]}>
 							<Text style={[SS.fz14, SS.cS]}>{curWallet.address}</Text>
 						</View>
 					</View>
-					<View style={[SS.ph16, SS.pv24]}>
-						<View style={[SS.c, SS.pb20]}>
-							<Text style={[SS.fz18]}>{I18n.t('account.outputCollect')}</Text>
+					<View style={[SS.ph16, SS.pt16]}>
+						<View style={[SS.row, SS.ac, SS.pb10]}>
+							<Text style={[SS.fz16]}>{I18n.t('account.outputCollect')}</Text>
 						</View>
 						<View style={[SS.row, SS.ac, SS.mt10]}>
-							<Text style={[SS.fz16, SS.cS, SS.mr24]}>{I18n.t('account.pendingNum')}</Text>
+							<Text style={[SS.fz14, SS.cS, SS.mr24]}>{I18n.t('account.pendingNum')}</Text>
 							<Text style={[SS.fz16, SS.cP, SS.fw600]}>{totalNum}</Text>
 						</View>
-						<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.passwordTips')}</Text>
+						<Text style={[SS.fz14, SS.mt24]}>{I18n.t('assets.passwordTips')}</Text>
 						<Input
 							secureTextEntry
 							value={password}
@@ -53,6 +53,7 @@ export const WalletCollection = () => {
 							style={[S.border(2), SS.pv10]}
 						/>
 						<Button
+							disabled={!password}
 							onPress={() => {
 								if (password !== curWallet.password) {
 									return Toast.error(I18n.t('assets.passwordError'));
@@ -73,26 +74,27 @@ export const WalletCollection = () => {
 						style={[
 							SS.bgW,
 							{
-								borderRadius: 16,
-								marginLeft: 8,
-								marginRight: 8
+								borderRadius: 16
 							}
 						]}>
-						<View style={[S.border(2), SS.ph16, SS.pv15]}>
+						<View style={[S.border(2), SS.ph16, SS.pv12]}>
 							<Text style={[SS.fz16, SS.fw600]}>{I18n.t('account.outputCollect')}</Text>
 						</View>
-						<View style={[SS.p16, SS.row, SS.ac, SS.jsb]}>
+						<View style={[SS.ph16, SS.row, SS.ac, SS.jsb]}>
 							<Text style={[SS.fz16, SS.cS]}>{I18n.t('account.processedNum')}</Text>
 							<View style={[SS.row, SS.ac]}>
-								{handeNum < totalNum ? (
-									<Spinner color={ThemeVar.brandPrimary} size='small' style={[SS.mr15]} animating />
-								) : null}
+								<Spinner
+									color={ThemeVar.brandPrimary}
+									size='small'
+									style={[SS.mr15, { opacity: handeNum < totalNum ? 1 : 0 }]}
+									animating
+								/>
 								<Text style={[SS.cP, SS.fw600, SS.fz16]}>
 									{handeNum} / {totalNum}
 								</Text>
 							</View>
 						</View>
-						<View style={[SS.p15]}>
+						<View style={[SS.ph16, SS.pb16]}>
 							<Button block onPress={handleStop}>
 								<Text>{I18n.t('account.collectTermination')}</Text>
 							</Button>

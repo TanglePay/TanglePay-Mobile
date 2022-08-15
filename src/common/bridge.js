@@ -59,27 +59,55 @@ export const Bridge = {
 				const { isKeepPopup, origin } = data;
 				const { method, params } = data?.data;
 				switch (method) {
+					case 'iota_sendTransaction':
+						const { to, value, unit = 'Mi', network = '', merchant = '', item_desc = '' } = params;
+						const url = `tanglepay://iota_sendTransaction/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}`;
+						Linking.openURL(url);
+						break;
 					case 'iota_connect':
 					case 'iota_sign':
-						let { content, expires } = params || {};
-						content = content || '';
-						expires = expires || 1000 * 3600 * 24;
-						const curWallet = await this.getCurWallet();
-						if (curWallet.address) {
-							const key = `${origin}_${method}_${curWallet.address}_${curWallet.nodeId}`;
-							const cacheData = await this.getCacheBgData(key);
-							if (cacheData) {
-								this[method](origin, expires, content);
-								return;
+						{
+							let { content, expires } = params || {};
+							content = content || '';
+							expires = expires || 1000 * 3600 * 24;
+							const curWallet = await this.getCurWallet();
+							if (curWallet.address) {
+								const key = `${origin}_${method}_${curWallet.address}_${curWallet.nodeId}`;
+								const cacheData = await this.getCacheBgData(key);
+								if (cacheData) {
+									this[method](origin, expires, content);
+									return;
+								}
 							}
+							Linking.openURL(
+								`tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&content=${content}&expires=${expires}`
+							);
 						}
-						Linking.openURL(
-							`tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&content=${content}&expires=${expires}`
-						);
+						break;
+					case 'iota_changeAccount':
+						{
+							const { network = '' } = params;
+							const url = `tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&network=${network}`;
+							Linking.openURL(url);
+						}
 						break;
 					case 'iota_accounts':
 					case 'iota_getBalance':
-						this[method](origin, params);
+						{
+							this[method](origin, params);
+						}
+						break;
+					case 'iota_getPublicKey':
+						try {
+							const curWallet = await this.getCurWallet();
+							const baseSeed = IotaSDK.getSeed(curWallet.seed, curWallet.password);
+							const addressKeyPair = IotaSDK.getPair(baseSeed);
+							this.sendMessage('iota_getPublicKey', IotaSDK.bytesToHex(addressKeyPair.publicKey));
+						} catch (error) {
+							this.sendErrorMessage('iota_getPublicKey', {
+								msg: error.toString()
+							});
+						}
 						break;
 					default:
 						break;
@@ -117,7 +145,7 @@ export const Bridge = {
 			Trace.dappConnect(origin.replace(/.+\/\//, ''), curWallet.address, curWallet.nodeId, IotaSDK.curNode.token);
 		}
 	},
-	async evm_getBalance(origin, { assetsList, addressList }) {
+	async eth_getBalance(origin, { assetsList, addressList }) {
 		try {
 			// iota
 			assetsList = assetsList || [];
@@ -136,11 +164,11 @@ export const Bridge = {
 				amount
 			};
 			const curWallet = await this.getCurWallet();
-			const key = `${origin}_evm_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
-			this.sendMessage('evm_getBalance', assetsData);
+			const key = `${origin}_eth_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
+			this.sendMessage('eth_getBalance', assetsData);
 		} catch (error) {
 			Toast.hideLoading();
-			this.sendErrorMessage('evm_getBalance', {
+			this.sendErrorMessage('eth_getBalance', {
 				msg: error.toString()
 			});
 		}

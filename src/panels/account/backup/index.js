@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { I18n } from '@tangle-pay/common';
 import { TipsDialog } from './tipsDialog';
-import { SS, S, Nav1, SvgIcon, ThemeVar } from '@/common';
+import { SS, S, Nav, SvgIcon, ThemeVar } from '@/common';
 
 export const AccountBackup = () => {
 	const dialogRef = useRef();
@@ -11,7 +11,7 @@ export const AccountBackup = () => {
 	};
 	return (
 		<Container>
-			<Nav1 title={I18n.t('account.backupTitle')} />
+			<Nav title={I18n.t('account.backupTitle')} />
 			<Content>
 				<View style={[SS.c, SS.pv70]}>
 					<SvgIcon size={70} name='encrypt' />

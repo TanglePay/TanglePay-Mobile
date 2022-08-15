@@ -43,14 +43,14 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 			onBackButtonPress={hide}
 			onBackdropPress={hide}
 			isVisible={isShow}>
-			<View style={[SS.ph20, SS.w100, SS.radius10, SS.bgS, SS.pr]}>
-				<View style={[SS.c, SS.pv15]}>
-					<Text style={[SS.fz16, SS.cS]}>{I18n.t('assets.addWallets')}</Text>
+			<View style={[SS.ph16, SS.w100, { borderTopRightRadius: 24, borderTopLeftRadius: 24 }, SS.bgS, SS.pr]}>
+				<View style={[SS.c, SS.pt24, SS.pb16]}>
+					<Text style={[SS.fz16, SS.fw600]}>{I18n.t('assets.addWallets')}</Text>
 				</View>
 				{isShowNode ? (
 					<>
-						<Text style={[SS.fz16, SS.cS, SS.mt20, SS.mb10]}>{I18n.t('account.selectNode')}</Text>
-						<View style={[SS.mb50, SS.bgW, SS.radius10]}>
+						<Text style={[SS.fz14, SS.cS, SS.mb16]}>{I18n.t('account.selectNode')}</Text>
+						<View style={[SS.mb24, SS.bgW, SS.radius8]}>
 							{IotaSDK.nodes.map((e, i) => {
 								return (
 									<TouchableOpacity
@@ -65,8 +65,13 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 											setLoading(false);
 											setShowNode(false);
 										}}
-										style={[SS.pv30, SS.jc, SS.pl30, S.border(0, '#ddd', i == 0 ? 0 : 1)]}>
-										<Text style={[SS.fz18]}>{e.name}</Text>
+										style={[
+											{ height: 72 },
+											SS.jc,
+											SS.pl24,
+											S.border(0, i == 0 ? 'transparent' : '#ccc')
+										]}>
+										<Text style={[SS.fz16]}>{e.name}</Text>
 									</TouchableOpacity>
 								);
 							})}
@@ -79,36 +84,49 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 					</>
 				) : (
 					<>
-						<TouchableOpacity
-							activeOpacity={0.8}
-							onPress={() => {
-								hide();
-								Base.push('account/register');
-							}}
-							style={[SS.pv30, SS.c, SS.bgW, SS.radius10]}>
-							<Text style={[SS.fz18]}>{I18n.t('account.createTitle')}</Text>
-						</TouchableOpacity>
-						<Text style={[SS.fz16, SS.cS, SS.mt20, SS.mb10]}>{I18n.t('account.intoBtn')}</Text>
-						<View style={[SS.mb50, SS.bgW, SS.radius10]}>
+						<View style={[SS.bgW, SS.radius8]}>
+							<TouchableOpacity
+								activeOpacity={0.8}
+								onPress={() => {
+									hide();
+									Base.push('account/register');
+								}}
+								style={[{ height: 72 }, SS.pl24, SS.jc]}>
+								<Text style={[SS.fz16]}>{I18n.t('account.createTitle')}</Text>
+							</TouchableOpacity>
+							{(curNode?.type == 1 || curNode?.type == 3) && (
+								<TouchableOpacity
+									activeOpacity={0.8}
+									onPress={() => {
+										hide();
+										Base.push('assets/claimReward');
+									}}
+									style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
+									<Text style={[SS.fz16]}>{I18n.t('shimmer.claimStakingReward')}</Text>
+								</TouchableOpacity>
+							)}
+						</View>
+						<Text style={[SS.fz16, SS.cS, SS.mv16]}>{I18n.t('account.intoBtn')}</Text>
+						<View style={[SS.mb24, SS.bgW, SS.radius8]}>
 							<TouchableOpacity
 								activeOpacity={0.8}
 								onPress={() => {
 									hide();
 									Base.push('account/into', { type: 1 });
 								}}
-								style={[SS.pv30, SS.c]}>
-								<Text style={[SS.fz18]}>{I18n.t('account.intoTitle1')}</Text>
+								style={[{ height: 72 }, SS.pl24, SS.jc]}>
+								<Text style={[SS.fz16]}>{I18n.t('account.intoTitle1')}</Text>
 							</TouchableOpacity>
-							{curNode?.type == 1 && (
+							{(curNode?.type == 1 || curNode?.type == 3) && (
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
-										hide();
+										// hide();
 										Toast.show(I18n.t('account.unopen'));
 										// Base.push('account/into', { type: 2 });
 									}}
-									style={[SS.pv30, SS.c, S.border(0)]}>
-									<Text style={[SS.fz18]}>{I18n.t('account.intoTitle2')}</Text>
+									style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
+									<Text style={[SS.fz16]}>{I18n.t('account.intoTitle2')}</Text>
 								</TouchableOpacity>
 							)}
 							{curNode?.type == 2 && (
@@ -118,7 +136,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 										hide();
 										Base.push('account/into/privateKey');
 									}}
-									style={[SS.pv30, SS.c, S.border(0)]}>
+									style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
 									<Text style={[SS.fz18]}>{I18n.t('account.privateKeyImport')}</Text>
 								</TouchableOpacity>
 							)}

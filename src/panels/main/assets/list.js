@@ -12,7 +12,7 @@ import ImageView from 'react-native-image-view';
 import { CachedImage, ImageCache } from 'react-native-img-cache';
 import CameraRoll from '@react-native-community/cameraroll';
 
-const itemH = 80;
+const itemH = 64;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
 	const [needRestake] = useStore('staking.needRestake');
@@ -40,37 +40,37 @@ export const CoinList = () => {
 						key={e.name}
 						style={[SS.row, SS.ac, { height: itemH }]}>
 						<Image
-							style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
+							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
 							source={{ uri: Base.getIcon(e.name) }}
 						/>
-						<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
-								<Text style={[SS.fz17]}>{e.name}</Text>
+								<Text style={[SS.fz16]}>{e.name}</Text>
 								{!IotaSDK.isWeb3Node && statedAmount > 0 && !needRestake && (
 									<View
 										style={[
-											SS.ml20,
-											S.border(4, '#BABABA'),
+											SS.ml16,
+											S.border(4, '#4A4A4D'),
 											S.radius(4),
 											{ paddingHorizontal: 4, paddingVertical: 0 }
 										]}>
-										<Text style={[SS.fz10, SS.cS]}> {I18n.t('staking.title')}</Text>
+										<Text style={[SS.fz10, { color: '#4A4A4D' }]}> {I18n.t('staking.title')}</Text>
 									</View>
 								)}
 							</View>
 							{isShowAssets ? (
 								<View>
-									<Text style={[SS.fz15, SS.tr, SS.mb5]}>
+									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
 										{e.balance} {e.unit || e.name}
 									</Text>
-									<Text style={[SS.fz15, SS.tr, SS.cS]}>
+									<Text style={[SS.fz12, SS.tr, SS.cS]}>
 										{curLegal.unit} {e.assets}
 									</Text>
 								</View>
 							) : (
 								<View>
-									<Text style={[SS.fz15, SS.tr, SS.mb5]}>****</Text>
-									<Text style={[SS.fz15, SS.tr, SS.cS]}>****</Text>
+									<Text style={[SS.fz14, SS.tr, SS.mb4]}>****</Text>
+									<Text style={[SS.fz12, SS.tr, SS.cS]}>****</Text>
 								</View>
 							)}
 						</View>
@@ -126,18 +126,18 @@ export const RewardsList = () => {
 			return (
 				<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
 					<Image
-						style={[S.wh(45), S.radius(45), SS.mr25, S.border(4)]}
+						style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
 						source={{ uri: Base.getIcon(e.symbol) }}
 					/>
-					<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
-						<Text style={[SS.fz17]}>{e.unit}</Text>
+					<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+						<Text style={[SS.fz16]}>{e.unit}</Text>
 						{isShowAssets ? (
 							<View>
-								<Text style={[SS.fz15, SS.tr]}>{e.amountLabel}</Text>
+								<Text style={[SS.fz14, SS.tr]}>{e.amountLabel}</Text>
 							</View>
 						) : (
 							<View>
-								<Text style={[SS.fz15, SS.tr]}>****</Text>
+								<Text style={[SS.fz14, SS.tr]}>****</Text>
 							</View>
 						)}
 					</View>
@@ -149,7 +149,7 @@ export const RewardsList = () => {
 		<>
 			{list.length <= 0 ? null : ListEl}
 			{!isRequestAssets && (
-				<View style={[SS.p30, SS.c, SS.row]}>
+				<View style={[SS.p16, SS.c, SS.row]}>
 					<Spinner size='small' color='gray' />
 					<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
 				</View>
@@ -171,15 +171,15 @@ export const ActivityList = ({ search, setHeight }) => {
 			const isSign = [4].includes(e.type);
 			let FromToEl = null;
 			if (isSign) {
-				FromToEl = <Text style={[SS.fz17, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
+				FromToEl = <Text style={[SS.fz16, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
 			} else {
 				if (isStake) {
 					FromToEl = (
-						<Text style={[SS.fz17, SS.mb5]}>{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}</Text>
+						<Text style={[SS.fz16, SS.mb5]}>{I18n.t(isOutto ? 'staking.unstake' : 'staking.stake')}</Text>
 					);
 				} else {
 					FromToEl = (
-						<Text style={[SS.fz17, SS.mb5]}>
+						<Text style={[SS.fz16, SS.mb5]}>
 							{isOutto ? 'To' : 'From'} : {(e.address || '').replace(/(^.{4})(.+)(.{4}$)/, '$1...$3')}
 						</Text>
 					);
@@ -187,30 +187,30 @@ export const ActivityList = ({ search, setHeight }) => {
 			}
 			let AssetsEl = isShowAssets ? (
 				<View>
-					<Text style={[SS.fz15, SS.tr, SS.mb5]}>
+					<Text style={[SS.fz14, SS.tr, SS.mb5]}>
 						{isSign ? '' : isOutto ? '-' : '+'} {e.num} {e.coin}
 					</Text>
-					<Text style={[SS.fz15, SS.tr, SS.cS]}>$ {e.assets}</Text>
+					<Text style={[SS.fz14, SS.tr, SS.cS]}>$ {e.assets}</Text>
 				</View>
 			) : (
 				<View>
-					<Text style={[SS.fz15, SS.tr, SS.mb5]}>****</Text>
-					<Text style={[SS.fz15, SS.tr, SS.cS]}>****</Text>
+					<Text style={[SS.fz14, SS.tr, SS.mb5]}>****</Text>
+					<Text style={[SS.fz14, SS.tr, SS.cS]}>****</Text>
 				</View>
 			);
 			return (
 				<TouchableOpacity
 					activeOpacity={e.viewUrl ? 0.8 : 1}
 					key={e.id + j}
-					style={[SS.row, SS.as, SS.mb20]}
+					style={[SS.row, SS.as, SS.pt16]}
 					onPress={() => {
 						e.viewUrl && Base.push(e.viewUrl);
 					}}>
-					<SvgIcon style={[SS.mr20]} name={isOutto ? 'outto' : 'into'} size={36} />
-					<View style={[S.border(2, '#ccc'), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb20]}>
+					<SvgIcon style={[SS.mr16]} name={isOutto ? 'outto' : 'into'} size={36} />
+					<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb16]}>
 						<View>
 							{FromToEl}
-							<Text style={[SS.fz15, SS.cS]}>{dayjs(e.timestamp * 1000).format('YYYY-MM-DD HH:mm')}</Text>
+							<Text style={[SS.fz14, SS.cS]}>{dayjs(e.timestamp * 1000).format('YYYY-MM-DD HH:mm')}</Text>
 						</View>
 						{AssetsEl}
 					</View>

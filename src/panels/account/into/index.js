@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
-import { S, SS, Nav1, ThemeVar, SvgIcon, Toast } from '@/common';
+import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -22,10 +22,11 @@ export const AccountInto = () => {
 	});
 	const { params } = useRoute();
 	const type = params.type;
+	const from = params.from;
 	const addWallet = useAddWallet();
 	return (
 		<Container>
-			<Nav1 title={I18n.t(type === 1 ? 'account.intoTitle1' : 'account.intoTitle2')} />
+			<Nav title={I18n.t(type === 1 ? 'account.intoTitle1' : 'account.intoTitle2')} />
 			<Content>
 				<Formik
 					innerRef={form}
@@ -52,17 +53,23 @@ export const AccountInto = () => {
 							addWallet({
 								...res
 							});
-							Base.popToTop();
-							Base.replace('main');
+							if (from === 'smr') {
+								Base.replace('assets/claimReward/claimSMR', {
+									id: res.id
+								});
+							} else {
+								Base.popToTop();
+								Base.replace('main');
+							}
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.ph20, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
 							<Form>
 								{type === 1 ? (
 									<View>
 										<View>
-											<Text style={[SS.fz14, SS.pb10, SS.tc, SS.cS]}>
+											<Text style={[SS.fz14, SS.pb10, SS.cS]}>
 												{I18n.t('account.mnemonicTips')}
 											</Text>
 										</View>
@@ -86,35 +93,34 @@ export const AccountInto = () => {
 								) : (
 									<View
 										style={[
-											S.border(4, ThemeVar.textColor),
 											SS.radius10,
 											SS.mt10,
 											S.h(140),
 											SS.c,
-											S.border(4, !errors.mnemonic ? ThemeVar.textColor : ThemeVar.brandDanger)
+											S.border(4, !errors.mnemonic ? '#eee' : ThemeVar.brandDanger)
 										]}>
 										<SvgIcon size={50} name='file' style={[SS.mb20]} />
 										<Text>{I18n.t('account.intoSelectFile')}</Text>
 									</View>
 								)}
-								<Item style={[SS.mt15, SS.ml0]} stackedLabel error={!!errors.name}>
-									<Label style={[SS.fz14]}>{I18n.t('account.intoName')}</Label>
+								<Text style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoName')}</Text>
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.name}>
 									<Input
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('account.intoNameTips')}
 										onChangeText={handleChange('name')}
 										value={values.name}
 									/>
 								</Item>
-								<Item style={[SS.mt15, SS.ml0]} stackedLabel error={!!errors.password}>
-									<Label style={[SS.fz14]}>
-										{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
-									</Label>
+								<Text style={[SS.fz14, SS.mt24]}>
+									{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
+								</Text>
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
 										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0]}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t(
 											type === 1 ? 'account.intoPasswordTips' : 'account.intoFilePasswordTips'
 										)}
@@ -124,13 +130,13 @@ export const AccountInto = () => {
 								</Item>
 								<Input style={[S.h(1)]} />
 								{type === 1 && (
-									<Item style={[SS.ml0]} error={!!errors.rePassword}>
+									<Item style={[SS.ml0, SS.mt8]} error={!!errors.rePassword}>
 										<Input
 											keyboardType='ascii-capable'
 											// secureTextEntry={!Base.isIos14}
 											secureTextEntry
 											textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-											style={[SS.fz14, SS.pl0]}
+											style={[SS.fz14, SS.pl0, S.h(44)]}
 											placeholder={I18n.t('account.intoRePasswordTips')}
 											onChangeText={handleChange('rePassword')}
 											value={values.rePassword}
@@ -147,16 +153,17 @@ export const AccountInto = () => {
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
 										size={15}
-										style={[SS.mr10, S.marginT(3)]}
+										style={[SS.mr8, S.marginT(3)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
 										<Text
 											style={[
-												SS.fz14,
+												SS.fz12,
 												S.tl,
 												S.lineHeight(22),
-												S.color(!errors.agree ? ThemeVar.textColor : ThemeVar.brandDanger)
+												SS.fw600,
+												S.color(!errors.agree ? '#eee' : ThemeVar.brandDanger)
 											]}>
 											{I18n.t('account.intoAgree')
 												.split('##')
@@ -172,7 +179,7 @@ export const AccountInto = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP]}>
+															style={[SS.cP, SS.fw600]}>
 															{e}
 														</Text>
 													) : (
