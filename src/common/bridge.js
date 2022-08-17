@@ -56,7 +56,8 @@ export const Bridge = {
 				}
 				break;
 			case 'iota_request':
-				const { isKeepPopup, origin } = data;
+				const { isKeepPopup } = data;
+				const origin = Bridge.origin;
 				const { method, params } = data?.data;
 				const curWallet = await this.getCurWallet();
 				const connectKey = `${origin}_iota_connect_${curWallet.address}_${curWallet.nodeId}`;
