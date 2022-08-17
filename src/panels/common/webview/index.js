@@ -17,6 +17,13 @@ export const CommonWebview = () => {
 			...params,
 			setWebviewUrl
 		});
+		try {
+			const arr = url.split('//');
+			const protocol = arr[0];
+			Bridge.origin = `${protocol}//${arr[1].split('/')[0]}`;
+		} catch (error) {
+			Bridge.origin = '';
+		}
 		Bridge.injectJavaScript = (e) => webview.current.injectJavaScript(e);
 	}, []);
 	useEffect(() => {
