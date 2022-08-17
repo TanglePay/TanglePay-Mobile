@@ -181,6 +181,12 @@ export const DappDialog = () => {
 	const handleUrl = async (url) => {
 		if (!url) return;
 		const res = Base.handlerParams(url);
+		const regex = /(<([^>]+)>)/gi;
+		for (const i in res) {
+			if (Object.hasOwnProperty.call(res, i)) {
+				res[i] = String(res[i] || '').replace(regex, '');
+			}
+		}
 		let {
 			network,
 			value,

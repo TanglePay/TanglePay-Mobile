@@ -58,6 +58,16 @@ export const Bridge = {
 			case 'iota_request':
 				const { isKeepPopup, origin } = data;
 				const { method, params } = data?.data;
+				const curWallet = await this.getCurWallet();
+				const connectKey = `${origin}_iota_connect_${curWallet.address}_${curWallet.nodeId}`;
+				const connectRes = await this.getCacheBgData(connectKey);
+				if (!connectRes && method !== 'iota_connect') {
+					this.sendErrorMessage(method, {
+						msg: 'not authorized',
+						status: 2
+					});
+					return;
+				}
 				switch (method) {
 					case 'iota_sendTransaction':
 						const { to, value, unit = 'Mi', network = '', merchant = '', item_desc = '' } = params;
