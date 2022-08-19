@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { S, SS, Nav } from '@/common';
+import { useFocusEffect } from '@react-navigation/native';
+import FlagSecure from 'react-native-flag-secure-android';
 
 export const AccountMnemonic = () => {
 	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
@@ -14,6 +16,14 @@ export const AccountMnemonic = () => {
 		setErrList(IotaSDK.getMnemonic().toString().split(' '));
 		setRegisterInfo({ ...registerInfo, mnemonic: code });
 	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			FlagSecure.activate();
+			return () => {
+				FlagSecure.deactivate();
+			};
+		}, [])
+	);
 	return (
 		<Container>
 			<Nav title={I18n.t('account.mnemonicTitle')} />

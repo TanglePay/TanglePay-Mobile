@@ -50,6 +50,7 @@
     "react-native-config": "^1.4.4",
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^8.4.1",
+    "react-native-flag-secure-android": "^1.0.3",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-get-random-values": "^1.7.0",
     "react-native-image-picker": "^4.1.2",
