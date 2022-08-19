@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { BackHandler, Alert } from 'react-native';
 import { panelsList } from '@/panels';
 import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -10,6 +11,7 @@ import { useChangeNode } from '@tangle-pay/store/common';
 import { Theme, Toast } from '@/common';
 import _wrap from 'lodash/wrap';
 import { DappDialog } from '@/common/components/DappDialog';
+import Jailbreak from 'react-native-jailbreak';
 
 // import SplashScreen from 'react-native-splash-screen'
 const Stack = createStackNavigator();
@@ -82,6 +84,24 @@ export default () => {
 		// }, 300)
 	};
 	useEffect(() => {
+		Jailbreak.check().then((result) => {
+			if (result && process.env.NODE_ENV == 'production') {
+				Alert.alert(
+					'',
+					`We have detected that your device has been rooted.
+For the sake of security, TanglePay is prohibited from running on such devices.
+Please keep your device in non-rooted state and then launch the application again.`,
+					[
+						{
+							text: 'Confirm',
+							onPress: () => {
+								BackHandler.exitApp();
+							}
+						}
+					]
+				);
+			}
+		});
 		Base.globalInit({
 			store,
 			dispatch,
