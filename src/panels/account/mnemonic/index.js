@@ -2,13 +2,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
-import { S, SS, Nav } from '@/common';
+import { S, SS, Nav, ThemeVar } from '@/common';
+import { AppState, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import FlagSecure from 'react-native-flag-secure-android';
-
 export const AccountMnemonic = () => {
 	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
 	const [list, setList] = useState([]);
+	const [opacity, setOpacity] = useState(1);
 	const [errList, setErrList] = useState([]);
 	useEffect(() => {
 		const code = IotaSDK.getMnemonic();
@@ -16,16 +17,25 @@ export const AccountMnemonic = () => {
 		setErrList(IotaSDK.getMnemonic().toString().split(' '));
 		setRegisterInfo({ ...registerInfo, mnemonic: code });
 	}, []);
+	const _handleAppStateChange = (nextAppState) => {
+		setOpacity(nextAppState === 'active' ? 1 : 0);
+	};
 	useFocusEffect(
 		useCallback(() => {
-			FlagSecure.activate();
+			if (Platform.OS === 'android') {
+				FlagSecure.activate();
+			}
+			const appStateEvt = AppState.addEventListener('change', _handleAppStateChange);
 			return () => {
-				FlagSecure.deactivate();
+				if (Platform.OS === 'android') {
+					FlagSecure.deactivate();
+				}
+				appStateEvt.remove();
 			};
 		}, [])
 	);
 	return (
-		<Container>
+		<Container style={{ opacity: opacity }}>
 			<Nav title={I18n.t('account.mnemonicTitle')} />
 			<Content contentContainerStyle={[SS.ph16, SS.pb50, SS.pt16]}>
 				<View style={[SS.mb10]}>

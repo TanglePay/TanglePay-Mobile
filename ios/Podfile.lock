@@ -385,6 +385,8 @@ PODS:
     - React-Core
   - RNDeviceInfo (8.4.1):
     - React-Core
+  - RNExitApp (1.1.0):
+    - React
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNLocalize (2.1.5):
@@ -473,6 +475,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNExitApp (from `../node_modules/react-native-exit-app`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
@@ -591,6 +594,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNExitApp:
+    :path: "../node_modules/react-native-exit-app"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNLocalize:
@@ -666,6 +671,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCClipboard: ddd4d291537f1667209c9c405aaa4307297e252e
   RNDeviceInfo: 55175b0bd852c1c5d70d76efc04ed77799cef638
+  RNExitApp: c4e052df2568b43bec8a37c7cd61194d4cfee2c3
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: 74b82db20cc3895ccc25af992c644879bcec2815
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027

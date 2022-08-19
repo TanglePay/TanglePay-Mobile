@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { BackHandler, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import { panelsList } from '@/panels';
 import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -12,6 +12,7 @@ import { Theme, Toast } from '@/common';
 import _wrap from 'lodash/wrap';
 import { DappDialog } from '@/common/components/DappDialog';
 import Jailbreak from 'react-native-jailbreak';
+import Exit from 'react-native-exit-app';
 
 // import SplashScreen from 'react-native-splash-screen'
 const Stack = createStackNavigator();
@@ -95,7 +96,7 @@ Please keep your device in non-rooted state and then launch the application agai
 						{
 							text: 'Confirm',
 							onPress: () => {
-								BackHandler.exitApp();
+								Exit.exitApp();
 							}
 						}
 					]
