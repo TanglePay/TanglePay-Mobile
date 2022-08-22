@@ -155,6 +155,9 @@ android {
             storePassword '159753'
             keyAlias 'iota'
             keyPassword '159753'
+            
+            v1SigningEnabled false
+            v2SigningEnabled true       
         }
     }
     buildTypes {
