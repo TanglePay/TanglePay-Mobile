@@ -7,7 +7,7 @@ import { Assets } from './assets';
 import { User } from './user';
 import { Discover } from './discover';
 import { Apps } from './apps';
-import { useGetNodeWallet } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useEditWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S, SS, Theme } from '@/common';
 import { useStore } from '@tangle-pay/store';
 import Shadow from '@/common/components/Shadow';
@@ -86,6 +86,7 @@ export const Main = () => {
 			component: User
 		}
 	];
+	const editWallet = useEditWallet();
 	const [lang] = useStore('common.lang');
 	const [curWallet] = useGetNodeWallet();
 	const [routes, setRoutes] = useState([...initRoutes]);
@@ -99,6 +100,11 @@ export const Main = () => {
 		const filterMenuList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterMenuList || [];
 		setRoutes([...initRoutes.filter((e) => !filterMenuList.includes(e.key))]);
 	}, [curWallet.nodeId, JSON.stringify(initRoutes)]);
+	useEffect(() => {
+		if (curWallet.seed && !IotaSDK.checkKeyAndIvIsV2(curWallet.seed)) {
+			editWallet(curWallet.id, { ...curWallet }, true);
+		}
+	}, [curWallet.seed]);
 	return (
 		<Tab.Navigator
 			initialRouteName='assets'
