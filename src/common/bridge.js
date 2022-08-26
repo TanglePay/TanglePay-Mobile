@@ -131,9 +131,9 @@ export const Bridge = {
 		const curWallet = (list || []).find((e) => e.isSelected);
 		return curWallet || {};
 	},
-	async iota_sign(origin, expires, content) {
+	async iota_sign(origin, expires, content, password) {
 		const curWallet = await this.getCurWallet();
-		const res = await IotaSDK.iota_sign(curWallet, content);
+		const res = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 		if (res) {
 			this.sendMessage('iota_sign', res);
 			// this.cacheBgData(`${origin}_iota_sign_${curWallet.address}_${curWallet.nodeId}`, res, expires);

@@ -84,8 +84,12 @@ export const Assets = () => {
 					<RefreshControl
 						refreshing={false}
 						onRefresh={() => {
-							if (isRequestAssets && isRequestHis) {
-								refreshAssets(Math.random());
+							if (curWallet.address) {
+								IotaSDK.inputPassword(curWallet).then((res) => {
+									if (res) {
+										refreshAssets(Math.random());
+									}
+								});
 							}
 						}}
 					/>

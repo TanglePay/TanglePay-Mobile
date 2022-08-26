@@ -49,8 +49,11 @@ export const DappDialog = () => {
 	};
 	const onExecute = async ({ address, return_url, content, type, amount, origin, expires, taggedData }) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
-		if (password !== curWallet.password && !noPassword.includes(type)) {
-			return Toast.error(I18n.t('assets.passwordError'));
+		if (!noPassword.includes(type)) {
+			const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+			if (!isPassword) {
+				return Toast.error(I18n.t('assets.passwordError'));
+			}
 		}
 		let messageId = '';
 		switch (type) {
@@ -120,7 +123,7 @@ export const DappDialog = () => {
 				break;
 			case 'sign':
 				try {
-					messageId = await IotaSDK.iota_sign(curWallet, content);
+					messageId = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 					setLoading(false);
 				} catch (error) {
 					setLoading(false);
@@ -149,7 +152,7 @@ export const DappDialog = () => {
 			case 'iota_sign':
 				{
 					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_sign(origin, expires, content);
+						await Bridge.iota_sign(origin, expires, content, password);
 					});
 				}
 				break;

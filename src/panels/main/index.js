@@ -100,11 +100,6 @@ export const Main = () => {
 		const filterMenuList = IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.filterMenuList || [];
 		setRoutes([...initRoutes.filter((e) => !filterMenuList.includes(e.key))]);
 	}, [curWallet.nodeId, JSON.stringify(initRoutes)]);
-	useEffect(() => {
-		if (curWallet.seed && !IotaSDK.checkKeyAndIvIsV2(curWallet.seed)) {
-			editWallet(curWallet.id, { ...curWallet }, true);
-		}
-	}, [curWallet.seed]);
 	return (
 		<Tab.Navigator
 			initialRouteName='assets'

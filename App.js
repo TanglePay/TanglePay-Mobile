@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
@@ -13,6 +13,7 @@ import _wrap from 'lodash/wrap';
 import { DappDialog } from '@/common/components/DappDialog';
 import Jailbreak from 'react-native-jailbreak';
 import Exit from 'react-native-exit-app';
+import { PasswordDialog } from '@/common/components/passwordDialog';
 
 // import SplashScreen from 'react-native-splash-screen'
 const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ const Stack = createStackNavigator();
 export default () => {
 	const [store, dispatch] = useStoreReducer();
 	const changeNode = useChangeNode();
+	const passwordDialog = useRef();
 	const [sceneList, setSceneList] = useState([]);
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
@@ -108,6 +110,7 @@ Please keep your device in non-rooted state and then launch the application agai
 			dispatch,
 			Toast
 		});
+		IotaSDK.passwordDialog = passwordDialog;
 		init();
 	}, []);
 	if (sceneList.length === 0) {
@@ -144,6 +147,7 @@ Please keep your device in non-rooted state and then launch the application agai
 							</Stack.Navigator>
 						</NavigationContainer>
 						<DappDialog />
+						<PasswordDialog dialogRef={passwordDialog} />
 					</RootSiblingParent>
 				</StyleProvider>
 			</StoreContext.Provider>

@@ -50,7 +50,8 @@ export const AssetsSend = () => {
 					validationSchema={schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
-						if (password !== curWallet.password) {
+						const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+						if (!isPassword) {
 							return Toast.error(I18n.t('assets.passwordError'));
 						}
 
@@ -77,7 +78,7 @@ export const AssetsSend = () => {
 						}
 						Toast.showLoading();
 						try {
-							const res = await IotaSDK.send(curWallet, receiver, sendAmount, {
+							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name
 							});
