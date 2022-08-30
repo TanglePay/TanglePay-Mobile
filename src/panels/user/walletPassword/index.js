@@ -38,7 +38,7 @@ export const UserWalletPassword = () => {
 						if (newPassword !== rePassword) {
 							return Toast.error(I18n.t('account.checkPasswrod'));
 						}
-						editWallet(params.id, { password: values.newPassword }, true);
+						editWallet(params.id, { password: values.newPassword, oldPassword: values.old }, true);
 						Toast.success(I18n.t('user.passwordSucc'));
 						Base.goBack();
 					}}>
