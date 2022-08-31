@@ -83,7 +83,7 @@ export const DappDialog = () => {
 							}
 						}
 						setLoading(true);
-						const res = await IotaSDK.send(curWallet, address, amount, {
+						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: assets?.contract,
 							token: assets?.name,
 							taggedData
