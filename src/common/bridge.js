@@ -71,7 +71,7 @@ export const Bridge = {
 				}
 				switch (method) {
 					case 'iota_sendTransaction':
-						const { to, value, unit = 'Mi', network = '', merchant = '', item_desc = '' } = params;
+						const { to, value, unit = '', network = '', merchant = '', item_desc = '' } = params;
 						const url = `tanglepay://iota_sendTransaction/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}`;
 						Linking.openURL(url);
 						break;
@@ -111,9 +111,7 @@ export const Bridge = {
 					case 'iota_getPublicKey':
 						try {
 							const curWallet = await this.getCurWallet();
-							const baseSeed = IotaSDK.getSeed(curWallet.seed, curWallet.password);
-							const addressKeyPair = IotaSDK.getPair(baseSeed);
-							this.sendMessage('iota_getPublicKey', IotaSDK.bytesToHex(addressKeyPair.publicKey));
+							this.sendMessage('iota_getPublicKey', curWallet.publicKey);
 						} catch (error) {
 							this.sendErrorMessage('iota_getPublicKey', {
 								msg: error.toString()
