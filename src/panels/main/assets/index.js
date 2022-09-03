@@ -83,13 +83,10 @@ export const Assets = () => {
 				refreshControl={
 					<RefreshControl
 						refreshing={false}
-						onRefresh={() => {
+						onRefresh={async () => {
 							if (curWallet.address) {
-								// IotaSDK.inputPassword(curWallet).then((res) => {
-								// 	if (res) {
+								// await Base.setLocalData(`valid.addresses.${curWallet.address}`, []);
 								refreshAssets(Math.random());
-								// 	}
-								// });
 							}
 						}}
 					/>

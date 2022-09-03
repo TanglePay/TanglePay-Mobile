@@ -35,7 +35,7 @@ export const PasswordDialog = ({ dialogRef }) => {
 	};
 	const hide = (info) => {
 		setShow(false);
-		callBackRef.current && callBackRef.current(info);
+		callBackRef.current && callBackRef.current({ ...info });
 		if (!info) {
 			// clear password selection given invalid password input
 			selectWallet('');
@@ -71,13 +71,13 @@ export const PasswordDialog = ({ dialogRef }) => {
 								oldPassword: password,
 								password
 							};
-							editWallet(curWallet.id, obj);
+							editWallet(curWallet.id, { ...obj });
 							hide(obj);
 
 							// v1->v2 start
 							if (!IotaSDK.checkKeyAndIvIsV2(curWallet.seed)) {
 								setTimeout(() => {
-									editWallet(curWallet.id, obj, true);
+									editWallet(curWallet.id, { ...obj }, true);
 								}, 300);
 							}
 							// v1->v2 end
