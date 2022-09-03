@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Container, View, Text } from 'native-base';
+import { Container, View, Text, Spinner } from 'native-base';
 import { TouchableOpacity, RefreshControl, ScrollView } from 'react-native';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
@@ -83,8 +83,9 @@ export const Assets = () => {
 				refreshControl={
 					<RefreshControl
 						refreshing={false}
-						onRefresh={() => {
-							if (isRequestAssets && isRequestHis) {
+						onRefresh={async () => {
+							if (curWallet.address) {
+								// await Base.setLocalData(`valid.addresses.${curWallet.address}`, []);
 								refreshAssets(Math.random());
 							}
 						}}
@@ -162,6 +163,12 @@ export const Assets = () => {
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
 						<CoinList />
 						{assetsTab.includes('stake') && <RewardsList />}
+						{!isRequestAssets && (
+							<View style={[SS.p16, SS.c, SS.row]}>
+								<Spinner size='small' color='gray' />
+								<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
+							</View>
+						)}
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
 						<CollectiblesList

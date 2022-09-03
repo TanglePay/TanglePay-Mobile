@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Content, View, Text, Input, Form, Item, Button, Label } from 'native-base';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useRoute } from '@react-navigation/native';
@@ -26,9 +26,10 @@ export const UserWalletPassword = () => {
 					validateOnChange={false}
 					validateOnMount={false}
 					validationSchema={schema}
-					onSubmit={(values) => {
-						if (params.password !== values.old) {
-							return Toast.error(I18n.t('user.passwordError'));
+					onSubmit={async (values) => {
+						const isPassword = await IotaSDK.checkPassword(params.seed, values.old);
+						if (!isPassword) {
+							return Toast.error(I18n.t('assets.passwordError'));
 						}
 						const { newPassword, rePassword } = values;
 						if (!Base.checkPassword(newPassword)) {
@@ -37,7 +38,11 @@ export const UserWalletPassword = () => {
 						if (newPassword !== rePassword) {
 							return Toast.error(I18n.t('account.checkPasswrod'));
 						}
-						editWallet(params.id, { password: values.newPassword }, true);
+						editWallet(
+							params.id,
+							{ ...params, password: values.newPassword, oldPassword: values.old },
+							true
+						);
 						Toast.success(I18n.t('user.passwordSucc'));
 						Base.goBack();
 					}}>

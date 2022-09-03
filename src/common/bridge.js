@@ -71,7 +71,7 @@ export const Bridge = {
 				}
 				switch (method) {
 					case 'iota_sendTransaction':
-						const { to, value, unit = 'Mi', network = '', merchant = '', item_desc = '' } = params;
+						const { to, value, unit = '', network = '', merchant = '', item_desc = '' } = params;
 						const url = `tanglepay://iota_sendTransaction/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}`;
 						Linking.openURL(url);
 						break;
@@ -111,9 +111,7 @@ export const Bridge = {
 					case 'iota_getPublicKey':
 						try {
 							const curWallet = await this.getCurWallet();
-							const baseSeed = IotaSDK.getSeed(curWallet.seed, curWallet.password);
-							const addressKeyPair = IotaSDK.getPair(baseSeed);
-							this.sendMessage('iota_getPublicKey', IotaSDK.bytesToHex(addressKeyPair.publicKey));
+							this.sendMessage('iota_getPublicKey', curWallet.publicKey);
 						} catch (error) {
 							this.sendErrorMessage('iota_getPublicKey', {
 								msg: error.toString()
@@ -131,9 +129,9 @@ export const Bridge = {
 		const curWallet = (list || []).find((e) => e.isSelected);
 		return curWallet || {};
 	},
-	async iota_sign(origin, expires, content) {
+	async iota_sign(origin, expires, content, password) {
 		const curWallet = await this.getCurWallet();
-		const res = await IotaSDK.iota_sign(curWallet, content);
+		const res = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 		if (res) {
 			this.sendMessage('iota_sign', res);
 			// this.cacheBgData(`${origin}_iota_sign_${curWallet.address}_${curWallet.nodeId}`, res, expires);
@@ -224,10 +222,11 @@ export const Bridge = {
 	},
 	async iota_getBalance(origin, { assetsList, addressList }) {
 		try {
+			const curWallet = await this.getCurWallet();
 			// iota
 			assetsList = assetsList || [];
 			let amount = BigNumber(0);
-			if (assetsList.includes('iota') && !IotaSDK.isWeb3Node) {
+			if (assetsList.includes('iota') && !IotaSDK.checkSMR(curWallet.nodeId) && !IotaSDK.isWeb3Node) {
 				const res = await Promise.all(addressList.map((e) => IotaSDK.client.address(e)));
 				res.forEach((e) => {
 					amount = amount.plus(e.balance);
@@ -243,22 +242,33 @@ export const Bridge = {
 
 			// stake
 			let othersDic = {};
-			if (assetsList.includes('smr') || assetsList.includes('asmb')) {
-				let eventConfig = await fetch(`${API_URL}/events.json?v=${new Date().getTime()}`).then((res) =>
-					res.json()
-				);
-				eventConfig = eventConfig?.rewards || {};
-				const othersRes = await IotaSDK.getAddressListRewards(addressList);
-				for (const i in othersRes) {
-					const { symbol, amount, minimumReached } = othersRes[i];
-					const { ratio, unit } = eventConfig[symbol];
-					if (minimumReached && assetsList.includes(unit.toLocaleLowerCase())) {
-						othersDic[symbol] = othersDic[symbol] || {
-							amount: 0,
-							symbol,
-							icon: `http://api.iotaichi.com/icon/${unit}.png`
-						};
-						othersDic[symbol].amount += amount * ratio;
+			if (IotaSDK.checkSMR(curWallet.nodeId)) {
+				if (assetsList.includes('smr')) {
+					const smrAessets = (await IotaSDK.getBalance(curWallet, addressList)) || [];
+					othersDic.smr = {
+						amount: smrAessets.find((e) => e.token === IotaSDK.curNode?.token)?.realBalance,
+						symbol: 'smr',
+						icon: `https://api.iotaichi.com/icon/SMR.png`
+					};
+				}
+			} else {
+				if (assetsList.includes('smr') || assetsList.includes('asmb')) {
+					let eventConfig = await fetch(`${API_URL}/events.json?v=${new Date().getTime()}`).then((res) =>
+						res.json()
+					);
+					eventConfig = eventConfig?.rewards || {};
+					const othersRes = await IotaSDK.getAddressListRewards(addressList);
+					for (const i in othersRes) {
+						const { symbol, amount, minimumReached } = othersRes[i];
+						const { ratio, unit } = eventConfig[symbol];
+						if (minimumReached && assetsList.includes(unit.toLocaleLowerCase())) {
+							othersDic[symbol] = othersDic[symbol] || {
+								amount: 0,
+								symbol,
+								icon: `http://api.iotaichi.com/icon/${unit}.png`
+							};
+							othersDic[symbol].amount += amount * ratio;
+						}
 					}
 				}
 			}

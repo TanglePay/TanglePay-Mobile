@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text, Input, Item, Button, Spinner } from 'native-base';
 import { Nav, S, SS, SvgIcon, ThemeVar, Toast } from '@/common';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import Modal from 'react-native-modal';
 import { useCollect, useGetWalletInfo, useGetNodeWallet } from '@tangle-pay/store/common';
 
@@ -54,11 +54,12 @@ export const WalletCollection = () => {
 						/>
 						<Button
 							disabled={!password}
-							onPress={() => {
-								if (password !== curWallet.password) {
+							onPress={async () => {
+								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+								if (!isPassword) {
 									return Toast.error(I18n.t('assets.passwordError'));
 								}
-								start(curWallet, setList);
+								start({ ...curWallet, password }, setList);
 								setShow(true);
 							}}
 							style={[SS.mt40, SS.mb16]}

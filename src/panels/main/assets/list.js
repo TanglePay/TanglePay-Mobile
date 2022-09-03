@@ -145,17 +145,7 @@ export const RewardsList = () => {
 			);
 		});
 	}, [JSON.stringify(list), isShowAssets]);
-	return (
-		<>
-			{list.length <= 0 ? null : ListEl}
-			{!isRequestAssets && (
-				<View style={[SS.p16, SS.c, SS.row]}>
-					<Spinner size='small' color='gray' />
-					<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
-				</View>
-			)}
-		</>
-	);
+	return list.length <= 0 ? null : ListEl;
 };
 export const ActivityList = ({ search, setHeight }) => {
 	const [list] = useStore('common.hisList');

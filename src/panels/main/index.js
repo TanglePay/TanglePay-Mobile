@@ -7,7 +7,7 @@ import { Assets } from './assets';
 import { User } from './user';
 import { Discover } from './discover';
 import { Apps } from './apps';
-import { useGetNodeWallet } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useEditWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S, SS, Theme } from '@/common';
 import { useStore } from '@tangle-pay/store';
 import Shadow from '@/common/components/Shadow';
@@ -86,6 +86,7 @@ export const Main = () => {
 			component: User
 		}
 	];
+	const editWallet = useEditWallet();
 	const [lang] = useStore('common.lang');
 	const [curWallet] = useGetNodeWallet();
 	const [routes, setRoutes] = useState([...initRoutes]);

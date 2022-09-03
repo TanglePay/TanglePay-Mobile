@@ -50,7 +50,8 @@ export const AssetsSend = () => {
 					validationSchema={schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
-						if (password !== curWallet.password) {
+						const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+						if (!isPassword) {
 							return Toast.error(I18n.t('assets.passwordError'));
 						}
 
@@ -77,7 +78,7 @@ export const AssetsSend = () => {
 						}
 						Toast.showLoading();
 						try {
-							const res = await IotaSDK.send(curWallet, receiver, sendAmount, {
+							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name
 							});
@@ -191,14 +192,14 @@ export const AssetsSend = () => {
 								</Item>
 								<View style={[S.marginT(100), SS.pb30]}>
 									<Button
-										disabled={curWallet.nodeId === IotaSDK.SMR_NODE_ID}
+										// disabled={curWallet.nodeId === IotaSDK.SMR_NODE_ID}
 										block
 										onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
-									{curWallet.nodeId === IotaSDK.SMR_NODE_ID ? (
+									{/* {curWallet.nodeId === IotaSDK.SMR_NODE_ID ? (
 										<Text style={[SS.fz10, SS.cS, SS.mt12]}>{I18n.t('shimmer.sendTips')}</Text>
-									) : null}
+									) : null} */}
 								</View>
 							</Form>
 						</View>

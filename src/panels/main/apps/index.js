@@ -51,7 +51,7 @@ export const Apps = () => {
 	}, [searchStr, curTab, JSON.stringify(list)]);
 	const onBlur = () => {
 		if (/^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$/.test(searchStr)) {
-			Base.push(`http://${searchStr}`);
+			Base.push(`https://${searchStr}`);
 		} else if (/(http|https):\/\/([\w.]+\/?)\S*/.test(searchStr)) {
 			Base.push(searchStr);
 		}

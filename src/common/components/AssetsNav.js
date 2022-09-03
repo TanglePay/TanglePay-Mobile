@@ -174,7 +174,11 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 									activeOpacity={0.8}
 									onPress={() => {
 										hideModal();
-										Base.push(`${curNode.explorer}/address/${curWallet.address}`);
+										Base.push(
+											`${curNode.explorer}/${
+												IotaSDK.checkSMR(curWallet.nodeId) ? 'addr' : 'address'
+											}/${curWallet.address}`
+										);
 									}}
 									style={[SS.row, SS.ac, SS.ph15, { height: 44, minWidth: 260 }]}>
 									<SvgIcon name='view' color='black' size='20' />

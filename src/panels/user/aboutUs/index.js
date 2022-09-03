@@ -63,7 +63,7 @@ export const UserAboutUs = () => {
 			<Nav title={I18n.t('user.aboutUs')} />
 			<Content>
 				<View style={[SS.c, SS.row, SS.pv40]}>
-					<Image style={[S.wh(43, 40), SS.mr15]} source={logo} />
+					<Image style={[S.wh(43, 43), SS.mr15]} source={logo} />
 					<View>
 						<Text style={[SS.fz24, { fontWeight: '700' }, SS.cP]}>TANGLEPAY</Text>
 						<Text style={[SS.fz14, SS.cS]}>

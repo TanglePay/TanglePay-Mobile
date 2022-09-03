@@ -8756,6 +8756,16 @@ react-native-easy-grid@0.2.2:
   dependencies:
     lodash "^4.17.15"
 
+react-native-exit-app@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/react-native-exit-app/-/react-native-exit-app-1.1.0.tgz#5ec082152974240e2d6a93f1608efb49a4385f21"
+  integrity sha512-Spne19zfMfJvnUTX909EHUqWMk69rATtLJq9XMBGpNSHhx0M7v5yetx2Z87egBhLOqQm+CWfD/oxWzDG8rbIQA==
+
+react-native-flag-secure-android@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/react-native-flag-secure-android/-/react-native-flag-secure-android-1.0.3.tgz#0e86b24836c68ff38f75d43774bf475ae6f70793"
+  integrity sha512-vbwTUVFAAqzcTlmqt09ykfzBsSTXKQOIW87eg9pQkgVuqkO4Vo9kX7JMs3nE2GF+xlrr7tCaDYf+jKQmgOVMdQ==
+
 react-native-gesture-handler@^1.10.3:
   version "1.10.3"
   resolved "https://registry.npm.taobao.org/react-native-gesture-handler/download/react-native-gesture-handler-1.10.3.tgz#942bbf2963bbf49fa79593600ee9d7b5dab3cfc0"
@@ -8808,6 +8818,11 @@ react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"
   resolved "https://registry.npm.taobao.org/react-native-iphone-x-helper/download/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha1-IMYD6aDnZf1vlzlmOL3rDlpgsBA=
+
+react-native-jailbreak@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/react-native-jailbreak/-/react-native-jailbreak-0.1.0.tgz#e591bd0a2fffd498b47739887bad79b4370e734b"
+  integrity sha512-nDeCQKD4Oew2S7w5bFVpv6PA3YeMLVbM+jUf7KbdGkhRh0vUqtpa86inPoh1zl4Gn0aJxo/gyXVDmIMQlibjZA==
 
 react-native-lewin-qrcode@^1.1.0:
   version "1.1.0"
@@ -10157,10 +10172,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^1.6.5:
-  version "1.6.5"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.6.5.tgz#08c7f524e451815dec47f345be3c8d764398ade0"
-  integrity sha512-+x+nJrlx2oGsqLsOvPMLnT69gYkRHLXvtFJI18bmJhyZ0wG9mfJGnn/EBleML2Wp4ZRFovObN/DtZoWQEqkoqw==
+tanglepay@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-1.8.1.tgz#3d9bce7546ac5c886a66142820ddcaa9bb752cb1"
+  integrity sha512-cxqwmI1Mpf5PKNk2ZImtoKZcvODtomOkCnHQgMzDumnN3l98ml3a6nUWGkMaVzBZKVspIV30P40wrYxdlt3/cg==
 
 tar@^4.0.2:
   version "4.4.19"

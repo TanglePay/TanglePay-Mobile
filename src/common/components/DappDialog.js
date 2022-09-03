@@ -47,17 +47,26 @@ export const DappDialog = () => {
 				break;
 		}
 	};
-	const onExecute = async ({ address, return_url, content, type, amount, origin, expires, taggedData }) => {
+	const onExecute = async ({ address, return_url, content, type, amount, origin, expires, taggedData, contract }) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
-		if (password !== curWallet.password && !noPassword.includes(type)) {
-			return Toast.error(I18n.t('assets.passwordError'));
+		if (!noPassword.includes(type)) {
+			const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+			if (!isPassword) {
+				return Toast.error(I18n.t('assets.passwordError'));
+			}
 		}
 		let messageId = '';
 		switch (type) {
 			case 'send':
 			case 'iota_sendTransaction':
 				{
-					const assets = assetsList.find((e) => e.name === IotaSDK.curNode?.token) || {};
+					let curToken = IotaSDK.curNode?.token;
+					if (contract) {
+						curToken =
+							(IotaSDK.curNode.contractList || []).find((e) => e.contract === contract)?.token ||
+							IotaSDK.curNode?.token;
+					}
+					let assets = assetsList.find((e) => e.name === curToken) || {};
 					let realBalance = BigNumber(assets.realBalance || 0);
 					const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 					realBalance = realBalance.minus(bigStatedAmount);
@@ -80,7 +89,7 @@ export const DappDialog = () => {
 							}
 						}
 						setLoading(true);
-						const res = await IotaSDK.send(curWallet, address, amount, {
+						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: assets?.contract,
 							token: assets?.name,
 							taggedData
@@ -120,7 +129,7 @@ export const DappDialog = () => {
 				break;
 			case 'sign':
 				try {
-					messageId = await IotaSDK.iota_sign(curWallet, content);
+					messageId = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 					setLoading(false);
 				} catch (error) {
 					setLoading(false);
@@ -149,7 +158,7 @@ export const DappDialog = () => {
 			case 'iota_sign':
 				{
 					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_sign(origin, expires, content);
+						await Bridge.iota_sign(origin, expires, content, password);
 					});
 				}
 				break;
@@ -215,35 +224,47 @@ export const DappDialog = () => {
 			clearTimeout(selectTimeHandler.current);
 			const path = url.replace('tanglepay://', '').split('?')[0];
 			if (path) {
-				const [type, address] = path.split('/');
+				let [type, address] = path.split('/');
 				switch (type) {
 					case 'send':
 					case 'iota_sendTransaction':
 						{
 							value = parseFloat(value) || 0;
-							if (!value) {
+							if (!value && !taggedData) {
 								Toast.error('Required: value');
 							}
 							if (!address) {
 								Toast.error('Required: address');
 							}
-
+							address = address.toLocaleLowerCase();
 							let showValue = '';
 							let showUnit = '';
 							let sendAmount = 0;
+							let contract = '';
 							if (IotaSDK.checkWeb3Node(toNetId)) {
+								let curToken = IotaSDK.curNode?.token;
+								if (taggedData) {
+									contract = address;
+									unit = 'wei';
+									value = `0x${taggedData.slice(-64).replace(/^0+/, '')}`;
+									value = parseFloat(IotaSDK.client?.utils.hexToNumberString(value)) || 0;
+									address = `0x${taggedData.slice(-(64 + 40), -64)}`;
+									curToken =
+										(IotaSDK.curNode.contractList || []).find((e) => e.contract === contract)
+											?.token || IotaSDK.curNode?.token;
+								}
 								unit = unit || 'wei';
 								if (IotaSDK.client?.utils) {
 									sendAmount = IotaSDK.client.utils.toWei(String(value), unit);
 									showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
-									showUnit = IotaSDK.curNode?.token;
+									showUnit = curToken;
 								} else {
 									showValue = value;
 									showUnit = unit;
 									sendAmount = value;
 								}
 							} else {
-								unit = unit || 'i';
+								unit = unit || 'Mi';
 								showValue = IotaSDK.convertUnits(value, unit, 'Mi');
 								sendAmount = IotaSDK.convertUnits(value, unit, 'i');
 								showUnit = 'MIOTA';
@@ -275,7 +296,8 @@ export const DappDialog = () => {
 								type,
 								amount: sendAmount,
 								address,
-								taggedData
+								taggedData,
+								contract
 							});
 							show();
 						}
