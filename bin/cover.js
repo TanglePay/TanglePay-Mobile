@@ -25,5 +25,8 @@ fs.copyFileSync(txPath, libTxPath);
 
 const iotaNextPath = path.join(__dirname, './template/iota-next-index-app.js');
 const libIotaNextPath = path.join(__dirname, '../node_modules/@iota/iota.js-next/dist/cjs/index-node.js');
-
 fs.copyFileSync(iotaNextPath, libIotaNextPath);
+
+const mqttNextPath = path.join(__dirname, './template/iota.mqtt-next-app.js');
+const libMqttNextPath = path.join(__dirname, '../node_modules/@iota/mqtt.js-next/dist/cjs/index-node.js');
+fs.copyFileSync(mqttNextPath, libMqttNextPath);
