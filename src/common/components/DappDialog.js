@@ -8,10 +8,12 @@ import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
 import { Bridge } from '@/common/bridge';
+import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
+	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
 	const [dappData, setDappData] = useState({
 		texts: []
@@ -20,7 +22,7 @@ export const DappDialog = () => {
 	const selectTimeHandler = useRef();
 	const [curWallet] = useGetNodeWallet();
 	const [assetsList] = useStore('common.assetsList');
-	const [statedAmount] = useStore('staking.statedAmount');
+	// const [statedAmount] = useStore('staking.statedAmount');
 	const [curNodeId] = useStore('common.curNodeId');
 	const changeNode = useChangeNode();
 	const show = () => {
@@ -68,8 +70,8 @@ export const DappDialog = () => {
 					}
 					let assets = assetsList.find((e) => e.name === curToken) || {};
 					let realBalance = BigNumber(assets.realBalance || 0);
-					const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
-					realBalance = realBalance.minus(bigStatedAmount);
+					// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
+					// realBalance = realBalance.minus(bigStatedAmount);
 					let residue = Number(realBalance.minus(amount)) || 0;
 					const decimal = Math.pow(10, assets.decimal);
 					try {
@@ -79,9 +81,7 @@ export const DappDialog = () => {
 							}
 						}
 						if (residue < 0) {
-							return Toast.error(
-								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
-							);
+							return Toast.error(I18n.t('assets.balanceError'));
 						}
 						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
 							if (residue < decimal && residue != 0) {
@@ -92,7 +92,8 @@ export const DappDialog = () => {
 						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: assets?.contract,
 							token: assets?.name,
-							taggedData
+							taggedData,
+							residue
 						});
 						if (!res) {
 							setLoading(false);
@@ -119,7 +120,7 @@ export const DappDialog = () => {
 						Toast.error(
 							`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
 								realBalance
-							)}---bigStatedAmount:${bigStatedAmount}`,
+							)}`,
 							{
 								duration: 5000
 							}

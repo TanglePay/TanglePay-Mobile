@@ -8,6 +8,7 @@ import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, SvgIcon, Toast } from '@/common';
 import BigNumber from 'bignumber.js';
+import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -16,7 +17,8 @@ const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
 export const AssetsSend = () => {
-	const [statedAmount] = useStore('staking.statedAmount');
+	useGetParticipationEvents();
+	// const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
 	const { params } = useRoute();
 	const form = useRef();
@@ -31,8 +33,8 @@ export const AssetsSend = () => {
 		setReceiver(params?.address);
 	}, [params]);
 
-	const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
-	let realBalance = BigNumber(assets.realBalance || 0).minus(bigStatedAmount);
+	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
+	let realBalance = BigNumber(assets.realBalance || 0);
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
@@ -65,9 +67,7 @@ export const AssetsSend = () => {
 							}
 						}
 						if (residue < 0) {
-							return Toast.error(
-								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
-							);
+							return Toast.error(I18n.t('assets.balanceError'));
 						}
 						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
 							if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
@@ -80,17 +80,12 @@ export const AssetsSend = () => {
 						try {
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
-								token: assets?.name
+								token: assets?.name,
+								residue
 							});
 							Toast.hideLoading();
 							if (res) {
-								Toast.success(
-									I18n.t(
-										IotaSDK.checkWeb3Node(curWallet.nodeId)
-											? 'assets.sendSucc'
-											: 'assets.sendSuccRestake'
-									)
-								);
+								Toast.success(I18n.t('assets.sendSucc'));
 								Base.goBack();
 							}
 						} catch (error) {
@@ -101,7 +96,7 @@ export const AssetsSend = () => {
 									values.amount
 								}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
 									realBalance
-								)}---available:${available}---bigStatedAmount:${bigStatedAmount}`,
+								)}---available:${available}`,
 								{
 									duration: 5000
 								}

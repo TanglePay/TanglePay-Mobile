@@ -11,6 +11,7 @@ import _sumBy from 'lodash/sumBy';
 export const UserSetting = () => {
 	useStore('common.lang');
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
+	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
 	const list = [
 		{
@@ -18,11 +19,6 @@ export const UserSetting = () => {
 			label: I18n.t('user.language'),
 			path: 'user/lang'
 		},
-		// {
-		// 	icon: 'network',
-		// 	label: I18n.t('user.network'),
-		// 	path: 'user/network'
-		// },
 		{
 			icon: 'cache',
 			label: I18n.t('nft.clearCache'),
@@ -39,8 +35,24 @@ export const UserSetting = () => {
 			type: 'switch',
 			value: disTrace == 1,
 			onChange: (e) => setDisTrace(e ? 1 : 0)
+		},
+		{
+			icon: 'stake',
+			label: 'restake',
+			type: 'switch',
+			value: isNoRestake,
+			onChange: (e) => {
+				setNoRestake(e);
+				Base.setLocalData('common.isNoRestake', e ? 0 : 1);
+			}
 		}
 	];
+	useEffect(() => {
+		Base.getLocalData('common.isNoRestake').then((res) => {
+			setNoRestake(res != 1);
+		});
+		getCache();
+	}, []);
 	const getCache = async () => {
 		const { cache } = ImageCache.get();
 		const requestList = [];
@@ -52,9 +64,6 @@ export const UserSetting = () => {
 		const totalSize = _sumBy(list, 'size');
 		setCache(Base.formatNum(totalSize / 1024 / 1024) + ' M');
 	};
-	useEffect(() => {
-		getCache();
-	}, []);
 	return (
 		<Container>
 			<Nav title={I18n.t('user.setting')} />
