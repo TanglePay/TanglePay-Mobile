@@ -156,7 +156,7 @@ export const AssetsSend = () => {
 											if (parseFloat(str) < Math.pow(10, -precision)) {
 												str = String(Math.pow(10, -precision));
 											}
-											if (curWallet.nodeId === IotaSDK.SMR_NODE_ID) {
+											if (IotaSDK.checkSMR(curWallet.nodeId)) {
 												str = String(parseInt(str));
 											}
 											setFieldValue('amount', str);
@@ -186,15 +186,9 @@ export const AssetsSend = () => {
 									/>
 								</Item>
 								<View style={[S.marginT(100), SS.pb30]}>
-									<Button
-										// disabled={curWallet.nodeId === IotaSDK.SMR_NODE_ID}
-										block
-										onPress={handleSubmit}>
+									<Button block onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
-									{/* {curWallet.nodeId === IotaSDK.SMR_NODE_ID ? (
-										<Text style={[SS.fz10, SS.cS, SS.mt12]}>{I18n.t('shimmer.sendTips')}</Text>
-									) : null} */}
 								</View>
 							</Form>
 						</View>
