@@ -43,9 +43,12 @@ export const CoinList = () => {
 							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
 							source={{ uri: Base.getIcon(e.name) }}
 						/>
+						<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
+							<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
+						</View>
 						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
-								<Text style={[SS.fz16]}>{e.name}</Text>
+								<Text style={[SS.fz16]}>{String(e.name).toLocaleUpperCase()}</Text>
 								{!IotaSDK.isWeb3Node && statedAmount > 0 && e.realBalance > 0 && !needRestake ? (
 									<View
 										style={[
@@ -61,7 +64,7 @@ export const CoinList = () => {
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
-										{e.balance} {e.unit || e.name}
+										{e.balance} {String(e.unit || e.name).toLocaleUpperCase()}
 									</Text>
 									<Text style={[SS.fz12, SS.tr, SS.cS]}>
 										{curLegal.unit} {e.assets}

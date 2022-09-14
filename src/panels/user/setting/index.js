@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text, Switch } from 'native-base';
 import { TouchableOpacity } from 'react-native';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { S, SS, Nav, SvgIcon } from '@/common';
 import { ImageCache } from 'react-native-img-cache';
@@ -47,6 +47,15 @@ export const UserSetting = () => {
 			}
 		}
 	];
+	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
+	if (curNodeKey) {
+		list.push({
+			icon: 'network',
+			label: I18n.t('user.network'),
+			value: curNodeKey,
+			hideArrow: true
+		});
+	}
 	useEffect(() => {
 		Base.getLocalData('common.isNoRestake').then((res) => {
 			setNoRestake(res != 1);
@@ -74,7 +83,11 @@ export const UserSetting = () => {
 							<TouchableOpacity
 								activeOpacity={0.8}
 								onPress={() => {
-									e.onPress ? e.onPress() : Base.push(e.path);
+									if (e.onPress) {
+										e.onPress();
+									} else if (e.path) {
+										Base.push(e.path);
+									}
 								}}
 								key={i}
 								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
@@ -88,7 +101,7 @@ export const UserSetting = () => {
 								) : (
 									<View style={[SS.row, SS.ac]}>
 										{e.value && <Text style={[SS.fz11, SS.mr10, SS.cS]}>{e.value}</Text>}
-										<SvgIcon size={16} name='right' />
+										{!e.hideArrow ? <SvgIcon size={16} name='right' /> : null}
 									</View>
 								)}
 							</TouchableOpacity>
