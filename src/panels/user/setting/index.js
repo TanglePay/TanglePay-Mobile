@@ -38,7 +38,7 @@ export const UserSetting = () => {
 		},
 		{
 			icon: 'stake',
-			label: 'restake',
+			label: I18n.t('staking.restake'),
 			type: 'switch',
 			value: isNoRestake,
 			onChange: (e) => {

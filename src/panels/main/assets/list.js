@@ -38,9 +38,17 @@ export const CoinList = () => {
 							Base.push('assets/send', { currency: e.name });
 						}}
 						key={e.name}
-						style={[SS.row, SS.ac, { height: itemH }]}>
+						style={[SS.row, SS.ac, SS.pr, { height: itemH }]}>
 						<Image
-							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
+							style={[
+								S.wh(48),
+								S.radius(48),
+								SS.pa,
+								// SS.bgW,
+								{ left: 0, top: 8, zIndex: 1 },
+								SS.mr12,
+								S.border(4)
+							]}
 							source={{ uri: Base.getIcon(e.name) }}
 						/>
 						<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
