@@ -51,17 +51,21 @@ export const ClaimSMR = () => {
 						if (!Base.checkPassword(password)) {
 							return Toast.error(I18n.t('account.intoPasswordTips'));
 						}
-						await changeNode(IotaSDK.SMR_NODE_ID);
-						const res = await IotaSDK.claimSMR({ ...curEdit, password });
-						if (res.code > 0) {
-							if (res.code === 200) {
-								addWallet({
-									...res.addressInfo
-								});
-								Base.replace('assets/claimReward/claimResult', { id, amount: res.amount });
-							} else {
-								setShow(true);
+						try {
+							await changeNode(IotaSDK.SMR_NODE_ID);
+							const res = await IotaSDK.claimSMR({ ...curEdit, password });
+							if (res.code > 0) {
+								if (res.code === 200) {
+									addWallet({
+										...res.addressInfo
+									});
+									Base.replace('assets/claimReward/claimResult', { id, amount: res.amount });
+								} else {
+									setShow(true);
+								}
 							}
+						} catch (error) {
+							setShow(true);
 						}
 					}}>
 					{({ handleChange, handleSubmit, values, errors }) => (

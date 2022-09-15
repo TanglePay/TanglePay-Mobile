@@ -94,11 +94,11 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								style={[{ height: 72 }, SS.pl24, SS.jc]}>
 								<Text style={[SS.fz16]}>{I18n.t('account.createTitle')}</Text>
 							</TouchableOpacity>
-							{(curNode?.type == 1 || curNode?.type == 3) && (
+							{curNode?.type == 3 && (
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
-										Toast.show(I18n.t('account.unopen'));
+										// Toast.show(I18n.t('account.unopen'));
 										hide();
 										Base.push('assets/claimReward');
 									}}
