@@ -4635,7 +4635,14 @@
 			} else {
 				for (const addressOutputId of addressOutputIds.items) {
 					const addressOutput = await localClient.output(addressOutputId);
-					if (!addressOutput.metadata.isSpent && consumedBalance.lesser(requiredBalance)) {
+					const addressUnlockCondition = addressOutput.output.unlockConditions.find(
+						(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
+					);
+					if (
+						!addressOutput.metadata.isSpent &&
+						consumedBalance.lesser(requiredBalance) &&
+						!addressUnlockCondition
+					) {
 						if (bigInt__default['default'](addressOutput.output.amount).equals(0)) {
 							zeroBalance++;
 							if (zeroBalance >= zeroCount) {
