@@ -100,8 +100,12 @@ export const UserSetting = () => {
 									<Switch value={e.value} onValueChange={e.onChange} />
 								) : (
 									<View style={[SS.row, SS.ac]}>
-										{e.value && <Text style={[SS.fz12, SS.mr10, SS.cS]}>{e.value}</Text>}
-										{!e.hideArrow ? <SvgIcon size={16} name='right' /> : null}
+										{e.value && <Text style={[SS.fz13, SS.cS]}>{e.value}</Text>}
+										{!e.hideArrow ? (
+											<View style={[SS.ml10]}>
+												<SvgIcon size={16} name='right' />
+											</View>
+										) : null}
 									</View>
 								)}
 							</TouchableOpacity>

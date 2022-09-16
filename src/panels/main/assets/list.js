@@ -15,6 +15,7 @@ import CameraRoll from '@react-native-community/cameraroll';
 const itemH = 64;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
+	const [hideIcon, setHideIcon] = useState({});
 	const [needRestake] = useStore('staking.needRestake');
 	const [statedAmount] = useStore('staking.statedAmount');
 	let [assetsList] = useStore('common.assetsList');
@@ -46,12 +47,17 @@ export const CoinList = () => {
 								S.wh(48),
 								S.radius(48),
 								SS.pa,
-								// SS.bgW,
-								{ left: 0, top: 8, zIndex: 1 },
+								SS.bgW,
+								{ left: 0, top: 8, zIndex: 1, opacity: hideIcon[e.name] ? 0 : 1 },
 								SS.mr12,
 								S.border(4)
 							]}
 							source={{ uri: Base.getIcon(e.name) }}
+							onError={() => {
+								setHideIcon((d) => {
+									return { ...d, [e.name]: true };
+								});
+							}}
 						/>
 						<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
 							<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
