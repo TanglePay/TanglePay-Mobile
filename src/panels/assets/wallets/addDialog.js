@@ -22,10 +22,10 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 		},
 		[]
 	);
-	const show = () => {
-		if (nodeId) {
+	const show = (showNodeId) => {
+		if (nodeId || showNodeId) {
 			setShowNode(false);
-			changeNode(parseInt(nodeId));
+			changeNode(parseInt(nodeId || showNodeId));
 		} else {
 			setShowNode(true);
 		}

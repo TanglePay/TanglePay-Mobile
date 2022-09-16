@@ -100,7 +100,7 @@ export const UserSetting = () => {
 									<Switch value={e.value} onValueChange={e.onChange} />
 								) : (
 									<View style={[SS.row, SS.ac]}>
-										{e.value && <Text style={[SS.fz11, SS.mr10, SS.cS]}>{e.value}</Text>}
+										{e.value && <Text style={[SS.fz12, SS.mr10, SS.cS]}>{e.value}</Text>}
 										{!e.hideArrow ? <SvgIcon size={16} name='right' /> : null}
 									</View>
 								)}
