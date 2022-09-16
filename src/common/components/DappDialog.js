@@ -242,7 +242,7 @@ export const DappDialog = () => {
 							let showUnit = '';
 							let sendAmount = 0;
 							let contract = '';
-							if (IotaSDK.checkWeb3Node(toNetId)) {
+							if (IotaSDK.checkWeb3Node(toNetId || curNodeId)) {
 								let curToken = IotaSDK.curNode?.token;
 								if (taggedData) {
 									contract = address;
@@ -265,10 +265,18 @@ export const DappDialog = () => {
 									sendAmount = value;
 								}
 							} else {
-								unit = unit || 'Mi';
-								showValue = IotaSDK.convertUnits(value, unit, 'Mi');
-								sendAmount = IotaSDK.convertUnits(value, unit, 'i');
-								showUnit = 'MIOTA';
+								if (IotaSDK.checkSMR(toNetId || curNodeId)) {
+									unit = unit || 'SMR';
+									showValue = value;
+									sendAmount =
+										unit === 'SMR' ? Math.pow(10, IotaSDK.curNode?.decimal || 0) * value : value;
+									showUnit = unit;
+								} else {
+									unit = unit || 'Mi';
+									showValue = IotaSDK.convertUnits(value, unit, 'Mi');
+									sendAmount = IotaSDK.convertUnits(value, unit, 'i');
+									showUnit = 'MIOTA';
+								}
 							}
 
 							let str = I18n.t('apps.send');

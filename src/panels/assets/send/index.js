@@ -81,7 +81,8 @@ export const AssetsSend = () => {
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
-								residue
+								residue,
+								awaitStake: true
 							});
 							Toast.hideLoading();
 							if (res) {

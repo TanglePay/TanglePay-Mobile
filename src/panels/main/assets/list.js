@@ -201,6 +201,9 @@ export const ActivityList = ({ search, setHeight }) => {
 					<Text style={[SS.fz14, SS.tr, SS.cS]}>****</Text>
 				</View>
 			);
+			if (isStake) {
+				AssetsEl = null;
+			}
 			return (
 				<TouchableOpacity
 					activeOpacity={e.viewUrl ? 0.8 : 1}
