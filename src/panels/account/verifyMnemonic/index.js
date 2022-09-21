@@ -1,18 +1,38 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { Container, View, Text, Button } from 'native-base';
 import { Vibration } from 'react-native';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import Carousel from 'react-native-snap-carousel';
 import { useRoute } from '@react-navigation/native';
-import { S, SS, Nav, ThemeVar } from '@/common';
+import { useStore } from '@tangle-pay/store';
+import { useAddWallet } from '@tangle-pay/store/common';
+import { S, SS, Nav, ThemeVar, Toast } from '@/common';
 
-const VerifyItem = ({ setNext, index, word, err, isLast }) => {
+const VerifyItem = ({ setNext, index, word, err, isLast, addWallet }) => {
 	const [error, setError] = useState(false);
 	const [topStr, setTop] = useState('');
 	const [bottomStr, setBottom] = useState('');
-	const handleVerify = (curWord) => {
+	const [registerInfo, seRegisterInfo] = useStore('common.registerInfo');
+	const handleVerify = async (curWord) => {
 		if (word === curWord) {
-			isLast ? Base.push('account/verifySucc') : setNext();
+			if (isLast) {
+				try {
+					Toast.showLoading();
+					const res = await IotaSDK.importMnemonic(registerInfo);
+					addWallet(res);
+					seRegisterInfo({});
+					Toast.hideLoading();
+					Base.popToTop();
+					Base.replace('main');
+				} catch (error) {
+					console.log(error);
+					Toast.hideLoading();
+					Base.goBack();
+				}
+			} else {
+				setNext();
+			}
+			// isLast ? Base.push('account/verifySucc') : setNext();
 		} else {
 			Vibration.vibrate();
 		}
@@ -26,7 +46,7 @@ const VerifyItem = ({ setNext, index, word, err, isLast }) => {
 		setBottom(bottom);
 	}, [index, word, err]);
 	return (
-		<View style={[SS.ph50, SS.bgW]}>
+		<View style={[SS.ph20, SS.bgW]}>
 			<View style={[S.marginV(120)]}>
 				<Text style={[SS.fz16, SS.tc, error && SS.cR]}>Word # {index + 1}</Text>
 			</View>
@@ -43,6 +63,8 @@ const VerifyItem = ({ setNext, index, word, err, isLast }) => {
 };
 
 export const AccountVerifyMnemonic = () => {
+	const addWallet = useAddWallet();
+	const [curIndex, setCurInex] = useState(0);
 	const { params } = useRoute();
 	const { list, errList } = params;
 	const carousel = useRef();
@@ -51,14 +73,18 @@ export const AccountVerifyMnemonic = () => {
 	};
 	return (
 		<Container>
-			<Nav title={I18n.t('account.testBackup')} />
+			<Nav title={`${I18n.t('account.testBackup')} (${curIndex + 1}/${list.length})`} />
 			<Carousel
 				ref={carousel}
 				layout='stack'
 				scrollEnabled={false}
 				data={list}
+				onSnapToItem={(slideIndex) => {
+					setCurInex(slideIndex);
+				}}
 				renderItem={({ item, index }) => (
 					<VerifyItem
+						addWallet={addWallet}
 						setNext={setNext}
 						key={`${item.word}_${index}`}
 						word={item}

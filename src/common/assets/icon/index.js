@@ -18,6 +18,7 @@ import Excel from './Excel';
 import Eye0 from './Eye0';
 import Eye1 from './Eye1';
 import File from './File';
+import Help from './Help';
 import History from './History';
 import Into from './Into';
 import Lang from './Lang';
@@ -59,6 +60,7 @@ export { default as Excel } from './Excel';
 export { default as Eye0 } from './Eye0';
 export { default as Eye1 } from './Eye1';
 export { default as File } from './File';
+export { default as Help } from './Help';
 export { default as History } from './History';
 export { default as Into } from './Into';
 export { default as Lang } from './Lang';
@@ -119,56 +121,58 @@ let IconFont = ({ name, ...rest }) => {
       return <Eye1 key="L15" {...rest} />;
     case 'file':
       return <File key="L16" {...rest} />;
+    case 'help':
+      return <Help key="L17" {...rest} />;
     case 'history':
-      return <History key="L17" {...rest} />;
+      return <History key="L18" {...rest} />;
     case 'into':
-      return <Into key="L18" {...rest} />;
+      return <Into key="L19" {...rest} />;
     case 'lang':
-      return <Lang key="L19" {...rest} />;
+      return <Lang key="L20" {...rest} />;
     case 'left':
-      return <Left key="L20" {...rest} />;
+      return <Left key="L21" {...rest} />;
     case 'loading':
-      return <Loading key="L21" {...rest} />;
+      return <Loading key="L22" {...rest} />;
     case 'me':
-      return <Me key="L22" {...rest} />;
+      return <Me key="L23" {...rest} />;
     case 'more':
-      return <More key="L23" {...rest} />;
+      return <More key="L24" {...rest} />;
     case 'network':
-      return <Network key="L24" {...rest} />;
+      return <Network key="L25" {...rest} />;
     case 'no_screenshot':
-      return <NoScreenshot key="L25" {...rest} />;
+      return <NoScreenshot key="L26" {...rest} />;
     case 'noData':
-      return <NoData key="L26" {...rest} />;
+      return <NoData key="L27" {...rest} />;
     case 'outto':
-      return <Outto key="L27" {...rest} />;
+      return <Outto key="L28" {...rest} />;
     case 'privacy':
-      return <Privacy key="L28" {...rest} />;
+      return <Privacy key="L29" {...rest} />;
     case 'remove':
-      return <Remove key="L29" {...rest} />;
+      return <Remove key="L30" {...rest} />;
     case 'right':
-      return <Right key="L30" {...rest} />;
+      return <Right key="L31" {...rest} />;
     case 'scan':
-      return <Scan key="L31" {...rest} />;
+      return <Scan key="L32" {...rest} />;
     case 'search':
-      return <Search key="L32" {...rest} />;
+      return <Search key="L33" {...rest} />;
     case 'set':
-      return <Set key="L33" {...rest} />;
+      return <Set key="L34" {...rest} />;
     case 'share':
-      return <Share key="L34" {...rest} />;
+      return <Share key="L35" {...rest} />;
     case 'stake':
-      return <Stake key="L35" {...rest} />;
+      return <Stake key="L36" {...rest} />;
     case 'staking':
-      return <Staking key="L36" {...rest} />;
+      return <Staking key="L37" {...rest} />;
     case 'tick':
-      return <Tick key="L37" {...rest} />;
+      return <Tick key="L38" {...rest} />;
     case 'time':
-      return <Time key="L38" {...rest} />;
+      return <Time key="L39" {...rest} />;
     case 'up':
-      return <Up key="L39" {...rest} />;
+      return <Up key="L40" {...rest} />;
     case 'view':
-      return <View key="L40" {...rest} />;
+      return <View key="L41" {...rest} />;
     case 'wallet':
-      return <Wallet key="L41" {...rest} />;
+      return <Wallet key="L42" {...rest} />;
   }
 
   return null;

@@ -21,6 +21,7 @@ export { default as Excel } from './Excel';
 export { default as Eye0 } from './Eye0';
 export { default as Eye1 } from './Eye1';
 export { default as File } from './File';
+export { default as Help } from './Help';
 export { default as History } from './History';
 export { default as Into } from './Into';
 export { default as Lang } from './Lang';
@@ -48,7 +49,7 @@ export { default as View } from './View';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'remove' | 'right' | 'scan' | 'search' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'up' | 'view' | 'wallet';
+  name: 'about' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'remove' | 'right' | 'scan' | 'search' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'up' | 'view' | 'wallet';
   size?: number;
   color?: string | string[];
 }

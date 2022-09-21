@@ -7,6 +7,7 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
+import { ExpDialog } from './expDialog';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -16,6 +17,7 @@ const schema = Yup.object().shape({
 	agree: Yup.bool().isTrue().required()
 });
 export const AccountInto = () => {
+	const dialogRef = useRef();
 	const form = useRef();
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
@@ -68,10 +70,16 @@ export const AccountInto = () => {
 							<Form>
 								{type === 1 ? (
 									<View>
-										<View>
-											<Text style={[SS.fz14, SS.pb10, SS.cS]}>
-												{I18n.t('account.mnemonicTips')}
-											</Text>
+										<View style={[SS.row, SS.ac, SS.pb10]}>
+											<Text style={[SS.fz14, SS.cS]}>{I18n.t('account.mnemonicTips')}</Text>
+											<SvgIcon
+												onPress={() => {
+													dialogRef.current.show();
+												}}
+												name='help'
+												size={16}
+												style={[{ height: 23 }, SS.cS, SS.ml8, SS.mt4]}
+											/>
 										</View>
 										<Textarea
 											blurOnSubmit={true}
@@ -197,6 +205,7 @@ export const AccountInto = () => {
 					)}
 				</Formik>
 			</Content>
+			<ExpDialog dialogRef={dialogRef} />
 		</Container>
 	);
 };
