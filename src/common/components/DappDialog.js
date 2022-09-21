@@ -75,7 +75,7 @@ export const DappDialog = () => {
 					let residue = Number(realBalance.minus(amount)) || 0;
 					const decimal = Math.pow(10, assets.decimal);
 					try {
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (amount < decimal) {
 								return Toast.error(I18n.t('assets.sendBelow1Tips'));
 							}
@@ -83,7 +83,7 @@ export const DappDialog = () => {
 						if (residue < 0) {
 							return Toast.error(I18n.t('assets.balanceError'));
 						}
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (residue < decimal && residue != 0) {
 								return Toast.error(I18n.t('assets.residueBelow1Tips'));
 							}
@@ -269,7 +269,7 @@ export const DappDialog = () => {
 									unit = unit || 'SMR';
 									showValue = value;
 									sendAmount =
-										unit === 'SMR' ? Math.pow(10, IotaSDK.curNode?.decimal || 0) * value : value;
+										unit !== 'Glow' ? Math.pow(10, IotaSDK.curNode?.decimal || 0) * value : value;
 									showUnit = unit;
 								} else {
 									unit = unit || 'Mi';

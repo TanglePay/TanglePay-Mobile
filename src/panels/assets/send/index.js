@@ -61,7 +61,7 @@ export const AssetsSend = () => {
 						const decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
 						let residue = Number(realBalance.minus(sendAmount)) || 0;
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (sendAmount < IotaSDK.IOTA_MI) {
 								return Toast.error(I18n.t('assets.sendBelow1Tips'));
 							}
@@ -69,7 +69,7 @@ export const AssetsSend = () => {
 						if (residue < 0) {
 							return Toast.error(I18n.t('assets.balanceError'));
 						}
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
 								sendAmount = Number(realBalance);
 							} else if (residue < IotaSDK.IOTA_MI && residue != 0) {
@@ -82,7 +82,9 @@ export const AssetsSend = () => {
 								contract: assets?.contract,
 								token: assets?.name,
 								residue,
-								awaitStake: true
+								awaitStake: true,
+								tokenId: assets?.tokenId,
+								decimal: assets?.decimal
 							});
 							Toast.hideLoading();
 							if (res) {

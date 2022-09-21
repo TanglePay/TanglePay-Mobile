@@ -36,12 +36,10 @@ export const CoinList = () => {
 					<TouchableOpacity
 						activeOpacity={0.8}
 						onPress={() => {
-							if (!e.isSMRToken) {
-								Base.push('assets/send', { currency: e.name });
-							}
+							Base.push('assets/send', { currency: e.name });
 						}}
 						key={e.name}
-						style={[SS.row, SS.ac, SS.pr, { height: itemH, opacity: e.isSMRToken ? 0.6 : 1 }]}>
+						style={[SS.row, SS.ac, SS.pr, { height: itemH }]}>
 						<Image
 							style={[
 								S.wh(48),
