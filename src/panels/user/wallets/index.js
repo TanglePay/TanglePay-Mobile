@@ -14,7 +14,7 @@ export const UserWallets = () => {
 			<Content>
 				<View style={[SS.ph16]}>
 					{walletsList.map((e) => {
-						const curNode = IotaSDK.nodes.find((d) => d.id === e.nodeId) || {};
+						const curNode = IotaSDK.nodes.find((d) => d.id == e.nodeId) || {};
 						return (
 							<TouchableOpacity
 								style={[

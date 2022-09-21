@@ -146,7 +146,7 @@ export const DappDialog = () => {
 					await Bridge.sendMessage(type, {
 						address: curWallet.address,
 						nodeId: curWallet.nodeId,
-						network: IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.network
+						network: IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.network
 					});
 					Toast.hideLoading();
 				}
@@ -213,7 +213,7 @@ export const DappDialog = () => {
 		} = res;
 		let toNetId;
 		if (network) {
-			toNetId = IotaSDK.nodes.find((e) => e.network === network)?.id;
+			toNetId = IotaSDK.nodes.find((e) => e.network == network)?.id;
 		}
 		if (toNetId && parseInt(toNetId) !== parseInt(curNodeId)) {
 			await changeNode(toNetId);

@@ -116,15 +116,14 @@ export const AccountIntoPrivateKey = () => {
 									}}>
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
-										size={15}
-										style={[SS.mr8, S.marginT(3)]}
+										size={16}
+										style={[SS.mr8, S.marginT(4)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
 										<Text
 											style={[
 												SS.fz12,
-												SS.fw600,
 												S.tl,
 												S.lineHeight(22),
 												S.color(!errors.agree ? ThemeVar.textColor : ThemeVar.brandDanger)
@@ -143,7 +142,7 @@ export const AccountIntoPrivateKey = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP, SS.fw600]}>
+															style={[SS.cP]}>
 															{e}
 														</Text>
 													) : (

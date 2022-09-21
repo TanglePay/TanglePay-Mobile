@@ -71,7 +71,9 @@ export const ClaimSMR = () => {
 					{({ handleChange, handleSubmit, values, errors }) => (
 						<View>
 							<Form>
-								<Text style={[SS.fz14, SS.mb16]}>{I18n.t('account.intoPassword')}</Text>
+								<Text style={[SS.fz14, SS.mb16]}>
+									{I18n.t('account.showKeyInputPassword').replace(/{name}/, curEdit.name)}
+								</Text>
 								<Item style={[SS.mb16, SS.pl0, SS.ml0, S.border(2)]} error={!!errors.password}>
 									<Input
 										style={[SS.fz16]}

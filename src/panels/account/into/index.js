@@ -170,7 +170,6 @@ export const AccountInto = () => {
 												SS.fz12,
 												S.tl,
 												S.lineHeight(22),
-												SS.fw600,
 												S.color(!errors.agree ? '#eee' : ThemeVar.brandDanger)
 											]}>
 											{I18n.t('account.intoAgree')

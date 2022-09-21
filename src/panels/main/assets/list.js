@@ -112,7 +112,8 @@ export const RewardsList = () => {
 				const symbol = item.symbol;
 				obj[symbol] = obj[symbol] || {
 					...item,
-					amount: 0
+					amount: 0,
+					isSMR: symbol.includes('SMR')
 				};
 				obj[symbol].amount += item.amount;
 				const ratio = _get(rewards, `${symbol}.ratio`) || 0;
@@ -136,29 +137,41 @@ export const RewardsList = () => {
 				obj[symbol].unit = unit;
 			}
 		}
-		setList(Object.values(obj));
+		const arr = Object.values(obj);
+		arr.sort((a) => (a.isSMR ? -1 : 0));
+		setList(arr);
 	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return (
-				<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
-					<Image
-						style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
-						source={{ uri: Base.getIcon(e.symbol) }}
-					/>
-					<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
-						<Text style={[SS.fz16]}>{e.unit}</Text>
-						{isShowAssets ? (
-							<View>
-								<Text style={[SS.fz14, SS.tr]}>{e.amountLabel}</Text>
-							</View>
-						) : (
-							<View>
-								<Text style={[SS.fz14, SS.tr]}>****</Text>
-							</View>
-						)}
+				<TouchableOpacity
+					activeOpacity={e.isSMR ? 0.8 : 1}
+					onPress={() => {
+						if (e.isSMR) {
+							Base.push('assets/claimReward/claimSMR', {
+								id: curWallet.id
+							});
+						}
+					}}>
+					<View key={e.symbol} style={[SS.row, SS.ac, { opacity: e.isSMR ? 1 : 0.6, height: itemH }]}>
+						<Image
+							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
+							source={{ uri: Base.getIcon(e.symbol) }}
+						/>
+						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+							<Text style={[SS.fz16]}>{e.unit}</Text>
+							{isShowAssets ? (
+								<View>
+									<Text style={[SS.fz14, SS.tr]}>{e.amountLabel}</Text>
+								</View>
+							) : (
+								<View>
+									<Text style={[SS.fz14, SS.tr]}>****</Text>
+								</View>
+							)}
+						</View>
 					</View>
-				</View>
+				</TouchableOpacity>
 			);
 		});
 	}, [JSON.stringify(list), isShowAssets]);

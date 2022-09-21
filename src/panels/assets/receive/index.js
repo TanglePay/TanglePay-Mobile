@@ -33,9 +33,9 @@ export const AssetsReceive = () => {
 						{curWallet.address && <QRCode value={curWallet.address} size={200} />}
 					</ImageBackground>
 				</View>
-				<View style={[SS.pt20, SS.ph50]}>
+				<View style={[SS.pt20, SS.ph24]}>
 					<View style={[SS.ph10, SS.pv5, SS.bgS, S.radius(4)]}>
-						<Text style={[SS.fz11, SS.tc]}>{curWallet.address}</Text>
+						<Text style={[SS.fz14, SS.tc]}>{curWallet.address}</Text>
 					</View>
 				</View>
 				<View style={[SS.pb10, SS.ph50, SS.w100]}>
