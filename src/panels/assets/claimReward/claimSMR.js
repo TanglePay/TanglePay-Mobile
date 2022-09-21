@@ -57,7 +57,8 @@ export const ClaimSMR = () => {
 							if (res.code > 0) {
 								if (res.code === 200) {
 									addWallet({
-										...res.addressInfo
+										...res.addressInfo,
+										password
 									});
 									Base.replace('assets/claimReward/claimResult', { id, amount: res.amount });
 								} else {
@@ -65,6 +66,7 @@ export const ClaimSMR = () => {
 								}
 							}
 						} catch (error) {
+							console.log(error);
 							setShow(true);
 						}
 					}}>
@@ -77,7 +79,7 @@ export const ClaimSMR = () => {
 								<Item style={[SS.mb16, SS.pl0, SS.ml0, S.border(2)]} error={!!errors.password}>
 									<Input
 										style={[SS.fz16]}
-										type='password'
+										secureTextEntry
 										placeholder={I18n.t('account.intoPasswordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
