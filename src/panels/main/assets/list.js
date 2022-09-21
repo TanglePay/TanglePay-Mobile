@@ -106,6 +106,7 @@ export const RewardsList = () => {
 	const [isRequestAssets] = useStore('common.isRequestAssets');
 	useEffect(() => {
 		const obj = {};
+		const hasSMR = !!IotaSDK.nodes.find((e) => e.bech32HRP === 'smr');
 		for (const i in stakedRewards) {
 			const item = stakedRewards[i];
 			if (item.amount > 0 && item.minimumReached) {
@@ -113,7 +114,7 @@ export const RewardsList = () => {
 				obj[symbol] = obj[symbol] || {
 					...item,
 					amount: 0,
-					isSMR: symbol.includes('SMR')
+					isSMR: hasSMR && symbol.includes('SMR')
 				};
 				obj[symbol].amount += item.amount;
 				const ratio = _get(rewards, `${symbol}.ratio`) || 0;

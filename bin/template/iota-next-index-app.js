@@ -4681,10 +4681,12 @@
 					const addressUnlockCondition = addressOutput.output.unlockConditions.find(
 						(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
 					);
+					const nativeTokens = addressOutput.output?.nativeTokens || []
 					if (
 						!addressOutput.metadata.isSpent &&
 						consumedBalance.lesser(requiredBalance) &&
-						!addressUnlockCondition
+						!addressUnlockCondition &&
+                        !nativeTokens.length
 					) {
 						if (bigInt__default['default'](addressOutput.output.amount).equals(0)) {
 							zeroBalance++;
