@@ -76,34 +76,42 @@ export const AssetsSend = () => {
 								return Toast.error(I18n.t('assets.residueBelow1Tips'));
 							}
 						}
+						const tokenId = assets?.tokenId;
 						Toast.showLoading();
 						try {
+							let mainBalance = 0;
+							if (tokenId) {
+								mainBalance = assetsList.find((e) => e.name === IotaSDK.curNode?.token)?.realBalance;
+							}
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
 								residue,
+								realBalance: Number(realBalance),
 								awaitStake: true,
 								tokenId: assets?.tokenId,
-								decimal: assets?.decimal
+								decimal: assets?.decimal,
+								mainBalance
 							});
 							Toast.hideLoading();
 							if (res) {
-								Toast.success(I18n.t('assets.sendSucc'));
+								// Toast.success(I18n.t('assets.sendSucc'));
 								Base.goBack();
 							}
 						} catch (error) {
 							console.log(error);
 							Toast.hideLoading();
-							Toast.error(
-								`${error.toString()}---input:${
-									values.amount
-								}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
-									realBalance
-								)}---available:${available}`,
-								{
-									duration: 5000
-								}
-							);
+							Toast.error(error.toString());
+							// Toast.error(
+							// 	`${error.toString()}---input:${
+							// 		values.amount
+							// 	}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
+							// 		realBalance
+							// 	)}---available:${available}`,
+							// 	{
+							// 		duration: 5000
+							// 	}
+							// );
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (

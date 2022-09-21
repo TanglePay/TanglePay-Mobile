@@ -93,6 +93,7 @@ export const DappDialog = () => {
 							contract: assets?.contract,
 							token: assets?.name,
 							taggedData,
+							realBalance: Number(realBalance),
 							residue
 						});
 						if (!res) {
@@ -104,11 +105,11 @@ export const DappDialog = () => {
 							Bridge.sendMessage(type, res);
 						}
 						setLoading(false);
-						Toast.success(
-							I18n.t(
-								IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'assets.sendSucc' : 'assets.sendSuccRestake'
-							)
-						);
+						// Toast.success(
+						// 	I18n.t(
+						// 		IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'assets.sendSucc' : 'assets.sendSuccRestake'
+						// 	)
+						// );
 						hide();
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
@@ -117,14 +118,15 @@ export const DappDialog = () => {
 							Bridge.sendErrorMessage(type, error);
 						}
 						setLoading(false);
-						Toast.error(
-							`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
-								realBalance
-							)}`,
-							{
-								duration: 5000
-							}
-						);
+						Toast.error(error.toString());
+						// Toast.error(
+						// 	`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
+						// 		realBalance
+						// 	)}`,
+						// 	{
+						// 		duration: 5000
+						// 	}
+						// );
 					}
 				}
 				break;

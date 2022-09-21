@@ -3,13 +3,15 @@ import { Container, Content, View, Text, Switch } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
-import { S, SS, Nav, SvgIcon } from '@/common';
+import { S, SS, Nav, SvgIcon, Toast } from '@/common';
 import { ImageCache } from 'react-native-img-cache';
 import RNFetchBlob from 'rn-fetch-blob';
 import _sumBy from 'lodash/sumBy';
+import { useChangeNode } from '@tangle-pay/store/common';
 
 export const UserSetting = () => {
 	useStore('common.lang');
+	const changeNode = useChangeNode();
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
 	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
@@ -53,7 +55,22 @@ export const UserSetting = () => {
 			icon: 'network',
 			label: I18n.t('user.network'),
 			value: curNodeKey,
-			hideArrow: true
+			hideArrow: true,
+			onPress: async () => {
+				const curNodeId = IotaSDK?.curNode?.id;
+				Toast.showLoading();
+				try {
+					await IotaSDK.getNodes();
+					if (curNodeId) {
+						Toast.hideLoading();
+						await changeNode(curNodeId);
+						IotaSDK.refreshAssets();
+					}
+					Toast.hideLoading();
+				} catch (error) {
+					Toast.hideLoading();
+				}
+			}
 		});
 	}
 	useEffect(() => {

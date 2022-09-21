@@ -66,7 +66,7 @@ export const AccountInto = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.p16, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16, S.h(ThemeVar.contentHeight1)]}>
 							<Form>
 								{type === 1 ? (
 									<View>
@@ -120,7 +120,7 @@ export const AccountInto = () => {
 										value={values.name}
 									/>
 								</Item>
-								<Text style={[SS.fz14, SS.mt24]}>
+								<Text style={[SS.fz14, SS.mt32]}>
 									{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
 								</Text>
 								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
@@ -152,7 +152,7 @@ export const AccountInto = () => {
 									</Item>
 								)}
 							</Form>
-							<Form style={[SS.mb80]}>
+							<Form style={[SS.mt40]}>
 								<Item
 									style={[SS.row, SS.as, SS.ml0, SS.mb40, { borderBottomWidth: 0 }]}
 									onPress={() => {
@@ -160,8 +160,8 @@ export const AccountInto = () => {
 									}}>
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
-										size={15}
-										style={[SS.mr8, S.marginT(3)]}
+										size={16}
+										style={[SS.mr8, S.marginT(4)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
@@ -187,7 +187,7 @@ export const AccountInto = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP, SS.fw600]}>
+															style={[SS.cP]}>
 															{e}
 														</Text>
 													) : (

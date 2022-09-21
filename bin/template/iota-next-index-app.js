@@ -3881,6 +3881,49 @@
 		};
 	}
 
+	async function addressUnlockBalance(client, addressBech32) {
+		var _a;
+		const localClient = typeof client === 'string' ? new SingleNodeClient(client) : client;
+		const indexerPluginClient = new IndexerPluginClient(localClient);
+		let total = bigInt__default['default'](0);
+		let ledgerIndex = 0;
+		const nativeTokens = {};
+		let response;
+		let cursor;
+		do {
+			response = await indexerPluginClient.outputs({ addressBech32, cursor });
+			for (const outputId of response.items) {
+				const output = await localClient.output(outputId);
+				const unlockConditions = output.output?.unlockConditions;
+				const addressUnlockCondition = unlockConditions.find(
+					(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
+				);
+				if (!output.metadata.isSpent && !addressUnlockCondition) {
+					total = total.plus(output.output.amount);
+					const nativeTokenOutput = output.output;
+					if (Array.isArray(nativeTokenOutput.nativeTokens)) {
+						for (const token of nativeTokenOutput.nativeTokens) {
+							nativeTokens[token.id] =
+								(_a = nativeTokens[token.id]) !== null && _a !== void 0
+									? _a
+									: bigInt__default['default'](0);
+							nativeTokens[token.id] = nativeTokens[token.id].add(
+								util_js.HexHelper.toBigInt256(token.amount)
+							);
+						}
+					}
+				}
+				ledgerIndex = output.metadata.ledgerIndex;
+			}
+			cursor = response.cursor;
+		} while (cursor && response.items.length > 0);
+		return {
+			balance: total,
+			nativeTokens,
+			ledgerIndex
+		};
+	}
+
 	// Copyright 2020 IOTA Stiftung
 	let IOTA_BIP44_BASE_PATH = "m/44'/4218'";
 	function setIotaBip44BasePath(path) {
@@ -5942,6 +5985,7 @@
 	exports.UTXO_INPUT_TYPE = UTXO_INPUT_TYPE;
 	exports.UnitsHelper = UnitsHelper;
 	exports.addressBalance = addressBalance;
+	exports.addressUnlockBalance = addressUnlockBalance;
 	exports.blockIdFromMilestonePayload = blockIdFromMilestonePayload;
 	exports.buildTransactionPayload = buildTransactionPayload;
 	exports.calculateInputs = calculateInputs;
