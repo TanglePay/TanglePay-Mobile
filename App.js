@@ -74,6 +74,7 @@ export default () => {
 	};
 	const init = async () => {
 		Trace.login();
+		Toast.showLoading();
 		try {
 			await IotaSDK.getNodes();
 		} catch (error) {
@@ -81,6 +82,7 @@ export default () => {
 		}
 		await getLocalInfo();
 		await initChangeNode();
+		Toast.hideLoading();
 		setSceneList(panelsList);
 		// setTimeout(() => {
 		//     SplashScreen.hide()

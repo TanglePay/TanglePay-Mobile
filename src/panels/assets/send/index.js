@@ -8,6 +8,7 @@ import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, SvgIcon, Toast } from '@/common';
 import BigNumber from 'bignumber.js';
+import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -16,7 +17,8 @@ const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
 export const AssetsSend = () => {
-	const [statedAmount] = useStore('staking.statedAmount');
+	useGetParticipationEvents();
+	// const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
 	const { params } = useRoute();
 	const form = useRef();
@@ -31,8 +33,8 @@ export const AssetsSend = () => {
 		setReceiver(params?.address);
 	}, [params]);
 
-	const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
-	let realBalance = BigNumber(assets.realBalance || 0).minus(bigStatedAmount);
+	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
+	let realBalance = BigNumber(assets.realBalance || 0);
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
@@ -59,53 +61,57 @@ export const AssetsSend = () => {
 						const decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
 						let residue = Number(realBalance.minus(sendAmount)) || 0;
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (sendAmount < IotaSDK.IOTA_MI) {
 								return Toast.error(I18n.t('assets.sendBelow1Tips'));
 							}
 						}
 						if (residue < 0) {
-							return Toast.error(
-								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
-							);
+							return Toast.error(I18n.t('assets.balanceError'));
 						}
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (residue < Number(BigNumber(0.01).times(IotaSDK.IOTA_MI))) {
 								sendAmount = Number(realBalance);
 							} else if (residue < IotaSDK.IOTA_MI && residue != 0) {
 								return Toast.error(I18n.t('assets.residueBelow1Tips'));
 							}
 						}
+						const tokenId = assets?.tokenId;
 						Toast.showLoading();
 						try {
+							let mainBalance = 0;
+							if (tokenId) {
+								mainBalance = assetsList.find((e) => e.name === IotaSDK.curNode?.token)?.realBalance;
+							}
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
-								token: assets?.name
+								token: assets?.name,
+								residue,
+								realBalance: Number(realBalance),
+								awaitStake: true,
+								tokenId: assets?.tokenId,
+								decimal: assets?.decimal,
+								mainBalance
 							});
 							Toast.hideLoading();
 							if (res) {
-								Toast.success(
-									I18n.t(
-										IotaSDK.checkWeb3Node(curWallet.nodeId)
-											? 'assets.sendSucc'
-											: 'assets.sendSuccRestake'
-									)
-								);
+								// Toast.success(I18n.t('assets.sendSucc'));
 								Base.goBack();
 							}
 						} catch (error) {
 							console.log(error);
 							Toast.hideLoading();
-							Toast.error(
-								`${error.toString()}---input:${
-									values.amount
-								}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
-									realBalance
-								)}---available:${available}---bigStatedAmount:${bigStatedAmount}`,
-								{
-									duration: 5000
-								}
-							);
+							Toast.error(error.toString());
+							// Toast.error(
+							// 	`${error.toString()}---input:${
+							// 		values.amount
+							// 	}---amount:${amount}---sendAmount:${sendAmount}---residue:${residue}---realBalance:${Number(
+							// 		realBalance
+							// 	)}---available:${available}`,
+							// 	{
+							// 		duration: 5000
+							// 	}
+							// );
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
@@ -161,7 +167,7 @@ export const AssetsSend = () => {
 											if (parseFloat(str) < Math.pow(10, -precision)) {
 												str = String(Math.pow(10, -precision));
 											}
-											if (curWallet.nodeId === IotaSDK.SMR_NODE_ID) {
+											if (IotaSDK.checkSMR(curWallet.nodeId)) {
 												str = String(parseInt(str));
 											}
 											setFieldValue('amount', str);
@@ -191,15 +197,9 @@ export const AssetsSend = () => {
 									/>
 								</Item>
 								<View style={[S.marginT(100), SS.pb30]}>
-									<Button
-										// disabled={curWallet.nodeId === IotaSDK.SMR_NODE_ID}
-										block
-										onPress={handleSubmit}>
+									<Button block onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
-									{/* {curWallet.nodeId === IotaSDK.SMR_NODE_ID ? (
-										<Text style={[SS.fz10, SS.cS, SS.mt12]}>{I18n.t('shimmer.sendTips')}</Text>
-									) : null} */}
 								</View>
 							</Form>
 						</View>

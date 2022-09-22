@@ -15,7 +15,7 @@ export const UserEditWallet = () => {
 	// const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
 	const dialogRef = useRef();
-	const curNode = IotaSDK.nodes.find((d) => d.id === curEdit.nodeId);
+	const curNode = IotaSDK.nodes.find((d) => d.id == curEdit.nodeId);
 	return (
 		<Container>
 			<Nav title={I18n.t('user.manage')} />

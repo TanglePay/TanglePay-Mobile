@@ -6,9 +6,12 @@ import { SvgIcon } from '@/common/assets';
 import { Toast, Nav, SS, S, ThemeVar } from '@/common';
 import { Container, View, Text } from 'native-base';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { useGetParticipationEvents, useGetRewards } from '@tangle-pay/store/staking'
 
 export const Discover = () => {
 	const [curWallet] = useGetNodeWallet();
+	useGetParticipationEvents()
+    useGetRewards(curWallet, false)
 	const [switchConfig, setSwichConfig] = useState({});
 	useEffect(() => {
 		fetch(`${API_URL}/switchConfig.json?v=${new Date().getTime()}`)

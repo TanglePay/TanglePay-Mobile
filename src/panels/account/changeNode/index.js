@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { TouchableOpacity, Image } from 'react-native';
 import { Container, View, Text } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import { S, SS, Nav, ThemeVar } from '@/common';
+import { AddDialog } from '../../assets/wallets/addDialog';
 // import logo_nobg from '@tangle-pay/assets/images/logo_nobg.png';
 
 export const AccountChangeNode = () => {
-	const [, , dispatch] = useStore('common.curNodeId');
-	const changeNode = useChangeNode();
+	const dialogRef = useRef();
+	// const changeNode = useChangeNode();
 	return (
 		<Container>
 			<Nav leftIcon={false} headerStyle={{ borderBottomWidth: 0 }} />
@@ -50,8 +51,9 @@ export const AccountChangeNode = () => {
 									style={[{ height: 64 }, SS.pl24, SS.row, SS.ac, i != 0 && S.border(0)]}
 									activeOpacity={0.8}
 									onPress={async () => {
-										await changeNode(e.id);
-										Base.push('account/login');
+										// await changeNode(e.id);
+										dialogRef.current.show(e.id);
+										// Base.push('account/login');
 									}}>
 									<Text style={[SS.fz15, SS.fw500]}>{e.name}</Text>
 								</TouchableOpacity>
@@ -60,6 +62,7 @@ export const AccountChangeNode = () => {
 					</View>
 				</View>
 			</View>
+			<AddDialog dialogRef={dialogRef} />
 		</Container>
 	);
 };

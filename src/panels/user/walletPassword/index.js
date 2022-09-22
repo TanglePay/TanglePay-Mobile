@@ -38,6 +38,8 @@ export const UserWalletPassword = () => {
 						if (newPassword !== rePassword) {
 							return Toast.error(I18n.t('account.checkPasswrod'));
 						}
+						params.nodeId = parseInt(params.nodeId);
+						params.isSelected = Boolean(params.isSelected);
 						editWallet(
 							params.id,
 							{ ...params, password: values.newPassword, oldPassword: values.old },

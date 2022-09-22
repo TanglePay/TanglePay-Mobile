@@ -12,8 +12,8 @@ const Item = ({ id, icon, desc, developer, url }) => {
 				Base.push(url, { title: id });
 			}}
 			style={[SS.ac, SS.row, SS.mb8]}>
-			<View style={[SS.c, SS.p10, SS.radius10, S.border(4), SS.mr8]}>
-				<Image style={[S.wh(44)]} source={{ uri: Base.getIcon(icon) }} />
+			<View style={[SS.mr8]}>
+				<Image style={[S.border(4), S.wh(64), { borderRadius: 16 }]} source={{ uri: Base.getIcon(icon) }} />
 			</View>
 			<View style={[S.w(ThemeVar.deviceWidth - 106), S.border(2), SS.pb8]}>
 				<Text style={[SS.fz16, SS.fw600, SS.mb5]}>{id}</Text>

@@ -15,6 +15,7 @@ import CameraRoll from '@react-native-community/cameraroll';
 const itemH = 64;
 export const CoinList = () => {
 	const [isShowAssets] = useStore('common.showAssets');
+	const [hideIcon, setHideIcon] = useState({});
 	const [needRestake] = useStore('staking.needRestake');
 	const [statedAmount] = useStore('staking.statedAmount');
 	let [assetsList] = useStore('common.assetsList');
@@ -38,15 +39,31 @@ export const CoinList = () => {
 							Base.push('assets/send', { currency: e.name });
 						}}
 						key={e.name}
-						style={[SS.row, SS.ac, { height: itemH }]}>
+						style={[SS.row, SS.ac, SS.pr, { height: itemH }]}>
 						<Image
-							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
+							style={[
+								S.wh(48),
+								S.radius(48),
+								SS.pa,
+								SS.bgW,
+								{ left: 0, top: 8, zIndex: 1, opacity: hideIcon[e.name] ? 0 : 1 },
+								SS.mr12,
+								S.border(4)
+							]}
 							source={{ uri: Base.getIcon(e.name) }}
+							onError={() => {
+								setHideIcon((d) => {
+									return { ...d, [e.name]: true };
+								});
+							}}
 						/>
+						<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
+							<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
+						</View>
 						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
-								<Text style={[SS.fz16]}>{e.name}</Text>
-								{!IotaSDK.isWeb3Node && statedAmount > 0 && !needRestake && (
+								<Text style={[SS.fz16]}>{String(e.name).toLocaleUpperCase()}</Text>
+								{!IotaSDK.isWeb3Node && statedAmount > 0 && e.realBalance > 0 && !needRestake ? (
 									<View
 										style={[
 											SS.ml16,
@@ -56,12 +73,12 @@ export const CoinList = () => {
 										]}>
 										<Text style={[SS.fz10, { color: '#4A4A4D' }]}> {I18n.t('staking.title')}</Text>
 									</View>
-								)}
+								) : null}
 							</View>
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
-										{e.balance} {e.unit || e.name}
+										{e.balance} {String(e.unit || e.name).toLocaleUpperCase()}
 									</Text>
 									<Text style={[SS.fz12, SS.tr, SS.cS]}>
 										{curLegal.unit} {e.assets}
@@ -89,13 +106,15 @@ export const RewardsList = () => {
 	const [isRequestAssets] = useStore('common.isRequestAssets');
 	useEffect(() => {
 		const obj = {};
+		const hasSMR = !!IotaSDK.nodes.find((e) => e.bech32HRP === 'smr');
 		for (const i in stakedRewards) {
 			const item = stakedRewards[i];
 			if (item.amount > 0 && item.minimumReached) {
 				const symbol = item.symbol;
 				obj[symbol] = obj[symbol] || {
 					...item,
-					amount: 0
+					amount: 0,
+					isSMR: hasSMR && symbol.includes('SMR')
 				};
 				obj[symbol].amount += item.amount;
 				const ratio = _get(rewards, `${symbol}.ratio`) || 0;
@@ -119,29 +138,41 @@ export const RewardsList = () => {
 				obj[symbol].unit = unit;
 			}
 		}
-		setList(Object.values(obj));
+		const arr = Object.values(obj);
+		arr.sort((a) => (a.isSMR ? -1 : 0));
+		setList(arr);
 	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return (
-				<View key={e.symbol} style={[SS.row, SS.ac, { opacity: 0.6, height: itemH }]}>
-					<Image
-						style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
-						source={{ uri: Base.getIcon(e.symbol) }}
-					/>
-					<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
-						<Text style={[SS.fz16]}>{e.unit}</Text>
-						{isShowAssets ? (
-							<View>
-								<Text style={[SS.fz14, SS.tr]}>{e.amountLabel}</Text>
-							</View>
-						) : (
-							<View>
-								<Text style={[SS.fz14, SS.tr]}>****</Text>
-							</View>
-						)}
+				<TouchableOpacity
+					activeOpacity={e.isSMR ? 0.8 : 1}
+					onPress={() => {
+						if (e.isSMR) {
+							Base.push('assets/claimReward/claimSMR', {
+								id: curWallet.id
+							});
+						}
+					}}>
+					<View key={e.symbol} style={[SS.row, SS.ac, { opacity: e.isSMR ? 1 : 0.6, height: itemH }]}>
+						<Image
+							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
+							source={{ uri: Base.getIcon(e.symbol) }}
+						/>
+						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+							<Text style={[SS.fz16]}>{e.unit}</Text>
+							{isShowAssets ? (
+								<View>
+									<Text style={[SS.fz14, SS.tr]}>{e.amountLabel}</Text>
+								</View>
+							) : (
+								<View>
+									<Text style={[SS.fz14, SS.tr]}>****</Text>
+								</View>
+							)}
+						</View>
 					</View>
-				</View>
+				</TouchableOpacity>
 			);
 		});
 	}, [JSON.stringify(list), isShowAssets]);
@@ -188,6 +219,9 @@ export const ActivityList = ({ search, setHeight }) => {
 					<Text style={[SS.fz14, SS.tr, SS.cS]}>****</Text>
 				</View>
 			);
+			if (isStake) {
+				AssetsEl = null;
+			}
 			return (
 				<TouchableOpacity
 					activeOpacity={e.viewUrl ? 0.8 : 1}

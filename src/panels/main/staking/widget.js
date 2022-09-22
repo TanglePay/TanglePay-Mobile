@@ -187,7 +187,9 @@ const Ended = ({ statedTokens, unStakeTokens }) => {
 export const StatusCon = () => {
 	const [{ filter, rewards }] = useStore('staking.config');
 	//status: 0->Ended  1->Upcoming ，2->Commencing
-	const [eventInfo, setEventInfo] = useGetParticipationEvents();
+	// const [eventInfo, setEventInfo] = useGetParticipationEvents();
+	useGetParticipationEvents();
+	const [eventInfo, setEventInfo] = useStore('staking.participationEvents');
 	let { status = 0, list = [], upcomingList = [], commencingList = [], endedList = [] } = eventInfo;
 	let [statedTokens] = useStore('staking.statedTokens');
 	const [statedAmount] = useStore('staking.statedAmount');
@@ -321,7 +323,8 @@ export const StatusCon = () => {
 export const RewardsList = ({ endedList }) => {
 	const [curWallet] = useGetNodeWallet();
 	const [statedTokens] = useStore('staking.statedTokens');
-	const stakedRewards = useGetRewards(curWallet);
+	const [curStatedRewards] = useStore('staking.curStatedRewards');
+	useGetRewards(curWallet);
 	const [{ rewards }] = useStore('staking.config');
 	const list = [];
 	statedTokens
@@ -330,9 +333,9 @@ export const RewardsList = ({ endedList }) => {
 			const { token, eventId } = e;
 			const ratio = _get(rewards, `${token}.ratio`) || 0;
 			let unit = _get(rewards, `${token}.unit`) || token;
-			const stakedRewardItem = stakedRewards[eventId] || {};
+			const stakedRewardItem = curStatedRewards[eventId] || {};
 			if (stakedRewardItem.amount > 0) {
-				let total = _get(stakedRewards, `${eventId}.amount`) * ratio || 0;
+				let total = _get(curStatedRewards, `${eventId}.amount`) * ratio || 0;
 				// 1 = 1000m = 1000000u
 				let preUnit = '';
 				if (total > 0) {

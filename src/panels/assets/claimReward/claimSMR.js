@@ -51,27 +51,35 @@ export const ClaimSMR = () => {
 						if (!Base.checkPassword(password)) {
 							return Toast.error(I18n.t('account.intoPasswordTips'));
 						}
-						await changeNode(IotaSDK.SMR_NODE_ID);
-						const res = await IotaSDK.claimSMR({ ...curEdit, password });
-						if (res.code > 0) {
-							if (res.code === 200) {
-								addWallet({
-									...res.addressInfo
-								});
-								Base.replace('assets/claimReward/claimResult', { id, amount: res.amount });
-							} else {
-								setShow(true);
+						try {
+							await changeNode(IotaSDK.SMR_NODE_ID);
+							const res = await IotaSDK.claimSMR({ ...curEdit, password });
+							if (res.code > 0) {
+								if (res.code === 200) {
+									addWallet({
+										...res.addressInfo,
+										password
+									});
+									Base.replace('assets/claimReward/claimResult', { id, amount: res.amount });
+								} else {
+									setShow(true);
+								}
 							}
+						} catch (error) {
+							console.log(error);
+							setShow(true);
 						}
 					}}>
 					{({ handleChange, handleSubmit, values, errors }) => (
 						<View>
 							<Form>
-								<Text style={[SS.fz14, SS.mb16]}>{I18n.t('account.intoPassword')}</Text>
+								<Text style={[SS.fz14, SS.mb16]}>
+									{I18n.t('account.showKeyInputPassword').replace(/{name}/, curEdit.name)}
+								</Text>
 								<Item style={[SS.mb16, SS.pl0, SS.ml0, S.border(2)]} error={!!errors.password}>
 									<Input
 										style={[SS.fz16]}
-										type='password'
+										secureTextEntry
 										placeholder={I18n.t('account.intoPasswordTips')}
 										onChangeText={handleChange('password')}
 										value={values.password}
