@@ -69,6 +69,9 @@ export const Apps = () => {
 				label: e
 			};
 		});
+		list.sort((a, b) => {
+			return a.id === 'Iotabee' ? -1 : 0;
+		});
 		setList(list);
 		setTabs(tabs);
 	}, [JSON.stringify(dapps)]);

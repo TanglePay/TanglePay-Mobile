@@ -7,6 +7,7 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
+import { ExpDialog } from './expDialog';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -16,6 +17,7 @@ const schema = Yup.object().shape({
 	agree: Yup.bool().isTrue().required()
 });
 export const AccountInto = () => {
+	const dialogRef = useRef();
 	const form = useRef();
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
@@ -64,14 +66,20 @@ export const AccountInto = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.p16, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16, S.h(ThemeVar.contentHeight1)]}>
 							<Form>
 								{type === 1 ? (
 									<View>
-										<View>
-											<Text style={[SS.fz14, SS.pb10, SS.cS]}>
-												{I18n.t('account.mnemonicTips')}
-											</Text>
+										<View style={[SS.row, SS.ac, SS.pb10]}>
+											<Text style={[SS.fz14, SS.cS]}>{I18n.t('account.mnemonicTips')}</Text>
+											<SvgIcon
+												onPress={() => {
+													dialogRef.current.show();
+												}}
+												name='help'
+												size={16}
+												style={[{ height: 23 }, SS.cS, SS.ml8, SS.mt4]}
+											/>
 										</View>
 										<Textarea
 											blurOnSubmit={true}
@@ -112,7 +120,7 @@ export const AccountInto = () => {
 										value={values.name}
 									/>
 								</Item>
-								<Text style={[SS.fz14, SS.mt24]}>
+								<Text style={[SS.fz14, SS.mt32]}>
 									{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
 								</Text>
 								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
@@ -144,7 +152,7 @@ export const AccountInto = () => {
 									</Item>
 								)}
 							</Form>
-							<Form style={[SS.mb80]}>
+							<Form style={[SS.mt40]}>
 								<Item
 									style={[SS.row, SS.as, SS.ml0, SS.mb40, { borderBottomWidth: 0 }]}
 									onPress={() => {
@@ -152,8 +160,8 @@ export const AccountInto = () => {
 									}}>
 									<SvgIcon
 										color={values.agree ? ThemeVar.brandPrimary : ThemeVar.textColor}
-										size={15}
-										style={[SS.mr8, S.marginT(3)]}
+										size={16}
+										style={[SS.mr8, S.marginT(4)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
 									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
@@ -162,7 +170,6 @@ export const AccountInto = () => {
 												SS.fz12,
 												S.tl,
 												S.lineHeight(22),
-												SS.fw600,
 												S.color(!errors.agree ? '#eee' : ThemeVar.brandDanger)
 											]}>
 											{I18n.t('account.intoAgree')
@@ -179,7 +186,7 @@ export const AccountInto = () => {
 																);
 															}}
 															key={i}
-															style={[SS.cP, SS.fw600]}>
+															style={[SS.cP]}>
 															{e}
 														</Text>
 													) : (
@@ -197,6 +204,7 @@ export const AccountInto = () => {
 					)}
 				</Formik>
 			</Content>
+			<ExpDialog dialogRef={dialogRef} />
 		</Container>
 	);
 };

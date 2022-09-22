@@ -30,7 +30,7 @@ export const AssetsWallets = () => {
 					<View style={[SS.mb16]}>
 						{walletsList.map((e) => {
 							const isActive = curActive === e.id;
-							const curNode = IotaSDK.nodes.find((d) => d.id === e.nodeId) || {};
+							const curNode = IotaSDK.nodes.find((d) => d.id == e.nodeId) || {};
 							return (
 								<TouchableOpacity
 									activeOpacity={0.8}

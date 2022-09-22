@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Content, View, Text, Switch } from 'native-base';
 import { TouchableOpacity } from 'react-native';
-import { Base, I18n } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
-import { S, SS, Nav, SvgIcon } from '@/common';
+import { S, SS, Nav, SvgIcon, Toast } from '@/common';
 import { ImageCache } from 'react-native-img-cache';
 import RNFetchBlob from 'rn-fetch-blob';
 import _sumBy from 'lodash/sumBy';
+import { useChangeNode } from '@tangle-pay/store/common';
 
 export const UserSetting = () => {
 	useStore('common.lang');
+	const changeNode = useChangeNode();
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
+	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
 	const list = [
 		{
@@ -18,11 +21,6 @@ export const UserSetting = () => {
 			label: I18n.t('user.language'),
 			path: 'user/lang'
 		},
-		// {
-		// 	icon: 'network',
-		// 	label: I18n.t('user.network'),
-		// 	path: 'user/network'
-		// },
 		{
 			icon: 'cache',
 			label: I18n.t('nft.clearCache'),
@@ -39,8 +37,48 @@ export const UserSetting = () => {
 			type: 'switch',
 			value: disTrace == 1,
 			onChange: (e) => setDisTrace(e ? 1 : 0)
+		},
+		{
+			icon: 'stake',
+			label: I18n.t('staking.restake'),
+			type: 'switch',
+			value: isNoRestake,
+			onChange: (e) => {
+				setNoRestake(e);
+				Base.setLocalData('common.isNoRestake', e ? 0 : 1);
+			}
 		}
 	];
+	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
+	if (curNodeKey) {
+		list.push({
+			icon: 'network',
+			label: I18n.t('user.network'),
+			value: curNodeKey,
+			hideArrow: true,
+			onPress: async () => {
+				const curNodeId = IotaSDK?.curNode?.id;
+				Toast.showLoading();
+				try {
+					await IotaSDK.getNodes();
+					if (curNodeId) {
+						Toast.hideLoading();
+						await changeNode(curNodeId);
+						IotaSDK.refreshAssets();
+					}
+					Toast.hideLoading();
+				} catch (error) {
+					Toast.hideLoading();
+				}
+			}
+		});
+	}
+	useEffect(() => {
+		Base.getLocalData('common.isNoRestake').then((res) => {
+			setNoRestake(res != 1);
+		});
+		getCache();
+	}, []);
 	const getCache = async () => {
 		const { cache } = ImageCache.get();
 		const requestList = [];
@@ -52,9 +90,6 @@ export const UserSetting = () => {
 		const totalSize = _sumBy(list, 'size');
 		setCache(Base.formatNum(totalSize / 1024 / 1024) + ' M');
 	};
-	useEffect(() => {
-		getCache();
-	}, []);
 	return (
 		<Container>
 			<Nav title={I18n.t('user.setting')} />
@@ -65,7 +100,11 @@ export const UserSetting = () => {
 							<TouchableOpacity
 								activeOpacity={0.8}
 								onPress={() => {
-									e.onPress ? e.onPress() : Base.push(e.path);
+									if (e.onPress) {
+										e.onPress();
+									} else if (e.path) {
+										Base.push(e.path);
+									}
 								}}
 								key={i}
 								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
@@ -78,8 +117,12 @@ export const UserSetting = () => {
 									<Switch value={e.value} onValueChange={e.onChange} />
 								) : (
 									<View style={[SS.row, SS.ac]}>
-										{e.value && <Text style={[SS.fz11, SS.mr10, SS.cS]}>{e.value}</Text>}
-										<SvgIcon size={16} name='right' />
+										{e.value && <Text style={[SS.fz13, SS.cS]}>{e.value}</Text>}
+										{!e.hideArrow ? (
+											<View style={[SS.ml10]}>
+												<SvgIcon size={16} name='right' />
+											</View>
+										) : null}
 									</View>
 								)}
 							</TouchableOpacity>

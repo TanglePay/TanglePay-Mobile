@@ -8,10 +8,12 @@ import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
 import { Bridge } from '@/common/bridge';
+import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
+	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
 	const [dappData, setDappData] = useState({
 		texts: []
@@ -20,7 +22,7 @@ export const DappDialog = () => {
 	const selectTimeHandler = useRef();
 	const [curWallet] = useGetNodeWallet();
 	const [assetsList] = useStore('common.assetsList');
-	const [statedAmount] = useStore('staking.statedAmount');
+	// const [statedAmount] = useStore('staking.statedAmount');
 	const [curNodeId] = useStore('common.curNodeId');
 	const changeNode = useChangeNode();
 	const show = () => {
@@ -68,22 +70,20 @@ export const DappDialog = () => {
 					}
 					let assets = assetsList.find((e) => e.name === curToken) || {};
 					let realBalance = BigNumber(assets.realBalance || 0);
-					const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
-					realBalance = realBalance.minus(bigStatedAmount);
+					// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
+					// realBalance = realBalance.minus(bigStatedAmount);
 					let residue = Number(realBalance.minus(amount)) || 0;
 					const decimal = Math.pow(10, assets.decimal);
 					try {
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (amount < decimal) {
 								return Toast.error(I18n.t('assets.sendBelow1Tips'));
 							}
 						}
 						if (residue < 0) {
-							return Toast.error(
-								I18n.t(statedAmount > 0 ? 'assets.balanceStakeError' : 'assets.balanceError')
-							);
+							return Toast.error(I18n.t('assets.balanceError'));
 						}
-						if (!IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (residue < decimal && residue != 0) {
 								return Toast.error(I18n.t('assets.residueBelow1Tips'));
 							}
@@ -92,7 +92,9 @@ export const DappDialog = () => {
 						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: assets?.contract,
 							token: assets?.name,
-							taggedData
+							taggedData,
+							realBalance: Number(realBalance),
+							residue
 						});
 						if (!res) {
 							setLoading(false);
@@ -103,11 +105,11 @@ export const DappDialog = () => {
 							Bridge.sendMessage(type, res);
 						}
 						setLoading(false);
-						Toast.success(
-							I18n.t(
-								IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'assets.sendSucc' : 'assets.sendSuccRestake'
-							)
-						);
+						// Toast.success(
+						// 	I18n.t(
+						// 		IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'assets.sendSucc' : 'assets.sendSuccRestake'
+						// 	)
+						// );
 						hide();
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
@@ -116,14 +118,15 @@ export const DappDialog = () => {
 							Bridge.sendErrorMessage(type, error);
 						}
 						setLoading(false);
-						Toast.error(
-							`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
-								realBalance
-							)}---bigStatedAmount:${bigStatedAmount}`,
-							{
-								duration: 5000
-							}
-						);
+						Toast.error(error.toString());
+						// Toast.error(
+						// 	`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
+						// 		realBalance
+						// 	)}`,
+						// 	{
+						// 		duration: 5000
+						// 	}
+						// );
 					}
 				}
 				break;
@@ -143,7 +146,7 @@ export const DappDialog = () => {
 					await Bridge.sendMessage(type, {
 						address: curWallet.address,
 						nodeId: curWallet.nodeId,
-						network: IotaSDK.nodes.find((e) => e.id === curWallet.nodeId)?.network
+						network: IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.network
 					});
 					Toast.hideLoading();
 				}
@@ -210,7 +213,7 @@ export const DappDialog = () => {
 		} = res;
 		let toNetId;
 		if (network) {
-			toNetId = IotaSDK.nodes.find((e) => e.network === network)?.id;
+			toNetId = IotaSDK.nodes.find((e) => e.network == network)?.id;
 		}
 		if (toNetId && parseInt(toNetId) !== parseInt(curNodeId)) {
 			await changeNode(toNetId);
@@ -241,7 +244,7 @@ export const DappDialog = () => {
 							let showUnit = '';
 							let sendAmount = 0;
 							let contract = '';
-							if (IotaSDK.checkWeb3Node(toNetId)) {
+							if (IotaSDK.checkWeb3Node(toNetId || curNodeId)) {
 								let curToken = IotaSDK.curNode?.token;
 								if (taggedData) {
 									contract = address;
@@ -264,10 +267,18 @@ export const DappDialog = () => {
 									sendAmount = value;
 								}
 							} else {
-								unit = unit || 'Mi';
-								showValue = IotaSDK.convertUnits(value, unit, 'Mi');
-								sendAmount = IotaSDK.convertUnits(value, unit, 'i');
-								showUnit = 'MIOTA';
+								if (IotaSDK.checkSMR(toNetId || curNodeId)) {
+									unit = unit || 'SMR';
+									showValue = value;
+									sendAmount =
+										unit !== 'Glow' ? Math.pow(10, IotaSDK.curNode?.decimal || 0) * value : value;
+									showUnit = unit;
+								} else {
+									unit = unit || 'Mi';
+									showValue = IotaSDK.convertUnits(value, unit, 'Mi');
+									sendAmount = IotaSDK.convertUnits(value, unit, 'i');
+									showUnit = 'MIOTA';
+								}
 							}
 
 							let str = I18n.t('apps.send');

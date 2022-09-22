@@ -37,36 +37,37 @@ export const AccountMnemonic = () => {
 	return (
 		<Container style={{ opacity: opacity }}>
 			<Nav title={I18n.t('account.mnemonicTitle')} />
-			<Content contentContainerStyle={[SS.ph16, SS.pb50, SS.pt16]}>
-				<View style={[SS.mb10]}>
-					<Text style={[SS.cS, SS.fz14]}>{I18n.t('account.mnemonicSubTitle')}</Text>
+			<Content contentContainerStyle={[SS.ph24, SS.pb50, SS.pt40]}>
+				<View style={[SS.mb24, SS.c]}>
+					<Text style={[SS.fz14]}>{I18n.t('account.mnemonicSubTitle')}</Text>
 				</View>
-				<View style={[S.radius(20), S.border(4, '#eee', 1), SS.row, { flexWrap: 'wrap' }]}>
+				<View style={[S.radius(12), S.border(4, '#000', 1), SS.row, { flexWrap: 'wrap' }]}>
 					{list.map((e, i) => {
 						return (
 							<View
 								key={`${e}_${i}`}
 								style={[
-									i >= 3 && S.border(0, '#eee', 1),
-									i % 3 !== 2 && S.border(1, '#eee', 1),
+									i >= 3 && S.border(0, '#000', 1),
+									i % 3 !== 2 && S.border(1, '#000', 1),
 									S.w('33.33%'),
-									SS.p5
+									{ height: 47 },
+									SS.c
 								]}>
-								<Text style={[SS.fz13, SS.cS]}>{i + 1}</Text>
-								<Text style={[SS.fz15, SS.tc]}>{e}</Text>
+								<Text style={[SS.fz14, SS.pa, { left: 4, top: 4 }]}>{i + 1}</Text>
+								<Text style={[SS.fz16, SS.tc]}>{e}</Text>
 							</View>
 						);
 					})}
 				</View>
-				<View style={[SS.mb10, SS.mt20, SS.as, SS.row, SS.mr24]}>
+				{/* <View style={[SS.mb10, SS.mt20, SS.as, SS.row, SS.mr24]}>
 					<Text style={[SS.mr20, { fontSize: 6 }, SS.mt5]}>●</Text>
 					<Text style={[SS.fz14, SS.cS]}>{I18n.t('account.mnemonicPhraseTips1')}</Text>
 				</View>
 				<View style={[SS.mb10, SS.as, SS.row, SS.mr24]}>
 					<Text style={[SS.mr20, { fontSize: 6 }, SS.mt5]}>●</Text>
 					<Text style={[SS.fz14, SS.cS]}>{I18n.t('account.mnemonicPhraseTips2')}</Text>
-				</View>
-				<View style={[SS.mt15]}>
+				</View> */}
+				<View style={[SS.mt70]}>
 					<Button
 						block
 						onPress={() => {

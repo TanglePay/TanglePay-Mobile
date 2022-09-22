@@ -22,10 +22,12 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 		},
 		[]
 	);
-	const show = () => {
-		if (nodeId) {
+	const show = async (showNodeId) => {
+		if (nodeId || showNodeId) {
 			setShowNode(false);
-			changeNode(parseInt(nodeId));
+			setLoading(true);
+			await changeNode(parseInt(nodeId || showNodeId));
+			setLoading(false);
 		} else {
 			setShowNode(true);
 		}
@@ -94,11 +96,11 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								style={[{ height: 72 }, SS.pl24, SS.jc]}>
 								<Text style={[SS.fz16]}>{I18n.t('account.createTitle')}</Text>
 							</TouchableOpacity>
-							{(curNode?.type == 1 || curNode?.type == 3) && (
+							{curNode?.type == 3 && (
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
-										Toast.show(I18n.t('account.unopen'));
+										// Toast.show(I18n.t('account.unopen'));
 										hide();
 										Base.push('assets/claimReward');
 									}}

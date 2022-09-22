@@ -66,6 +66,9 @@ const styleObj = {
 	bgW: {
 		backgroundColor: ThemeVar.cardDefaultBg
 	},
+	bgP: {
+		backgroundColor: ThemeVar.brandPrimary
+	},
 	bgS: {
 		backgroundColor: ThemeVar.secondBgColor
 	},
