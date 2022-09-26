@@ -3847,6 +3847,7 @@
 		const localClient = typeof client === 'string' ? new SingleNodeClient(client) : client;
 		const indexerPluginClient = new IndexerPluginClient(localClient);
 		let total = bigInt__default['default'](0);
+		let available = bigInt__default['default'](0);
 		let ledgerIndex = 0;
 		const nativeTokens = {};
 		let response;
@@ -3857,9 +3858,16 @@
 				const output = await localClient.output(outputId);
 				if (!output.metadata.isSpent) {
 					total = total.plus(output.output.amount);
-					const nativeTokenOutput = output.output;
-					if (Array.isArray(nativeTokenOutput.nativeTokens)) {
-						for (const token of nativeTokenOutput.nativeTokens) {
+					const nativeTokenOutput = output.output?.nativeTokens || [];
+					const unlockConditions = output.output?.unlockConditions || [];
+					const addressUnlockCondition = unlockConditions.find(
+						(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
+					);
+					if (!addressUnlockCondition && !nativeTokenOutput.length) {
+						available = available.plus(output.output.amount);
+					}
+					if (nativeTokenOutput.length > 0) {
+						for (const token of nativeTokenOutput) {
 							nativeTokens[token.id] =
 								(_a = nativeTokens[token.id]) !== null && _a !== void 0
 									? _a
@@ -3877,7 +3885,8 @@
 		return {
 			balance: total,
 			nativeTokens,
-			ledgerIndex
+			ledgerIndex,
+			available
 		};
 	}
 
@@ -3898,7 +3907,8 @@
 				const addressUnlockCondition = unlockConditions.find(
 					(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
 				);
-				if (!output.metadata.isSpent && !addressUnlockCondition) {
+				const nativeTokens = output.output?.nativeTokens || [];
+				if (!output.metadata.isSpent && !addressUnlockCondition && !nativeTokens.length) {
 					total = total.plus(output.output.amount);
 					const nativeTokenOutput = output.output;
 					if (Array.isArray(nativeTokenOutput.nativeTokens)) {
@@ -4681,12 +4691,12 @@
 					const addressUnlockCondition = addressOutput.output.unlockConditions.find(
 						(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
 					);
-					const nativeTokens = addressOutput.output?.nativeTokens || []
+					const nativeTokens = addressOutput.output?.nativeTokens || [];
 					if (
 						!addressOutput.metadata.isSpent &&
 						consumedBalance.lesser(requiredBalance) &&
 						!addressUnlockCondition &&
-                        !nativeTokens.length
+						!nativeTokens.length
 					) {
 						if (bigInt__default['default'](addressOutput.output.amount).equals(0)) {
 							zeroBalance++;

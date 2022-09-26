@@ -97,7 +97,7 @@ export const Main = () => {
 		IotaSDK.setMqtt(curWallet.address);
 	}, [curWallet.address + curWallet.nodeId]);
 	useEffect(() => {
-		const filterMenuList = IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.filterMenuList || [];
+		const filterMenuList = IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.filterMenuList || ['apps'];
 		setRoutes([...initRoutes.filter((e) => !filterMenuList.includes(e.key))]);
 	}, [curWallet.nodeId, JSON.stringify(initRoutes)]);
 	return (

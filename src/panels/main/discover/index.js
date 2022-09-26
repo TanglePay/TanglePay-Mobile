@@ -6,17 +6,20 @@ import { SvgIcon } from '@/common/assets';
 import { Toast, Nav, SS, S, ThemeVar } from '@/common';
 import { Container, View, Text } from 'native-base';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { useGetParticipationEvents, useGetRewards } from '@tangle-pay/store/staking'
+import { useGetParticipationEvents, useGetRewards } from '@tangle-pay/store/staking';
 
 export const Discover = () => {
 	const [curWallet] = useGetNodeWallet();
-	useGetParticipationEvents()
-    useGetRewards(curWallet, false)
+	useGetParticipationEvents();
+	useGetRewards(curWallet, false);
 	const [switchConfig, setSwichConfig] = useState({});
 	useEffect(() => {
 		fetch(`${API_URL}/switchConfig.json?v=${new Date().getTime()}`)
 			.then((res) => res.json())
 			.then((res) => {
+				if (Base.getClientType() === 'IOS' && Base.getVersion() == res.checkVersion) {
+					res.buyIota = 0;
+				}
 				setSwichConfig(res);
 			});
 	}, []);

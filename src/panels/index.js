@@ -34,7 +34,12 @@ import { WalletCollection } from './user/walletDetail/collection';
 import { ClaimReward } from './assets/claimReward/index';
 import { ClaimSMR } from './assets/claimReward/claimSMR';
 import { ClaimResult } from './assets/claimReward/claimResult';
+import { UserAdvanced } from './user/advanced';
 export const panelsList = [
+	{
+		path: 'user/advanced',
+		component: UserAdvanced
+	},
 	{
 		path: 'assets/claimReward/claimResult',
 		component: ClaimResult
