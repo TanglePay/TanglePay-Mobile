@@ -47,6 +47,13 @@ export const UserSetting = () => {
 				setNoRestake(e);
 				Base.setLocalData('common.isNoRestake', e ? 0 : 1);
 			}
+		},
+		,
+		{
+			icon: 'advanced',
+			label: 'Advanced',
+			path: 'user/advanced',
+			size: 22
 		}
 	];
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
@@ -109,7 +116,9 @@ export const UserSetting = () => {
 								key={i}
 								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
 								<View style={[SS.row, SS.ac]}>
-									<SvgIcon name={e.icon} size={24} />
+									<View style={[SS.c, { minWidth: 24 }]}>
+										<SvgIcon name={e.icon} size={e.size || 24} />
+									</View>
 									<Text style={[SS.fz16, SS.ml12]}>{e.label}</Text>
 									{e.tips && <Text style={[SS.fz11, SS.ml10, SS.cS, SS.mt5]}>{e.tips}</Text>}
 								</View>
