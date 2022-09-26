@@ -34,7 +34,6 @@ export const AssetsSend = () => {
 	}, [params]);
 
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
-	console.log(assets.realAvailable, '=====');
 	let realBalance = BigNumber(assets.realAvailable || assets.realBalance || 0);
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);

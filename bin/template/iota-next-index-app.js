@@ -3858,16 +3858,16 @@
 				const output = await localClient.output(outputId);
 				if (!output.metadata.isSpent) {
 					total = total.plus(output.output.amount);
-					const nativeTokenOutput = output.output;
-					const unlockConditions = output.output?.unlockConditions;
+					const nativeTokenOutput = output.output?.nativeTokens || [];
+					const unlockConditions = output.output?.unlockConditions || [];
 					const addressUnlockCondition = unlockConditions.find(
 						(u) => u.type === EXPIRATION_UNLOCK_CONDITION_TYPE
 					);
-					if (!addressUnlockCondition && !nativeTokens.length) {
+					if (!addressUnlockCondition && !nativeTokenOutput.length) {
 						available = available.plus(output.output.amount);
 					}
-					if (Array.isArray(nativeTokenOutput.nativeTokens)) {
-						for (const token of nativeTokenOutput.nativeTokens) {
+					if (nativeTokenOutput.length > 0) {
+						for (const token of nativeTokenOutput) {
 							nativeTokens[token.id] =
 								(_a = nativeTokens[token.id]) !== null && _a !== void 0
 									? _a
