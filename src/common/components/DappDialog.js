@@ -121,14 +121,15 @@ export const DappDialog = () => {
 							residue,
 							tokenId: foundryData?.tokenId,
 							decimal: assets?.decimal,
-							mainBalance
+							mainBalance,
+							awaitStake: true
 						});
 						if (!res) {
 							setLoading(false);
 							return;
 						}
 						messageId = res.messageId;
-						if (type === 'iota_sendTransaction') {
+						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
 							Bridge.sendMessage(type, res);
 						}
 						setLoading(false);
@@ -141,7 +142,7 @@ export const DappDialog = () => {
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
 					} catch (error) {
-						if (type === 'iota_sendTransaction') {
+						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
 							Bridge.sendErrorMessage(type, error);
 						}
 						setLoading(false);

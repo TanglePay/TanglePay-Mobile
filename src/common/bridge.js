@@ -70,9 +70,19 @@ export const Bridge = {
 					return;
 				}
 				switch (method) {
+					case 'eth_sendTransaction':
 					case 'iota_sendTransaction':
-						const { to, value, unit = '', network = '', merchant = '', item_desc = '' } = params;
-						const url = `tanglepay://iota_sendTransaction/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}`;
+						const {
+							to,
+							value,
+							unit = '',
+							network = '',
+							merchant = '',
+							item_desc = '',
+							assetId = '',
+							data = ''
+						} = params;
+						const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}`;
 						Linking.openURL(url);
 						break;
 					case 'iota_connect':
@@ -104,6 +114,7 @@ export const Bridge = {
 						break;
 					case 'iota_accounts':
 					case 'iota_getBalance':
+					case 'eth_getBalance':
 						{
 							this[method](origin, params);
 						}
@@ -156,8 +167,11 @@ export const Bridge = {
 	},
 	async eth_getBalance(origin, { assetsList, addressList }) {
 		try {
-			// iota
+			const curWallet = await this.getCurWallet();
 			assetsList = assetsList || [];
+			if (addressList.length === 0) {
+				addressList = (await Base.getLocalData(`valid.addresses.${curWallet.address}`)) || [];
+			}
 			let amount = BigNumber(0);
 			if (assetsList.includes('evm') && IotaSDK.isWeb3Node) {
 				if (!IotaSDK.client || !IotaSDK?.client?.eth) {
@@ -172,7 +186,6 @@ export const Bridge = {
 			const assetsData = {
 				amount
 			};
-			const curWallet = await this.getCurWallet();
 			const key = `${origin}_eth_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
 			this.sendMessage('eth_getBalance', assetsData);
 		} catch (error) {
@@ -223,7 +236,9 @@ export const Bridge = {
 	async iota_getBalance(origin, { assetsList, addressList }) {
 		try {
 			const curWallet = await this.getCurWallet();
-			// iota
+			if (addressList.length === 0) {
+				addressList = (await Base.getLocalData(`valid.addresses.${curWallet.address}`)) || [];
+			}
 			assetsList = assetsList || [];
 			let amount = BigNumber(0);
 			if (assetsList.includes('iota') && !IotaSDK.checkSMR(curWallet.nodeId) && !IotaSDK.isWeb3Node) {
@@ -240,16 +255,24 @@ export const Bridge = {
 				collectibles = await IotaSDK.getNfts(addressList);
 			}
 
-			// stake
+			let nativeTokens = [];
 			let othersDic = {};
 			if (IotaSDK.checkSMR(curWallet.nodeId)) {
 				if (assetsList.includes('smr')) {
 					const smrAessets = (await IotaSDK.getBalance(curWallet, addressList)) || [];
-					othersDic.smr = {
-						amount: smrAessets.find((e) => e.token === IotaSDK.curNode?.token)?.realBalance,
-						symbol: 'smr',
-						icon: `https://api.iotaichi.com/icon/SMR.png`
-					};
+					amount = smrAessets.find((e) => e.token === IotaSDK.curNode?.token)?.realBalance;
+					nativeTokens = smrAessets.filter((e) => e.token !== IotaSDK.curNode?.token);
+					let tokens = nativeTokens.map((e) => e.tokenId);
+					tokens = await Promise.all(nativeTokens.map((e) => IotaSDK.foundry(e.tokenId)));
+					tokens = tokens.map((e) => IotaSDK.handleFoundry(e));
+					nativeTokens = nativeTokens.map((e, i) => {
+						return {
+							id: e.tokenId,
+							amount: e.realBalance,
+							info: tokens[i]
+						};
+					});
+					console.log(nativeTokens);
 				}
 			} else {
 				if (assetsList.includes('smr') || assetsList.includes('asmb')) {
@@ -276,7 +299,8 @@ export const Bridge = {
 			const assetsData = {
 				amount,
 				collectibles,
-				others: Object.values(othersDic)
+				others: Object.values(othersDic),
+				nativeTokens
 			};
 
 			this.sendMessage('iota_getBalance', assetsData);
