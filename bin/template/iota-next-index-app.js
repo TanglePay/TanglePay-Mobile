@@ -3836,7 +3836,7 @@
 	B1T6.TRITS_PER_TRYTE = 3;
 
 	// check output
-	async function checkOutput(output) {
+	function checkOutput(output) {
 		const isSpent = output?.metadata?.isSpent;
 		const outputType = output?.output?.type;
 		const nativeTokens = output?.output?.nativeTokens || [];
