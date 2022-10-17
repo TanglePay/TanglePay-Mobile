@@ -3834,7 +3834,70 @@
 	 * @internal
 	 */
 	B1T6.TRITS_PER_TRYTE = 3;
+	//verify input & output
+	function verifySMRSendParams(inputs, outputs) {
+		inputs = JSON.parse(JSON.stringify(inputs));
+		outputs = JSON.parse(JSON.stringify(outputs));
+		let isError = false;
+		let inputSMR = bigInt__default['default'](0);
+		let tokens = {};
+		inputs.forEach((e) => {
+			let smrAmount = e.consumingOutput.amount || 0;
+			if (/0x/.test(String(smrAmount))) {
+				smrAmount = util_js.HexHelper.toBigInt256(smrAmount);
+			}
+			inputSMR = inputSMR.add(smrAmount);
+			(e.consumingOutput.nativeTokens || []).map(({ id, amount }) => {
+				if (/0x/.test(String(amount))) {
+					amount = util_js.HexHelper.toBigInt256(amount);
+				}
+				tokens[id] = tokens[id] || bigInt__default['default'](0);
+				tokens[id] = tokens[id].add(amount);
+			});
+		});
 
+		let outputSMR = bigInt__default['default'](0);
+		let outputTokens = {};
+		outputs.forEach((e) => {
+			let smrAmount = e.amount || 0;
+			if (/0x/.test(String(smrAmount))) {
+				smrAmount = util_js.HexHelper.toBigInt256(smrAmount);
+			}
+			outputSMR = outputSMR.add(smrAmount);
+			(e.nativeTokens || []).map(({ id, amount }) => {
+				if (/0x/.test(String(amount))) {
+					amount = util_js.HexHelper.toBigInt256(amount);
+				}
+				outputTokens[id] = outputTokens[id] || bigInt__default['default'](0);
+				outputTokens[id] = outputTokens[id].add(amount);
+			});
+		});
+		if (Number(inputSMR) != Number(outputSMR)) {
+			isError = true;
+		}
+		for (const id in tokens) {
+			if (!outputTokens[id]) {
+				isError = true;
+			} else if (Number(tokens[id] != Number(outputTokens[id]))) {
+				isError = true;
+			}
+		}
+		let tips = '';
+		if (isError) {
+			let outputTokenStr = '';
+			for (const id in outputTokens) {
+				outputTokenStr += `| ${Number(outputTokens[id])} ${id.slice(0, 8)}`;
+			}
+			let inputTokenStr = '';
+			for (const id in tokens) {
+				inputTokenStr += `| ${Number(tokens[id])} ${id.slice(0, 8)}`;
+			}
+			tips = `Invalid transaction, total assets in outputs ${Number(
+				outputSMR
+			)} SMR ${outputTokenStr} must be equal to the inputs ${Number(inputSMR)} SMR ${inputTokenStr}.`;
+		}
+		return [!isError, tips];
+	}
 	// check output
 	function checkOutput(output) {
 		const isSpent = output?.metadata?.isSpent;
@@ -3858,8 +3921,13 @@
 		const indexerPluginClient = new IndexerPluginClient(localClient);
 		let total = bigInt__default['default'](0);
 		let available = bigInt__default['default'](0);
+		let outputIds = [];
+		let availableOutputIds = [];
+		let outputDatas = [];
+		let availableOutputDatas = [];
 		let ledgerIndex = 0;
 		const nativeTokens = {};
+		let availableNativeTokens = {};
 		let response;
 		let cursor;
 		do {
@@ -3867,10 +3935,19 @@
 			for (const outputId of response.items) {
 				const output = await localClient.output(outputId);
 				if (!output.metadata.isSpent) {
-					total = total.plus(output.output.amount);
+					let unlockConditions = output.output?.unlockConditions || [];
+					const isLock = unlockConditions.find((e) => e.type != ADDRESS_UNLOCK_CONDITION_TYPE);
+					if (!isLock) {
+						total = total.plus(output.output.amount);
+					}
+					outputIds.push(outputId);
+					outputDatas.push(output);
 					const nativeTokenOutput = output.output?.nativeTokens || [];
-					if (checkOutput(output)) {
+					const isCheckOutput = checkOutput(output);
+					if (isCheckOutput) {
 						available = available.plus(output.output.amount);
+						availableOutputIds.push(outputId);
+						availableOutputDatas.push(output);
 					}
 					if (nativeTokenOutput.length > 0) {
 						for (const token of nativeTokenOutput) {
@@ -3881,6 +3958,15 @@
 							nativeTokens[token.id] = nativeTokens[token.id].add(
 								util_js.HexHelper.toBigInt256(token.amount)
 							);
+							if (!isLock) {
+								availableNativeTokens[token.id] =
+									(_a = availableNativeTokens[token.id]) !== null && _a !== void 0
+										? _a
+										: bigInt__default['default'](0);
+								availableNativeTokens[token.id] = availableNativeTokens[token.id].add(
+									util_js.HexHelper.toBigInt256(token.amount)
+								);
+							}
 						}
 					}
 				}
@@ -3891,47 +3977,13 @@
 		return {
 			balance: total,
 			nativeTokens,
+			availableNativeTokens,
 			ledgerIndex,
-			available
-		};
-	}
-
-	async function addressUnlockBalance(client, addressBech32) {
-		var _a;
-		const localClient = typeof client === 'string' ? new SingleNodeClient(client) : client;
-		const indexerPluginClient = new IndexerPluginClient(localClient);
-		let total = bigInt__default['default'](0);
-		let ledgerIndex = 0;
-		const nativeTokens = {};
-		let response;
-		let cursor;
-		do {
-			response = await indexerPluginClient.outputs({ addressBech32, cursor });
-			for (const outputId of response.items) {
-				const output = await localClient.output(outputId);
-				if (checkOutput(output)) {
-					total = total.plus(output.output.amount);
-					const nativeTokenOutput = output.output;
-					if (Array.isArray(nativeTokenOutput.nativeTokens)) {
-						for (const token of nativeTokenOutput.nativeTokens) {
-							nativeTokens[token.id] =
-								(_a = nativeTokens[token.id]) !== null && _a !== void 0
-									? _a
-									: bigInt__default['default'](0);
-							nativeTokens[token.id] = nativeTokens[token.id].add(
-								util_js.HexHelper.toBigInt256(token.amount)
-							);
-						}
-					}
-				}
-				ledgerIndex = output.metadata.ledgerIndex;
-			}
-			cursor = response.cursor;
-		} while (cursor && response.items.length > 0);
-		return {
-			balance: total,
-			nativeTokens,
-			ledgerIndex
+			available,
+			outputIds,
+			availableOutputIds,
+			outputDatas,
+			availableOutputDatas
 		};
 	}
 
@@ -4324,6 +4376,10 @@
 	 * @returns The id of the block created and the remainder address if one was needed.
 	 */
 	async function sendAdvanced(client, inputsAndSignatureKeyPairs, outputs, taggedData) {
+		const [isCanSend, tips] = verifySMRSendParams(inputsAndSignatureKeyPairs, outputs);
+		if (!isCanSend) {
+			throw tips;
+		}
 		const localClient = typeof client === 'string' ? new SingleNodeClient(client) : client;
 		const protocolInfo = await localClient.protocolInfo();
 		const transactionPayload = buildTransactionPayload(
@@ -4644,6 +4700,12 @@
 			outputs,
 			zeroCount
 		);
+
+		const [isCanSend, tips] = verifySMRSendParams(inputsAndKeys, outputs);
+		if (!isCanSend) {
+			throw tips;
+		}
+
 		const response = await sendAdvanced(client, inputsAndKeys, outputs, taggedData);
 		return {
 			blockId: response.blockId,
@@ -5988,9 +6050,9 @@
 	exports.UINT8_SIZE = UINT8_SIZE;
 	exports.UTXO_INPUT_TYPE = UTXO_INPUT_TYPE;
 	exports.UnitsHelper = UnitsHelper;
+	exports.verifySMRSendParams = verifySMRSendParams;
 	exports.checkOutput = checkOutput;
 	exports.addressBalance = addressBalance;
-	exports.addressUnlockBalance = addressUnlockBalance;
 	exports.blockIdFromMilestonePayload = blockIdFromMilestonePayload;
 	exports.buildTransactionPayload = buildTransactionPayload;
 	exports.calculateInputs = calculateInputs;

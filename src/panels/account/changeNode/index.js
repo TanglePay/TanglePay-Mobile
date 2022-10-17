@@ -11,6 +11,23 @@ import { AddDialog } from '../../assets/wallets/addDialog';
 export const AccountChangeNode = () => {
 	const dialogRef = useRef();
 	// const changeNode = useChangeNode();
+	const list = [];
+	let evmName = [];
+	const nodes = JSON.parse(JSON.stringify(IotaSDK.nodes));
+	nodes.forEach((e) => {
+		if (IotaSDK.checkWeb3Node(e.id)) {
+			if (!list.find((d) => d.type == e.type)) {
+				list.push({ ...e });
+			}
+			evmName.push(e.name);
+		} else {
+			list.push({ ...e });
+		}
+	});
+	const evmData = list.find((e) => IotaSDK.checkWeb3Node(e.id));
+	if (evmData) {
+		evmData.name = `EVM (${evmName.join(' / ')})`;
+	}
 	return (
 		<Container>
 			<Nav leftIcon={false} headerStyle={{ borderBottomWidth: 0 }} />
@@ -44,7 +61,7 @@ export const AccountChangeNode = () => {
 					]}>
 					<Text style={[SS.fz14, SS.cW, { lineHeight: 18 }]}>{I18n.t('account.changeTips')}</Text>
 					<View style={[SS.mt20, S.radius(16), SS.bgW]}>
-						{IotaSDK.nodes.map((e, i) => {
+						{list.map((e, i) => {
 							return (
 								<TouchableOpacity
 									key={e.id}

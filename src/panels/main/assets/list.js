@@ -19,7 +19,6 @@ export const CoinList = () => {
 	const [needRestake] = useStore('staking.needRestake');
 	const [statedAmount] = useStore('staking.statedAmount');
 	let [assetsList] = useStore('common.assetsList');
-	const curLegal = useGetLegal();
 	const contractList = IotaSDK.curNode?.contractList || [];
 	assetsList = assetsList.filter((e) => {
 		const { name } = e;
@@ -29,9 +28,11 @@ export const CoinList = () => {
 		const contract = contractList.find((e) => e.token === name)?.contract;
 		return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
 	});
+	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
 	return (
 		<View>
 			{assetsList.map((e) => {
+				const isSMR = isSMRNode && !e.isSMRToken;
 				return (
 					<TouchableOpacity
 						activeOpacity={0.8}
@@ -50,7 +51,7 @@ export const CoinList = () => {
 								SS.mr12,
 								S.border(4)
 							]}
-							source={{ uri: Base.getIcon(e.name) }}
+							source={{ uri: e.logoUrl || Base.getIcon(e.name) }}
 							onError={() => {
 								setHideIcon((d) => {
 									return { ...d, [e.name]: true };
@@ -80,14 +81,20 @@ export const CoinList = () => {
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
 										{e.balance} {String(e.unit || e.name).toLocaleUpperCase()}
 									</Text>
-									<Text style={[SS.fz12, SS.tr, SS.cS]}>
-										{curLegal.unit} {e.assets}
-									</Text>
+									{isSMR ? (
+										<Text style={[SS.fz12, SS.tr, SS.cS]}>
+											{I18n.t('staking.available')} {e.available}{' '}
+										</Text>
+									) : null}
 								</View>
 							) : (
 								<View>
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>****</Text>
-									<Text style={[SS.fz12, SS.tr, SS.cS]}>****</Text>
+									{isSMR ? (
+										<Text style={[SS.fz12, SS.tr, SS.cS]}>
+											{I18n.t('staking.available') + ' ****'}
+										</Text>
+									) : null}
 								</View>
 							)}
 						</View>
@@ -104,6 +111,7 @@ export const RewardsList = () => {
 	const [curWallet] = useGetNodeWallet();
 	const [{ rewards }] = useStore('staking.config');
 	const [isRequestAssets] = useStore('common.isRequestAssets');
+	const [checkClaim] = useStore('common.checkClaim');
 	useEffect(() => {
 		const obj = {};
 		const hasSMR = !!IotaSDK.nodes.find((e) => e.bech32HRP === 'smr');
@@ -138,10 +146,13 @@ export const RewardsList = () => {
 				obj[symbol].unit = unit;
 			}
 		}
-		const arr = Object.values(obj);
+		let arr = Object.values(obj);
 		arr.sort((a) => (a.isSMR ? -1 : 0));
+		if (checkClaim) {
+			arr = arr.filter((e) => !e.isSMR);
+		}
 		setList(arr);
-	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
+	}, [checkClaim, JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return (

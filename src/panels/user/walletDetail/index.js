@@ -33,7 +33,10 @@ export const WalletDetail = () => {
 						<View style={[{ height: 30 }, SS.ac, SS.jsb, SS.row, SS.mb8]}>
 							<Text style={[SS.flex1, SS.fz14]}>{I18n.t('account.address')}</Text>
 							<Text style={[SS.flex1, SS.tr, SS.fz14]}>{I18n.t('account.outputNum')}</Text>
-							<Text style={[SS.flex1, SS.tr, SS.fz14]}>{I18n.t('account.iotaNum')}</Text>
+							<Text style={[SS.flex1, SS.tr, SS.fz14]}>
+								{I18n.t('staking.available') + ' '}
+								{totalInfo.unit || ''}
+							</Text>
 						</View>
 						{list.map((e, i) => {
 							return (

@@ -16,6 +16,7 @@ export const Assets = () => {
 	const [heightInfo, setHeightInfo] = useState({ 0: hScroll, 1: undefined, 2: undefined });
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
+	const [unlockConditions] = useStore('common.unlockConditions');
 	const changeNode = useChangeNode();
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
 	const [___, refreshAssets] = useStore('common.forceRequest');
@@ -132,14 +133,28 @@ export const Assets = () => {
 				</View>
 				<View style={[SS.row, SS.ac, SS.jsb, SS.ph16, S.border(2), { width: '100%' }]}>
 					<View style={[SS.row, SS.ac]}>
-						<TouchableOpacity
-							onPress={() => setTab(0)}
-							activeOpacity={0.8}
-							style={[SS.c, SS.mr24, { height: 60 }]}>
-							<Text style={[S.color(curTab === 0 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz14]}>
-								{I18n.t('assets.assets')}
-							</Text>
-						</TouchableOpacity>
+						<View style={[SS.flex, SS.ac, SS.row]}>
+							<TouchableOpacity
+								onPress={() => setTab(0)}
+								activeOpacity={0.8}
+								style={[SS.c, SS.mr24, { height: 60 }]}>
+								<Text
+									style={[
+										S.color(curTab === 0 ? ThemeVar.brandPrimary : ThemeVar.textColor),
+										SS.fz14
+									]}>
+									{I18n.t('assets.assets')}
+								</Text>
+							</TouchableOpacity>
+							{unlockConditions.length > 0 ? (
+								<TouchableOpacity
+									onPress={() => Base.push('assets/tradingList')}
+									activeOpacity={0.8}
+									style={[SS.ph5, SS.c, SS.ml24, S.bg('#D53554'), { borderRadius: 4, height: 18 }]}>
+									<Text style={[SS.cW, SS.fz14]}>{String(unlockConditions.length)}</Text>
+								</TouchableOpacity>
+							) : null}
+						</View>
 						{assetsTab.includes('soonaverse') && (
 							<TouchableOpacity
 								onPress={() => setTab(1)}

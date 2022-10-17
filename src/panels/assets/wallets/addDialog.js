@@ -37,6 +37,23 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 	const hide = () => {
 		setShow(false);
 	};
+	const list = [];
+	let evmName = [];
+	const nodes = JSON.parse(JSON.stringify(IotaSDK.nodes));
+	nodes.forEach((e) => {
+		if (IotaSDK.checkWeb3Node(e.id)) {
+			if (!list.find((d) => d.type == e.type)) {
+				list.push({ ...e });
+			}
+			evmName.push(e.name);
+		} else {
+			list.push({ ...e });
+		}
+	});
+	const evmData = list.find((e) => IotaSDK.checkWeb3Node(e.id));
+	if (evmData) {
+		evmData.name = `EVM (${evmName.join(' / ')})`;
+	}
 	return (
 		<Modal
 			style={[SS.m0, SS.je]}
@@ -53,7 +70,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 					<>
 						<Text style={[SS.fz14, SS.cS, SS.mb16]}>{I18n.t('account.selectNode')}</Text>
 						<View style={[SS.mb24, SS.bgW, SS.radius8]}>
-							{IotaSDK.nodes.map((e, i) => {
+							{list.map((e, i) => {
 								return (
 									<TouchableOpacity
 										key={e.id}

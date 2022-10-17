@@ -21,6 +21,9 @@ export const WalletCollection = () => {
 		setShow(false);
 		getInfo();
 		Base.goBack();
+		setTimeout(() => {
+			getInfo();
+		}, 3000);
 	};
 	useEffect(() => {
 		if (handeNum >= totalNum && handeNum > 0) {
