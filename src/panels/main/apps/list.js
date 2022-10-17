@@ -11,15 +11,11 @@ const Item = ({ id, icon, desc, developer, url, curAddress }) => {
 		<TouchableOpacity
 			activeOpacity={0.8}
 			onPress={() => {
-				if (!hasTips) {
+				if (hasTips) {
 					Clipboard.setString(curAddress);
 					Toast.success(I18n.t('discover.addressCopy'));
-					setTimeout(() => {
-						Base.push(url, { title: id });
-					}, 2000);
-				} else {
-					Base.push(url, { title: id });
 				}
+				Base.push(url, { title: id });
 			}}
 			style={[SS.ac, SS.row, SS.mb8]}>
 			<View style={[SS.mr8]}>

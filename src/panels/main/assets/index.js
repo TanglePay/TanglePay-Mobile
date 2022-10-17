@@ -146,20 +146,12 @@ export const Assets = () => {
 									{I18n.t('assets.assets')}
 								</Text>
 							</TouchableOpacity>
-							{unlockConditions.length > 0 ? (
-								<TouchableOpacity
-									onPress={() => Base.push('assets/tradingList')}
-									activeOpacity={0.8}
-									style={[SS.ph5, SS.c, SS.ml24, S.bg('#D53554'), { borderRadius: 4, height: 18 }]}>
-									<Text style={[SS.cW, SS.fz14]}>{String(unlockConditions.length)}</Text>
-								</TouchableOpacity>
-							) : null}
 						</View>
 						{assetsTab.includes('soonaverse') && (
 							<TouchableOpacity
 								onPress={() => setTab(1)}
 								activeOpacity={0.8}
-								style={[SS.c, { height: 60 }]}>
+								style={[SS.c, SS.mr24, { height: 60 }]}>
 								<Text
 									style={[
 										S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
@@ -169,6 +161,14 @@ export const Assets = () => {
 								</Text>
 							</TouchableOpacity>
 						)}
+						{unlockConditions.length > 0 ? (
+							<TouchableOpacity
+								onPress={() => Base.push('assets/tradingList')}
+								activeOpacity={0.8}
+								style={[SS.ph5, SS.c, S.bg('#D53554'), { borderRadius: 4, height: 18 }]}>
+								<Text style={[SS.cW, SS.fz14]}>{String(unlockConditions.length)}</Text>
+							</TouchableOpacity>
+						) : null}
 					</View>
 					<TouchableOpacity onPress={() => setTab(2)} activeOpacity={0.8} style={[SS.c, { height: 60 }]}>
 						<Text style={[S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz14]}>
@@ -179,7 +179,7 @@ export const Assets = () => {
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
 						<CoinList />
-						{assetsTab.includes('stake') && <RewardsList />}
+						{assetsTab.includes('stake') ? <RewardsList /> : null}
 						{!isRequestAssets && (
 							<View style={[SS.p16, SS.c, SS.row]}>
 								<Spinner size='small' color='gray' />

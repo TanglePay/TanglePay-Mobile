@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Nav, SvgIcon, Toast, SS, S } from '@/common';
+import { Nav, SvgIcon, Toast, SS, S, ThemeVar } from '@/common';
+import { Image, TouchableOpacity } from 'react-native';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
-import { Container, Content, View, Text, Input, Form, Button } from 'native-base';
+import { Container, Content, View, Text, Input, Form, Button, Item } from 'native-base';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useGetNodeWallet, useHandleUnlocalConditions } from '@tangle-pay/store/common';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 const schema = Yup.object().shape({
@@ -16,14 +16,23 @@ const schema = Yup.object().shape({
 
 export const AssetsTrading = () => {
 	const form = useRef();
+	const [ipfsImage, setIpfsImage] = useState('');
 	const [curWallet] = useGetNodeWallet();
 	const { params } = useRoute();
-	params = Base.handlerParams(params.search);
 	const id = params.id;
 	const [unlockConditions] = useStore('common.unlockConditions');
 	const { onDismiss, onAccept } = useHandleUnlocalConditions();
 	const curInfo = unlockConditions.find((e) => e.blockId == id) || {};
 	const [opacity, setOpacity] = useState(1);
+	useEffect(() => {
+		if (/ipfs/.test(curInfo.logoUrl)) {
+			fetch(curInfo.logoUrl)
+				.then((res) => res.json())
+				.then((res) => {
+					setIpfsImage(res?.image || '');
+				});
+		}
+	}, [curInfo.logoUrl]);
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.tradingTitle')} />
@@ -42,37 +51,39 @@ export const AssetsTrading = () => {
 								{ left: 0, top: 0, zIndex: 1, opacity },
 								S.border(4)
 							]}
-							source={{ uri: e.logoUrl }}
+							source={{ uri: ipfsImage || curInfo.logoUrl }}
 							onError={() => {
 								setOpacity(0);
 							}}
 						/>
 						<View style={[{ width: 32, height: 32, borderRadius: 32 }, S.border(4), SS.bgP, SS.c]}>
-							<Text style={[SS.fw600, SS.cW, SS.fz22]}>{String(item.token).toLocaleUpperCase()[0]}</Text>
+							<Text style={[SS.fw600, SS.cW, SS.fz22]}>
+								{String(curInfo.token).toLocaleUpperCase()[0]}
+							</Text>
 						</View>
 					</View>
 					<Text style={[SS.cP, SS.fz14, SS.fw600, SS.ml20, SS.mr24]}>
 						{curInfo.token}: {curInfo.amountStr}
 					</Text>
-					<Text style={[SS.fz14, SS.fw600]}>
+					<Text style={[SS.fz14]}>
 						{I18n.t('assets.tradingFrom')} {Base.handleAddress(curInfo.unlockAddress)}
 					</Text>
 				</View>
 				{curInfo.standard || curInfo.depositStr ? (
 					<View style={[SS.pt16]}>
 						{curInfo.depositStr ? (
-							<View style={[SS.ac, SS.jsb, SS.pb10]}>
+							<View style={[SS.ac, SS.row, SS.jsb, SS.pb12]}>
 								<Text style={[SS.fz14, SS.fw400]}>{I18n.t('assets.storageDeposit')}</Text>
 								<Text style={[SS.fz14, SS.fw400]}>{curInfo.depositStr}</Text>
 							</View>
 						) : null}
-						<View style={[SS.ac, SS.jsb, SS.pb10]}>
-							<View style={[SS.fz14, SS.fw400]}>{curInfo.token}</View>
+						<View style={[SS.ac, SS.row, SS.jsb, SS.pb12]}>
+							<Text style={[SS.fz14, SS.fw400]}>{curInfo.token}</Text>
 						</View>
 						{curInfo.standard ? (
-							<View style={[SS.ac, SS.jsb, SS.pb10]}>
-								<View style={[SS.fz14, SS.fw400]}>{I18n.t('assets.standard')}</View>
-								<View style={[SS.fz14, SS.fw400]}>{curInfo.standard}</View>
+							<View style={[SS.ac, SS.row, SS.jsb, SS.pb12]}>
+								<Text style={[SS.fz14, SS.fw400]}>{I18n.t('assets.standard')}</Text>
+								<Text style={[SS.fz14, SS.fw400]}>{curInfo.standard}</Text>
 							</View>
 						) : null}
 					</View>
@@ -116,7 +127,7 @@ export const AssetsTrading = () => {
 								});
 								onDismiss(curInfo.blockId);
 								Toast.hideLoading();
-								Toast.show(I18n.t('assets.acceptSucc'));
+								Toast.success(I18n.t('assets.acceptSucc'));
 								IotaSDK.refreshAssets();
 								setTimeout(() => {
 									IotaSDK.refreshAssets();
@@ -131,10 +142,10 @@ export const AssetsTrading = () => {
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<View>
 								<Form>
-									<Text style={[SS.fz14, SS.mb16]}>
+									<Text style={[SS.fz14, SS.mb12, SS.mt12]}>
 										{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
 									</Text>
-									<Item style={[SS.mt8, SS.ml0]}>
+									<Item style={[SS.ml0, S.border(2)]}>
 										<Input
 											keyboardType='ascii-capable'
 											secureTextEntry
@@ -145,8 +156,13 @@ export const AssetsTrading = () => {
 										/>
 									</Item>
 								</Form>
-								<View style={[SS.row, SS.ac, SS.jsb, { marginTop: 50 }]}>
-									<Button primary disabled={!values.password} block onPress={handleSubmit}>
+								<View style={[SS.row, SS.ac, SS.jsb, { marginTop: 50, width: ThemeVar.deviceWidth }]}>
+									<Button
+										style={[S.w(ThemeVar.deviceWidth - 32)]}
+										block
+										primary
+										disabled={!values.password}
+										onPress={handleSubmit}>
 										<Text>{I18n.t('shimmer.accept')}</Text>
 									</Button>
 								</View>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
-import { I18n, Base, IotaSDK } from '@tangle-pay/common';
+import { I18n, Base, IotaSDK, API_URL } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal, useGetNodeWallet } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
@@ -19,6 +19,7 @@ export const CoinList = () => {
 	const [needRestake] = useStore('staking.needRestake');
 	const [statedAmount] = useStore('staking.statedAmount');
 	let [assetsList] = useStore('common.assetsList');
+	const [ipfsDic, setIpfsDic] = useState({});
 	const contractList = IotaSDK.curNode?.contractList || [];
 	assetsList = assetsList.filter((e) => {
 		const { name } = e;
@@ -29,6 +30,20 @@ export const CoinList = () => {
 		return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
 	});
 	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
+	const ipfsList = assetsList.filter((e) => e.logoUrl && /ipfs/.test(e.logoUrl)).map((e) => e.logoUrl);
+	useEffect(() => {
+		Promise.all(
+			ipfsList.map((e) => {
+				return fetch(e).then((res) => res.json());
+			})
+		).then((res) => {
+			const dic = {};
+			ipfsList.forEach((e, i) => {
+				dic[e] = res[i]?.image || '';
+			});
+			setIpfsDic(dic);
+		});
+	}, [JSON.stringify(ipfsList)]);
 	return (
 		<View>
 			{assetsList.map((e) => {
@@ -51,7 +66,7 @@ export const CoinList = () => {
 								SS.mr12,
 								S.border(4)
 							]}
-							source={{ uri: e.logoUrl || Base.getIcon(e.name) }}
+							source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.name) }}
 							onError={() => {
 								setHideIcon((d) => {
 									return { ...d, [e.name]: true };
@@ -157,6 +172,7 @@ export const RewardsList = () => {
 		return list.map((e) => {
 			return (
 				<TouchableOpacity
+					key={e.symbol}
 					activeOpacity={e.isSMR ? 0.8 : 1}
 					onPress={() => {
 						if (e.isSMR) {
@@ -165,7 +181,7 @@ export const RewardsList = () => {
 							});
 						}
 					}}>
-					<View key={e.symbol} style={[SS.row, SS.ac, { opacity: e.isSMR ? 1 : 0.6, height: itemH }]}>
+					<View style={[SS.row, SS.ac, { opacity: e.isSMR ? 1 : 0.6, height: itemH }]}>
 						<Image
 							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
 							source={{ uri: Base.getIcon(e.symbol) }}
