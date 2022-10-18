@@ -180,7 +180,11 @@ export const Assets = () => {
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
 						<CoinList
 							setHeight={(e) => {
-								setHeightInfo({ ...heightInfo, 0: e + 300 });
+								let h = e + 300;
+								if (h < hScroll) {
+									h = hScroll;
+								}
+								setHeightInfo({ ...heightInfo, 0: h });
 							}}
 						/>
 						{assetsTab.includes('stake') ? <RewardsList /> : null}
