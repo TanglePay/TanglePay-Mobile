@@ -178,7 +178,11 @@ export const Assets = () => {
 				</View>
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
-						<CoinList />
+						<CoinList
+							setHeight={(e) => {
+								setHeightInfo({ ...heightInfo, 0: e + 300 });
+							}}
+						/>
 						{assetsTab.includes('stake') ? <RewardsList /> : null}
 						{!isRequestAssets && (
 							<View style={[SS.p16, SS.c, SS.row]}>

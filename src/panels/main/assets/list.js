@@ -13,7 +13,7 @@ import { CachedImage, ImageCache } from 'react-native-img-cache';
 import CameraRoll from '@react-native-community/cameraroll';
 
 const itemH = 64;
-export const CoinList = () => {
+export const CoinList = ({ setHeight }) => {
 	const [isShowAssets] = useStore('common.showAssets');
 	const [hideIcon, setHideIcon] = useState({});
 	const [needRestake] = useStore('staking.needRestake');
@@ -45,7 +45,10 @@ export const CoinList = () => {
 		});
 	}, [JSON.stringify(ipfsList)]);
 	return (
-		<View>
+		<View
+			onLayout={(e) => {
+				setHeight(e.nativeEvent.layout.height);
+			}}>
 			{assetsList.map((e) => {
 				const isSMR = isSMRNode && !e.isSMRToken;
 				return (

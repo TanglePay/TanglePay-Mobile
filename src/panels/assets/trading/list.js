@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@tangle-pay/store';
-import { Image, Animated, TouchableOpacity, Alert } from 'react-native';
+import { Image, Animated, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useHandleUnlocalConditions } from '@tangle-pay/store/common';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { Base, I18n } from '@tangle-pay/common';
@@ -153,7 +153,8 @@ export const AssetsTradingList = () => {
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.tradingList')} />
-			<Content style={[SS.pt10]}>
+			<ScrollView>
+				<View style={[S.h(10)]}></View>
 				{unlockConditions.length > 0 ? (
 					<View>
 						{unlockConditions.map((e, i) => {
@@ -163,7 +164,8 @@ export const AssetsTradingList = () => {
 				) : (
 					<NoData />
 				)}
-			</Content>
+				<View style={[S.h(30)]}></View>
+			</ScrollView>
 		</Container>
 	);
 };
