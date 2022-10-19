@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
 import { View, Text, Spinner } from 'native-base';
-import { I18n, Base, IotaSDK } from '@tangle-pay/common';
+import { I18n, Base, IotaSDK, API_URL } from '@tangle-pay/common';
 import { useStore } from '@tangle-pay/store';
 import { useGetLegal, useGetNodeWallet } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
@@ -13,13 +13,13 @@ import { CachedImage, ImageCache } from 'react-native-img-cache';
 import CameraRoll from '@react-native-community/cameraroll';
 
 const itemH = 64;
-export const CoinList = () => {
+export const CoinList = ({ setHeight }) => {
 	const [isShowAssets] = useStore('common.showAssets');
 	const [hideIcon, setHideIcon] = useState({});
 	const [needRestake] = useStore('staking.needRestake');
 	const [statedAmount] = useStore('staking.statedAmount');
 	let [assetsList] = useStore('common.assetsList');
-	const curLegal = useGetLegal();
+	const [ipfsDic, setIpfsDic] = useState({});
 	const contractList = IotaSDK.curNode?.contractList || [];
 	assetsList = assetsList.filter((e) => {
 		const { name } = e;
@@ -29,9 +29,28 @@ export const CoinList = () => {
 		const contract = contractList.find((e) => e.token === name)?.contract;
 		return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
 	});
+	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
+	const ipfsList = assetsList.filter((e) => e.logoUrl && /ipfs/.test(e.logoUrl)).map((e) => e.logoUrl);
+	useEffect(() => {
+		Promise.all(
+			ipfsList.map((e) => {
+				return fetch(e).then((res) => res.json());
+			})
+		).then((res) => {
+			const dic = {};
+			ipfsList.forEach((e, i) => {
+				dic[e] = res[i]?.image || '';
+			});
+			setIpfsDic(dic);
+		});
+	}, [JSON.stringify(ipfsList)]);
 	return (
-		<View>
+		<View
+			onLayout={(e) => {
+				setHeight(e.nativeEvent.layout.height);
+			}}>
 			{assetsList.map((e) => {
+				const isSMR = isSMRNode && !e.isSMRToken;
 				return (
 					<TouchableOpacity
 						activeOpacity={0.8}
@@ -50,7 +69,7 @@ export const CoinList = () => {
 								SS.mr12,
 								S.border(4)
 							]}
-							source={{ uri: Base.getIcon(e.name) }}
+							source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.name) }}
 							onError={() => {
 								setHideIcon((d) => {
 									return { ...d, [e.name]: true };
@@ -80,14 +99,20 @@ export const CoinList = () => {
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
 										{e.balance} {String(e.unit || e.name).toLocaleUpperCase()}
 									</Text>
-									<Text style={[SS.fz12, SS.tr, SS.cS]}>
-										{curLegal.unit} {e.assets}
-									</Text>
+									{isSMR ? (
+										<Text style={[SS.fz12, SS.tr, SS.cS]}>
+											{I18n.t('staking.available')} {e.available}{' '}
+										</Text>
+									) : null}
 								</View>
 							) : (
 								<View>
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>****</Text>
-									<Text style={[SS.fz12, SS.tr, SS.cS]}>****</Text>
+									{isSMR ? (
+										<Text style={[SS.fz12, SS.tr, SS.cS]}>
+											{I18n.t('staking.available') + ' ****'}
+										</Text>
+									) : null}
 								</View>
 							)}
 						</View>
@@ -104,6 +129,7 @@ export const RewardsList = () => {
 	const [curWallet] = useGetNodeWallet();
 	const [{ rewards }] = useStore('staking.config');
 	const [isRequestAssets] = useStore('common.isRequestAssets');
+	const [checkClaim] = useStore('common.checkClaim');
 	useEffect(() => {
 		const obj = {};
 		const hasSMR = !!IotaSDK.nodes.find((e) => e.bech32HRP === 'smr');
@@ -138,14 +164,18 @@ export const RewardsList = () => {
 				obj[symbol].unit = unit;
 			}
 		}
-		const arr = Object.values(obj);
+		let arr = Object.values(obj);
 		arr.sort((a) => (a.isSMR ? -1 : 0));
+		if (checkClaim) {
+			arr = arr.filter((e) => !e.isSMR);
+		}
 		setList(arr);
-	}, [JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
+	}, [checkClaim, JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return (
 				<TouchableOpacity
+					key={e.symbol}
 					activeOpacity={e.isSMR ? 0.8 : 1}
 					onPress={() => {
 						if (e.isSMR) {
@@ -154,7 +184,7 @@ export const RewardsList = () => {
 							});
 						}
 					}}>
-					<View key={e.symbol} style={[SS.row, SS.ac, { opacity: e.isSMR ? 1 : 0.6, height: itemH }]}>
+					<View style={[SS.row, SS.ac, { opacity: e.isSMR ? 1 : 0.6, height: itemH }]}>
 						<Image
 							style={[S.wh(48), S.radius(48), SS.mr12, S.border(4)]}
 							source={{ uri: Base.getIcon(e.symbol) }}

@@ -8928,11 +8928,6 @@ react-native-vector-icons@^7.0.0:
     prop-types "^15.7.2"
     yargs "^15.0.2"
 
-react-native-webp-format@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.npmjs.org/react-native-webp-format/-/react-native-webp-format-1.1.2.tgz#22b14f544191e9a5411c920b9874e532a6ea6c89"
-  integrity sha512-qs0oyLZOjoLdlTM9781Vr8WBwvtdkcwQuSJpCtA5KxspGl+YDDDZrW+tpwRQI0PSlB84O+IoK3bfmgHu1zqejQ==
-
 react-native-webview@^11.14.0:
   version "11.14.0"
   resolved "https://registry.npmmirror.com/react-native-webview/download/react-native-webview-11.14.0.tgz#01d7669409d7510c859300c058902c8a8490cbbb"
@@ -10172,10 +10167,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.1.1.tgz#b2900ccacedb3c6c288647a18739210569b56579"
-  integrity sha512-Surcoa+GH/OJ6aeEE/RihFK2Lu2vEgIV+R4Lx1FQa2Er6TF33pCdBxAETnsqWG77+CnGobj53tUl6LrZOaW3GQ==
+tanglepay@^2.1.8:
+  version "2.1.8"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.1.8.tgz#c477991229b64d60a84313fee393184735ded91b"
+  integrity sha512-nl2zxBB+Ktq3ifRfhuHCxqxAvapxhTpZ0lwNCKBWDICctwIV+RaQ3GlnszIln8WCXN6oTaE853ecHyT9LzCZlg==
 
 tar@^4.0.2:
   version "4.4.19"

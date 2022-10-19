@@ -75,11 +75,11 @@ export const Main = () => {
 			title: I18n.t('apps.title'),
 			component: Apps
 		},
-		{
-			key: 'staking',
-			title: I18n.t('discover.title'),
-			component: Discover
-		},
+		// {
+		// 	key: 'staking',
+		// 	title: I18n.t('discover.title'),
+		// 	component: Discover
+		// },
 		{
 			key: 'me',
 			title: I18n.t('user.me'),
