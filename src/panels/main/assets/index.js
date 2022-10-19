@@ -16,6 +16,7 @@ export const Assets = () => {
 	const [heightInfo, setHeightInfo] = useState({ 0: hScroll, 1: undefined, 2: undefined });
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
+	const [unlockConditions] = useStore('common.unlockConditions');
 	const changeNode = useChangeNode();
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
 	const [___, refreshAssets] = useStore('common.forceRequest');
@@ -132,19 +133,25 @@ export const Assets = () => {
 				</View>
 				<View style={[SS.row, SS.ac, SS.jsb, SS.ph16, S.border(2), { width: '100%' }]}>
 					<View style={[SS.row, SS.ac]}>
-						<TouchableOpacity
-							onPress={() => setTab(0)}
-							activeOpacity={0.8}
-							style={[SS.c, SS.mr24, { height: 60 }]}>
-							<Text style={[S.color(curTab === 0 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz14]}>
-								{I18n.t('assets.assets')}
-							</Text>
-						</TouchableOpacity>
+						<View style={[SS.flex, SS.ac, SS.row]}>
+							<TouchableOpacity
+								onPress={() => setTab(0)}
+								activeOpacity={0.8}
+								style={[SS.c, SS.mr24, { height: 60 }]}>
+								<Text
+									style={[
+										S.color(curTab === 0 ? ThemeVar.brandPrimary : ThemeVar.textColor),
+										SS.fz14
+									]}>
+									{I18n.t('assets.assets')}
+								</Text>
+							</TouchableOpacity>
+						</View>
 						{assetsTab.includes('soonaverse') && (
 							<TouchableOpacity
 								onPress={() => setTab(1)}
 								activeOpacity={0.8}
-								style={[SS.c, { height: 60 }]}>
+								style={[SS.c, SS.mr24, { height: 60 }]}>
 								<Text
 									style={[
 										S.color(curTab === 1 ? ThemeVar.brandPrimary : ThemeVar.textColor),
@@ -154,6 +161,14 @@ export const Assets = () => {
 								</Text>
 							</TouchableOpacity>
 						)}
+						{unlockConditions.length > 0 ? (
+							<TouchableOpacity
+								onPress={() => Base.push('assets/tradingList')}
+								activeOpacity={0.8}
+								style={[SS.ph5, SS.c, S.bg('#D53554'), { borderRadius: 4, height: 18 }]}>
+								<Text style={[SS.cW, SS.fz14]}>{String(unlockConditions.length)}</Text>
+							</TouchableOpacity>
+						) : null}
 					</View>
 					<TouchableOpacity onPress={() => setTab(2)} activeOpacity={0.8} style={[SS.c, { height: 60 }]}>
 						<Text style={[S.color(curTab === 2 ? ThemeVar.brandPrimary : ThemeVar.textColor), SS.fz14]}>
@@ -163,8 +178,16 @@ export const Assets = () => {
 				</View>
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
-						<CoinList />
-						{assetsTab.includes('stake') && <RewardsList />}
+						<CoinList
+							setHeight={(e) => {
+								let h = e + 300;
+								if (h < hScroll) {
+									h = hScroll;
+								}
+								setHeightInfo({ ...heightInfo, 0: h });
+							}}
+						/>
+						{assetsTab.includes('stake') ? <RewardsList /> : null}
 						{!isRequestAssets && (
 							<View style={[SS.p16, SS.c, SS.row]}>
 								<Spinner size='small' color='gray' />

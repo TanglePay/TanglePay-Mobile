@@ -125,7 +125,7 @@ export const Apps = () => {
 							})}
 						</View>
 					</ScrollView>
-					<List list={showList} />
+					<List list={showList} curWallet={curWallet} />
 				</View>
 			</Content>
 		</Container>

@@ -1,14 +1,20 @@
 import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import { View, Text } from 'native-base';
-import { SS, S, ThemeVar } from '@/common';
-import { Base } from '@tangle-pay/common';
+import { SS, S, ThemeVar, Toast } from '@/common';
+import { Base, I18n } from '@tangle-pay/common';
+import Clipboard from '@react-native-clipboard/clipboard';
 
-const Item = ({ id, icon, desc, developer, url }) => {
+const Item = ({ id, icon, desc, developer, url, curAddress }) => {
+	const hasTips = id === 'Simplex' && curAddress;
 	return (
 		<TouchableOpacity
 			activeOpacity={0.8}
 			onPress={() => {
+				if (hasTips) {
+					Clipboard.setString(curAddress);
+					Toast.success(I18n.t('discover.addressCopy'));
+				}
 				Base.push(url, { title: id });
 			}}
 			style={[SS.ac, SS.row, SS.mb8]}>
@@ -32,11 +38,11 @@ const Item = ({ id, icon, desc, developer, url }) => {
 	);
 };
 
-export const List = ({ list }) => {
+export const List = ({ list, curWallet }) => {
 	return (
 		<View>
 			{list.map((e) => {
-				return <Item key={e.id} {...e} />;
+				return <Item key={e.id} {...e} curAddress={curWallet?.address} />;
 			})}
 		</View>
 	);

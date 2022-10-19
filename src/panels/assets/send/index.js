@@ -34,7 +34,10 @@ export const AssetsSend = () => {
 	}, [params]);
 
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
-	let realBalance = BigNumber(assets.realAvailable || assets.realBalance || 0);
+	let realBalance = BigNumber(assets.realBalance || 0);
+	if (IotaSDK.checkSMR(curWallet.nodeId) && !assets.isSMRToken) {
+		realBalance = BigNumber(assets.realAvailable || 0);
+	}
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
@@ -166,9 +169,6 @@ export const AssetsSend = () => {
 											let str = Base.formatNum(values.amount, precision);
 											if (parseFloat(str) < Math.pow(10, -precision)) {
 												str = String(Math.pow(10, -precision));
-											}
-											if (IotaSDK.checkSMR(curWallet.nodeId)) {
-												str = String(parseInt(str));
 											}
 											setFieldValue('amount', str);
 										}}

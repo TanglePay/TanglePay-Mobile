@@ -94,6 +94,9 @@ export const DappDialog = () => {
 						}
 					}
 					let realBalance = BigNumber(assets.realBalance || 0);
+					if (IotaSDK.checkSMR(curWallet.nodeId) && !assets.isSMRToken) {
+						realBalance = BigNumber(assets.realAvailable || 0);
+					}
 					// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 					// realBalance = realBalance.minus(bigStatedAmount);
 					let residue = Number(realBalance.minus(amount)) || 0;
@@ -281,7 +284,7 @@ export const DappDialog = () => {
 									contract = address;
 									unit = 'wei';
 									value = `0x${taggedData.slice(-64).replace(/^0+/, '')}`;
-									value = parseFloat(IotaSDK.client?.utils.hexToNumberString(value)) || 0;
+									value = IotaSDK.client?.utils.hexToNumberString(value) || 0;
 									address = `0x${taggedData.slice(-(64 + 40), -64)}`;
 									curToken =
 										(IotaSDK.curNode.contractList || []).find((e) => e.contract === contract)
