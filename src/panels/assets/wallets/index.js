@@ -5,6 +5,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { AddDialog } from './addDialog';
 import { useRoute } from '@react-navigation/native';
+import { useStore } from '@tangle-pay/store';
 import { useSelectWallet, useGetNodeWallet } from '@tangle-pay/store/common';
 import { S, SS, SvgIcon, Nav, ThemeVar, NoData, Toast } from '@/common';
 import Shadow from '@/common/components/Shadow';
@@ -14,6 +15,8 @@ export const AssetsWallets = () => {
 	const selectWallet = useSelectWallet();
 	let [_, walletsList] = useGetNodeWallet();
 	const [curActive, setActive] = useState('');
+	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
+	const [isBio, setIsBio] = useStore('common.biometrics');
 	const { params } = useRoute();
 	if (params?.nodeId) {
 		walletsList = walletsList.filter((e) => e.nodeId == params.nodeId);
@@ -40,6 +43,8 @@ export const AssetsWallets = () => {
 											return;
 										}
 										setActive(e.id);
+										setIsBio(false);
+										setIsPwdInput(false);
 										// Toast.showLoading();
 										setTimeout(() => {
 											selectWallet(e.id);
