@@ -17,10 +17,11 @@ export const UserBiometrics = () => {
 	const [showDialog, setShowDialog] = useState(false);
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
-		biometrics: false,
+		biometrics: false
 	}); //设备是否支持
 
 	const checkPwd = async (inputPwd) => {
@@ -33,6 +34,7 @@ export const UserBiometrics = () => {
 		} else {
 			setIsPwdInput(true);
 			setShowDialog(false);
+			setCurPwd(inputPwd);
 			return Toast.success(I18n.t('user.biometricsSucc'));
 		}
 	};
@@ -44,7 +46,7 @@ export const UserBiometrics = () => {
 			rnBiometrics
 				.simplePrompt({
 					promptMessage: I18n.t('user.bioVerification'),
-					cancelButtonText: I18n.t('apps.cancel')
+					cancelButtonText: I18n.t('apps.cancel'),
 				})
 				.then((resultObject) => {
 					const { success } = resultObject;
@@ -78,7 +80,7 @@ export const UserBiometrics = () => {
 			const availableBiometrics = {
 				touchId: false,
 				faceId: false,
-				biometrics: false,
+				biometrics: false
 			};
 			if (available && biometryType === ReactNativeBiometrics.TouchID) {
 				availableBiometrics.touchId = true;
