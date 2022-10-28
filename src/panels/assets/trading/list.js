@@ -4,7 +4,7 @@ import { Image, Animated, TouchableOpacity, Alert, ScrollView } from 'react-nati
 import { useHandleUnlocalConditions } from '@tangle-pay/store/common';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { Base, I18n } from '@tangle-pay/common';
-import { S, SS, Nav, SvgIcon, NoData } from '@/common';
+import { S, SS, Nav, SvgIcon, NoData, ThemeVar } from '@/common';
 
 const Item = (item) => {
 	const [ipfsImage, setIpfsImage] = useState('');
@@ -80,11 +80,17 @@ const Item = (item) => {
 					</View>
 				</View>
 			</View>
-			<Animated.View style={[SS.row, SS.ac, { transform: [{ translateX: btnAnim }] }]}>
+			<Animated.View
+				style={[
+					{ width: ThemeVar.deviceWidth + 200 },
+					SS.row,
+					SS.ac,
+					{ transform: [{ translateX: btnAnim }] },
+				]}>
 				<TouchableOpacity
 					onPress={hideBtn}
 					activeOpacity={1}
-					style={[SS.w100, SS.ac, SS.row, SS.jsb, SS.pr24, { height: 60 }]}>
+					style={[{ width: ThemeVar.deviceWidth }, SS.w100, SS.ac, SS.row, SS.jsb, SS.pr24, { height: 60 }]}>
 					<View style={[SS.ac, SS.row]}>
 						<View style={[SS.c, { width: 80 }]}>
 							<SvgIcon size='24' style={{ width: 24, height: 24 }} name='tradingTime' />
@@ -154,7 +160,7 @@ export const AssetsTradingList = () => {
 		<Container>
 			<Nav title={I18n.t('assets.tradingList')} />
 			<ScrollView>
-				<View style={[S.h(10)]}></View>
+				<View style={[S.h(10)]} />
 				{unlockConditions.length > 0 ? (
 					<View>
 						{unlockConditions.map((e, i) => {
@@ -164,7 +170,7 @@ export const AssetsTradingList = () => {
 				) : (
 					<NoData />
 				)}
-				<View style={[S.h(30)]}></View>
+				<View style={[S.h(30)]} />
 			</ScrollView>
 		</Container>
 	);
