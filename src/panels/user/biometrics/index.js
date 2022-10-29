@@ -3,10 +3,9 @@ import { Container, Content, View, Text, Switch, Dialog } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import { S, SS, Nav, Toast } from '@/common';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
-import { TipsDialog } from './tipsDialog';
 import DialogInput from 'react-native-dialog-input';
 import { useStore } from '@tangle-pay/store';
-import ReactNativeBiometrics from 'react-native-biometrics';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 
 const rnBiometrics = new ReactNativeBiometrics();
@@ -16,13 +15,14 @@ export const UserBiometrics = () => {
 	const [isBio, setIsBio] = useStore('common.biometrics');
 	const [showDialog, setShowDialog] = useState(false);
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
-	const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
+	// const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
-		biometrics: false
+		biometrics: false,
 	}); //设备是否支持
+	const [bioSupport, setBioSupport] = useState(false);
 
 	const checkPwd = async (inputPwd) => {
 		const isPassword = await IotaSDK.checkPassword(curWallet.seed, inputPwd);
@@ -46,7 +46,7 @@ export const UserBiometrics = () => {
 			rnBiometrics
 				.simplePrompt({
 					promptMessage: I18n.t('user.bioVerification'),
-					cancelButtonText: I18n.t('apps.cancel'),
+					cancelButtonText: I18n.t('apps.cancel')
 				})
 				.then((resultObject) => {
 					const { success } = resultObject;
@@ -62,17 +62,18 @@ export const UserBiometrics = () => {
 				})
 				.catch(() => {
 					console.log('biometrics failed');
+					Toast.error(I18n.t('user.biometricsFailed'));
 					setIsBio(false);
 				});
 		}
 	};
 
-	const notPromptSwitchChange = () => {
-		if (isNotPrompt) {
-			setIsPwdInput(false);
-		}
-		setIsNotPrompt(!isNotPrompt);
-	};
+	// const notPromptSwitchChange = () => {
+	// 	if (isNotPrompt) {
+	// 		setIsPwdInput(false);
+	// 	}
+	// 	setIsNotPrompt(!isNotPrompt);
+	// };
 
 	useEffect(() => {
 		rnBiometrics.isSensorAvailable().then((resultObject) => {
@@ -80,19 +81,24 @@ export const UserBiometrics = () => {
 			const availableBiometrics = {
 				touchId: false,
 				faceId: false,
-				biometrics: false
+				biometrics: false,
 			};
-			if (available && biometryType === ReactNativeBiometrics.TouchID) {
+			if (available && biometryType === BiometryTypes.TouchID) {
 				availableBiometrics.touchId = true;
+				setBioSupport(true);
 				console.log('TouchID is supported');
-			}
-			if (available && biometryType === ReactNativeBiometrics.FaceID) {
+			} else if (available && biometryType === BiometryTypes.FaceID) {
 				availableBiometrics.faceId = true;
+				setBioSupport(true);
 				console.log('FaceID is supported');
-			}
-			if (available && biometryType === ReactNativeBiometrics.Biometrics) {
+			} else if (available && biometryType === BiometryTypes.Biometrics) {
 				availableBiometrics.biometrics = true;
+				setBioSupport(true);
 				console.log('Biometrics is supported');
+			} else {
+				console.log('Biometrics is not supported');
+				setBioSupport(false);
+				Toast.error(I18n.t('user.biometricsFailed')); //NOT Support
 			}
 			setBiometrics(availableBiometrics);
 		});
@@ -103,15 +109,16 @@ export const UserBiometrics = () => {
 			<Nav title={'Biometrics'} />
 			<Content>
 				<TouchableOpacity
+					disabled={!bioSupport}
 					onPress={bioSwitchChange}
 					activeOpacity={0.8}
 					style={[SS.row, SS.ac, SS.jsb, SS.ph30, SS.pv20, S.border(2)]}>
 					<View style={[SS.row, SS.ac]}>
 						<Text>{I18n.t('user.enableBiometrics')}</Text>
 					</View>
-					<Switch value={isBio} onValueChange={bioSwitchChange} />
+					<Switch value={isBio} onValueChange={bioSwitchChange} disabled={!bioSupport} />
 				</TouchableOpacity>
-				<TouchableOpacity
+				{/* <TouchableOpacity
 					onPress={notPromptSwitchChange}
 					activeOpacity={0.8}
 					style={[SS.row, SS.ac, SS.jsb, SS.ph30, SS.pv20, S.border(2)]}>
@@ -119,7 +126,7 @@ export const UserBiometrics = () => {
 						<Text>{I18n.t('user.noPrompt')}</Text>
 					</View>
 					<Switch value={isNotPrompt} onValueChange={notPromptSwitchChange} />
-				</TouchableOpacity>
+				</TouchableOpacity> */}
 			</Content>
 			<DialogInput
 				isDialogVisible={showDialog}

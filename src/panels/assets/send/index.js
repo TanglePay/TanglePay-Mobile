@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, SvgIcon, Toast, AlertDialog } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast, AlertDialog, ConfirmDialog } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
@@ -49,6 +49,7 @@ export const AssetsSend = () => {
 		realBalance = BigNumber(0);
 	}
 	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
+
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.send')} />
@@ -266,7 +267,7 @@ export const AssetsSend = () => {
 					)}
 				</Formik>
 			</Content>
-			<AlertDialog dialogRef={alert} />
+			<ConfirmDialog dialogRef={alert} />
 		</Container>
 	);
 };
