@@ -37,7 +37,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 							<Text
 								numberOfLines={1}
 								ellipsizeMode='tail'
-								style={[SS.fz16, SS.cW, SS.fw600, { maxWidth: 80 }]}>
+								style={[SS.fz16, SS.cW, SS.fw600, { maxWidth: curWallet.name ? 80 : 180 }]}>
 								{curWallet.name || I18n.t('assets.addWallets')}
 							</Text>
 							{curWallet.address && (
