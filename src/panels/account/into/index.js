@@ -66,7 +66,7 @@ export const AccountInto = () => {
 						}
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.p16, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16]}>
 							<Form>
 								{type === 1 ? (
 									<View>
