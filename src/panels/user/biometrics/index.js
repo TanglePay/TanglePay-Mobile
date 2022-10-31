@@ -77,32 +77,38 @@ export const UserBiometrics = () => {
 	// };
 
 	useEffect(() => {
-		rnBiometrics.isSensorAvailable().then((resultObject) => {
-			const { available, biometryType } = resultObject;
-			const availableBiometrics = {
-				touchId: false,
-				faceId: false,
-				biometrics: false
-			};
-			if (available && biometryType === BiometryTypes.TouchID) {
-				availableBiometrics.touchId = true;
-				setBioSupport(true);
-				console.log('TouchID is supported');
-			} else if (available && biometryType === BiometryTypes.FaceID) {
-				availableBiometrics.faceId = true;
-				setBioSupport(true);
-				console.log('FaceID is supported');
-			} else if (available && biometryType === BiometryTypes.Biometrics) {
-				availableBiometrics.biometrics = true;
-				setBioSupport(true);
-				console.log('Biometrics is supported');
-			} else {
-				console.log('Biometrics is not supported');
-				setBioSupport(false);
-				Toast.error(I18n.t('user.biometricsFailed')); //NOT Support
-			}
-			setBiometrics(availableBiometrics);
-		});
+		rnBiometrics
+			.isSensorAvailable()
+			.then((resultObject) => {
+				const { available, biometryType } = resultObject;
+				const availableBiometrics = {
+					touchId: false,
+					faceId: false,
+					biometrics: false
+				};
+				if (available && biometryType === BiometryTypes.TouchID) {
+					availableBiometrics.touchId = true;
+					setBioSupport(true);
+					console.log('TouchID is supported');
+				} else if (available && biometryType === BiometryTypes.FaceID) {
+					availableBiometrics.faceId = true;
+					setBioSupport(true);
+					console.log('FaceID is supported');
+				} else if (available && biometryType === BiometryTypes.Biometrics) {
+					availableBiometrics.biometrics = true;
+					setBioSupport(true);
+					console.log('Biometrics is supported');
+				} else {
+					console.log('Biometrics is not supported');
+					setBioSupport(false);
+					Toast.error(I18n.t('user.biometricsFailed')); //NOT Support
+				}
+				setBiometrics(availableBiometrics);
+			})
+			.catch(() => {
+				console.log('biometrics failed');
+				Toast.error(I18n.t('user.biometricsFailed'));
+			});
 	}, []);
 
 	return (
