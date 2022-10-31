@@ -20,8 +20,8 @@ export const UserBiometrics = () => {
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
-		biometrics: false,
-	}); //设备是否支持
+		biometrics: false
+	}); // device supports
 	const [bioSupport, setBioSupport] = useState(false);
 
 	const checkPwd = async (inputPwd) => {
@@ -46,7 +46,8 @@ export const UserBiometrics = () => {
 			rnBiometrics
 				.simplePrompt({
 					promptMessage: I18n.t('user.bioVerification'),
-					cancelButtonText: I18n.t('apps.cancel')
+					// cancelButtonText: I18n.t('apps.cancel')
+					// fallbackPromptMessage: I18n.t('apps.cancel'),
 				})
 				.then((resultObject) => {
 					const { success } = resultObject;
@@ -81,7 +82,7 @@ export const UserBiometrics = () => {
 			const availableBiometrics = {
 				touchId: false,
 				faceId: false,
-				biometrics: false,
+				biometrics: false
 			};
 			if (available && biometryType === BiometryTypes.TouchID) {
 				availableBiometrics.touchId = true;
