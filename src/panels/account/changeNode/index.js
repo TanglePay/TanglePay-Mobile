@@ -47,7 +47,7 @@ export const AccountChangeNode = () => {
 									);
 								})}
 						</Text>
-						<Text style={[SS.fz14, S.lineHeight(22), { color: '#333' }]}>
+						<Text style={[SS.fz14, S.lineHeight(22), SS.tc, { color: '#333' }]}>
 							{I18n.t('account.betaReady')}
 						</Text>
 					</View>
