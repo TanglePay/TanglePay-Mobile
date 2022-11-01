@@ -6,7 +6,8 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, SvgIcon, Toast } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast, AlertDialog, ConfirmDialog } from '@/common';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 
@@ -14,14 +15,20 @@ const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
 	receiver: Yup.string().required(),
 	amount: Yup.number().positive().required(),
-	password: Yup.string().required()
+	password: Yup.string(),
 });
+const rnBiometrics = new ReactNativeBiometrics();
 export const AssetsSend = () => {
 	useGetParticipationEvents();
 	// const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
+	const [isBio] = useStore('common.biometrics');
+	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
+	const [isNotPrompt] = useStore('common.bioPrompt');
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	const { params } = useRoute();
 	const form = useRef();
+	const alert = useRef();
 	let currency = params?.currency;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
@@ -42,6 +49,7 @@ export const AssetsSend = () => {
 		realBalance = BigNumber(0);
 	}
 	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
+
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.send')} />
@@ -55,9 +63,42 @@ export const AssetsSend = () => {
 					validationSchema={schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
-						const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-						if (!isPassword) {
-							return Toast.error(I18n.t('assets.passwordError'));
+						if (isBio) {
+							password = curPwd;
+							rnBiometrics
+								.simplePrompt({
+									promptMessage: I18n.t('user.bioVerification'),
+									cancelButtonText: I18n.t('apps.cancel'),
+								})
+								.then((resultObject) => {
+									const { success } = resultObject;
+									if (success) {
+										console.log('successful biometrics provided');
+										//TODO 成功逻辑
+										Toast.success(
+											I18n.t(
+												IotaSDK.checkWeb3Node(curWallet.nodeId)
+													? 'assets.sendSucc'
+													: 'assets.sendSuccRestake'
+											)
+										);
+										setIsPwdInput(true);
+									} else {
+										console.log('user cancelled biometric prompt');
+									}
+								})
+								.catch(() => {
+									console.log('biometrics failed');
+									return Toast.error(I18n.t('user.biometricsFailed'));
+								});
+						} else {
+							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+							if (!isBio && !isPassword) {
+								console.log(password);
+								return Toast.error(I18n.t('assets.passwordError'));
+							} else {
+								setCurPwd(password);
+							}
 						}
 
 						amount = parseFloat(amount) || 0;
@@ -86,6 +127,7 @@ export const AssetsSend = () => {
 							if (tokenId) {
 								mainBalance = assetsList.find((e) => e.name === IotaSDK.curNode?.token)?.realBalance;
 							}
+							console.log(password);
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
@@ -98,8 +140,21 @@ export const AssetsSend = () => {
 							});
 							Toast.hideLoading();
 							if (res) {
-								// Toast.success(I18n.t('assets.sendSucc'));
-								Base.goBack();
+								Toast.success(
+									I18n.t(
+										IotaSDK.checkWeb3Node(curWallet.nodeId)
+											? 'assets.sendSucc'
+											: 'assets.sendSuccRestake'
+									)
+								);
+								if (isBio === false && !isNotPrompt) {
+									alert.current.show(I18n.t('user.biometriceDialog'), () => {
+										const path = 'user/biometrics';
+										Base.push(path);
+									});
+								} else {
+									Base.goBack();
+								}
 							}
 						} catch (error) {
 							console.log(error);
@@ -134,10 +189,10 @@ export const AssetsSend = () => {
 									<SvgIcon
 										onPress={() => {
 											Base.push('assets/scan', {
-												setReceiver
+												setReceiver,
 											});
 										}}
-										name='scan'
+										name="scan"
 										size={20}
 									/>
 								</View>
@@ -146,7 +201,7 @@ export const AssetsSend = () => {
 										numberOfLines={2}
 										multiline
 										blurOnSubmit={true}
-										returnKeyType='done'
+										returnKeyType="done"
 										style={[SS.fz14, SS.pl0, SS.pb0, S.h(44)]}
 										placeholder={I18n.t('assets.receiverTips')}
 										onChangeText={handleChange('receiver')}
@@ -156,7 +211,7 @@ export const AssetsSend = () => {
 								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.amount')}</Text>
 								<Item style={[SS.ml0, SS.mt8]} error={!!errors.amount}>
 									<Input
-										keyboardType='numeric'
+										keyboardType="numeric"
 										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.amountTips')}
 										onChangeText={handleChange('amount')}
@@ -185,17 +240,23 @@ export const AssetsSend = () => {
 										{assets.balance} {assets.unit} IOTA
 									</Text>
 								</Item> */}
-								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.password')}</Text>
-								<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
-									<Input
-										keyboardType='ascii-capable'
-										secureTextEntry
-										style={[SS.fz14, SS.pl0, S.h(44)]}
-										placeholder={I18n.t('assets.passwordTips')}
-										onChangeText={handleChange('password')}
-										value={values.password}
-									/>
-								</Item>
+								{isBio ? (
+									<View />
+								) : (
+									<View>
+										<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.password')}</Text>
+										<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
+											<Input
+												keyboardType="ascii-capable"
+												secureTextEntry
+												style={[SS.fz14, SS.pl0]}
+												placeholder={I18n.t('assets.passwordTips')}
+												onChangeText={handleChange('password')}
+												value={values.password}
+											/>
+										</Item>
+									</View>
+								)}
 								<View style={[S.marginT(100), SS.pb30]}>
 									<Button block onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>
@@ -206,6 +267,7 @@ export const AssetsSend = () => {
 					)}
 				</Formik>
 			</Content>
+			<ConfirmDialog dialogRef={alert} />
 		</Container>
 	);
 };

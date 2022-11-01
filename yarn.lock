@@ -2274,8 +2274,8 @@ absolute-path@^0.0.0:
 
 accepts@^1.3.7, accepts@~1.3.5, accepts@~1.3.7, accepts@~1.3.8:
   version "1.3.8"
-  resolved "https://registry.npm.taobao.org/accepts/download/accepts-1.3.8.tgz#531bc726517a3b2b41f850021c6cc15eaab507cd"
-  integrity "sha1-C/C+EltnAUrcsLCSHmLbe//hay4= sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw=="
+  resolved "https://registry.npmjs.org/accepts/-/accepts-1.3.8.tgz#0bf0be125b67014adcb0b0921e62db7bffe16b2e"
+  integrity sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==
   dependencies:
     mime-types "~2.1.34"
     negotiator "0.6.3"
@@ -8699,6 +8699,11 @@ react-native-animatable@1.3.3:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-biometrics@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/react-native-biometrics/-/react-native-biometrics-3.0.1.tgz#23c5a0bdbae1fcb1e08b22936223fe0fc4af846e"
+  integrity sha512-Ru80gXRa9KG04sl5AB9HyjLjVbduhqZVjA+AiOSGqr+fNqCDmCu9y5WEksnjbnniNLmq1yGcw+qcLXmR1ddLDQ==
+
 react-native-camera@^4.2.1:
   version "4.2.1"
   resolved "https://registry.nlark.com/react-native-camera/download/react-native-camera-4.2.1.tgz#caf74081f055e89d7e9b0cd5108965d808c60e90"
@@ -8740,6 +8745,11 @@ react-native-device-info@^8.4.1:
   version "8.4.1"
   resolved "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-8.4.1.tgz#21d1cf0c7bc8476a20c82f0dde968f1660261674"
   integrity sha512-O+G0wUXAc3196CUAs/C/ugIvIUvTMPvw7gixStZyXOpOGwGQKWx6if1YV1qLD5oPldxSvg17CdgB91yOLniKEA==
+
+react-native-dialog-input@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.npmjs.org/react-native-dialog-input/-/react-native-dialog-input-1.0.8.tgz#6813d3b158bbb85d83a94310f38695d9f2b02682"
+  integrity sha512-W9YNMt6r+rUUMDEkOR1WMuGfSJw97ujB8H1xp8TjJTOnYVSlsf4aEP6t+J8tVk3XZaDcTawXgDjxH6E1WVWRog==
 
 react-native-drawer@2.5.1:
   version "2.5.1"
