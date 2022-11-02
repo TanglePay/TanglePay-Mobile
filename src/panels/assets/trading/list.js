@@ -85,12 +85,12 @@ const Item = (item) => {
 					{ width: ThemeVar.deviceWidth + 200 },
 					SS.row,
 					SS.ac,
-					{ transform: [{ translateX: btnAnim }] },
+					{ transform: [{ translateX: btnAnim }] }
 				]}>
 				<TouchableOpacity
 					onPress={hideBtn}
 					activeOpacity={1}
-					style={[{ width: ThemeVar.deviceWidth }, SS.w100, SS.ac, SS.row, SS.jsb, SS.pr24, { height: 60 }]}>
+					style={[{ width: ThemeVar.deviceWidth }, SS.ac, SS.row, SS.jsb, SS.pr24, { height: 60 }]}>
 					<View style={[SS.ac, SS.row]}>
 						<View style={[SS.c, { width: 80 }]}>
 							<SvgIcon size='24' style={{ width: 24, height: 24 }} name='tradingTime' />
