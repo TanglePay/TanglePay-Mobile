@@ -155,9 +155,15 @@ export const Bridge = {
 	async iota_connect(origin, expires) {
 		const curWallet = await this.getCurWallet();
 		if (curWallet.address) {
-			this.sendMessage('iota_connect', {
+			const obj = {
 				address: curWallet.address,
 				nodeId: curWallet.nodeId
+			};
+			if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+				obj.chainId = await IotaSDK.client.eth.getChainId();
+			}
+			this.sendMessage('iota_connect', {
+				...obj
 			});
 			const key = `${origin}_iota_connect_${curWallet.address}_${curWallet.nodeId}`;
 			this.cacheBgData(key, 1, expires);
