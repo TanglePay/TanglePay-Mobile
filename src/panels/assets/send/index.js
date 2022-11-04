@@ -15,7 +15,7 @@ const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
 	receiver: Yup.string().required(),
 	amount: Yup.number().positive().required(),
-	password: Yup.string(),
+	password: Yup.string()
 });
 const rnBiometrics = new ReactNativeBiometrics();
 export const AssetsSend = () => {
@@ -68,13 +68,12 @@ export const AssetsSend = () => {
 							rnBiometrics
 								.simplePrompt({
 									promptMessage: I18n.t('user.bioVerification'),
-									cancelButtonText: I18n.t('apps.cancel'),
+									cancelButtonText: I18n.t('apps.cancel')
 								})
 								.then((resultObject) => {
 									const { success } = resultObject;
 									if (success) {
 										console.log('successful biometrics provided');
-										//TODO 成功逻辑
 										Toast.success(
 											I18n.t(
 												IotaSDK.checkWeb3Node(curWallet.nodeId)
@@ -85,6 +84,7 @@ export const AssetsSend = () => {
 										setIsPwdInput(true);
 									} else {
 										console.log('user cancelled biometric prompt');
+										return Toast.error(I18n.t('user.biometricsFailed'));
 									}
 								})
 								.catch(() => {
@@ -189,10 +189,10 @@ export const AssetsSend = () => {
 									<SvgIcon
 										onPress={() => {
 											Base.push('assets/scan', {
-												setReceiver,
+												setReceiver
 											});
 										}}
-										name="scan"
+										name='scan'
 										size={20}
 									/>
 								</View>
@@ -201,7 +201,7 @@ export const AssetsSend = () => {
 										numberOfLines={2}
 										multiline
 										blurOnSubmit={true}
-										returnKeyType="done"
+										returnKeyType='done'
 										style={[SS.fz14, SS.pl0, SS.pb0, S.h(44)]}
 										placeholder={I18n.t('assets.receiverTips')}
 										onChangeText={handleChange('receiver')}
@@ -211,7 +211,7 @@ export const AssetsSend = () => {
 								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.amount')}</Text>
 								<Item style={[SS.ml0, SS.mt8]} error={!!errors.amount}>
 									<Input
-										keyboardType="numeric"
+										keyboardType='numeric'
 										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('assets.amountTips')}
 										onChangeText={handleChange('amount')}
@@ -247,7 +247,7 @@ export const AssetsSend = () => {
 										<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.password')}</Text>
 										<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
 											<Input
-												keyboardType="ascii-capable"
+												keyboardType='ascii-capable'
 												secureTextEntry
 												style={[SS.fz14, SS.pl0]}
 												placeholder={I18n.t('assets.passwordTips')}

@@ -7,7 +7,11 @@ import { S, SS, Nav, SvgIcon, Toast } from '@/common';
 import { ImageCache } from 'react-native-img-cache';
 import RNFetchBlob from 'rn-fetch-blob';
 import _sumBy from 'lodash/sumBy';
-import { useChangeNode } from '@tangle-pay/store/common';
+import { useChangeNode, useGetNodeWallet } from '@tangle-pay/store/common';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import DialogInput from 'react-native-dialog-input';
+
+const rnBiometrics = new ReactNativeBiometrics();
 
 export const UserSetting = () => {
 	useStore('common.lang');
@@ -15,6 +19,18 @@ export const UserSetting = () => {
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
 	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
+	const [curWallet] = useGetNodeWallet();
+	const [isBio, setIsBio] = useStore('common.biometrics');
+	const [showDialog, setShowDialog] = useState(false);
+	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
+	// const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [biometrics, setBiometrics] = useState({
+		touchId: false,
+		faceId: false,
+		biometrics: false
+	}); // device supports
+	const [bioSupport, setBioSupport] = useState(false);
 	const list = [
 		{
 			icon: 'lang',
@@ -48,18 +64,22 @@ export const UserSetting = () => {
 				Base.setLocalData('common.isNoRestake', e ? 0 : 1);
 			}
 		},
-		,
+		{
+			icon: 'biometrics',
+			label: I18n.t('user.biometrics'),
+			type: 'switch',
+			value: isBio,
+			disabled: !bioSupport,
+			onChange: (e) => {
+				bioSwitchChange();
+			}
+		},
 		{
 			icon: 'advanced',
 			label: 'Advanced',
 			path: 'user/advanced',
 			size: 22
-		},
-		{
-			icon: 'biometrics',
-			label: I18n.t('user.biometrics'),
-			path: 'user/biometrics',
-		},
+		}
 	];
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
 	if (curNodeKey) {
@@ -90,6 +110,38 @@ export const UserSetting = () => {
 			setNoRestake(res != 1);
 		});
 		getCache();
+		rnBiometrics
+			.isSensorAvailable()
+			.then((resultObject) => {
+				const { available, biometryType } = resultObject;
+				const availableBiometrics = {
+					touchId: false,
+					faceId: false,
+					biometrics: false
+				};
+				if (available && biometryType === BiometryTypes.TouchID) {
+					availableBiometrics.touchId = true;
+					setBioSupport(true);
+					console.log('TouchID is supported');
+				} else if (available && biometryType === BiometryTypes.FaceID) {
+					availableBiometrics.faceId = true;
+					setBioSupport(true);
+					console.log('FaceID is supported');
+				} else if (available && biometryType === BiometryTypes.Biometrics) {
+					availableBiometrics.biometrics = true;
+					setBioSupport(true);
+					console.log('Biometrics is supported');
+				} else {
+					console.log('Biometrics is not supported');
+					setBioSupport(false);
+					Toast.error(I18n.t('user.biometricsFailed')); //NOT Support
+				}
+				setBiometrics(availableBiometrics);
+			})
+			.catch(() => {
+				console.log('biometrics failed');
+				Toast.error(I18n.t('user.biometricsFailed'));
+			});
 	}, []);
 	const getCache = async () => {
 		const { cache } = ImageCache.get();
@@ -101,6 +153,49 @@ export const UserSetting = () => {
 		const list = await Promise.all(requestList);
 		const totalSize = _sumBy(list, 'size');
 		setCache(Base.formatNum(totalSize / 1024 / 1024) + ' M');
+	};
+	const checkPwd = async (inputPwd) => {
+		const isPassword = await IotaSDK.checkPassword(curWallet.seed, inputPwd);
+		if (!isPassword) {
+			console.log(curWallet.password);
+			setShowDialog(false);
+			setIsBio(false);
+			return Toast.error(I18n.t('assets.passwordError'));
+		} else {
+			setIsPwdInput(true);
+			setShowDialog(false);
+			setCurPwd(inputPwd);
+			return Toast.success(I18n.t('user.biometricsSucc'));
+		}
+	};
+	const bioSwitchChange = () => {
+		if (isBio) {
+			setIsBio(false);
+		} else {
+			rnBiometrics
+				.simplePrompt({
+					promptMessage: I18n.t('user.bioVerification')
+					// cancelButtonText: I18n.t('apps.cancel')
+					// fallbackPromptMessage: I18n.t('apps.cancel'),
+				})
+				.then((resultObject) => {
+					const { success } = resultObject;
+					if (success) {
+						console.log('successful biometrics provided');
+						setIsBio(true);
+						if (!isPwdInput) {
+							setShowDialog(true);
+						}
+					} else {
+						console.log('user cancelled biometric prompt');
+					}
+				})
+				.catch(() => {
+					console.log('biometrics failed');
+					Toast.error(I18n.t('user.biometricsFailed'));
+					setIsBio(false);
+				});
+		}
 	};
 	return (
 		<Container>
@@ -128,7 +223,11 @@ export const UserSetting = () => {
 									{e.tips && <Text style={[SS.fz11, SS.ml10, SS.cS, SS.mt5]}>{e.tips}</Text>}
 								</View>
 								{e.type === 'switch' ? (
-									<Switch value={e.value} onValueChange={e.onChange} />
+									<Switch
+										value={e.value}
+										onValueChange={e.onChange}
+										disabled={e.disabled == null ? false : e.disabled}
+									/>
 								) : (
 									<View style={[SS.row, SS.ac]}>
 										{e.value && <Text style={[SS.fz13, SS.cS]}>{e.value}</Text>}
@@ -144,6 +243,21 @@ export const UserSetting = () => {
 					})}
 				</View>
 			</Content>
+			<DialogInput
+				isDialogVisible={showDialog}
+				title={I18n.t('assets.password')}
+				hintInput={'Your Password'}
+				textInputProps={{ secureTextEntry: true }}
+				submitInput={(inputText) => {
+					checkPwd(inputText);
+				}}
+				closeDialog={() => {
+					setShowDialog(false);
+					setIsBio(false);
+				}}
+				cancelText={I18n.t('apps.cancel')}
+				submitText={I18n.t('assets.confirm')}
+			/>
 		</Container>
 	);
 };
