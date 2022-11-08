@@ -26,6 +26,7 @@ export const AssetsSend = () => {
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt] = useStore('common.bioPrompt');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [showPwd, setShowPwd] = useState(false);
 	const { params } = useRoute();
 	const form = useRef();
 	const alert = useRef();
@@ -248,11 +249,17 @@ export const AssetsSend = () => {
 										<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
 											<Input
 												keyboardType='ascii-capable'
-												secureTextEntry
+												secureTextEntry={!showPwd}
 												style={[SS.fz14, SS.pl0]}
 												placeholder={I18n.t('assets.passwordTips')}
 												onChangeText={handleChange('password')}
 												value={values.password}
+											/>
+											<SvgIcon
+												onPress={() => setShowPwd(!showPwd)}
+												name={showPwd ? 'eye_1' : 'eye_0'}
+												size={20}
+												style={[SS.ml10]}
 											/>
 										</Item>
 									</View>
