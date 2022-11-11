@@ -92,7 +92,7 @@ export const AccountRegister = () => {
 										style={[SS.mr8, S.marginT(4)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
-									<View style={[S.w(ThemeVar.deviceWidth - 120)]}>
+									<View style={[S.w(ThemeVar.deviceWidth - 80)]}>
 										<Text
 											style={[
 												SS.fz12,
