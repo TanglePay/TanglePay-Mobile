@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, SvgIcon, Toast, AlertDialog, ConfirmDialog } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';

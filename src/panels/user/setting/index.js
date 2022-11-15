@@ -65,7 +65,7 @@ export const UserSetting = () => {
 			}
 		},
 		{
-			icon: 'biometrics',
+			icon: 'fingerprint',
 			label: I18n.t('user.biometrics'),
 			type: 'switch',
 			value: isBio,
