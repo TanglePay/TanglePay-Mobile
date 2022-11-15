@@ -164,7 +164,7 @@ export const AccountInto = () => {
 										style={[SS.mr8, S.marginT(4)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
-									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
+									<View style={[S.w(ThemeVar.deviceWidth - 50)]}>
 										<Text
 											style={[
 												SS.fz12,
