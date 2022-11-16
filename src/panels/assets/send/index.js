@@ -18,6 +18,7 @@ const schema = Yup.object().shape({
 	password: Yup.string()
 });
 const rnBiometrics = new ReactNativeBiometrics();
+
 export const AssetsSend = () => {
 	useGetParticipationEvents();
 	// const [statedAmount] = useStore('staking.statedAmount');
