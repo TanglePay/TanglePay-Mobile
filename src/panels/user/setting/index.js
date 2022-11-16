@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, Content, View, Text, Switch } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
@@ -9,7 +9,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import _sumBy from 'lodash/sumBy';
 import { useChangeNode, useGetNodeWallet } from '@tangle-pay/store/common';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
-import DialogInput from 'react-native-dialog-input';
+import { PasswordDialog } from '../biometrics/passwordDialog';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -19,12 +19,9 @@ export const UserSetting = () => {
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
 	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
-	const [curWallet] = useGetNodeWallet();
 	const [isBio, setIsBio] = useStore('common.biometrics');
-	const [showDialog, setShowDialog] = useState(false);
-	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
-	// const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
-	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const dialogRef = useRef();
+	const [isPwdInput] = useStore('common.pwdInput');
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
@@ -154,20 +151,6 @@ export const UserSetting = () => {
 		const totalSize = _sumBy(list, 'size');
 		setCache(Base.formatNum(totalSize / 1024 / 1024) + ' M');
 	};
-	const checkPwd = async (inputPwd) => {
-		const isPassword = await IotaSDK.checkPassword(curWallet.seed, inputPwd);
-		if (!isPassword) {
-			console.log(curWallet.password);
-			setShowDialog(false);
-			setIsBio(false);
-			return Toast.error(I18n.t('assets.passwordError'));
-		} else {
-			setIsPwdInput(true);
-			setShowDialog(false);
-			setCurPwd(inputPwd);
-			return Toast.success(I18n.t('user.biometricsSucc'));
-		}
-	};
 	const bioSwitchChange = () => {
 		if (isBio) {
 			setIsBio(false);
@@ -184,7 +167,7 @@ export const UserSetting = () => {
 						console.log('successful biometrics provided');
 						setIsBio(true);
 						if (!isPwdInput) {
-							setShowDialog(true);
+							dialogRef.current.show();
 						}
 					} else {
 						console.log('user cancelled biometric prompt');
@@ -243,21 +226,7 @@ export const UserSetting = () => {
 					})}
 				</View>
 			</Content>
-			<DialogInput
-				isDialogVisible={showDialog}
-				title={I18n.t('assets.password')}
-				hintInput={'Your Password'}
-				textInputProps={{ secureTextEntry: true }}
-				submitInput={(inputText) => {
-					checkPwd(inputText);
-				}}
-				closeDialog={() => {
-					setShowDialog(false);
-					setIsBio(false);
-				}}
-				cancelText={I18n.t('apps.cancel')}
-				submitText={I18n.t('assets.confirm')}
-			/>
+			<PasswordDialog dialogRef={dialogRef} />
 		</Container>
 	);
 };
