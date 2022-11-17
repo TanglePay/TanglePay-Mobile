@@ -217,9 +217,10 @@ export const ActivityList = ({ search, setHeight }) => {
 	);
 	const ListEl = useMemo(() => {
 		return showList.map((e, j) => {
-			const isOutto = [1, 3].includes(e.type);
+			const isOutto = [1, 3, 6, 8].includes(e.type);
 			const isStake = [2, 3].includes(e.type);
 			const isSign = [4].includes(e.type);
+			const isNft = [7, 8].includes(e.type);
 			let FromToEl = null;
 			if (isSign) {
 				FromToEl = <Text style={[SS.fz16, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
@@ -238,8 +239,9 @@ export const ActivityList = ({ search, setHeight }) => {
 			}
 			let AssetsEl = isShowAssets ? (
 				<View>
-					<Text style={[SS.fz14, SS.tr, SS.mb5]}>
-						{isSign ? '' : isOutto ? '-' : '+'} {e.num} {e.coin}
+					<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140 }]}>
+						{isSign ? '' : isOutto ? '-' : '+'} {!isNft ? `${e.num} ` : ''}
+						{e.coin}
 					</Text>
 					<Text style={[SS.fz14, SS.tr, SS.cS]}>$ {e.assets}</Text>
 				</View>
@@ -400,7 +402,8 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											S.radius(8),
 											S.wh(imgW),
 											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
-											S.marginB(15)
+											S.marginB(15),
+											SS.bgS
 										]}
 										resizeMode='contain'
 										source={{ uri: e.thumbnailImage || e.media }}

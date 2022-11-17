@@ -55,6 +55,11 @@ export const UserSetting = () => {
 			path: 'user/advanced',
 			size: 22
 		}
+		// {
+		// 	icon: 'biometrics',
+		// 	label: I18n.t('user.biometrics'),
+		// 	path: 'user/biometrics',
+		// },
 	];
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
 	if (curNodeKey) {

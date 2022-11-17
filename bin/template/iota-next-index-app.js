@@ -3932,8 +3932,9 @@
 		let cursor;
 		do {
 			response = await indexerPluginClient.outputs({ addressBech32, cursor });
-			for (const outputId of response.items) {
-				const output = await localClient.output(outputId);
+			const localOutputDatas = await Promise.all(response.items.map((outputId) => localClient.output(outputId)));
+			for (const [index, outputId] of response.items.entries()) {
+				const output = localOutputDatas[index];
 				if (!output.metadata.isSpent) {
 					let unlockConditions = output.output?.unlockConditions || [];
 					const isLock = unlockConditions.find((e) => e.type != ADDRESS_UNLOCK_CONDITION_TYPE);

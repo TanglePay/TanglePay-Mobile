@@ -51,7 +51,7 @@ export const AccountIntoPrivateKey = () => {
 						Base.replace('main');
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
-						<View style={[SS.p16, SS.jsb, S.h(ThemeVar.contentHeight1)]}>
+						<View style={[SS.p16]}>
 							<Form>
 								<View>
 									<View>
@@ -108,7 +108,7 @@ export const AccountIntoPrivateKey = () => {
 									/>
 								</Item>
 							</Form>
-							<Form style={[SS.mb80]}>
+							<Form style={[SS.mb80, SS.mt40]}>
 								<Item
 									style={[SS.row, SS.as, SS.ml0, SS.mb40, { borderBottomWidth: 0 }]}
 									onPress={() => {
@@ -120,7 +120,7 @@ export const AccountIntoPrivateKey = () => {
 										style={[SS.mr8, S.marginT(4)]}
 										name={values.agree ? 'checkbox_1' : 'checkbox_0'}
 									/>
-									<View style={[S.w(ThemeVar.deviceWidth - 70)]}>
+									<View style={[S.w(ThemeVar.deviceWidth - 50)]}>
 										<Text
 											style={[
 												SS.fz12,

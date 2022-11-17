@@ -9,6 +9,7 @@ import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
 import { Bridge } from '@/common/bridge';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
+import { Unit } from '@iota/unit-converter';
 
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
@@ -314,6 +315,9 @@ export const DappDialog = () => {
 										showUnit = unit;
 									} else {
 										unit = unit || 'SMR';
+										if (!['SMR', 'Glow'].includes(unit)) {
+											unit = 'SMR';
+										}
 										showValue = value;
 										sendAmount =
 											unit !== 'Glow'
@@ -323,6 +327,9 @@ export const DappDialog = () => {
 									}
 								} else {
 									unit = unit || 'Mi';
+									if (!Unit[unit]) {
+										unit = 'Mi';
+									}
 									showValue = IotaSDK.convertUnits(value, unit, 'Mi');
 									sendAmount = IotaSDK.convertUnits(value, unit, 'i');
 									showUnit = 'MIOTA';

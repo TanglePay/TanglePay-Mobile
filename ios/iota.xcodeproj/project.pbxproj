@@ -24,6 +24,7 @@
 		71DA7A584F0E40868938DE36 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 803527EC7EDE4C61A38CD866 /* MaterialIcons.ttf */; };
 		7A2539CCAFE642F7938C927D /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9962EB3314C641F98606FBE5 /* Octicons.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8D1ED58929081468004500FC /* bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8D1ED58829081468004500FC /* bundle */; };
 		8D8DA26DFE4E45EC8AB8B522 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7BF4E3F0486E4EFDB28CE9CD /* Ionicons.ttf */; };
 		8F294C71763CC15B227655D8 /* libPods-iota-iotaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4349451BC2C5095B7266D4 /* libPods-iota-iotaTests.a */; };
 		9C7694DD11CC4CF6A44C9556 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5A499ADCB28148099BE2B453 /* Feather.ttf */; };
@@ -75,6 +76,7 @@
 		7BF4E3F0486E4EFDB28CE9CD /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		803527EC7EDE4C61A38CD866 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = iota/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8D1ED58829081468004500FC /* bundle */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bundle; sourceTree = "<group>"; };
 		960D5481CE8F4349BBBB586C /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		9962EB3314C641F98606FBE5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		9FD39F9C0D7B4B97A411BD02 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				8D1ED58829081468004500FC /* bundle */,
 				13B07FAE1A68108700A75B9A /* iota */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* iotaTests */,
@@ -333,6 +336,7 @@
 				382B4F99E8204854B1CD42B2 /* FontAwesome.ttf in Resources */,
 				1D7C12E217644B44B4A06007 /* FontAwesome5_Brands.ttf in Resources */,
 				A778917A1D3C47F1A664896A /* FontAwesome5_Regular.ttf in Resources */,
+				8D1ED58929081468004500FC /* bundle in Resources */,
 				F3752939DC7F470384224733 /* FontAwesome5_Solid.ttf in Resources */,
 				E1EE9B035B884D8EACF5FCAE /* Fontisto.ttf in Resources */,
 				3FED45D4289A961000767473 /* Open-Sans.ttf in Resources */,
@@ -596,7 +600,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.6;
+				MARKETING_VERSION = 1.4.8;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -624,7 +628,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.6;
+				MARKETING_VERSION = 1.4.8;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
