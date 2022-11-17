@@ -3,7 +3,7 @@ import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native'
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
-import { SS, ThemeVar, Toast, SvgIcon, ConfirmDialog } from '@/common';
+import { SS, ThemeVar, Toast, SvgIcon } from '@/common';
 import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';

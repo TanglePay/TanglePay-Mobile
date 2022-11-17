@@ -7,11 +7,12 @@ import { I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { S, SS, Toast } from '@/common';
+import { S, SS, Toast, SvgIcon } from '@/common';
 
 export const PasswordDialog = ({ dialogRef }) => {
 	const [isShow, setShow] = useState(false);
 	const [curWallet] = useGetNodeWallet();
+	const [showPwd, setShowPwd] = useState(false);
 	const [isBio, setIsBio] = useStore('common.biometrics');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
@@ -65,12 +66,19 @@ export const PasswordDialog = ({ dialogRef }) => {
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<Form>
 								<Text style={[SS.fz16, SS.fw600]}>{I18n.t('assets.password')}</Text>
-								<Item style={[SS.mt10, SS.ml0, { minHeight: 50 }]} stackedLabel>
+								<Item style={[SS.mt10, SS.ml0, { minHeight: 50 }]}>
 									<Input
+										secureTextEntry={!showPwd}
 										style={[SS.fz14]}
 										placeholder={I18n.t('assets.password')}
 										onChangeText={handleChange('pwd')}
 										value={values.pwd}
+									/>
+									<SvgIcon
+										onPress={() => setShowPwd(!showPwd)}
+										name={showPwd ? 'eye_1' : 'eye_0'}
+										size={20}
+										style={[SS.ml10]}
 									/>
 								</Item>
 								<View style={[S.marginT(24), SS.row]}>
@@ -79,7 +87,7 @@ export const PasswordDialog = ({ dialogRef }) => {
 										style={[SS.flex1, SS.c, { marginHorizontal: 10 }]}
 										onPress={() => {
 											setIsBio(false);
-											hide;
+											hide();
 										}}>
 										<Text>{I18n.t('apps.cancel')}</Text>
 									</Button>
