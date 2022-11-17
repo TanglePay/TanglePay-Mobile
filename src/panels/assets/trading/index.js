@@ -135,7 +135,13 @@ export const AssetsTrading = () => {
 								Base.goBack();
 							} catch (error) {
 								Toast.hideLoading();
-								Toast.show(String(error));
+								error = String(error);
+								if (
+									error.includes('There are not enough funds in the inputs for the required balance')
+								) {
+									error = I18n.t('assets.unlockError');
+								}
+								Toast.show(error);
 								Base.goBack();
 							}
 						}}>
