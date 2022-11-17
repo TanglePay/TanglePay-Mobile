@@ -239,7 +239,7 @@ export const ActivityList = ({ search, setHeight }) => {
 			}
 			let AssetsEl = isShowAssets ? (
 				<View>
-					<Text style={[SS.fz14, SS.tr, SS.mb5]}>
+					<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140 }]}>
 						{isSign ? '' : isOutto ? '-' : '+'} {!isNft ? `${e.num} ` : ''}
 						{e.coin}
 					</Text>
@@ -402,7 +402,8 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											S.radius(8),
 											S.wh(imgW),
 											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
-											S.marginB(15)
+											S.marginB(15),
+											SS.bgS
 										]}
 										resizeMode='contain'
 										source={{ uri: e.thumbnailImage || e.media }}
