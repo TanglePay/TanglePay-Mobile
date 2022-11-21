@@ -32,6 +32,10 @@ export const PasswordDialog = ({ dialogRef }) => {
 	const hide = () => {
 		setShow(false);
 	};
+	const cancel = () => {
+		hide();
+		setIsBio(false);
+	};
 	const checkPwd = async (inputPwd) => {
 		const isPassword = await IotaSDK.checkPassword(curWallet.seed, inputPwd);
 		if (!isPassword) {
@@ -46,7 +50,7 @@ export const PasswordDialog = ({ dialogRef }) => {
 		}
 	};
 	return (
-		<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={hide} onBackdropPress={hide} isVisible={isShow}>
+		<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={cancel} onBackdropPress={cancel} isVisible={isShow}>
 			<View style={[SS.w100, SS.radius10, SS.bgW]}>
 				<Text style={[SS.pv12, SS.ph16, SS.fz16, SS.fw600, S.border(2)]}>
 					{I18n.t('user.enableBiometrics')}
@@ -65,7 +69,9 @@ export const PasswordDialog = ({ dialogRef }) => {
 						}}>
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<Form>
-								<Text style={[SS.fz16, SS.fw600]}>{I18n.t('assets.password')}</Text>
+								<Text style={[SS.fz16]}>
+									{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
+								</Text>
 								<Item style={[SS.mt10, SS.ml0, { minHeight: 50 }]}>
 									<Input
 										secureTextEntry={!showPwd}
@@ -85,10 +91,7 @@ export const PasswordDialog = ({ dialogRef }) => {
 									<Button
 										bordered
 										style={[SS.flex1, SS.c, { marginHorizontal: 10 }]}
-										onPress={() => {
-											setIsBio(false);
-											hide();
-										}}>
+										onPress={cancel}>
 										<Text>{I18n.t('apps.cancel')}</Text>
 									</Button>
 									<Button style={[SS.flex1, SS.c, { marginHorizontal: 10 }]} onPress={handleSubmit}>
