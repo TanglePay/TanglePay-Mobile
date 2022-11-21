@@ -69,9 +69,7 @@ export const PasswordDialog = ({ dialogRef }) => {
 						}}>
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<Form>
-								<Text style={[SS.fz16]}>
-									{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
-								</Text>
+								<Text style={[SS.fz16]}>{I18n.t('assets.passwordTips')}</Text>
 								<Item style={[SS.mt10, SS.ml0, { minHeight: 50 }]}>
 									<Input
 										secureTextEntry={!showPwd}
