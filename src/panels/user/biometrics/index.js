@@ -15,7 +15,7 @@ export const UserBiometrics = () => {
 	const [isBio, setIsBio] = useStore('common.biometrics');
 	const [showDialog, setShowDialog] = useState(false);
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
-	// const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
+	const [isNotPrompt, setIsNotPrompt] = useStore('common.bioPrompt');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
@@ -69,12 +69,12 @@ export const UserBiometrics = () => {
 		}
 	};
 
-	// const notPromptSwitchChange = () => {
-	// 	if (isNotPrompt) {
-	// 		setIsPwdInput(false);
-	// 	}
-	// 	setIsNotPrompt(!isNotPrompt);
-	// };
+	const notPromptSwitchChange = () => {
+		if (isNotPrompt) {
+			setIsPwdInput(false);
+		}
+		setIsNotPrompt(!isNotPrompt);
+	};
 
 	useEffect(() => {
 		rnBiometrics
@@ -125,7 +125,7 @@ export const UserBiometrics = () => {
 					</View>
 					<Switch value={isBio} onValueChange={bioSwitchChange} disabled={!bioSupport} />
 				</TouchableOpacity>
-				{/* <TouchableOpacity
+				<TouchableOpacity
 					onPress={notPromptSwitchChange}
 					activeOpacity={0.8}
 					style={[SS.row, SS.ac, SS.jsb, SS.ph30, SS.pv20, S.border(2)]}>
@@ -133,7 +133,7 @@ export const UserBiometrics = () => {
 						<Text>{I18n.t('user.noPrompt')}</Text>
 					</View>
 					<Switch value={isNotPrompt} onValueChange={notPromptSwitchChange} />
-				</TouchableOpacity> */}
+				</TouchableOpacity>
 			</Content>
 			<DialogInput
 				isDialogVisible={showDialog}

@@ -6,8 +6,8 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, SvgIcon, Toast, AlertDialog, ConfirmDialog } from '@/common';
-// import ReactNativeBiometrics from 'react-native-biometrics';
+import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog } from '@/common';
+import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 
@@ -15,17 +15,19 @@ const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
 	receiver: Yup.string().required(),
 	amount: Yup.number().positive().required(),
-	password: Yup.string().required()
+	password: Yup.string()
 });
-// const rnBiometrics = new ReactNativeBiometrics();
+const rnBiometrics = new ReactNativeBiometrics();
+
 export const AssetsSend = () => {
 	useGetParticipationEvents();
 	// const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
-	// const [isBio] = useStore(false);
-	// const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
-	// const [isNotPrompt] = useStore('common.bioPrompt');
-	// const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [isBio] = useStore('common.biometrics');
+	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
+	const [isNotPrompt] = useStore('common.bioPrompt');
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [showPwd, setShowPwd] = useState(false);
 	const { params } = useRoute();
 	const form = useRef();
 	const alert = useRef();
@@ -63,39 +65,42 @@ export const AssetsSend = () => {
 					validationSchema={schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
-						// if (isBio) {
-						// 	password = curPwd;
-						// 	rnBiometrics
-						// 		.simplePrompt({
-						// 			promptMessage: I18n.t('user.bioVerification'),
-						// 			cancelButtonText: I18n.t('apps.cancel')
-						// 		})
-						// 		.then((resultObject) => {
-						// 			const { success } = resultObject;
-						// 			if (success) {
-						// 				console.log('successful biometrics provided');
-						// 				//TODO 成功逻辑
-						// 				Toast.success(
-						// 					I18n.t(
-						// 						IotaSDK.checkWeb3Node(curWallet.nodeId)
-						// 							? 'assets.sendSucc'
-						// 							: 'assets.sendSuccRestake'
-						// 					)
-						// 				);
-						// 				setIsPwdInput(true);
-						// 			} else {
-						// 				console.log('user cancelled biometric prompt');
-						// 			}
-						// 		})
-						// 		.catch(() => {
-						// 			console.log('biometrics failed');
-						// 			return Toast.error(I18n.t('user.biometricsFailed'));
-						// 		});
-						// } else {
-						const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-						if (!isPassword) {
-							// console.log(password);
-							return Toast.error(I18n.t('assets.passwordError'));
+						if (isBio) {
+							password = curPwd;
+							rnBiometrics
+								.simplePrompt({
+									promptMessage: I18n.t('user.bioVerification'),
+									cancelButtonText: I18n.t('apps.cancel')
+								})
+								.then((resultObject) => {
+									const { success } = resultObject;
+									if (success) {
+										console.log('successful biometrics provided');
+										Toast.success(
+											I18n.t(
+												IotaSDK.checkWeb3Node(curWallet.nodeId)
+													? 'assets.sendSucc'
+													: 'assets.sendSuccRestake'
+											)
+										);
+										setIsPwdInput(true);
+									} else {
+										console.log('user cancelled biometric prompt');
+										return Toast.error(I18n.t('user.biometricsFailed'));
+									}
+								})
+								.catch(() => {
+									console.log('biometrics failed');
+									return Toast.error(I18n.t('user.biometricsFailed'));
+								});
+						} else {
+							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+							if (!isBio && !isPassword) {
+								console.log(password);
+								return Toast.error(I18n.t('assets.passwordError'));
+							} else {
+								setCurPwd(password);
+							}
 						}
 
 						amount = parseFloat(amount) || 0;
@@ -144,14 +149,14 @@ export const AssetsSend = () => {
 											: 'assets.sendSuccRestake'
 									)
 								);
-								// if (isBio === false && !isNotPrompt) {
-								// 	alert.current.show(I18n.t('user.biometriceDialog'), () => {
-								// 		const path = 'user/biometrics';
-								// 		Base.push(path);
-								// 	});
-								// } else {
-								Base.goBack();
-								// }
+								if (isBio === false && !isNotPrompt) {
+									alert.current.show(I18n.t('user.biometriceDialog'), () => {
+										const path = 'user/biometrics';
+										Base.push(path);
+									});
+								} else {
+									Base.goBack();
+								}
 							}
 						} catch (error) {
 							console.log(error);
@@ -229,34 +234,32 @@ export const AssetsSend = () => {
 										{I18n.t('staking.available')} {available} {assets.unit}
 									</Text>
 								</Item>
-								{/* <Item
-									style={[SS.mt20, SS.ml0, SS.row, SS.jsb, SS.ac, { minHeight: 40 }]}
-									error={!!errors.amount}>
-									<Text style={[SS.fz16]}>{I18n.t('assets.balance')}</Text>
-									<Text style={[SS.fz14, SS.cS]}>
-										{assets.balance} {assets.unit} IOTA
-									</Text>
-								</Item> */}
-								{/* {isBio ? (
+								{isBio ? (
 									<View />
-								) : ( */}
-								<View>
-									<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.password')}</Text>
-									<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
-										<Input
-											keyboardType='ascii-capable'
-											secureTextEntry
-											style={[SS.fz14, SS.pl0]}
-											placeholder={I18n.t('assets.passwordTips')}
-											onChangeText={handleChange('password')}
-											value={values.password}
-										/>
-									</Item>
-								</View>
-								{/* )} */}
+								) : (
+									<View>
+										<Text style={[SS.fz16, SS.mt25]}>{I18n.t('assets.password')}</Text>
+										<Item style={[SS.ml0, { minHeight: 50 }]} error={!!errors.password}>
+											<Input
+												keyboardType='ascii-capable'
+												secureTextEntry={!showPwd}
+												style={[SS.fz14, SS.pl0]}
+												placeholder={I18n.t('assets.passwordTips')}
+												onChangeText={handleChange('password')}
+												value={values.password}
+											/>
+											<SvgIcon
+												onPress={() => setShowPwd(!showPwd)}
+												name={showPwd ? 'eye_1' : 'eye_0'}
+												size={20}
+												style={[SS.ml10]}
+											/>
+										</Item>
+									</View>
+								)}
 								<View style={[S.marginT(100), SS.pb30]}>
 									<Button block onPress={handleSubmit}>
-										<Text>{I18n.t('assets.confirm')}</Text>
+										<Text>{I18n.t('user.goSetting')}</Text>
 									</Button>
 								</View>
 							</Form>
@@ -264,7 +267,7 @@ export const AssetsSend = () => {
 					)}
 				</Formik>
 			</Content>
-			{/* <ConfirmDialog dialogRef={alert} /> */}
+			<ConfirmDialog dialogRef={alert} />
 		</Container>
 	);
 };
