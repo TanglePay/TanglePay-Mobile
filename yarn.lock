@@ -8908,6 +8908,11 @@ react-native-snap-carousel@^3.9.1:
     prop-types "^15.6.1"
     react-addons-shallow-compare "15.6.2"
 
+react-native-splash-screen@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.npmjs.org/react-native-splash-screen/-/react-native-splash-screen-3.3.0.tgz#3af71ed17afe50fee69590a45aec399d071ead02"
+  integrity sha512-rGjt6HkoSXxMqH4SQUJ1gnPQlPJV8+J47+4yhgTIan4bVvAwJhEeJH7wWt9hXSdH4+VfwTS0GTaflj1Tw83IhA==
+
 react-native-storage@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/react-native-storage/download/react-native-storage-1.0.1.tgz#2c493875ff76ec301987c951a8302f3a54381241"
@@ -10177,10 +10182,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.2.2.tgz#7118b57f1e564fe4d92ed77fe932be80980ada9f"
-  integrity sha512-4wwoZnCygqOXmGiAFB5v8lVs+z3GdoU4OPlApfclCUpfRnIgSRWFxMr4tNndnzX+ixzXaJsuCKqQh8CdNcurww==
+tanglepay@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.npmmirror.com/tanglepay/-/tanglepay-2.2.3.tgz#65bdf9749fec0ae2c97e7b28dc540f9928b0d424"
+  integrity sha512-mB29uMpR3rfjm92Z7fZ5Lps1fGOzCnq+Wgfnq4t+2Y+6DMNqo7m2P2oQ17E1F0etzp04wXNbzbGpVkd3T/Yr7w==
 
 tar@^4.0.2:
   version "4.4.19"

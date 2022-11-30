@@ -3,19 +3,26 @@ import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native'
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
-import { SS, ThemeVar, Toast } from '@/common';
+import { SS, ThemeVar, Toast, SvgIcon } from '@/common';
 import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
 import { Bridge } from '@/common/bridge';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Unit } from '@iota/unit-converter';
+import ReactNativeBiometrics from 'react-native-biometrics';
 
+const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
+	const [showPwd, setShowPwd] = useState(false);
+	const [isBio] = useStore('common.biometrics');
+	const [curPwd] = useStore('common.curPwd');
+	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
+	const [isNotPrompt] = useStore(false);
 	const [dappData, setDappData] = useState({
 		texts: []
 	});
@@ -501,20 +508,65 @@ export const DappDialog = () => {
 								})}
 							</Text>
 						</View>
-						{dappData.type !== 'iota_connect' && (
+						{!isBio && dappData.type !== 'iota_connect' && (
 							<Item inlineLabel>
 								<Input
 									keyboardType='ascii-capable'
-									secureTextEntry
+									secureTextEntry={!showPwd}
 									onChangeText={setPassword}
 									placeholder={I18n.t('assets.passwordTips')}
+								/>
+								<SvgIcon
+									onPress={() => setShowPwd(!showPwd)}
+									name={showPwd ? 'eye_1' : 'eye_0'}
+									size={20}
+									style={[SS.ml10]}
 								/>
 							</Item>
 						)}
 						<View style={[SS.row, SS.jsb, SS.ac, SS.mt25, SS.pb20]}>
 							<Button
 								onPress={() => {
-									onExecute(dappData);
+									if (!isBio && dappData.type !== 'iota_connect') {
+										onExecute(dappData);
+										if (!isNotPrompt) {
+											alert.current.show(I18n.t('user.biometriceDialog'), () => {
+												const path = 'user/biometrics';
+												Base.push(path);
+											});
+										}
+									} else if (isBio && dappData.type !== 'iota_connect') {
+										setPassword(curPwd);
+										rnBiometrics
+											.simplePrompt({
+												promptMessage: I18n.t('user.bioVerification'),
+												cancelButtonText: I18n.t('apps.cancel')
+											})
+											.then((resultObject) => {
+												const { success } = resultObject;
+												if (success) {
+													console.log('successful biometrics provided');
+													Toast.success(
+														I18n.t(
+															IotaSDK.checkWeb3Node(curWallet.nodeId)
+																? 'assets.sendSucc'
+																: 'assets.sendSuccRestake'
+														)
+													);
+													setIsPwdInput(true);
+													// onExecute(dappData);
+												} else {
+													console.log('user cancelled biometric prompt');
+													return Toast.error(I18n.t('user.biometricsFailed'));
+												}
+											})
+											.catch(() => {
+												console.log('biometrics failed');
+												return Toast.error(I18n.t('user.biometricsFailed'));
+											});
+									} else {
+										onExecute(dappData);
+									}
 								}}
 								small
 								rounded
