@@ -14,8 +14,8 @@ import { DappDialog } from '@/common/components/DappDialog';
 import Jailbreak from 'react-native-jailbreak';
 import Exit from 'react-native-exit-app';
 import { PasswordDialog } from '@/common/components/passwordDialog';
+import SplashScreen from 'react-native-splash-screen';
 
-// import SplashScreen from 'react-native-splash-screen'
 const Stack = createStackNavigator();
 
 export default () => {
@@ -91,9 +91,9 @@ export default () => {
 		await initChangeNode();
 		Toast.hideLoading();
 		setSceneList(panelsList);
-		// setTimeout(() => {
-		//     SplashScreen.hide()
-		// }, 300)
+		setTimeout(() => {
+			SplashScreen.hide();
+		}, 300);
 	};
 	useEffect(() => {
 		Jailbreak.check().then((result) => {
