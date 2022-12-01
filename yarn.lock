@@ -10184,7 +10184,7 @@ table@^5.2.3:
 
 tanglepay@^2.2.5:
   version "2.2.5"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.2.5.tgz#151f49795e559ba8c977a8e1859cf16043ddc9c3"
+  resolved "https://registry.npmmirror.com/tanglepay/-/tanglepay-2.2.5.tgz#151f49795e559ba8c977a8e1859cf16043ddc9c3"
   integrity sha512-J/L3Nl4Ae4peN1sKhj2T7s3BZDK+9b5rjH/hPpgRMRSUlXAVlkSWfzi0oeIecmXOZ7abYWMFTIUio5CxK4HeDg==
 
 tar@^4.0.2:
