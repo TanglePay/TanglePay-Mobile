@@ -531,7 +531,7 @@ export const DappDialog = () => {
 										onExecute(dappData);
 										if (!isNotPrompt) {
 											alert.current.show(I18n.t('user.biometriceDialog'), () => {
-												const path = 'user/biometrics';
+												const path = 'user/settings';
 												Base.push(path);
 											});
 										}
@@ -554,7 +554,7 @@ export const DappDialog = () => {
 														)
 													);
 													setIsPwdInput(true);
-													// onExecute(dappData);
+													onExecute(dappData);
 												} else {
 													console.log('user cancelled biometric prompt');
 													return Toast.error(I18n.t('user.biometricsFailed'));

@@ -151,7 +151,7 @@ export const AssetsSend = () => {
 								);
 								if (isBio === false && !isNotPrompt) {
 									alert.current.show(I18n.t('user.biometriceDialog'), () => {
-										const path = 'user/biometrics';
+										const path = 'user/settings';
 										Base.push(path);
 									});
 								} else {
