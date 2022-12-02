@@ -60,7 +60,7 @@ export const ConfirmDialog = ({ dialogRef }) => {
 							callBackRef.current && callBackRef.current();
 							hide();
 						}}>
-						<Text>{I18n.t('assets.confirm')}</Text>
+						<Text>{I18n.t('user.goSetting')}</Text>
 					</Button>
 				</View>
 				<View style={[S.marginV(10), SS.row, SS.je]}>

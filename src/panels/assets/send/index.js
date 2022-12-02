@@ -259,7 +259,7 @@ export const AssetsSend = () => {
 								)}
 								<View style={[S.marginT(100), SS.pb30]}>
 									<Button block onPress={handleSubmit}>
-										<Text>{I18n.t('user.goSetting')}</Text>
+										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
 								</View>
 							</Form>
