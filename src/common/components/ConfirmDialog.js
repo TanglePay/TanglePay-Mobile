@@ -31,6 +31,7 @@ export const ConfirmDialog = ({ dialogRef }) => {
 	};
 	const switchOn = () => {
 		setIsNotPrompt(true);
+		setShow(false);
 	};
 	return (
 		<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={hide} onBackdropPress={hide} isVisible={isShow}>

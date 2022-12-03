@@ -76,13 +76,13 @@ export const AssetsSend = () => {
 									const { success } = resultObject;
 									if (success) {
 										console.log('successful biometrics provided');
-										Toast.success(
-											I18n.t(
-												IotaSDK.checkWeb3Node(curWallet.nodeId)
-													? 'assets.sendSucc'
-													: 'assets.sendSuccRestake'
-											)
-										);
+										// Toast.success(
+										// 	I18n.t(
+										// 		IotaSDK.checkWeb3Node(curWallet.nodeId)
+										// 			? 'assets.sendSucc'
+										// 			: 'assets.sendSuccRestake'
+										// 	)
+										// );
 										setIsPwdInput(true);
 									} else {
 										console.log('user cancelled biometric prompt');
