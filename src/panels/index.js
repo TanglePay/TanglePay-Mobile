@@ -14,7 +14,6 @@ import { AssetsScan } from './assets/scan';
 import { AssetsAddAssets } from './assets/addAssets';
 import { UserWallets } from './user/wallets';
 import { UserSetting } from './user/setting';
-import { UserBiometrics } from './user/biometrics';
 import { UserNetwork } from './user/network';
 import { UserAboutUs } from './user/aboutUs';
 import { UserLang } from './user/lang';
@@ -134,10 +133,6 @@ export const panelsList = [
 	{
 		path: 'user/setting',
 		component: UserSetting
-	},
-	{
-		path: 'user/biometrics',
-		component: UserBiometrics,
 	},
 	{
 		path: 'user/wallets',

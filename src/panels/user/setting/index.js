@@ -16,6 +16,7 @@ const rnBiometrics = new ReactNativeBiometrics();
 export const UserSetting = () => {
 	useStore('common.lang');
 	const changeNode = useChangeNode();
+	const curWallet = useGetNodeWallet();
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
 	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
@@ -66,7 +67,7 @@ export const UserSetting = () => {
 			label: I18n.t('user.biometrics'),
 			type: 'switch',
 			value: isBio,
-			disabled: !bioSupport,
+			disabled: curWallet[0]?.id && !bioSupport,
 			onChange: (e) => {
 				bioSwitchChange();
 			}
@@ -78,7 +79,9 @@ export const UserSetting = () => {
 			size: 22
 		}
 	];
+	console.log(curWallet[0]?.id);
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
+
 	if (curNodeKey) {
 		list.push({
 			icon: 'network',

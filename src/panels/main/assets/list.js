@@ -360,6 +360,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
 	const [imgIndex, setImgIndex] = useState(0);
 	const [isShowPre, setIsShowPre] = useState(false);
+	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
 	const images = list.map((e) => {
 		return {
 			...e,
@@ -394,8 +395,16 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 									key={`${e.uid}_${i}`}
 									activeOpacity={0.7}
 									onPress={() => {
-										setImgIndex(i);
-										setIsShowPre(true);
+										if (isSMRNode && e.nftId) {
+											Base.push('assets/send', {
+												nftId: e.nftId,
+												currency: e.name,
+												nftImg: e.thumbnailImage || e.media
+											});
+										} else {
+											setImgIndex(i);
+											setIsShowPre(true);
+										}
 									}}>
 									<CachedImage
 										style={[

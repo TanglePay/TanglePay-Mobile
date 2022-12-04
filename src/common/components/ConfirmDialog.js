@@ -1,6 +1,6 @@
 import React, { useState, useImperativeHandle, useRef } from 'react';
 import { View, Text, Button, Switch } from 'native-base';
-import { I18n } from '@tangle-pay/common';
+import { Base, I18n } from '@tangle-pay/common';
 import Modal from 'react-native-modal';
 import { useStore } from '@tangle-pay/store';
 import { S, SS } from '@/common/style/base.style';
@@ -31,6 +31,8 @@ export const ConfirmDialog = ({ dialogRef }) => {
 	};
 	const switchOn = () => {
 		setIsNotPrompt(true);
+		setShow(false);
+		Base.goBack();
 	};
 	return (
 		<Modal hasBackdrop backdropOpacity={0.3} onBackButtonPress={hide} onBackdropPress={hide} isVisible={isShow}>
@@ -60,7 +62,7 @@ export const ConfirmDialog = ({ dialogRef }) => {
 							callBackRef.current && callBackRef.current();
 							hide();
 						}}>
-						<Text>{I18n.t('assets.confirm')}</Text>
+						<Text>{I18n.t('user.goSetting')}</Text>
 					</Button>
 				</View>
 				<View style={[S.marginV(10), SS.row, SS.je]}>

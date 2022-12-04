@@ -10,6 +10,7 @@ import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
+import { Image } from 'react-native';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -32,6 +33,8 @@ export const AssetsSend = () => {
 	const form = useRef();
 	const alert = useRef();
 	let currency = params?.currency;
+	const nftId = params?.nftId;
+	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
 	const assets = assetsList.find((e) => e.name === currency) || {};
@@ -58,7 +61,7 @@ export const AssetsSend = () => {
 			<Content>
 				<Formik
 					innerRef={form}
-					initialValues={{}}
+					initialValues={nftId ? { amount: '1' } : {}}
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
@@ -75,17 +78,15 @@ export const AssetsSend = () => {
 								.then((resultObject) => {
 									const { success } = resultObject;
 									if (success) {
-										console.log('successful biometrics provided');
-										Toast.success(
-											I18n.t(
-												IotaSDK.checkWeb3Node(curWallet.nodeId)
-													? 'assets.sendSucc'
-													: 'assets.sendSuccRestake'
-											)
-										);
+										// Toast.success(
+										// 	I18n.t(
+										// 		IotaSDK.checkWeb3Node(curWallet.nodeId)
+										// 			? 'assets.sendSucc'
+										// 			: 'assets.sendSuccRestake'
+										// 	)
+										// );
 										setIsPwdInput(true);
 									} else {
-										console.log('user cancelled biometric prompt');
 										return Toast.error(I18n.t('user.biometricsFailed'));
 									}
 								})
@@ -96,7 +97,6 @@ export const AssetsSend = () => {
 						} else {
 							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 							if (!isBio && !isPassword) {
-								console.log(password);
 								return Toast.error(I18n.t('assets.passwordError'));
 							} else {
 								setCurPwd(password);
@@ -104,7 +104,7 @@ export const AssetsSend = () => {
 						}
 
 						amount = parseFloat(amount) || 0;
-						const decimal = Math.pow(10, assets.decimal);
+						let decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
 						let residue = Number(realBalance.minus(sendAmount)) || 0;
 						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
@@ -129,7 +129,14 @@ export const AssetsSend = () => {
 							if (tokenId) {
 								mainBalance = assetsList.find((e) => e.name === IotaSDK.curNode?.token)?.realBalance;
 							}
-							console.log(password);
+							// nft
+							if (nftId) {
+								amount = 1;
+								sendAmount = 1;
+								residue = 0;
+								realBalance = 0;
+								decimal = 0;
+							}
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
@@ -138,7 +145,8 @@ export const AssetsSend = () => {
 								awaitStake: true,
 								tokenId: assets?.tokenId,
 								decimal: assets?.decimal,
-								mainBalance
+								mainBalance,
+								nftId
 							});
 							Toast.hideLoading();
 							if (res) {
@@ -151,7 +159,7 @@ export const AssetsSend = () => {
 								);
 								if (isBio === false && !isNotPrompt) {
 									alert.current.show(I18n.t('user.biometriceDialog'), () => {
-										const path = 'user/biometrics';
+										const path = 'user/setting';
 										Base.push(path);
 									});
 								} else {
@@ -180,9 +188,26 @@ export const AssetsSend = () => {
 								<Item
 									style={[SS.ml0, SS.row, SS.ac, SS.jsb, { minHeight: 40 }]}
 									error={!!errors.currency}>
-									<Text>{I18n.t('assets.currency')}</Text>
 									<View style={[SS.row, SS.ac]}>
-										<Text style={[SS.fz14, SS.cS]}>{currency}</Text>
+										<Text>{nftId ? 'NFT' : I18n.t('assets.currency')}</Text>
+										{nftId ? (
+											<Image
+												style={[
+													SS.ml12,
+													{
+														borderRadius: 4,
+														width: 30,
+														height: 30
+													}
+												]}
+												source={{ uri: nftImg }}
+											/>
+										) : null}
+									</View>
+									<View style={[SS.row, SS.ac]}>
+										<Text numberOfLines={1} style={[SS.fz14, SS.cS, { maxWidth: 180 }]}>
+											{currency}
+										</Text>
 										{/* <Image style={[S.wh(16), SS.ml10]} source={images.com.right} /> */}
 									</View>
 								</Item>
@@ -210,30 +235,34 @@ export const AssetsSend = () => {
 										value={values.receiver}
 									/>
 								</Item>
-								<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.amount')}</Text>
-								<Item style={[SS.ml0, SS.mt8]} error={!!errors.amount}>
-									<Input
-										keyboardType='numeric'
-										style={[SS.fz14, SS.pl0, S.h(44)]}
-										placeholder={I18n.t('assets.amountTips')}
-										onChangeText={handleChange('amount')}
-										value={values.amount}
-										onBlur={() => {
-											let precision = assets.decimal;
-											if (precision > 6) {
-												precision = 6;
-											}
-											let str = Base.formatNum(values.amount, precision);
-											if (parseFloat(str) < Math.pow(10, -precision)) {
-												str = String(Math.pow(10, -precision));
-											}
-											setFieldValue('amount', str);
-										}}
-									/>
-									<Text style={[SS.fz14, SS.cS]}>
-										{I18n.t('staking.available')} {available} {assets.unit}
-									</Text>
-								</Item>
+								{!nftId ? (
+									<>
+										<Text style={[SS.fz16, SS.mt24]}>{I18n.t('assets.amount')}</Text>
+										<Item style={[SS.ml0, SS.mt8]} error={!!errors.amount}>
+											<Input
+												keyboardType='numeric'
+												style={[SS.fz14, SS.pl0, S.h(44)]}
+												placeholder={I18n.t('assets.amountTips')}
+												onChangeText={handleChange('amount')}
+												value={values.amount}
+												onBlur={() => {
+													let precision = assets.decimal;
+													if (precision > 6) {
+														precision = 6;
+													}
+													let str = Base.formatNum(values.amount, precision);
+													if (parseFloat(str) < Math.pow(10, -precision)) {
+														str = String(Math.pow(10, -precision));
+													}
+													setFieldValue('amount', str);
+												}}
+											/>
+											<Text style={[SS.fz14, SS.cS]}>
+												{I18n.t('staking.available')} {available} {assets.unit}
+											</Text>
+										</Item>
+									</>
+								) : null}
 								{isBio ? (
 									<View />
 								) : (
@@ -259,7 +288,7 @@ export const AssetsSend = () => {
 								)}
 								<View style={[S.marginT(100), SS.pb30]}>
 									<Button block onPress={handleSubmit}>
-										<Text>{I18n.t('user.goSetting')}</Text>
+										<Text>{I18n.t('assets.confirm')}</Text>
 									</Button>
 								</View>
 							</Form>
