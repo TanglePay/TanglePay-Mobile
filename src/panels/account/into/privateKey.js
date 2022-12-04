@@ -123,7 +123,7 @@ export const AccountIntoPrivateKey = () => {
 									<View style={[S.w(ThemeVar.deviceWidth - 50)]}>
 										<Text
 											style={[
-												SS.fz12,
+												SS.fz14,
 												S.tl,
 												S.lineHeight(22),
 												S.color(!errors.agree ? ThemeVar.textColor : ThemeVar.brandDanger)
