@@ -80,9 +80,11 @@ export const Bridge = {
 							merchant = '',
 							item_desc = '',
 							assetId = '',
-							data = ''
+							data = '',
+							tag = '',
+							nftId = ''
 						} = params;
-						const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}`;
+						const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}`;
 						Linking.openURL(url);
 						break;
 					case 'iota_connect':

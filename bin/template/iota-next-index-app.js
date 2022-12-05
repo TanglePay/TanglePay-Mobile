@@ -3905,7 +3905,19 @@
 		const nativeTokens = output?.output?.nativeTokens || [];
 		let unlockConditions = output?.output?.unlockConditions || [];
 		const unlockConditionsData = unlockConditions.find((e) => e.type != ADDRESS_UNLOCK_CONDITION_TYPE);
-		return !isSpent && outputType == BASIC_OUTPUT_TYPE && !nativeTokens.length && !unlockConditionsData;
+		const features = output?.output?.features || [];
+		let featuresLock = false;
+		if (features.length > 0) {
+			const PARTICIPATE = `0x${util_js.Converter.utf8ToHex('PARTICIPATE')}`;
+			featuresLock = !!features.find((e) => e.tag === PARTICIPATE);
+		}
+		return (
+			!featuresLock &&
+			!isSpent &&
+			outputType == BASIC_OUTPUT_TYPE &&
+			!nativeTokens.length &&
+			!unlockConditionsData
+		);
 	}
 
 	// Copyright 2020 IOTA Stiftung
@@ -4455,8 +4467,13 @@
 							}
 						}
 					],
-					features: []
+					features: output.features || []
 				};
+				if (output.nftId) {
+					o.nftId = output.nftId;
+					o.type = NFT_OUTPUT_TYPE;
+					o.immutableFeatures = output.immutableFeatures || [];
+				}
 				const writeStream = new util_js.WriteStream();
 				serializeOutput(writeStream, o);
 				const finalBytes = writeStream.finalBytes();
@@ -4726,6 +4743,7 @@
 	async function calculateInputs(client, seed, initialAddressState, nextAddressPath, outputs, zeroCount = 5) {
 		const localClient = typeof client === 'string' ? new SingleNodeClient(client) : client;
 		const protocolInfo = await localClient.protocolInfo();
+		const clientInfo = await localClient.info();
 		let requiredBalance = bigInt__default['default'](0);
 		for (const output of outputs) {
 			requiredBalance = requiredBalance.plus(output.amount);
@@ -4734,6 +4752,7 @@
 		const inputsAndSignatureKeyPairs = [];
 		let finished = false;
 		let zeroBalance = 0;
+		let minBalance = 0;
 		do {
 			const path = nextAddressPath(initialAddressState);
 			const addressSeed = seed.generateSeedFromPath(new crypto_js.Bip32Path(path));
@@ -4741,9 +4760,29 @@
 			const ed25519Address = new Ed25519Address(addressKeyPair.publicKey);
 			const addressBytes = ed25519Address.toAddress();
 			const indexerPlugin = new IndexerPluginClient(client);
+			const addressBech32 = Bech32Helper.toBech32(ED25519_ADDRESS_TYPE, addressBytes, protocolInfo.bech32Hrp);
 			const addressOutputIds = await indexerPlugin.outputs({
-				addressBech32: Bech32Helper.toBech32(ED25519_ADDRESS_TYPE, addressBytes, protocolInfo.bech32Hrp)
+				addressBech32
 			});
+
+			if (!minBalance) {
+				minBalance = TransactionHelper.getStorageDeposit(
+					{
+						address: Bech32Helper.addressFromBech32(addressBech32, protocolInfo.bech32Hrp),
+						addressType: ED25519_ADDRESS_TYPE,
+						type: BASIC_OUTPUT_TYPE,
+						amount: '',
+						unlockConditions: [
+							{
+								type: ADDRESS_UNLOCK_CONDITION_TYPE,
+								address: Bech32Helper.addressFromBech32(addressBech32, protocolInfo.bech32Hrp)
+							}
+						]
+					},
+					clientInfo.protocol.rentStructure
+				);
+			}
+
 			if (addressOutputIds.items.length === 0) {
 				zeroBalance++;
 				if (zeroBalance >= zeroCount) {
@@ -4792,7 +4831,12 @@
 										});
 									}
 								}
-								finished = true;
+								if (
+									consumedBalance == requiredBalance ||
+									consumedBalance.minus(requiredBalance).greaterOrEquals(minBalance)
+								) {
+									finished = true;
+								}
 							}
 						}
 					}

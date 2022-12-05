@@ -17,6 +17,7 @@ export const Assets = () => {
 	const [isRequestAssets, _] = useStore('common.isRequestAssets');
 	const [isRequestHis, __] = useStore('common.isRequestHis');
 	const [unlockConditions] = useStore('common.unlockConditions');
+	const [lockedList] = useStore('common.lockedList');
 	const changeNode = useChangeNode();
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
 	const [___, refreshAssets] = useStore('common.forceRequest');
@@ -161,12 +162,19 @@ export const Assets = () => {
 								</Text>
 							</TouchableOpacity>
 						)}
-						{unlockConditions.length > 0 ? (
+						{unlockConditions.length > 0 || lockedList.length > 0 ? (
 							<TouchableOpacity
 								onPress={() => Base.push('assets/tradingList')}
 								activeOpacity={0.8}
-								style={[SS.ph5, SS.c, S.bg('#D53554'), { borderRadius: 4, height: 18 }]}>
-								<Text style={[SS.cW, SS.fz14]}>{String(unlockConditions.length)}</Text>
+								style={[
+									SS.ph5,
+									SS.c,
+									S.bg(unlockConditions.length == 0 ? '#3671ee' : '#D53554'),
+									{ borderRadius: 4, height: 18 }
+								]}>
+								<Text style={[SS.cW, SS.fz14]}>
+									{String(unlockConditions.length + lockedList.length)}
+								</Text>
 							</TouchableOpacity>
 						) : null}
 					</View>

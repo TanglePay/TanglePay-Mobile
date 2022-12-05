@@ -29,7 +29,7 @@ const Item = (item) => {
 	};
 
 	useEffect(() => {
-		if (/ipfs/.test(item.logoUrl)) {
+		if (/^ipfs/.test(item.logoUrl)) {
 			fetch(item.logoUrl)
 				.then((res) => res.json())
 				.then((res) => {
@@ -60,7 +60,7 @@ const Item = (item) => {
 						<Text style={[SS.fw600, SS.cW, SS.fz22]}>{String(item.token).toLocaleUpperCase()[0]}</Text>
 					</View>
 				</View>
-				<View style={[{ height: 72 }, SS.row, SS.ac, SS.flex1, S.border(2)]}>
+				<View style={[{ height: 72 }, SS.row, SS.ac, SS.jsb, SS.mr24, SS.flex1, S.border(2)]}>
 					<View style={{ width: 100 }}>
 						<Text style={[SS.cP, SS.fz14, SS.fw600]}>
 							{item.token}: {item.amountStr}
@@ -154,19 +154,98 @@ const Item = (item) => {
 	);
 };
 
+const LockedItem = (item) => {
+	const [ipfsImage, setIpfsImage] = useState('');
+	const [opacity, setOpacity] = useState(1);
+	useEffect(() => {
+		if (/^ipfs/.test(item.logoUrl)) {
+			fetch(item.logoUrl)
+				.then((res) => res.json())
+				.then((res) => {
+					setIpfsImage(res?.image || '');
+				});
+		}
+	}, [item.logoUrl]);
+	return (
+		<View style={[S.border(2)]}>
+			<View style={[{ height: 72 }, SS.w100, SS.ac, SS.row]}>
+				<View style={[SS.c, SS.pr, { height: 72, width: 80 }]}>
+					<Image
+						style={[
+							S.wh(32),
+							S.radius(32),
+							SS.pa,
+							SS.bgW,
+							{ left: 24, top: 20, zIndex: 1, opacity },
+							S.border(4)
+						]}
+						source={{ uri: ipfsImage || item.logoUrl }}
+						onError={() => {
+							setOpacity(0);
+						}}
+					/>
+					<View style={[{ width: 32, height: 32, borderRadius: 32 }, S.border(4), SS.bgP, SS.c]}>
+						<Text style={[SS.fw600, SS.cW, SS.fz22]}>{String(item.token).toLocaleUpperCase()[0]}</Text>
+					</View>
+				</View>
+				<View style={[{ height: 72 }, SS.row, SS.ac, SS.jsb, SS.mr24, SS.flex1, S.border(2)]}>
+					<View style={{ width: 100 }}>
+						<Text style={[SS.cP, SS.fz14, SS.fw600]}>
+							{item.token}: {item.amountStr}
+						</Text>
+					</View>
+					<View style={{ width: 130 }}>
+						<View>
+							<Text numberOfLines={1} style={[SS.fz14, SS.fw400, SS.mb4, { width: 130 }]}>
+								{item.blockId}
+							</Text>
+						</View>
+						<View>
+							<Text numberOfLines={1} style={[SS.fz14, SS.fw400, { width: 130 }]}>
+								{I18n.t('assets.tradingFrom')} {Base.handleAddress(item.unlockAddress)}
+							</Text>
+						</View>
+					</View>
+				</View>
+			</View>
+			<View style={[SS.row, SS.ac, SS.jsb]}>
+				<View style={[SS.ac, SS.row, SS.jsb, SS.pr24, { height: 60 }]}>
+					<View style={[SS.ac, SS.row]}>
+						<View style={[SS.c, { width: 80 }]}>
+							<SvgIcon size='24' style={{ width: 24, height: 24 }} name='tradingTime' />
+						</View>
+						<Text style={[SS.fz14, SS.fw400]}>{item.timeStr}</Text>
+					</View>
+				</View>
+				<View style={[SS.bgS, SS.mr24, { borderRadius: 4, paddingHorizontal: 10, paddingVertical: 4 }]}>
+					<Text style={[SS.fz12]}> {I18n.t('assets.locked')}</Text>
+				</View>
+			</View>
+		</View>
+	);
+};
+
 export const AssetsTradingList = () => {
 	const [unlockConditions] = useStore('common.unlockConditions');
+	const [lockedList] = useStore('common.lockedList');
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.tradingList')} />
 			<ScrollView>
 				<View style={[S.h(10)]} />
-				{unlockConditions.length > 0 ? (
-					<View>
-						{unlockConditions.map((e, i) => {
-							return <Item {...e} key={e.blockId} i={i} />;
-						})}
-					</View>
+				{unlockConditions.length > 0 || lockedList.length > 0 ? (
+					<>
+						<View>
+							{unlockConditions.map((e, i) => {
+								return <Item {...e} key={e.blockId} i={i} />;
+							})}
+						</View>
+						<View>
+							{lockedList.map((e, i) => {
+								return <LockedItem {...e} key={e.blockId} />;
+							})}
+						</View>
+					</>
 				) : (
 					<NoData />
 				)}
