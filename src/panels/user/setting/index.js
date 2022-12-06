@@ -67,7 +67,7 @@ export const UserSetting = () => {
 			label: I18n.t('user.biometrics'),
 			type: 'switch',
 			value: isBio,
-			disabled: curWallet[0]?.id && !bioSupport,
+			disabled: !curWallet[0]?.id || !bioSupport,
 			onChange: (e) => {
 				bioSwitchChange();
 			}
