@@ -3,19 +3,26 @@ import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native'
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
-import { SS, ThemeVar, Toast } from '@/common';
+import { SS, ThemeVar, Toast, SvgIcon } from '@/common';
 import { useGetNodeWallet, useChangeNode } from '@tangle-pay/store/common';
 import { useStore } from '@tangle-pay/store';
 import BigNumber from 'bignumber.js';
 import { Bridge } from '@/common/bridge';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Unit } from '@iota/unit-converter';
+import ReactNativeBiometrics from 'react-native-biometrics';
 
+const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
+	const [showPwd, setShowPwd] = useState(false);
+	const [isBio] = useStore('common.biometrics');
+	const [curPwd] = useStore('common.curPwd');
+	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
+	const [isNotPrompt] = useStore(false);
 	const [dappData, setDappData] = useState({
 		texts: []
 	});
@@ -60,7 +67,9 @@ export const DappDialog = () => {
 		expires,
 		taggedData,
 		contract,
-		foundryData
+		foundryData,
+		tag,
+		nftId
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
@@ -101,7 +110,7 @@ export const DappDialog = () => {
 					// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 					// realBalance = realBalance.minus(bigStatedAmount);
 					let residue = Number(realBalance.minus(amount)) || 0;
-					const decimal = Math.pow(10, assets.decimal);
+					let decimal = Math.pow(10, assets.decimal);
 					try {
 						if (!IotaSDK.checkWeb3Node(curWallet.nodeId) && !IotaSDK.checkSMR(curWallet.nodeId)) {
 							if (amount < decimal) {
@@ -117,6 +126,13 @@ export const DappDialog = () => {
 							}
 						}
 						setLoading(true);
+						// nft
+						if (nftId) {
+							amount = 1;
+							residue = 0;
+							realBalance = 0;
+							decimal = 0;
+						}
 						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: assets?.contract,
 							token: assets?.name,
@@ -126,7 +142,9 @@ export const DappDialog = () => {
 							tokenId: foundryData?.tokenId,
 							decimal: assets?.decimal,
 							mainBalance,
-							awaitStake: true
+							awaitStake: true,
+							tag,
+							nftId
 						});
 						if (!res) {
 							setLoading(false);
@@ -242,7 +260,9 @@ export const DappDialog = () => {
 			origin = '',
 			expires = '',
 			taggedData = '',
-			assetId = ''
+			assetId = '',
+			nftId = '',
+			tag = ''
 		} = res;
 		let toNetId;
 		if (network) {
@@ -267,6 +287,9 @@ export const DappDialog = () => {
 					case 'eth_sendTransaction':
 						{
 							value = parseFloat(value) || 0;
+							if (nftId) {
+								value = 1;
+							}
 							let foundryData = null;
 							if (!value && !taggedData) {
 								Toast.error('Required: value');
@@ -303,7 +326,32 @@ export const DappDialog = () => {
 								}
 							} else {
 								if (IotaSDK.checkSMR(toNetId || curNodeId)) {
-									if (assetId) {
+									if (nftId) {
+										value = 1;
+										showValue = 1;
+										unit = Base.handleAddress(nftId);
+										setLoading(true);
+										if (IotaSDK?.IndexerPluginClient?.nft) {
+											let nftInfo = await IotaSDK.IndexerPluginClient.nft(nftId);
+											if (nftInfo?.items?.[0]) {
+												nftInfo = await IotaSDK.client.output(nftInfo?.items?.[0]);
+												let info = (nftInfo?.output?.immutableFeatures || []).find((d) => {
+													return d.type == 2;
+												});
+												if (info && info.data) {
+													try {
+														info = IotaSDK.hexToUtf8(info.data);
+														info = JSON.parse(info);
+														unit = info.name;
+													} catch (error) {
+														console.log(error);
+													}
+												}
+											}
+										}
+										showUnit = unit;
+										setLoading(false);
+									} else if (assetId) {
 										setLoading(true);
 										foundryData = await IotaSDK.foundry(assetId);
 										setLoading(false);
@@ -364,7 +412,9 @@ export const DappDialog = () => {
 								address,
 								taggedData,
 								contract,
-								foundryData
+								foundryData,
+								tag,
+								nftId
 							});
 							show();
 						}
@@ -501,20 +551,65 @@ export const DappDialog = () => {
 								})}
 							</Text>
 						</View>
-						{dappData.type !== 'iota_connect' && (
+						{!isBio && dappData.type !== 'iota_connect' && (
 							<Item inlineLabel>
 								<Input
 									keyboardType='ascii-capable'
-									secureTextEntry
+									secureTextEntry={!showPwd}
 									onChangeText={setPassword}
 									placeholder={I18n.t('assets.passwordTips')}
+								/>
+								<SvgIcon
+									onPress={() => setShowPwd(!showPwd)}
+									name={showPwd ? 'eye_1' : 'eye_0'}
+									size={20}
+									style={[SS.ml10]}
 								/>
 							</Item>
 						)}
 						<View style={[SS.row, SS.jsb, SS.ac, SS.mt25, SS.pb20]}>
 							<Button
 								onPress={() => {
-									onExecute(dappData);
+									if (!isBio && dappData.type !== 'iota_connect') {
+										onExecute(dappData);
+										if (!isNotPrompt) {
+											alert.current.show(I18n.t('user.biometriceDialog'), () => {
+												const path = 'user/settings';
+												Base.push(path);
+											});
+										}
+									} else if (isBio && dappData.type !== 'iota_connect') {
+										setPassword(curPwd);
+										rnBiometrics
+											.simplePrompt({
+												promptMessage: I18n.t('user.bioVerification'),
+												cancelButtonText: I18n.t('apps.cancel')
+											})
+											.then((resultObject) => {
+												const { success } = resultObject;
+												if (success) {
+													console.log('successful biometrics provided');
+													Toast.success(
+														I18n.t(
+															IotaSDK.checkWeb3Node(curWallet.nodeId)
+																? 'assets.sendSucc'
+																: 'assets.sendSuccRestake'
+														)
+													);
+													setIsPwdInput(true);
+													onExecute(dappData);
+												} else {
+													console.log('user cancelled biometric prompt');
+													return Toast.error(I18n.t('user.biometricsFailed'));
+												}
+											})
+											.catch(() => {
+												console.log('biometrics failed');
+												return Toast.error(I18n.t('user.biometricsFailed'));
+											});
+									} else {
+										onExecute(dappData);
+									}
 								}}
 								small
 								rounded

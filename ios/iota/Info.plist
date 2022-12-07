@@ -49,7 +49,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>In order to scan the QR code to get the address information of the receiver, TanglePay will have to get the access of your camera.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>$(PRODUCT_NAME) requires FaceID access to allows you quick and secure access.</string>
+	<string>TanglePay requires FaceID access to allows you quick and secure access.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Please allow TanglePay to save NFT pictures on your phone.
 </string>
