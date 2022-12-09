@@ -3898,26 +3898,29 @@
 		}
 		return [!isError, tips];
 	}
-	// check output
-	function checkOutput(output) {
-		const isSpent = output?.metadata?.isSpent;
-		const outputType = output?.output?.type;
-		const nativeTokens = output?.output?.nativeTokens || [];
+	function checkUnLock(output) {
+		const nowTime = parseInt(new Date().getTime() / 1000);
 		let unlockConditions = output?.output?.unlockConditions || [];
-		const unlockConditionsData = unlockConditions.find((e) => e.type != ADDRESS_UNLOCK_CONDITION_TYPE);
+		let lockData = unlockConditions.find((e) => e.type != ADDRESS_UNLOCK_CONDITION_TYPE);
+		if (lockData && lockData.type == TIMELOCK_UNLOCK_CONDITION_TYPE && nowTime > lockData.unixTime) {
+			lockData = null;
+		}
 		const features = output?.output?.features || [];
 		let featuresLock = false;
 		if (features.length > 0) {
 			const PARTICIPATE = `0x${util_js.Converter.utf8ToHex('PARTICIPATE')}`;
 			featuresLock = !!features.find((e) => e.tag === PARTICIPATE);
 		}
-		return (
-			!featuresLock &&
-			!isSpent &&
-			outputType == BASIC_OUTPUT_TYPE &&
-			!nativeTokens.length &&
-			!unlockConditionsData
-		);
+		return !lockData && !featuresLock;
+	}
+	// check output
+	function checkOutput(output) {
+		const isSpent = output?.metadata?.isSpent;
+		const outputType = output?.output?.type;
+		const nativeTokens = output?.output?.nativeTokens || [];
+		const isUnLock = checkUnLock(output);
+		const canUse = !isSpent && outputType == BASIC_OUTPUT_TYPE && !nativeTokens.length && isUnLock;
+		return canUse;
 	}
 
 	// Copyright 2020 IOTA Stiftung
@@ -3948,9 +3951,8 @@
 			for (const [index, outputId] of response.items.entries()) {
 				const output = localOutputDatas[index];
 				if (!output.metadata.isSpent) {
-					let unlockConditions = output.output?.unlockConditions || [];
-					const isLock = unlockConditions.find((e) => e.type != ADDRESS_UNLOCK_CONDITION_TYPE);
-					if (!isLock) {
+					const isUnLock = checkUnLock(output);
+					if (isUnLock) {
 						total = total.plus(output.output.amount);
 					}
 					outputIds.push(outputId);
@@ -3971,7 +3973,7 @@
 							nativeTokens[token.id] = nativeTokens[token.id].add(
 								util_js.HexHelper.toBigInt256(token.amount)
 							);
-							if (!isLock) {
+							if (isUnLock) {
 								availableNativeTokens[token.id] =
 									(_a = availableNativeTokens[token.id]) !== null && _a !== void 0
 										? _a
@@ -6097,6 +6099,7 @@
 	exports.UnitsHelper = UnitsHelper;
 	exports.verifySMRSendParams = verifySMRSendParams;
 	exports.checkOutput = checkOutput;
+	exports.checkUnLock = checkUnLock;
 	exports.addressBalance = addressBalance;
 	exports.blockIdFromMilestonePayload = blockIdFromMilestonePayload;
 	exports.buildTransactionPayload = buildTransactionPayload;
