@@ -38,6 +38,7 @@ import Remove from './Remove';
 import Right from './Right';
 import Scan from './Scan';
 import Search from './Search';
+import Send from './Send';
 import Set from './Set';
 import Share from './Share';
 import Stake from './Stake';
@@ -84,6 +85,7 @@ export { default as Remove } from './Remove';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
 export { default as Search } from './Search';
+export { default as Send } from './Send';
 export { default as Set } from './Set';
 export { default as Share } from './Share';
 export { default as Stake } from './Stake';
@@ -169,26 +171,28 @@ let IconFont = ({ name, ...rest }) => {
       return <Scan key="L35" {...rest} />;
     case 'search':
       return <Search key="L36" {...rest} />;
+    case 'send':
+      return <Send key="L37" {...rest} />;
     case 'set':
-      return <Set key="L37" {...rest} />;
+      return <Set key="L38" {...rest} />;
     case 'share':
-      return <Share key="L38" {...rest} />;
+      return <Share key="L39" {...rest} />;
     case 'stake':
-      return <Stake key="L39" {...rest} />;
+      return <Stake key="L40" {...rest} />;
     case 'staking':
-      return <Staking key="L40" {...rest} />;
+      return <Staking key="L41" {...rest} />;
     case 'tick':
-      return <Tick key="L41" {...rest} />;
+      return <Tick key="L42" {...rest} />;
     case 'time':
-      return <Time key="L42" {...rest} />;
+      return <Time key="L43" {...rest} />;
     case 'tradingTime':
-      return <TradingTime key="L43" {...rest} />;
+      return <TradingTime key="L44" {...rest} />;
     case 'up':
-      return <Up key="L44" {...rest} />;
+      return <Up key="L45" {...rest} />;
     case 'view':
-      return <View key="L45" {...rest} />;
+      return <View key="L46" {...rest} />;
     case 'wallet':
-      return <Wallet key="L46" {...rest} />;
+      return <Wallet key="L47" {...rest} />;
   }
 
   return null;
