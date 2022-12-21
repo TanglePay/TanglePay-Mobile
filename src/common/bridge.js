@@ -131,6 +131,12 @@ export const Bridge = {
 							});
 						}
 						break;
+					case 'get_login_token':
+						{
+							const token = (await Base.getLocalData('token')) || '';
+							this.sendMessage('get_login_token', token);
+						}
+						break;
 					default:
 						break;
 				}
