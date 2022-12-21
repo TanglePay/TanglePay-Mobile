@@ -394,6 +394,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 								<TouchableOpacity
 									key={`${e.uid}_${i}`}
 									activeOpacity={0.7}
+									style={[SS.pr]}
 									onPress={() => {
 										if (isSMRNode && e.nftId) {
 											Base.push('assets/send', {
@@ -406,6 +407,51 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											setIsShowPre(true);
 										}
 									}}>
+									<View
+										style={[
+											SS.ac,
+											SS.jsb,
+											SS.pa,
+											S.w(imgW),
+											SS.row,
+											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+											{
+												borderTopLeftRadius: 8,
+												borderTopRightRadius: 8,
+												zIndex: 3,
+												height: 30,
+												left: 0,
+												backgroundColor: 'rgba(0,0,0,0.5)'
+											}
+										]}>
+										<SvgIcon
+											onPress={() => {
+												setImgIndex(i);
+												setIsShowPre(true);
+											}}
+											size={20}
+											style={[SS.ml4]}
+											name='eye_1'
+											color='#ffffff'
+										/>
+										{isSMRNode && e.nftId ? (
+											<SvgIcon
+												onPress={() => {
+													if (isSMRNode && e.nftId) {
+														Base.push('assets/send', {
+															nftId: e.nftId,
+															currency: e.name,
+															nftImg: e.thumbnailImage || e.media
+														});
+													}
+												}}
+												size={18}
+												style={[SS.mr4]}
+												name='send'
+												color='#ffffff'
+											/>
+										) : null}
+									</View>
 									<CachedImage
 										style={[
 											S.radius(8),
