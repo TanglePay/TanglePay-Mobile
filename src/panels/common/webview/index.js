@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Container, Content } from 'native-base';
+import { Container, Content, Right, Button } from 'native-base';
 import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 import { Nav, ThemeVar } from '@/common';
 import { Base } from '@tangle-pay/common';
 import { Bridge } from '@/common/bridge';
+import { SvgIcon } from '@/common/assets';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 
 export const CommonWebview = () => {
@@ -34,7 +35,23 @@ export const CommonWebview = () => {
 	return (
 		<>
 			<Container>
-				<Nav title={params.title || ''} />
+				<Nav
+					leftIcon={null}
+					title={params.title || ''}
+					headerStyle={{ height: 40 }}
+					rightContent={
+						<Right>
+							<Button
+								onPress={() => {
+									Base.goBack();
+								}}
+								style={{ marginRight: 0 }}
+								transparent>
+								<SvgIcon name='radio' size={18} color={ThemeVar.textColor} />
+							</Button>
+						</Right>
+					}
+				/>
 				<Content>
 					<WebView
 						ref={webview}

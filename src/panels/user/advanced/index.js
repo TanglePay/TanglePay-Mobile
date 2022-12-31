@@ -62,7 +62,7 @@ export const UserAdvanced = () => {
 					<Switch
 						value={polyganSupport}
 						onValueChange={async (e) => {
-							setIotaSupport(e);
+							setPolyganSupport(e);
 							Base.setLocalData('common.polyganSupport', e ? 1 : 0);
 							await handleChange();
 						}}
