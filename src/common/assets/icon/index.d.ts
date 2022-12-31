@@ -37,6 +37,7 @@ export { default as NoScreenshot } from './NoScreenshot';
 export { default as NoData } from './NoData';
 export { default as Outto } from './Outto';
 export { default as Privacy } from './Privacy';
+export { default as Radio } from './Radio';
 export { default as Remove } from './Remove';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
@@ -54,7 +55,7 @@ export { default as View } from './View';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'add' | 'advanced' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'fingerprint' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'remove' | 'right' | 'scan' | 'search' | 'send' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'tradingTime' | 'up' | 'view' | 'wallet';
+  name: 'about' | 'add' | 'advanced' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'fingerprint' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'radio' | 'remove' | 'right' | 'scan' | 'search' | 'send' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'tradingTime' | 'up' | 'view' | 'wallet';
   size?: number;
   color?: string | string[];
 }

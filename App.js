@@ -88,7 +88,7 @@ export default () => {
 			console.log(error);
 		}
 		await getLocalInfo();
-		await initChangeNode();
+		initChangeNode();
 		Toast.hideLoading();
 		setSceneList(panelsList);
 		setTimeout(() => {
