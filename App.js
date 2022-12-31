@@ -82,18 +82,15 @@ export default () => {
 	const init = async () => {
 		Trace.login();
 		Toast.showLoading();
-		try {
-			await IotaSDK.getNodes();
-		} catch (error) {
-			console.log(error);
-		}
-		await getLocalInfo();
-		initChangeNode();
-		Toast.hideLoading();
-		setSceneList(panelsList);
-		setTimeout(() => {
-			SplashScreen.hide();
-		}, 300);
+		IotaSDK.getNodes(async () => {
+			await getLocalInfo();
+			await initChangeNode();
+			Toast.hideLoading();
+			setSceneList(panelsList);
+			setTimeout(() => {
+				SplashScreen.hide();
+			}, 300);
+		});
 	};
 	useEffect(() => {
 		Jailbreak.check().then((result) => {

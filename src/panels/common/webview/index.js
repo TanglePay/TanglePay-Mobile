@@ -7,7 +7,10 @@ import { Base } from '@tangle-pay/common';
 import { Bridge } from '@/common/bridge';
 import { SvgIcon } from '@/common/assets';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-
+import { StatusBar, Dimensions } from 'react-native';
+const deviceHeight = Dimensions.get('screen').height;
+const toolH = ThemeVar.platform === 'ios' ? 40 : 40 + StatusBar.currentHeight;
+const webviewH = deviceHeight - toolH;
 export const CommonWebview = () => {
 	const [curWallet] = useGetNodeWallet();
 	const { params } = useRoute();
@@ -38,7 +41,7 @@ export const CommonWebview = () => {
 				<Nav
 					leftIcon={null}
 					title={params.title || ''}
-					headerStyle={{ height: 40 }}
+					headerStyle={{ height: toolH }}
 					rightContent={
 						<Right>
 							<Button
@@ -57,7 +60,7 @@ export const CommonWebview = () => {
 						ref={webview}
 						injectedJavaScript={Bridge.injectedJavaScript}
 						onMessage={(e) => Bridge.onMessage(e)}
-						style={{ height: ThemeVar.contentHeight }}
+						style={{ height: webviewH }}
 						source={{ uri: url }}
 					/>
 				</Content>
