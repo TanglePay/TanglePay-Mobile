@@ -55,15 +55,13 @@ export const CommonWebview = () => {
 						</Right>
 					}
 				/>
-				<Content>
-					<WebView
-						ref={webview}
-						injectedJavaScript={Bridge.injectedJavaScript}
-						onMessage={(e) => Bridge.onMessage(e)}
-						style={{ height: webviewH }}
-						source={{ uri: url }}
-					/>
-				</Content>
+				<WebView
+					ref={webview}
+					injectedJavaScript={Bridge.injectedJavaScript}
+					onMessage={(e) => Bridge.onMessage(e)}
+					style={{ flex: 1 }}
+					source={{ uri: url }}
+				/>
 			</Container>
 		</>
 	);
