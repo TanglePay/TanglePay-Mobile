@@ -26,20 +26,10 @@ export default () => {
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
-		const list = [
-			'common.curNodeId',
-			'common.showAssets',
-			'common.lang',
-			'common.price',
-			'common.disTrace',
-			'common.bioPrompt'
-		];
+		const list = ['common.showAssets', 'common.lang', 'common.price', 'common.disTrace', 'common.bioPrompt'];
 		const res = await Promise.all(list.map((e) => Base.getLocalData(e)));
 		list.map((e, i) => {
 			switch (e) {
-				case 'common.curNodeId':
-					changeNode(res[i] || 1);
-					break;
 				default:
 					dispatch({ type: e, data: res[i] });
 					break;
