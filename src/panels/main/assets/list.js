@@ -69,7 +69,7 @@ export const CoinList = ({ setHeight }) => {
 								SS.mr12,
 								S.border(4)
 							]}
-							source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.name) }}
+							source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.isSMRToken ? e.tokenId : e.name) }}
 							onError={() => {
 								setHideIcon((d) => {
 									return { ...d, [e.name]: true };
