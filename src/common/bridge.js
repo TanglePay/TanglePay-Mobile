@@ -76,20 +76,61 @@ export const Bridge = {
 				switch (method) {
 					case 'eth_sendTransaction':
 					case 'iota_sendTransaction':
-						const {
-							to,
-							value,
-							unit = '',
-							network = '',
-							merchant = '',
-							item_desc = '',
-							assetId = '',
-							data = '',
-							tag = '',
-							nftId = ''
-						} = params;
-						const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}`;
-						Linking.openURL(url);
+						const checkSignData = (data) => {
+							let isCall = false;
+							[
+								'0xdd62ed3e',
+								'0x70a08231',
+								'0x313ce567',
+								'0xa0712d68',
+								'0x07546172',
+								'0x06fdde03',
+								'0x95d89b41',
+								'0x18160ddd'
+							].forEach((e) => {
+								if (RegExp(`^${e}`).test(data)) {
+									isCall = true;
+								}
+							});
+							return isCall;
+						};
+
+						if (method === 'eth_sendTransaction' && params.data && checkSignData(params.data)) {
+							const abiRes = IotaSDK.getAbiParams(params.to, params.data);
+							if (abiRes.web3Contract) {
+								let abiParams = [];
+								for (const i in abiRes.params) {
+									if (Object.hasOwnProperty.call(abiRes.params, i) && /^\d$/.test(i)) {
+										abiParams.push(abiRes.params[i]);
+									}
+								}
+								abiRes.web3Contract.methods[abiRes.functionName](...abiParams)
+									.call()
+									.then((res) => {
+										this.sendMessage(method, res);
+									})
+									.catch((error) => {
+										this.sendErrorMessage(method, {
+											msg: error.toString()
+										});
+									});
+							}
+						} else {
+							const {
+								to,
+								value,
+								unit = '',
+								network = '',
+								merchant = '',
+								item_desc = '',
+								assetId = '',
+								data = '',
+								tag = '',
+								nftId = ''
+							} = params;
+							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}`;
+							Linking.openURL(url);
+						}
 						break;
 					case 'iota_connect':
 					case 'iota_sign':

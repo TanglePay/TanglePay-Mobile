@@ -87,20 +87,6 @@ export const DappDialog = () => {
 			case 'iota_sendTransaction':
 			case 'eth_sendTransaction':
 				{
-					if (abiFunc && abiFunc !== 'transfer') {
-						if (contractInfo) {
-							try {
-								Toast.showLoading();
-								const contractRes = await contractInfo.methods[abiFunc](...abiParams).call();
-								Toast.hideLoading();
-								Bridge.sendMessage(type, contractRes);
-							} catch (error) {
-								Toast.hideLoading();
-								return Toast.error(error.toString());
-							}
-						}
-						return;
-					}
 					let mainBalance = 0;
 					let curToken = IotaSDK.curNode?.token;
 					if (contract) {
@@ -342,7 +328,10 @@ export const DappDialog = () => {
 									contractInfo = web3Contract;
 									abiFunc = functionName;
 									switch (functionName) {
-										// case 'transfer':
+										case 'transfer':
+											address = params[0];
+											value = params[1];
+											break;
 										case 'approve':
 											const contractGasLimit =
 												(IotaSDK.curNode.contractList || []).find(
@@ -359,8 +348,6 @@ export const DappDialog = () => {
 											value = params[1];
 											break;
 										default:
-											address = params[0];
-											value = params[1];
 											break;
 									}
 
