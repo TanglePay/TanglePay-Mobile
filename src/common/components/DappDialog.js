@@ -356,7 +356,6 @@ export const DappDialog = () => {
 									IotaSDK.importContract(contract, curToken);
 									sendAmount = Number(new BigNumber(value));
 									showValue = new BigNumber(value).div(BigNumber(10).pow(decimals)).valueOf();
-									setInit(true);
 									Toast.hideLoading();
 								}
 								showUnit = curToken;
