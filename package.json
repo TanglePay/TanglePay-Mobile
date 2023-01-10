@@ -80,7 +80,7 @@
     "readable-stream": "^1.0.33",
     "rn-fetch-blob": "^0.12.0",
     "stream-browserify": "^1.0.0",
-    "tanglepay": "^2.3.5",
+    "tanglepay": "^2.3.6",
     "unorm": "^1.6.0",
     "url": "^0.10.3",
     "web3": "1.7.3",
