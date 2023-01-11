@@ -306,7 +306,6 @@ export const DappDialog = () => {
 							let sendAmount = 0;
 							let contract = '';
 							let abiFunc = '';
-							let contractInfo = null;
 							let abiParams = [];
 							let gasFee = '';
 							let contractAmount = '';
@@ -318,7 +317,7 @@ export const DappDialog = () => {
 								showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
 								if (taggedData) {
 									contract = address;
-									const { functionName, params, web3Contract } = IotaSDK.getAbiParams(
+									const { functionName, params, web3Contract, isErc20 } = IotaSDK.getAbiParams(
 										address,
 										taggedData
 									);
@@ -330,7 +329,6 @@ export const DappDialog = () => {
 									if (sendAmount) {
 										abiParams.push(`${showValue} ${curToken}`);
 									}
-									contractInfo = web3Contract;
 									abiFunc = functionName;
 									switch (functionName) {
 										case 'transfer':
@@ -360,7 +358,9 @@ export const DappDialog = () => {
 										curToken =
 											(await web3Contract.methods.symbol().call()) || IotaSDK.curNode?.token;
 										const decimals = await web3Contract.methods.decimals().call();
-										IotaSDK.importContract(contract, curToken);
+										if (isErc20) {
+											IotaSDK.importContract(contract, curToken);
+										}
 										showContractAmount = new BigNumber(contractAmount)
 											.div(BigNumber(10).pow(decimals))
 											.valueOf();
@@ -473,7 +473,6 @@ export const DappDialog = () => {
 								tag,
 								nftId,
 								abiFunc,
-								contractInfo,
 								abiParams,
 								gas
 							});
