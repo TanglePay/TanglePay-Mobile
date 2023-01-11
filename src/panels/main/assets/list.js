@@ -391,22 +391,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 					<View style={[SS.row, SS.ac, { flexWrap: 'wrap' }, S.border(2)]}>
 						{list.map((e, i) => {
 							return (
-								<TouchableOpacity
-									key={`${e.uid}_${i}`}
-									activeOpacity={0.7}
-									style={[SS.pr]}
-									onPress={() => {
-										if (isSMRNode && e.nftId) {
-											Base.push('assets/send', {
-												nftId: e.nftId,
-												currency: e.name,
-												nftImg: e.thumbnailImage || e.media
-											});
-										} else {
-											setImgIndex(i);
-											setIsShowPre(true);
-										}
-									}}>
+								<View key={`${e.uid}_${i}`} style={[SS.pr]}>
 									<View
 										style={[
 											SS.ac,
@@ -463,7 +448,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 										resizeMode='contain'
 										source={{ uri: e.thumbnailImage || e.media }}
 									/>
-								</TouchableOpacity>
+								</View>
 							);
 						})}
 					</View>
