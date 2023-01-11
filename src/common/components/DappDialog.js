@@ -70,9 +70,7 @@ export const DappDialog = () => {
 		foundryData,
 		tag,
 		nftId,
-		abiFunc,
-		contractInfo,
-		abiParams
+		gas
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
@@ -147,7 +145,8 @@ export const DappDialog = () => {
 							mainBalance,
 							awaitStake: true,
 							tag,
-							nftId
+							nftId,
+							gas
 						});
 						if (!res) {
 							setLoading(false);
@@ -265,7 +264,8 @@ export const DappDialog = () => {
 			taggedData = '',
 			assetId = '',
 			nftId = '',
-			tag = ''
+			tag = '',
+			gas = ''
 		} = res;
 		let toNetId;
 		if (network) {
@@ -474,7 +474,8 @@ export const DappDialog = () => {
 								nftId,
 								abiFunc,
 								contractInfo,
-								abiParams
+								abiParams,
+								gas
 							});
 							show();
 						}
