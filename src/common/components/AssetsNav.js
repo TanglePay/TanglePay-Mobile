@@ -123,7 +123,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 								borderRadius: 8
 							}}>
 							<View style={[SS.c, S.border(2), { height: 44, minWidth: 260 }]}>
-								<Text style={[SS.fz14]}>{I18n.t('user.network')}</Text>
+								<Text style={[SS.fz14]}>EVM {I18n.t('user.network')}</Text>
 							</View>
 							{web3Nodes.map((e) => {
 								return (

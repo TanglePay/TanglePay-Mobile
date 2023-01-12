@@ -308,7 +308,7 @@ export default {
 	get contentHeight() {
 		return this.deviceHeight - this.toolbarHeight;
 	},
-	// 使用nav1时的内容区域高度
+	//
 	get contentHeight1() {
 		return this.deviceHeight - this.toolbarHeight - this.nav1ToolbarTop;
 	},
