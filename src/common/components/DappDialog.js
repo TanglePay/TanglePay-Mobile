@@ -70,9 +70,7 @@ export const DappDialog = () => {
 		foundryData,
 		tag,
 		nftId,
-		abiFunc,
-		contractInfo,
-		abiParams
+		gas
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
@@ -87,20 +85,6 @@ export const DappDialog = () => {
 			case 'iota_sendTransaction':
 			case 'eth_sendTransaction':
 				{
-					if (abiFunc && abiFunc !== 'transfer') {
-						if (contractInfo) {
-							try {
-								Toast.showLoading();
-								const contractRes = await contractInfo.methods[abiFunc](...abiParams).call();
-								Toast.hideLoading();
-								Bridge.sendMessage(type, contractRes);
-							} catch (error) {
-								Toast.hideLoading();
-								return Toast.error(error.toString());
-							}
-						}
-						return;
-					}
 					let mainBalance = 0;
 					let curToken = IotaSDK.curNode?.token;
 					if (contract) {
@@ -161,7 +145,8 @@ export const DappDialog = () => {
 							mainBalance,
 							awaitStake: true,
 							tag,
-							nftId
+							nftId,
+							gas
 						});
 						if (!res) {
 							setLoading(false);
@@ -279,7 +264,8 @@ export const DappDialog = () => {
 			taggedData = '',
 			assetId = '',
 			nftId = '',
-			tag = ''
+			tag = '',
+			gas = ''
 		} = res;
 		let toNetId;
 		if (network) {
@@ -320,9 +306,10 @@ export const DappDialog = () => {
 							let sendAmount = 0;
 							let contract = '';
 							let abiFunc = '';
-							let contractInfo = null;
 							let abiParams = [];
 							let gasFee = '';
+							let contractAmount = '';
+							let showContractAmount = '';
 							if (IotaSDK.checkWeb3Node(toNetId || curNodeId)) {
 								unit = unit || 'wei';
 								let curToken = IotaSDK.curNode?.token;
@@ -330,7 +317,7 @@ export const DappDialog = () => {
 								showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
 								if (taggedData) {
 									contract = address;
-									const { functionName, params, web3Contract } = IotaSDK.getAbiParams(
+									const { functionName, params, web3Contract, isErc20 } = IotaSDK.getAbiParams(
 										address,
 										taggedData
 									);
@@ -339,10 +326,15 @@ export const DappDialog = () => {
 											abiParams.push(params[i]);
 										}
 									}
-									contractInfo = web3Contract;
+									if (sendAmount) {
+										abiParams.push(`${showValue} ${curToken}`);
+									}
 									abiFunc = functionName;
 									switch (functionName) {
-										// case 'transfer':
+										case 'transfer':
+											address = params[0];
+											contractAmount = params[1];
+											break;
 										case 'approve':
 											const contractGasLimit =
 												(IotaSDK.curNode.contractList || []).find(
@@ -356,20 +348,23 @@ export const DappDialog = () => {
 											gasFee = IotaSDK.client.utils.fromWei(gasPrice, 'ether');
 											gasFee = `${gasFee} ${IotaSDK.curNode.token}`;
 											address = params[0];
-											value = params[1];
+											contractAmount = params[1];
 											break;
 										default:
-											address = params[0];
-											value = params[1];
 											break;
 									}
-
-									curToken = (await web3Contract.methods.symbol().call()) || IotaSDK.curNode?.token;
-									const decimals = await web3Contract.methods.decimals().call();
-									IotaSDK.importContract(contract, curToken);
-									sendAmount = Number(new BigNumber(value));
-									showValue = new BigNumber(value).div(BigNumber(10).pow(decimals)).valueOf();
-									setInit(true);
+									contractAmount = Number(new BigNumber(contractAmount));
+									try {
+										curToken =
+											(await web3Contract.methods.symbol().call()) || IotaSDK.curNode?.token;
+										const decimals = await web3Contract.methods.decimals().call();
+										if (isErc20) {
+											IotaSDK.importContract(contract, curToken);
+										}
+										showContractAmount = new BigNumber(contractAmount)
+											.div(BigNumber(10).pow(decimals))
+											.valueOf();
+									} catch (error) {}
 									Toast.hideLoading();
 								}
 								showUnit = curToken;
@@ -446,13 +441,20 @@ export const DappDialog = () => {
 							str = str.replace('#unit#', showUnit);
 							str = str.replace('#fee#', gasFee);
 							let texts = str.trim().replace('#address#', address);
-							texts = texts.split('#amount#');
+							let showValueStr = '';
+							if (abiFunc === 'approve') {
+								texts = texts.split('#contractAmount#');
+								showValueStr = showContractAmount;
+							} else {
+								texts = texts.split('#amount#');
+								showValueStr = showValue;
+							}
 							texts = [
 								{
 									text: texts[0]
 								},
 								{
-									text: showValue,
+									text: showValueStr,
 									isBold: true
 								},
 								{
@@ -471,8 +473,8 @@ export const DappDialog = () => {
 								tag,
 								nftId,
 								abiFunc,
-								contractInfo,
-								abiParams
+								abiParams,
+								gas
 							});
 							show();
 						}
