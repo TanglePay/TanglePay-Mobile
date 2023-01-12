@@ -345,7 +345,10 @@ export const DappDialog = () => {
 												curWallet.address,
 												0
 											);
-											gasFee = IotaSDK.client.utils.fromWei(gasPrice, 'ether');
+											gasFee = IotaSDK.client.utils.fromWei(
+												BigNumber(gasPrice).valueOf(),
+												'ether'
+											);
 											gasFee = `${gasFee} ${IotaSDK.curNode.token}`;
 											address = params[0];
 											contractAmount = params[1];
