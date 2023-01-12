@@ -26,20 +26,10 @@ export default () => {
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
-		const list = [
-			'common.curNodeId',
-			'common.showAssets',
-			'common.lang',
-			'common.price',
-			'common.disTrace',
-			'common.bioPrompt'
-		];
+		const list = ['common.showAssets', 'common.lang', 'common.price', 'common.disTrace', 'common.bioPrompt'];
 		const res = await Promise.all(list.map((e) => Base.getLocalData(e)));
 		list.map((e, i) => {
 			switch (e) {
-				case 'common.curNodeId':
-					changeNode(res[i] || 1);
-					break;
 				default:
 					dispatch({ type: e, data: res[i] });
 					break;
@@ -82,18 +72,15 @@ export default () => {
 	const init = async () => {
 		Trace.login();
 		Toast.showLoading();
-		try {
-			await IotaSDK.getNodes();
-		} catch (error) {
-			console.log(error);
-		}
-		await getLocalInfo();
-		await initChangeNode();
-		Toast.hideLoading();
-		setSceneList(panelsList);
-		setTimeout(() => {
-			SplashScreen.hide();
-		}, 300);
+		IotaSDK.getNodes(async () => {
+			await getLocalInfo();
+			await initChangeNode();
+			Toast.hideLoading();
+			setSceneList(panelsList);
+			setTimeout(() => {
+				SplashScreen.hide();
+			}, 300);
+		});
 	};
 	useEffect(() => {
 		Jailbreak.check().then((result) => {
