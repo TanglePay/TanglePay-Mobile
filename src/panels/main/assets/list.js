@@ -52,34 +52,49 @@ export const CoinList = ({ setHeight }) => {
 			{assetsList.map((e) => {
 				const isSMR = isSMRNode && !e.isSMRToken;
 				return (
-					<TouchableOpacity
-						activeOpacity={0.8}
-						onPress={() => {
-							Base.push('assets/send', { currency: e.name });
-						}}
-						key={e.name}
-						style={[SS.row, SS.ac, SS.pr, { height: itemH }]}>
-						<Image
-							style={[
-								S.wh(48),
-								S.radius(48),
-								SS.pa,
-								SS.bgW,
-								{ left: 0, top: 8, zIndex: 1, opacity: hideIcon[e.name] ? 0 : 1 },
-								SS.mr12,
-								S.border(4)
-							]}
-							source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.isSMRToken ? e.tokenId : e.name) }}
-							onError={() => {
-								setHideIcon((d) => {
-									return { ...d, [e.name]: true };
-								});
+					<View key={e.name} style={[SS.row, SS.ac, { height: itemH }]}>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							style={[SS.pr]}
+							onPress={() => {
+								if (e.isSMRToken) {
+									Base.push('assets/tokenDetail', {
+										tokenId: e.tokenId,
+										standard: e.standard,
+										name: e.name,
+										logoUrl: e.logoUrl || Base.getIcon(e.tokenId)
+									});
+								} else {
+									Base.push('assets/send', { currency: e.name });
+								}
+							}}>
+							<Image
+								style={[
+									S.wh(48),
+									S.radius(48),
+									SS.pa,
+									SS.bgW,
+									{ left: 0, top: 0, zIndex: 1, opacity: hideIcon[e.name] ? 0 : 1 },
+									SS.mr12,
+									S.border(4)
+								]}
+								source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.isSMRToken ? e.tokenId : e.name) }}
+								onError={() => {
+									setHideIcon((d) => {
+										return { ...d, [e.name]: true };
+									});
+								}}
+							/>
+							<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
+								<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							onPress={() => {
+								Base.push('assets/send', { currency: e.name });
 							}}
-						/>
-						<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
-							<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
-						</View>
-						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+							style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz16]}>{String(e.name).toLocaleUpperCase()}</Text>
 								{!IotaSDK.isWeb3Node && statedAmount > 0 && e.realBalance > 0 && !needRestake ? (
@@ -115,8 +130,8 @@ export const CoinList = ({ setHeight }) => {
 									) : null}
 								</View>
 							)}
-						</View>
-					</TouchableOpacity>
+						</TouchableOpacity>
+					</View>
 				);
 			})}
 		</View>
