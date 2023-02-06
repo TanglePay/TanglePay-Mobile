@@ -7,10 +7,8 @@ import { List } from './list';
 import { Base } from '@tangle-pay/common';
 import _uniq from 'lodash/uniq';
 import { useStore } from '@tangle-pay/store';
-import { useGetDappsConfig } from '@tangle-pay/store/dapps';
 
 export const Apps = () => {
-	useGetDappsConfig();
 	const [curWallet] = useGetNodeWallet();
 	const [dapps] = useStore('dapps.list');
 	const [keywords] = useStore('dapps.keywords');

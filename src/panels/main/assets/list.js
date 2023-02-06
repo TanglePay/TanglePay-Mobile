@@ -181,9 +181,9 @@ export const RewardsList = () => {
 		}
 		let arr = Object.values(obj);
 		arr.sort((a) => (a.isSMR ? -1 : 0));
-		if (checkClaim) {
-			arr = arr.filter((e) => !e.isSMR);
-		}
+		// if (checkClaim) {
+		arr = arr.filter((e) => !e.isSMR);
+		// }
 		setList(arr);
 	}, [checkClaim, JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {

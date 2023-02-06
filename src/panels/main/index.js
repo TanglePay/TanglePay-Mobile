@@ -11,6 +11,7 @@ import { useGetNodeWallet, useEditWallet } from '@tangle-pay/store/common';
 import { SvgIcon, ThemeVar, S, SS, Theme } from '@/common';
 import { useStore } from '@tangle-pay/store';
 import Shadow from '@/common/components/Shadow';
+import { useGetDappsConfig } from '@tangle-pay/store/dapps';
 
 const bottom = ThemeVar.isIphoneX ? 10 : 0;
 const MyTabBar = ({ state, descriptors, navigation }) => {
@@ -86,9 +87,11 @@ export const Main = () => {
 			component: User
 		}
 	];
+	const [dappsList] = useStore('dapps.list');
 	const editWallet = useEditWallet();
 	const [lang] = useStore('common.lang');
 	const [curWallet] = useGetNodeWallet();
+	useGetDappsConfig(curWallet);
 	const [routes, setRoutes] = useState([...initRoutes]);
 	useEffect(() => {
 		IotaSDK.changeNodesLang(lang);
@@ -97,9 +100,12 @@ export const Main = () => {
 		IotaSDK.setMqtt(curWallet.address);
 	}, [curWallet.address + curWallet.nodeId]);
 	useEffect(() => {
-		const filterMenuList = IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.filterMenuList || ['apps'];
+		const filterMenuList = [...(IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.filterMenuList || [])];
+		if (JSON.stringify(dappsList) === '{}') {
+			filterMenuList.push('apps');
+		}
 		setRoutes([...initRoutes.filter((e) => !filterMenuList.includes(e.key))]);
-	}, [curWallet.nodeId, JSON.stringify(initRoutes)]);
+	}, [curWallet.nodeId, JSON.stringify(initRoutes), JSON.stringify(dappsList)]);
 	return (
 		<Tab.Navigator
 			initialRouteName='assets'
