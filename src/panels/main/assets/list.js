@@ -21,14 +21,14 @@ export const CoinList = ({ setHeight }) => {
 	let [assetsList] = useStore('common.assetsList');
 	const [ipfsDic, setIpfsDic] = useState({});
 	const contractList = IotaSDK.curNode?.contractList || [];
-	assetsList = assetsList.filter((e) => {
-		const { name } = e;
-		if (!e.contract) {
-			return true;
-		}
-		const contract = contractList.find((e) => e.token === name)?.contract;
-		return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
-	});
+	// assetsList = assetsList.filter((e) => {
+	// 	const { name } = e;
+	// 	if (!e.contract) {
+	// 		return true;
+	// 	}
+	// 	const contract = contractList.find((e) => e.token === name)?.contract;
+	// 	return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
+	// });
 	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
 	const ipfsList = assetsList.filter((e) => e.logoUrl && /ipfs/.test(e.logoUrl)).map((e) => e.logoUrl);
 	useEffect(() => {

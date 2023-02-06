@@ -196,12 +196,24 @@ export const Assets = () => {
 							}}
 						/>
 						{assetsTab.includes('stake') ? <RewardsList /> : null}
-						{!isRequestAssets && (
+						{!isRequestAssets ? (
 							<View style={[SS.p16, SS.c, SS.row]}>
 								<Spinner size='small' color='gray' />
 								<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
 							</View>
-						)}
+						) : null}
+						{IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
+							<TouchableOpacity
+								style={[SS.pv16, SS.mt4, SS.c, SS.row]}
+								onPress={() => {
+									Base.push('assets/importToken');
+								}}>
+								<Text style={[SS.fz24, SS.fw600, SS.mr4, SS.cP]}>+</Text>
+								<Text style={[SS.fz16, SS.fw600, SS.cP]} className='fz24 fw600 mr4'>
+									{I18n.t('assets.importToken')}
+								</Text>
+							</TouchableOpacity>
+						) : null}
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
 						<CollectiblesList
