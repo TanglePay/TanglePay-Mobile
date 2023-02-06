@@ -452,17 +452,25 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											/>
 										) : null}
 									</View>
-									<CachedImage
-										style={[
-											S.radius(8),
-											S.wh(imgW),
-											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
-											S.marginB(15),
-											SS.bgS
-										]}
-										resizeMode='contain'
-										source={{ uri: e.thumbnailImage || e.media }}
-									/>
+									<TouchableOpacity
+										activeOpacity={0.8}
+										onPress={() => {
+											Base.push('assets/nftDetail', {
+												...e
+											});
+										}}>
+										<CachedImage
+											style={[
+												S.radius(8),
+												S.wh(imgW),
+												S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+												S.marginB(15),
+												SS.bgS
+											]}
+											resizeMode='contain'
+											source={{ uri: e.thumbnailImage || e.media }}
+										/>
+									</TouchableOpacity>
 								</View>
 							);
 						})}

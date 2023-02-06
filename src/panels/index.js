@@ -38,7 +38,12 @@ import { UserAdvanced } from './user/advanced';
 import { AssetsTrading } from './assets/trading';
 import { AssetsTradingList } from './assets/trading/list';
 import { TokenDetail } from './assets/tokenDetail/index';
+import { NftDetail } from './assets/nftDetail/index';
 export const panelsList = [
+	{
+		path: 'assets/nftDetail',
+		component: NftDetail
+	},
 	{
 		path: 'assets/tokenDetail',
 		component: TokenDetail

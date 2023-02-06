@@ -17,7 +17,7 @@ export const TokenDetail = () => {
 		<Container>
 			<Nav title={I18n.t('assets.tokenDetail')} />
 			<Content>
-				<View style={[SS.flex, SS.c, SS, { marginTop: 80, marginBottom: 60 }]}>
+				<View style={[SS.flex, SS.c, { marginTop: 80, marginBottom: 60 }]}>
 					<View style={[SS.c, SS.pr]}>
 						<Image
 							style={[
