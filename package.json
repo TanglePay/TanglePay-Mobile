@@ -1,6 +1,6 @@
 {
   "name": "tangle",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -80,7 +80,7 @@
     "readable-stream": "^1.0.33",
     "rn-fetch-blob": "^0.12.0",
     "stream-browserify": "^1.0.0",
-    "tanglepay": "^2.4.2",
+    "tanglepay": "^2.4.3",
     "unorm": "^1.6.0",
     "url": "^0.10.3",
     "web3": "1.7.3",

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native';
+import { Linking, KeyboardAvoidingView, InteractionManager, TouchableOpacity } from 'react-native';
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
@@ -11,9 +11,11 @@ import { Bridge } from '@/common/bridge';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
+import { GasDialog } from '@/common/components/gasDialog';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
+	const gasDialog = useRef();
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	useGetParticipationEvents();
@@ -33,6 +35,22 @@ export const DappDialog = () => {
 	// const [statedAmount] = useStore('staking.statedAmount');
 	const [curNodeId] = useStore('common.curNodeId');
 	const changeNode = useChangeNode();
+	const [gasInfo, setGasInfo] = useState({});
+	useEffect(() => {
+		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+			const eth = IotaSDK.client.eth;
+			Promise.all([eth.getGasPrice()]).then(([gasPrice]) => {
+				let gasLimit = gasInfo.gasLimit || 21000;
+				let total = new BigNumber(gasPrice).times(gasLimit);
+				total = IotaSDK.client.utils.fromWei(total.valueOf(), 'ether');
+				setGasInfo({
+					gasLimit,
+					gasPrice,
+					total
+				});
+			});
+		}
+	}, [curWallet.nodeId]);
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -69,8 +87,7 @@ export const DappDialog = () => {
 		contract,
 		foundryData,
 		tag,
-		nftId,
-		gas
+		nftId
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
@@ -146,7 +163,8 @@ export const DappDialog = () => {
 							awaitStake: true,
 							tag,
 							nftId,
-							gas
+							gas: gasInfo.gasLimit,
+							gasPrice: gasInfo.gasPrice
 						});
 						if (!res) {
 							setLoading(false);
@@ -167,10 +185,10 @@ export const DappDialog = () => {
 						await sleep(2000);
 					} catch (error) {
 						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendErrorMessage(type, error);
+							Bridge.sendErrorMessage(type, String(error));
 						}
 						setLoading(false);
-						Toast.error(error.toString());
+						Toast.error(String(error));
 						// Toast.error(
 						// 	`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
 						// 		realBalance
@@ -614,9 +632,28 @@ export const DappDialog = () => {
 								})}
 							</Text>
 						</View>
+						{['iota_sendTransaction', 'eth_sendTransaction', 'send'].includes(dappData.type) &&
+						IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
+							<View style={[SS.row, SS.ac, SS.jsb, SS.pv10, SS.mt5]}>
+								<Text style={[SS.fz16]}>{I18n.t('assets.estimateGasFee')}</Text>
+								<View style={[SS.row, SS.ac]}>
+									<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr16]}>{gasInfo.total}</Text>
+									<TouchableOpacity
+										activeOpacity={0.8}
+										onPress={() => {
+											gasDialog.current.show(gasInfo, (res) => {
+												setGasInfo(res);
+											});
+										}}>
+										<Text style={[SS.cP, SS.fz14, SS.fw400]}> {I18n.t('assets.edit')}</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						) : null}
 						{!isBio && dappData.type !== 'iota_connect' && (
-							<Item inlineLabel>
+							<Item inlineLabel style={[SS.ml0]}>
 								<Input
+									style={[SS.pl0]}
 									keyboardType='ascii-capable'
 									secureTextEntry={!showPwd}
 									onChangeText={setPassword}
@@ -702,6 +739,7 @@ export const DappDialog = () => {
 					</View>
 				</View>
 			</KeyboardAvoidingView>
+			<GasDialog dialogRef={gasDialog} />
 		</Modal>
 	);
 };

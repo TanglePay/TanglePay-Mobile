@@ -10,7 +10,8 @@ import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
-import { Image } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
+import { GasDialog } from '@/common/components/gasDialog';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -32,6 +33,7 @@ export const AssetsSend = () => {
 	const { params } = useRoute();
 	const form = useRef();
 	const alert = useRef();
+	const gasDialog = useRef();
 	let currency = params?.currency;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
@@ -44,6 +46,22 @@ export const AssetsSend = () => {
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
+	const [gasInfo, setGasInfo] = useState({});
+	useEffect(() => {
+		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+			const eth = IotaSDK.client.eth;
+			Promise.all([eth.getGasPrice()]).then(([gasPrice]) => {
+				let gasLimit = gasInfo.gasLimit || 21000;
+				let total = new BigNumber(gasPrice).times(gasLimit);
+				total = IotaSDK.client.utils.fromWei(total.valueOf(), 'ether');
+				setGasInfo({
+					gasLimit,
+					gasPrice,
+					total
+				});
+			});
+		}
+	}, [curWallet.nodeId]);
 
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 	let realBalance = BigNumber(assets.realBalance || 0);
@@ -146,7 +164,9 @@ export const AssetsSend = () => {
 								tokenId: assets?.tokenId,
 								decimal: assets?.decimal,
 								mainBalance,
-								nftId
+								nftId,
+								gas: gasInfo.gasLimit,
+								gasPrice: gasInfo.gasPrice
 							});
 							Toast.hideLoading();
 							if (res) {
@@ -263,6 +283,25 @@ export const AssetsSend = () => {
 										</Item>
 									</>
 								) : null}
+								{IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
+									<View style={[SS.row, SS.ac, SS.jsb, SS.pv10, SS.mt5]}>
+										<Text style={[SS.fz16]}>{I18n.t('assets.estimateGasFee')}</Text>
+										<View style={[SS.row, SS.ac]}>
+											<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr16]}>
+												{gasInfo.total}
+											</Text>
+											<TouchableOpacity
+												activeOpacity={0.8}
+												onPress={() => {
+													gasDialog.current.show(gasInfo, (res) => {
+														setGasInfo(res);
+													});
+												}}>
+												<Text style={[SS.cP, SS.fz14, SS.fw400]}> {I18n.t('assets.edit')}</Text>
+											</TouchableOpacity>
+										</View>
+									</View>
+								) : null}
 								{isBio ? (
 									<View />
 								) : (
@@ -297,6 +336,7 @@ export const AssetsSend = () => {
 				</Formik>
 			</Content>
 			<ConfirmDialog dialogRef={alert} />
+			<GasDialog dialogRef={gasDialog} />
 		</Container>
 	);
 };
