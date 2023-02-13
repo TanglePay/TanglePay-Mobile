@@ -65,7 +65,7 @@ export const CoinList = ({ setHeight }) => {
 										logoUrl: e.logoUrl || Base.getIcon(e.tokenId)
 									});
 								} else {
-									Base.push('assets/send', { currency: e.name });
+									Base.push('assets/send', { currency: e.name, id: e.tokenId || e.contract || '' });
 								}
 							}}>
 							<Image
@@ -92,7 +92,7 @@ export const CoinList = ({ setHeight }) => {
 						<TouchableOpacity
 							activeOpacity={0.8}
 							onPress={() => {
-								Base.push('assets/send', { currency: e.name });
+								Base.push('assets/send', { currency: e.name, id: e.tokenId || e.contract || '' });
 							}}
 							style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>

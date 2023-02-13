@@ -35,11 +35,17 @@ export const AssetsSend = () => {
 	const alert = useRef();
 	const gasDialog = useRef();
 	let currency = params?.currency;
+	const assetsId = params.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
-	const assets = assetsList.find((e) => e.name === currency) || {};
+	let assets = assetsList.find((e) => e.name === currency) || {};
+	if (assetsId) {
+		console.log(assetsId);
+		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
+		console.log(assets);
+	}
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
 	};
@@ -50,18 +56,20 @@ export const AssetsSend = () => {
 	useEffect(() => {
 		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
 			const eth = IotaSDK.client.eth;
-			Promise.all([eth.getGasPrice()]).then(([gasPrice]) => {
-				let gasLimit = gasInfo.gasLimit || 21000;
-				let total = new BigNumber(gasPrice).times(gasLimit);
-				total = IotaSDK.client.utils.fromWei(total.valueOf(), 'ether');
-				setGasInfo({
-					gasLimit,
-					gasPrice,
-					total
-				});
-			});
+			Promise.all([eth.getGasPrice(), IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract)]).then(
+				([gasPrice, gas]) => {
+					let gasLimit = gasInfo.gasLimit || gas;
+					let total = new BigNumber(gasPrice).times(gasLimit);
+					total = IotaSDK.client.utils.fromWei(total.valueOf(), 'ether');
+					setGasInfo({
+						gasLimit,
+						gasPrice,
+						total
+					});
+				}
+			);
 		}
-	}, [curWallet.nodeId]);
+	}, [curWallet.nodeId, assets?.contract]);
 
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 	let realBalance = BigNumber(assets.realBalance || 0);

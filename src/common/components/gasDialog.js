@@ -50,12 +50,15 @@ export const GasDialog = ({ dialogRef }) => {
 	};
 	useEffect(() => {
 		let { gasPrice, gasLimit } = gasInfo;
-		gasPrice = parseFloat(gasPrice);
-		gasLimit = parseFloat(gasLimit);
+		gasPrice = IotaSDK.getNumberStr(parseFloat(gasPrice) || '');
+		gasLimit = IotaSDK.getNumberStr(parseFloat(gasLimit) || '');
 		let total = 0;
 		if (gasPrice && gasLimit) {
+			gasPrice = IotaSDK.client.utils.toHex(gasPrice);
+			gasLimit = IotaSDK.client.utils.toHex(gasLimit);
 			total = new BigNumber(gasPrice).times(gasLimit);
-			total = IotaSDK.client.utils.fromWei(total.valueOf(), 'ether');
+			total = IotaSDK.getNumberStr(total);
+			total = IotaSDK.client.utils.fromWei(total, 'ether');
 		}
 		setGasInfo({
 			...gasInfo,
@@ -71,7 +74,7 @@ export const GasDialog = ({ dialogRef }) => {
 			isVisible={isShow}>
 			<View style={[SS.w100, SS.radius10, SS.bgW]}>
 				<ScrollView contentContainerStyle={[SS.p16]}>
-					<View style={[S.border(2), SS.pv12, SS.ph16]}>
+					<View style={[S.border(2), SS.pv12]}>
 						<Text style={[SS.fz]} className='border-b pv12 ph16 fz16 fw600'>
 							{I18n.t('assets.editPriority')}
 						</Text>
@@ -84,8 +87,8 @@ export const GasDialog = ({ dialogRef }) => {
 						validateOnChange={false}
 						validateOnMount={false}
 						validationSchema={Yup.object().shape({
-							gasPrice: Yup.number().required(),
-							gasLimit: Yup.number().required()
+							gasPrice: Yup.string().required(),
+							gasLimit: Yup.string().required()
 						})}
 						onSubmit={async (values) => {
 							hide(gasInfo);
