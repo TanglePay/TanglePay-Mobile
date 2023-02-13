@@ -35,11 +35,17 @@ export const AssetsSend = () => {
 	const alert = useRef();
 	const gasDialog = useRef();
 	let currency = params?.currency;
+	const assetsId = params.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
-	const assets = assetsList.find((e) => e.name === currency) || {};
+	let assets = assetsList.find((e) => e.name === currency) || {};
+	if (assetsId) {
+		console.log(assetsId);
+		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
+		console.log(assets);
+	}
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
 	};

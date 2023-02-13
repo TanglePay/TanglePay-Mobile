@@ -74,7 +74,7 @@ export const GasDialog = ({ dialogRef }) => {
 			isVisible={isShow}>
 			<View style={[SS.w100, SS.radius10, SS.bgW]}>
 				<ScrollView contentContainerStyle={[SS.p16]}>
-					<View style={[S.border(2), SS.pv12, SS.ph16]}>
+					<View style={[S.border(2), SS.pv12]}>
 						<Text style={[SS.fz]} className='border-b pv12 ph16 fz16 fw600'>
 							{I18n.t('assets.editPriority')}
 						</Text>
