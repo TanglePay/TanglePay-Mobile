@@ -35,7 +35,7 @@ export const AssetsSend = () => {
 	const alert = useRef();
 	const gasDialog = useRef();
 	let currency = params?.currency;
-	const assetsId = params.id;
+	const assetsId = params?.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
