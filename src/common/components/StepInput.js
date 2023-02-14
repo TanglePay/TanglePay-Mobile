@@ -4,6 +4,7 @@ import { Input, Text, View } from 'native-base';
 import { S, SS } from '@/common';
 import { ThemeVar } from '../style/theme';
 import BigNumber from 'bignumber.js';
+import { IotaSDK } from '@tangle-pay/common';
 
 export const StepInput = (props) => {
 	const { value, onChangeText } = props;
@@ -13,11 +14,11 @@ export const StepInput = (props) => {
 	}, [value]);
 	const handleReduce = () => {
 		if (inputValue && inputValue > 0) {
-			setValue(BigNumber(inputValue).minus(1).valueOf());
+			setValue(IotaSDK.getNumberStr(BigNumber(inputValue).minus(1).valueOf()));
 		}
 	};
 	const handlePlus = () => {
-		setValue(BigNumber(inputValue).plus(1).valueOf());
+		setValue(IotaSDK.getNumberStr(BigNumber(inputValue).plus(1).valueOf()));
 	};
 	return (
 		<View style={[SS.row, SS.ac]}>
