@@ -42,9 +42,7 @@ export const AssetsSend = () => {
 	const [curWallet] = useGetNodeWallet();
 	let assets = assetsList.find((e) => e.name === currency) || {};
 	if (assetsId) {
-		console.log(assetsId);
 		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
-		console.log(assets);
 	}
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
@@ -79,7 +77,7 @@ export const AssetsSend = () => {
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
-	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
+	let available = Base.formatNum(IotaSDK.getNumberStr(Number(realBalance.div(Math.pow(10, assets.decimal)))));
 
 	return (
 		<Container>
