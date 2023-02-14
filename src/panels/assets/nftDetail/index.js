@@ -10,8 +10,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 
 export const NftDetail = () => {
 	const { params } = useRoute();
-	let { thumbnailImage, media, attributes } = params;
-	attributes = attributes?.props || attributes || [];
+	let { thumbnailImage, media, attributes, properties } = params;
+	attributes = attributes?.props || attributes || properties || {};
 	let propsList = [];
 	for (const i in attributes) {
 		if (Object.hasOwnProperty.call(attributes, i)) {

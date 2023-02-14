@@ -52,7 +52,7 @@ export const CoinList = ({ setHeight }) => {
 			{assetsList.map((e) => {
 				const isSMR = isSMRNode && !e.isSMRToken;
 				return (
-					<View key={e.name} style={[SS.row, SS.ac, { height: itemH }]}>
+					<View key={`${e.name}_${e.tokenId}_${e.contract}`} style={[SS.row, SS.ac, { height: itemH }]}>
 						<TouchableOpacity
 							activeOpacity={0.8}
 							style={[SS.pr]}

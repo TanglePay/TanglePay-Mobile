@@ -79,7 +79,6 @@ export const ImportToken = () => {
 									if (searchStr) {
 										try {
 											const web3Contract = IotaSDK.getContract(searchStr);
-											console.log(web3Contract);
 											if (web3Contract) {
 												Toast.showLoading();
 												const symbol = await web3Contract.methods.symbol().call();
@@ -139,6 +138,23 @@ export const ImportToken = () => {
 												placeholder={I18n.t('assets.inputContractAddress')}
 												onChangeText={handleChange('contract')}
 												value={values.contract}
+												onBlur={async () => {
+													if (values.contract) {
+														try {
+															const web3Contract = IotaSDK.getContract(values.contract);
+															if (web3Contract) {
+																const symbol = await web3Contract.methods
+																	.symbol()
+																	.call();
+																const decimal = await web3Contract.methods
+																	.decimals()
+																	.call();
+																setFieldValue('symbol', String(symbol));
+																setFieldValue('decimal', String(decimal));
+															}
+														} catch (error) {}
+													}
+												}}
 											/>
 										</Item>
 										<Label style={[SS.fz16, SS.mt24]}>{I18n.t('assets.tokenSymbol')}</Label>
