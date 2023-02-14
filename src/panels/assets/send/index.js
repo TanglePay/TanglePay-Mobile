@@ -299,7 +299,7 @@ export const AssetsSend = () => {
 											<TouchableOpacity
 												activeOpacity={0.8}
 												onPress={() => {
-													gasDialog.current.show(gasInfo, (res) => {
+													gasDialog.current.show({ ...gasInfo }, (res) => {
 														setGasInfo(res);
 													});
 												}}>
