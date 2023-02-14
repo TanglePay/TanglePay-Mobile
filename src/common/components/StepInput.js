@@ -27,6 +27,7 @@ export const StepInput = (props) => {
 				onChangeText={(e) => {
 					onChangeText(e);
 				}}
+				maxLength={18}
 				keyboardType='numeric'
 				style={[SS.mr12, SS.pl0]}
 			/>

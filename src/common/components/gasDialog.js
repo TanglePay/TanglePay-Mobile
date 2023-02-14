@@ -49,21 +49,22 @@ export const GasDialog = ({ dialogRef }) => {
 		}
 	};
 	useEffect(() => {
-		let { gasPrice, gasLimit } = gasInfo;
-		gasPrice = IotaSDK.getNumberStr(parseFloat(gasPrice) || '');
-		gasLimit = IotaSDK.getNumberStr(parseFloat(gasLimit) || '');
-		let total = 0;
-		if (gasPrice && gasLimit) {
-			gasPrice = IotaSDK.client.utils.toHex(gasPrice);
-			gasLimit = IotaSDK.client.utils.toHex(gasLimit);
-			total = new BigNumber(gasPrice).times(gasLimit);
-			total = IotaSDK.getNumberStr(total);
-			total = IotaSDK.client.utils.fromWei(total, 'ether');
-		}
-		setGasInfo({
-			...gasInfo,
-			total
-		});
+		try {
+			let { gasPrice, gasLimit } = gasInfo;
+			gasPrice = IotaSDK.getNumberStr(parseFloat(gasPrice) || '');
+			gasLimit = IotaSDK.getNumberStr(parseFloat(gasLimit) || '');
+			let total = 0;
+			if (gasPrice && gasLimit) {
+				gasPrice = IotaSDK.client.utils.toHex(gasPrice);
+				gasLimit = IotaSDK.client.utils.toHex(gasLimit);
+				total = new BigNumber(gasPrice).times(gasLimit).div(Math.pow(10, 18));
+				total = IotaSDK.getNumberStr(total);
+			}
+			setGasInfo({
+				...gasInfo,
+				total
+			});
+		} catch (error) {}
 	}, [JSON.stringify(gasInfo)]);
 	return (
 		<Modal
@@ -99,6 +100,7 @@ export const GasDialog = ({ dialogRef }) => {
 								<Item style={[SS.ml0]} error={!!errors.gasPrice}>
 									<StepInput
 										onChangeText={(e) => {
+											e = IotaSDK.getNumberStr(e);
 											setGasInfo({ ...gasInfo, gasPrice: e });
 											setFieldValue('gasPrice', e);
 										}}
@@ -109,6 +111,7 @@ export const GasDialog = ({ dialogRef }) => {
 								<Item style={[SS.ml0]} error={!!errors.gasLimit}>
 									<StepInput
 										onChangeText={(e) => {
+											e = IotaSDK.getNumberStr(e);
 											setGasInfo({ ...gasInfo, gasLimit: e });
 											setFieldValue('gasLimit', e);
 										}}
