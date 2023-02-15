@@ -92,10 +92,10 @@ export const NftDetail = () => {
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
-										Clipboard.setString(params.uri);
+										Clipboard.setString(params.uri || params.ipfsMedia);
 										Toast.success(I18n.t('assets.copied'));
 									}}>
-									<Text style={[SS.fz12, SS.fw400]}>{params.uri}</Text>
+									<Text style={[SS.fz12, SS.fw400]}>{params.uri || params.ipfsMedia}</Text>
 								</TouchableOpacity>
 							</View>
 							<View style={[SS.mt8, SS.bgS, SS.radius10, SS.ph12, SS.pv12]}>
@@ -130,7 +130,7 @@ export const NftDetail = () => {
 						<View style={[{ flexWrap: 'wrap' }, SS.ac, SS.row, SS.mt8]}>
 							{propsList.map((e, i) => {
 								return (
-									<View key={i} style={[SS.bgS, SS.radius10, SS.p12, SS.mr8]}>
+									<View key={i} style={[SS.bgS, SS.radius10, SS.p12, SS.mr8, SS.mb8]}>
 										<Text style={[SS.fz14, SS.cS, SS.fw600]}>{e.label}</Text>
 										<Text style={[SS.fz14, SS.mt4, SS.cB, SS.fw600]}>{e.value}</Text>
 									</View>
