@@ -104,7 +104,7 @@ export const GasDialog = ({ dialogRef }) => {
 											setGasInfo({ ...gasInfo, gasPrice: e });
 											setFieldValue('gasPrice', e);
 										}}
-										value={values.gasPrice}
+										value={values.gasPrice || ''}
 									/>
 								</Item>
 								<Text style={[SS.fz16, SS.fw400, SS.mt16]}>{I18n.t('assets.gasLimit')}</Text>
@@ -115,12 +115,12 @@ export const GasDialog = ({ dialogRef }) => {
 											setGasInfo({ ...gasInfo, gasLimit: e });
 											setFieldValue('gasLimit', e);
 										}}
-										value={values.gasLimit}
+										value={values.gasLimit || ''}
 									/>
 								</Item>
 								<Text style={[SS.fz16, SS.fw400, SS.mt16]}>{I18n.t('assets.maxFee')}</Text>
 								<Item style={[SS.ml0, { borderBottomWidth: 0 }]} underline={false}>
-									<Text style={[SS.fz16, SS.pt12, SS.pb8]}>{gasInfo.total}</Text>
+									<Text style={[SS.fz16, SS.pt12, SS.pb8]}>{gasInfo.total || ''}</Text>
 								</Item>
 								<View style={[S.marginT(24)]}>
 									<Button block onPress={handleSubmit}>

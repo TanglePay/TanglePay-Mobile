@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog, ThemeVar } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
@@ -293,7 +293,16 @@ export const AssetsSend = () => {
 									<View style={[SS.row, SS.ac, SS.jsb, SS.pv10, SS.mt5]}>
 										<Text style={[SS.fz16]}>{I18n.t('assets.estimateGasFee')}</Text>
 										<View style={[SS.row, SS.ac]}>
-											<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr16]}>
+											<Text
+												ellipsizeMode='tail'
+												style={[
+													SS.cS,
+													SS.fz14,
+													SS.fw400,
+													SS.tr,
+													SS.mr16,
+													{ maxWidth: ThemeVar.deviceWidth * 0.4 }
+												]}>
 												{gasInfo.total}
 											</Text>
 											<TouchableOpacity
