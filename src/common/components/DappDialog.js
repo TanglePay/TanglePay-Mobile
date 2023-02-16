@@ -636,7 +636,18 @@ export const DappDialog = () => {
 							<View style={[SS.row, SS.ac, SS.jsb, SS.pv10, SS.mt5]}>
 								<Text style={[SS.fz16]}>{I18n.t('assets.estimateGasFee')}</Text>
 								<View style={[SS.row, SS.ac]}>
-									<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr16]}>{gasInfo.total}</Text>
+									<Text
+										ellipsizeMode='tail'
+										style={[
+											SS.cS,
+											SS.fz14,
+											SS.fw400,
+											SS.tr,
+											SS.mr16,
+											{ maxWidth: ThemeVar.deviceWidth * 0.4 }
+										]}>
+										{gasInfo.total}
+									</Text>
 									<TouchableOpacity
 										activeOpacity={0.8}
 										onPress={() => {
