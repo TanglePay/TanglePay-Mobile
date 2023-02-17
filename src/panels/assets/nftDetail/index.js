@@ -23,7 +23,7 @@ export const NftDetail = () => {
 				}
 			}
 			propsList.push({
-				label,
+				label: obj[label],
 				value: obj.value
 			});
 		}
