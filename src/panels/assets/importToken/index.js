@@ -57,7 +57,7 @@ export const ImportToken = () => {
 								style={[SS.fz16, SS.fw400, { height: 24 }, SS.pv0]}
 								value={searchStr}
 								onChangeText={setSearch}
-								placeholder='Search Tokens'
+								placeholder={I18n.t('assets.searchToken')}
 							/>
 						</View>
 						<View style={[SS.row, { marginTop: 56 }]}>
