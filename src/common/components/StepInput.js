@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Input, Text, View } from 'native-base';
-import { S, SS } from '@/common';
+import { S, SS, SvgIcon } from '@/common';
 import { ThemeVar } from '../style/theme';
 import BigNumber from 'bignumber.js';
 import { IotaSDK } from '@tangle-pay/common';
@@ -31,16 +31,11 @@ export const StepInput = (props) => {
 				keyboardType='numeric'
 				style={[SS.mr12, SS.pl0]}
 			/>
-			<TouchableOpacity
-				disabled={!inputValue || inputValue <= 0}
-				onPress={handleReduce}
-				style={[{ borderRadius: 24 }, S.wh(24), SS.bgW, S.border(4, ThemeVar.brandPrimary, 1), SS.c, SS.mr12]}>
-				<Text style={[{ fontSize: 22, lineHeight: 22 }, SS.fw600, SS.cP]}>-</Text>
+			<TouchableOpacity disabled={!inputValue || inputValue <= 0} onPress={handleReduce} style={[SS.mr12]}>
+				<SvgIcon color={ThemeVar.brandPrimary} size={20} name='minus_circle' />
 			</TouchableOpacity>
-			<TouchableOpacity
-				onPress={handlePlus}
-				style={[{ borderRadius: 24 }, S.wh(24), SS.bgW, S.border(4, ThemeVar.brandPrimary, 1), SS.c]}>
-				<Text style={[{ fontSize: 18, lineHeight: 20 }, SS.fw600, SS.cP]}>+</Text>
+			<TouchableOpacity onPress={handlePlus}>
+				<SvgIcon color={ThemeVar.brandPrimary} size={20} name='add_circle' />
 			</TouchableOpacity>
 		</View>
 	);

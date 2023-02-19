@@ -36,13 +36,13 @@ export const NftDetail = () => {
 			<Content contentContainerStyle={[SS.ph32]}>
 				<View style={[SS.c, { marginTop: 35, marginBottom: 32 }]}>
 					<Image
-						style={[S.wh(160), S.radius(36), SS.bgS, SS.mb8]}
+						style={[S.wh(160), S.radius(36), SS.bgS]}
 						resizeMode='contain'
 						source={{ uri: thumbnailImage || media }}
 					/>
-					<Text style={[SS.fz16, SS.mt8, SS.fw600, SS.tc]}>{params.name}</Text>
-					<Text style={[SS.fz16, SS.mt4, SS.fw600, SS.cS]}>{params.issuerName}</Text>
-					<Text style={[SS.fz14, SS.mt12, SS.fw600, SS.cS]}>{params.description}</Text>
+					<Text style={[SS.fz16, SS.mt10, SS.fw600, SS.tc]}>{params.name}</Text>
+					<Text style={[SS.fz16, SS.fw600, SS.cS, { marginTop: 6 }]}>{params.issuerName}</Text>
+					<Text style={[SS.fz14, SS.mt16, SS.fw600, SS.cS]}>{params.description}</Text>
 				</View>
 				<View>
 					<TouchableOpacity
@@ -51,7 +51,7 @@ export const NftDetail = () => {
 						}}
 						activeOpacity={0.8}
 						style={[SS.row, SS.ac, S.h(32)]}>
-						<Text style={[SS.fz18, SS.fw600, SS.mr4]}>{I18n.t('assets.nftDetail')}</Text>
+						<Text style={[SS.fz18, SS.fw600, SS.mr8]}>{I18n.t('assets.nftDetail')}</Text>
 						<SvgIcon
 							size={14}
 							name='up'
@@ -119,7 +119,7 @@ export const NftDetail = () => {
 						}}
 						activeOpacity={0.8}
 						style={[SS.row, SS.ac, S.h(32)]}>
-						<Text style={[SS.fz18, SS.fw600, SS.mr4]}>{I18n.t('assets.nftProperties')}</Text>
+						<Text style={[SS.fz18, SS.fw600, SS.mr8]}>{I18n.t('assets.nftProperties')}</Text>
 						<SvgIcon
 							size={14}
 							name='up'
