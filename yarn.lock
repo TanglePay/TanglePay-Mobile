@@ -9574,10 +9574,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^2.4.6:
-  version "2.4.6"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.4.6.tgz#73533469bb08d5726730c21463de1716665201a9"
-  integrity sha512-LwdADB7ib7D1t3gBl3c27neTOV+2AaptOMD2+xZ0umeP2BMWtn+UIJl0gYK1Md0qi6mryN27FroT0DQrsUSxGA==
+tanglepay@^2.4.7:
+  version "2.4.7"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.4.7.tgz#540400fd28681d4408eb67958d0d31d4c28d19dc"
+  integrity sha512-w3cguv0bwEvW05cvaI1So012qY7zwcNCm3gb8a/3Zqjn0QAhvuo94wXZP4nTBpnkkKaulm2KF5JZC7fxhQbPeQ==
 
 tar@^4.0.2:
   version "4.4.19"

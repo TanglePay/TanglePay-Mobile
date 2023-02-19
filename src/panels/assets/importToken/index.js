@@ -129,7 +129,7 @@ export const ImportToken = () => {
 							{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
 								<View style={[SS.p16]}>
 									<Form>
-										<Label style={[SS.fz14, SS.mt10]}>
+										<Label style={[SS.fz16, { marginTop: 6 }]}>
 											{I18n.t('assets.tokenContractAddress')}
 										</Label>
 										<Item style={[SS.mt8, SS.ml0]} error={!!errors.contract}>

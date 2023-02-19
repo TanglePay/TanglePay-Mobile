@@ -113,7 +113,7 @@ const styleObj = {
 		fontWeight: '500'
 	},
 	fw600: {
-		fontWeight: '600'
+		fontWeight: '500'
 	}
 };
 // generate font styles

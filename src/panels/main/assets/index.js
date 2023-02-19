@@ -208,7 +208,7 @@ export const Assets = () => {
 								onPress={() => {
 									Base.push('assets/importToken');
 								}}>
-								<Text style={[SS.fz24, SS.fw600, SS.mr4, SS.cP]}>+</Text>
+								<Text style={[SS.fz24, SS.fw600, SS.mr12, SS.cP, { marginBottom: 3 }]}>+</Text>
 								<Text style={[SS.fz16, SS.fw600, SS.cP]} className='fz24 fw600 mr4'>
 									{I18n.t('assets.importToken')}
 								</Text>
