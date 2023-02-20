@@ -53,8 +53,8 @@ export const GasDialog = ({ dialogRef }) => {
 			let { gasPrice, gasLimit } = gasInfo;
 			gasPrice = IotaSDK.getNumberStr(parseFloat(gasPrice) || '');
 			gasLimit = IotaSDK.getNumberStr(parseFloat(gasLimit) || '');
-			let total = 0;
-			let totalEth = 0;
+			let total = "0";
+			let totalEth = "0";
 			if (gasPrice && gasLimit) {
 				total = IotaSDK.getNumberStr(gasPrice * gasLimit);
 				totalEth = IotaSDK.getNumberStr(total / 1000000000);

@@ -298,6 +298,7 @@ export const AssetsSend = () => {
 										<View style={[SS.row, SS.ac]}>
 											<Text
 												ellipsizeMode='tail'
+												numberOfLines={1}
 												style={[
 													SS.cS,
 													SS.fz14,
