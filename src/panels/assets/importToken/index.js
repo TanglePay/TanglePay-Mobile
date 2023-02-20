@@ -15,13 +15,13 @@ const schema = Yup.object().shape({
 });
 export const ImportToken = () => {
 	const form = useRef();
-	const [curTab, setTab] = useState(0);
+	const [curTab, setTab] = useState(1);
 	const [searchStr, setSearch] = useState('');
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.importToken')} />
 			<Content>
-				<View style={[SS.flex, SS.ac, SS.row, S.border(2), SS.ph16]}>
+				{/* <View style={[SS.flex, SS.ac, SS.row, S.border(2), SS.ph16]}>
 					<TouchableOpacity
 						onPress={() => setTab(0)}
 						activeOpacity={0.8}
@@ -48,7 +48,7 @@ export const ImportToken = () => {
 							{I18n.t('assets.customTokens')}
 						</Text>
 					</TouchableOpacity>
-				</View>
+				</View> */}
 				{curTab == 0 ? (
 					<View style={[SS.p16]}>
 						<View style={[{ height: 48, padding: 6 }, SS.row, SS.ac, SS.bgS, SS.radius10]}>
@@ -136,12 +136,11 @@ export const ImportToken = () => {
 											<Input
 												style={[SS.fz16, SS.pl0, S.h(44)]}
 												placeholder={I18n.t('assets.inputContractAddress')}
-												onChangeText={handleChange('contract')}
-												value={values.contract}
-												onBlur={async () => {
-													if (values.contract) {
+												onChangeText={async (e) => {
+													setFieldValue('contract', e);
+													if (e.length > 24 && /^0x/i.test(e)) {
 														try {
-															const web3Contract = IotaSDK.getContract(values.contract);
+															const web3Contract = IotaSDK.getContract(e);
 															if (web3Contract) {
 																const symbol = await web3Contract.methods
 																	.symbol()
@@ -155,6 +154,7 @@ export const ImportToken = () => {
 														} catch (error) {}
 													}
 												}}
+												value={values.contract}
 											/>
 										</Item>
 										<Label style={[SS.fz16, SS.mt24]}>{I18n.t('assets.tokenSymbol')}</Label>

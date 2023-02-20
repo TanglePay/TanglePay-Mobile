@@ -185,7 +185,7 @@ export const Assets = () => {
 					</TouchableOpacity>
 				</View>
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
-					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
+					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16, SS.jsb]}>
 						<CoinList
 							setHeight={(e) => {
 								let h = e + 300;
@@ -208,8 +208,8 @@ export const Assets = () => {
 								onPress={() => {
 									Base.push('assets/importToken');
 								}}>
-								<Text style={[SS.fz24, SS.fw600, SS.mr12, SS.cP, { marginBottom: 3 }]}>+</Text>
-								<Text style={[SS.fz16, SS.fw600, SS.cP]} className='fz24 fw600 mr4'>
+								<Text style={[SS.fz23, SS.mr12, SS.cP, { marginBottom: 3 }]}>+</Text>
+								<Text style={[SS.fz15, SS.cP]} className='fz24 fw600 mr4'>
 									{I18n.t('assets.importToken')}
 								</Text>
 							</TouchableOpacity>

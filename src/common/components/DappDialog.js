@@ -324,12 +324,15 @@ export const DappDialog = () => {
 									IotaSDK.getDefaultGasLimit(curWallet.address, taggedData ? address : '')
 								]);
 								gasLimit = gasLimit || 21000;
-								let total = new BigNumber(gasPrice).times(gasLimit);
-								total = IotaSDK.client.utils.fromWei(total.valueOf(), 'ether');
+								let totalWei = new BigNumber(gasPrice).times(gasLimit);
+								const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+								gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
+								const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
 								setGasInfo({
 									gasLimit,
 									gasPrice,
-									total
+									total,
+									totalEth
 								});
 
 								if (taggedData) {
@@ -638,21 +641,27 @@ export const DappDialog = () => {
 								<View style={[SS.row, SS.ac]}>
 									<Text
 										ellipsizeMode='tail'
+										numberOfLines={1}
 										style={[
 											SS.cS,
 											SS.fz14,
 											SS.fw400,
 											SS.tr,
-											SS.mr16,
-											{ maxWidth: ThemeVar.deviceWidth * 0.4 }
+											SS.mr4,
+											{ width: ThemeVar.deviceWidth * 0.35 }
 										]}>
-										{gasInfo.total}
+										{gasInfo.totalEth}
 									</Text>
+									{gasInfo.totalEth ? (
+										<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr8]}>
+											{IotaSDK.curNode?.token}
+										</Text>
+									) : null}
 									<TouchableOpacity
 										activeOpacity={0.8}
 										onPress={() => {
 											if (JSON.stringify(gasInfo) == '{}') {
-												return
+												return;
 											}
 											gasDialog.current.show({ ...gasInfo }, (res) => {
 												setGasInfo(res);

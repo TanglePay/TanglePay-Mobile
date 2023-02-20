@@ -12,6 +12,9 @@ export const StepInput = (props) => {
 	useEffect(() => {
 		setValue(value);
 	}, [value]);
+	useEffect(() => {
+		onChangeText(inputValue);
+	}, [inputValue]);
 	const handleReduce = () => {
 		if (inputValue && inputValue > 0) {
 			setValue(IotaSDK.getNumberStr(BigNumber(inputValue).minus(1).valueOf()));
@@ -25,9 +28,10 @@ export const StepInput = (props) => {
 			<Input
 				value={String(inputValue)}
 				onChangeText={(e) => {
+					e = String(e).replace(/[a-zA-z]/, '');
 					onChangeText(e);
 				}}
-				maxLength={18}
+				maxLength={12}
 				keyboardType='numeric'
 				style={[SS.mr12, SS.pl0]}
 			/>
