@@ -53,18 +53,20 @@ export const GasDialog = ({ dialogRef }) => {
 			let { gasPrice, gasLimit } = gasInfo;
 			gasPrice = IotaSDK.getNumberStr(parseFloat(gasPrice) || '');
 			gasLimit = IotaSDK.getNumberStr(parseFloat(gasLimit) || '');
-			let total = 0;
+			let total = "0";
+			let totalEth = "0";
 			if (gasPrice && gasLimit) {
-				gasPrice = IotaSDK.client.utils.toHex(gasPrice);
-				gasLimit = IotaSDK.client.utils.toHex(gasLimit);
-				total = new BigNumber(gasPrice).times(gasLimit).div(Math.pow(10, 18));
-				total = IotaSDK.getNumberStr(total);
+				total = IotaSDK.getNumberStr(gasPrice * gasLimit);
+				totalEth = IotaSDK.getNumberStr(total / 1000000000);
 			}
 			setGasInfo({
 				...gasInfo,
-				total
+				total,
+				totalEth
 			});
-		} catch (error) {}
+		} catch (error) {
+			console.log(error);
+		}
 	}, [JSON.stringify(gasInfo)]);
 	return (
 		<Modal
@@ -96,7 +98,7 @@ export const GasDialog = ({ dialogRef }) => {
 						}}>
 						{({ setFieldValue, handleSubmit, values, errors }) => (
 							<Form>
-								<Text style={[SS.fz16, SS.fw400, SS.mt16]}>{I18n.t('assets.gasFee')}</Text>
+								<Text style={[SS.fz16, SS.fw400, SS.mt16]}>{I18n.t('assets.gasFee')} (GWEI)</Text>
 								<Item style={[SS.ml0]} error={!!errors.gasPrice}>
 									<StepInput
 										onChangeText={(e) => {
@@ -118,7 +120,7 @@ export const GasDialog = ({ dialogRef }) => {
 										value={values.gasLimit || ''}
 									/>
 								</Item>
-								<Text style={[SS.fz16, SS.fw400, SS.mt16]}>{I18n.t('assets.maxFee')}</Text>
+								<Text style={[SS.fz16, SS.fw400, SS.mt16]}>{I18n.t('assets.maxFee')} (GWEI)</Text>
 								<Item style={[SS.ml0, { borderBottomWidth: 0 }]} underline={false}>
 									<Text style={[SS.fz16, SS.pt12, SS.pb8]}>{gasInfo.total || ''}</Text>
 								</Item>
