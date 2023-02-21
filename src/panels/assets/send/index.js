@@ -6,11 +6,12 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
-import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog } from '@/common';
+import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog, ThemeVar } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
-import { Image } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
+import { GasDialog } from '@/common/components/gasDialog';
 
 const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
@@ -32,18 +33,44 @@ export const AssetsSend = () => {
 	const { params } = useRoute();
 	const form = useRef();
 	const alert = useRef();
+	const gasDialog = useRef();
 	let currency = params?.currency;
+	const assetsId = params?.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
-	const assets = assetsList.find((e) => e.name === currency) || {};
+	let assets = assetsList.find((e) => e.name === currency) || {};
+	if (assetsId) {
+		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
+	}
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
 	};
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
+	const [gasInfo, setGasInfo] = useState({});
+	useEffect(() => {
+		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+			const eth = IotaSDK.client.eth;
+			Promise.all([eth.getGasPrice(), IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract)]).then(
+				([gasPrice, gas]) => {
+					let gasLimit = gasInfo.gasLimit || gas;
+					let totalWei = new BigNumber(gasPrice).times(gasLimit);
+					const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+					gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
+					const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
+					setGasInfo({
+						gasLimit,
+						gasPrice,
+						total,
+						totalEth
+					});
+				}
+			);
+		}
+	}, [curWallet.nodeId, assets?.contract]);
 
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 	let realBalance = BigNumber(assets.realBalance || 0);
@@ -53,7 +80,7 @@ export const AssetsSend = () => {
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
-	let available = Base.formatNum(realBalance.div(Math.pow(10, assets.decimal)));
+	let available = Base.formatNum(IotaSDK.getNumberStr(Number(realBalance.div(Math.pow(10, assets.decimal)))));
 
 	return (
 		<Container>
@@ -146,7 +173,9 @@ export const AssetsSend = () => {
 								tokenId: assets?.tokenId,
 								decimal: assets?.decimal,
 								mainBalance,
-								nftId
+								nftId,
+								gas: gasInfo.gasLimit,
+								gasPrice: gasInfo.gasPrice
 							});
 							Toast.hideLoading();
 							if (res) {
@@ -263,6 +292,43 @@ export const AssetsSend = () => {
 										</Item>
 									</>
 								) : null}
+								{IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
+									<View style={[SS.row, SS.ac, SS.jsb, SS.pv10, SS.mt5]}>
+										<Text style={[SS.fz16]}>{I18n.t('assets.estimateGasFee')}</Text>
+										<View style={[SS.row, SS.ac]}>
+											<Text
+												ellipsizeMode='tail'
+												numberOfLines={1}
+												style={[
+													SS.cS,
+													SS.fz14,
+													SS.fw400,
+													SS.tr,
+													SS.mr4,
+													{ maxWidth: ThemeVar.deviceWidth * 0.4 }
+												]}>
+												{gasInfo.totalEth}
+											</Text>
+											{gasInfo.totalEth ? (
+												<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr8]}>
+													{IotaSDK.curNode?.token}
+												</Text>
+											) : null}
+											<TouchableOpacity
+												activeOpacity={0.8}
+												onPress={() => {
+													if (JSON.stringify(gasInfo) == '{}') {
+														return;
+													}
+													gasDialog.current.show({ ...gasInfo }, (res) => {
+														setGasInfo(res);
+													});
+												}}>
+												<Text style={[SS.cP, SS.fz14, SS.fw400]}> {I18n.t('assets.edit')}</Text>
+											</TouchableOpacity>
+										</View>
+									</View>
+								) : null}
 								{isBio ? (
 									<View />
 								) : (
@@ -297,6 +363,7 @@ export const AssetsSend = () => {
 				</Formik>
 			</Content>
 			<ConfirmDialog dialogRef={alert} />
+			<GasDialog dialogRef={gasDialog} />
 		</Container>
 	);
 };

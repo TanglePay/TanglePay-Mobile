@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Linking, KeyboardAvoidingView, InteractionManager } from 'react-native';
+import { Linking, KeyboardAvoidingView, InteractionManager, TouchableOpacity } from 'react-native';
 import { View, Text, Item, Input, Button, Spinner } from 'native-base';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
@@ -11,9 +11,11 @@ import { Bridge } from '@/common/bridge';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
+import { GasDialog } from '@/common/components/gasDialog';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
+	const gasDialog = useRef();
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	useGetParticipationEvents();
@@ -33,6 +35,7 @@ export const DappDialog = () => {
 	// const [statedAmount] = useStore('staking.statedAmount');
 	const [curNodeId] = useStore('common.curNodeId');
 	const changeNode = useChangeNode();
+	const [gasInfo, setGasInfo] = useState({});
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -69,8 +72,7 @@ export const DappDialog = () => {
 		contract,
 		foundryData,
 		tag,
-		nftId,
-		gas
+		nftId
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
@@ -146,7 +148,8 @@ export const DappDialog = () => {
 							awaitStake: true,
 							tag,
 							nftId,
-							gas
+							gas: gasInfo.gasLimit,
+							gasPrice: gasInfo.gasPrice
 						});
 						if (!res) {
 							setLoading(false);
@@ -167,10 +170,10 @@ export const DappDialog = () => {
 						await sleep(2000);
 					} catch (error) {
 						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendErrorMessage(type, error);
+							Bridge.sendErrorMessage(type, String(error));
 						}
 						setLoading(false);
-						Toast.error(error.toString());
+						Toast.error(String(error));
 						// Toast.error(
 						// 	`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
 						// 		realBalance
@@ -315,6 +318,23 @@ export const DappDialog = () => {
 								let curToken = IotaSDK.curNode?.token;
 								sendAmount = Number(new BigNumber(value));
 								showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
+
+								let [gasPrice, gasLimit] = await Promise.all([
+									IotaSDK.client.eth.getGasPrice(),
+									IotaSDK.getDefaultGasLimit(curWallet.address, taggedData ? address : '')
+								]);
+								gasLimit = gasLimit || 21000;
+								let totalWei = new BigNumber(gasPrice).times(gasLimit);
+								const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+								gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
+								const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
+								setGasInfo({
+									gasLimit,
+									gasPrice,
+									total,
+									totalEth
+								});
+
 								if (taggedData) {
 									contract = address;
 									const { functionName, params, web3Contract, isErc20 } = IotaSDK.getAbiParams(
@@ -614,9 +634,48 @@ export const DappDialog = () => {
 								})}
 							</Text>
 						</View>
+						{['iota_sendTransaction', 'eth_sendTransaction', 'send'].includes(dappData.type) &&
+						IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
+							<View style={[SS.row, SS.ac, SS.jsb, SS.pv10, SS.mt5]}>
+								<Text style={[SS.fz16]}>{I18n.t('assets.estimateGasFee')}</Text>
+								<View style={[SS.row, SS.ac]}>
+									<Text
+										ellipsizeMode='tail'
+										numberOfLines={1}
+										style={[
+											SS.cS,
+											SS.fz14,
+											SS.fw400,
+											SS.tr,
+											SS.mr4,
+											{ width: ThemeVar.deviceWidth * 0.35 }
+										]}>
+										{gasInfo.totalEth}
+									</Text>
+									{gasInfo.totalEth ? (
+										<Text style={[SS.cS, SS.fz14, SS.fw400, SS.tr, SS.mr8]}>
+											{IotaSDK.curNode?.token}
+										</Text>
+									) : null}
+									<TouchableOpacity
+										activeOpacity={0.8}
+										onPress={() => {
+											if (JSON.stringify(gasInfo) == '{}') {
+												return;
+											}
+											gasDialog.current.show({ ...gasInfo }, (res) => {
+												setGasInfo(res);
+											});
+										}}>
+										<Text style={[SS.cP, SS.fz14, SS.fw400]}> {I18n.t('assets.edit')}</Text>
+									</TouchableOpacity>
+								</View>
+							</View>
+						) : null}
 						{!isBio && dappData.type !== 'iota_connect' && (
-							<Item inlineLabel>
+							<Item inlineLabel style={[SS.ml0]}>
 								<Input
+									style={[SS.pl0]}
 									keyboardType='ascii-capable'
 									secureTextEntry={!showPwd}
 									onChangeText={setPassword}
@@ -702,6 +761,7 @@ export const DappDialog = () => {
 					</View>
 				</View>
 			</KeyboardAvoidingView>
+			<GasDialog dialogRef={gasDialog} />
 		</Modal>
 	);
 };

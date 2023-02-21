@@ -242,9 +242,14 @@ export const Bridge = {
 					amount = amount.plus(e);
 				});
 			}
+			let collectibles = []
+			if(assetsList.includes('soonaverse') && IotaSDK.isWeb3Node){
+				collectibles = await IotaSDK.getNfts(addressList);
+			}
 			amount = Number(amount);
 			const assetsData = {
-				amount
+				amount,
+				collectibles
 			};
 			const key = `${origin}_eth_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
 			this.sendMessage('eth_getBalance', assetsData);
