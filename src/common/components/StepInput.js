@@ -16,7 +16,7 @@ export const StepInput = (props) => {
 		onChangeText(inputValue);
 	}, [inputValue]);
 	const handleReduce = () => {
-		if (inputValue && inputValue > 0) {
+		if (inputValue && inputValue > 1) {
 			setValue(IotaSDK.getNumberStr(BigNumber(inputValue).minus(1).valueOf()));
 		}
 	};
