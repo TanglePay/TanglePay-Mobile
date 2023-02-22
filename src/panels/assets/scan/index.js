@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, View, Text } from 'native-base';
 import { StyleSheet, PermissionsAndroid, Animated, Easing, ImageBackground } from 'react-native';
 import { Base, I18n } from '@tangle-pay/common';
@@ -16,12 +16,17 @@ let getDataFlag = false;
 export const AssetsScan = () => {
 	const [moveAnim] = useState(new Animated.Value(-2));
 	const { params } = useRoute();
+	const isClickRef = useRef();
+	const timeHandleRef = useRef();
 	useEffect(async () => {
 		await requestCameraPermission();
 		startAnimation();
 		getDataFlag = false;
 		return () => {
 			getDataFlag = false;
+			if (timeHandleRef.current) {
+				clearTimeout(timeHandleRef.current);
+			}
 		};
 	}, []);
 	const requestCameraPermission = async () => {
@@ -75,6 +80,9 @@ export const AssetsScan = () => {
 		}
 	};
 	const onImageLibrary = () => {
+		if (isClickRef.current) {
+			return;
+		}
 		launchImageLibrary(
 			{
 				mediaType: 'photo'
@@ -91,6 +99,10 @@ export const AssetsScan = () => {
 					});
 			}
 		);
+		isClickRef.current = true;
+		timeHandleRef.current = setTimeout(() => {
+			isClickRef.current = false;
+		}, 1000);
 	};
 	return (
 		<Container>

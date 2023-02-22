@@ -6,6 +6,7 @@ import { ViewProps } from 'react-native';
 import { GProps } from 'react-native-svg';
 
 export { default as About } from './About';
+export { default as AddCircle } from './AddCircle';
 export { default as Add } from './Add';
 export { default as Advanced } from './Advanced';
 export { default as Apps } from './Apps';
@@ -31,6 +32,7 @@ export { default as Lang } from './Lang';
 export { default as Left } from './Left';
 export { default as Loading } from './Loading';
 export { default as Me } from './Me';
+export { default as MinusCircle } from './MinusCircle';
 export { default as More } from './More';
 export { default as Network } from './Network';
 export { default as NoScreenshot } from './NoScreenshot';
@@ -55,7 +57,7 @@ export { default as View } from './View';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'add' | 'advanced' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'fingerprint' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'radio' | 'remove' | 'right' | 'scan' | 'search' | 'send' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'tradingTime' | 'up' | 'view' | 'wallet';
+  name: 'about' | 'add_circle' | 'add' | 'advanced' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'fingerprint' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'minus_circle' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'privacy' | 'radio' | 'remove' | 'right' | 'scan' | 'search' | 'send' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'tradingTime' | 'up' | 'view' | 'wallet';
   size?: number;
   color?: string | string[];
 }

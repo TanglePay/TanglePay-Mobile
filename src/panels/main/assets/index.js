@@ -185,7 +185,7 @@ export const Assets = () => {
 					</TouchableOpacity>
 				</View>
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
-					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
+					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16, SS.jsb]}>
 						<CoinList
 							setHeight={(e) => {
 								let h = e + 300;
@@ -196,12 +196,24 @@ export const Assets = () => {
 							}}
 						/>
 						{assetsTab.includes('stake') ? <RewardsList /> : null}
-						{!isRequestAssets && (
+						{!isRequestAssets ? (
 							<View style={[SS.p16, SS.c, SS.row]}>
 								<Spinner size='small' color='gray' />
 								<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
 							</View>
-						)}
+						) : null}
+						{IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
+							<TouchableOpacity
+								style={[SS.pv16, SS.mt4, SS.c, SS.row]}
+								onPress={() => {
+									Base.push('assets/importToken');
+								}}>
+								<Text style={[SS.fz23, SS.mr12, SS.cP, { marginBottom: 3 }]}>+</Text>
+								<Text style={[SS.fz15, SS.cP]} className='fz24 fw600 mr4'>
+									{I18n.t('assets.importToken')}
+								</Text>
+							</TouchableOpacity>
+						) : null}
 					</View>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16]}>
 						<CollectiblesList

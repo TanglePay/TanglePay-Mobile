@@ -21,14 +21,14 @@ export const CoinList = ({ setHeight }) => {
 	let [assetsList] = useStore('common.assetsList');
 	const [ipfsDic, setIpfsDic] = useState({});
 	const contractList = IotaSDK.curNode?.contractList || [];
-	assetsList = assetsList.filter((e) => {
-		const { name } = e;
-		if (!e.contract) {
-			return true;
-		}
-		const contract = contractList.find((e) => e.token === name)?.contract;
-		return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
-	});
+	// assetsList = assetsList.filter((e) => {
+	// 	const { name } = e;
+	// 	if (!e.contract) {
+	// 		return true;
+	// 	}
+	// 	const contract = contractList.find((e) => e.token === name)?.contract;
+	// 	return IotaSDK.contracAssetsShowDic[contract] || e.realBalance > 0;
+	// });
 	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
 	const ipfsList = assetsList.filter((e) => e.logoUrl && /ipfs/.test(e.logoUrl)).map((e) => e.logoUrl);
 	useEffect(() => {
@@ -52,34 +52,49 @@ export const CoinList = ({ setHeight }) => {
 			{assetsList.map((e) => {
 				const isSMR = isSMRNode && !e.isSMRToken;
 				return (
-					<TouchableOpacity
-						activeOpacity={0.8}
-						onPress={() => {
-							Base.push('assets/send', { currency: e.name });
-						}}
-						key={e.name}
-						style={[SS.row, SS.ac, SS.pr, { height: itemH }]}>
-						<Image
-							style={[
-								S.wh(48),
-								S.radius(48),
-								SS.pa,
-								SS.bgW,
-								{ left: 0, top: 8, zIndex: 1, opacity: hideIcon[e.name] ? 0 : 1 },
-								SS.mr12,
-								S.border(4)
-							]}
-							source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.isSMRToken ? e.tokenId : e.name) }}
-							onError={() => {
-								setHideIcon((d) => {
-									return { ...d, [e.name]: true };
-								});
+					<View key={`${e.name}_${e.tokenId}_${e.contract}`} style={[SS.row, SS.ac, { height: itemH }]}>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							style={[SS.pr]}
+							onPress={() => {
+								if (e.isSMRToken) {
+									Base.push('assets/tokenDetail', {
+										tokenId: e.tokenId,
+										standard: e.standard,
+										name: e.name,
+										logoUrl: e.logoUrl || Base.getIcon(e.tokenId)
+									});
+								} else {
+									Base.push('assets/send', { currency: e.name, id: e.tokenId || e.contract || '' });
+								}
+							}}>
+							<Image
+								style={[
+									S.wh(48),
+									S.radius(48),
+									SS.pa,
+									SS.bgW,
+									{ left: 0, top: 0, zIndex: 1, opacity: hideIcon[e.name] ? 0 : 1 },
+									SS.mr12,
+									S.border(4)
+								]}
+								source={{ uri: ipfsDic[e.logoUrl] || Base.getIcon(e.isSMRToken ? e.tokenId : e.name) }}
+								onError={() => {
+									setHideIcon((d) => {
+										return { ...d, [e.name]: true };
+									});
+								}}
+							/>
+							<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
+								<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
+							</View>
+						</TouchableOpacity>
+						<TouchableOpacity
+							activeOpacity={0.8}
+							onPress={() => {
+								Base.push('assets/send', { currency: e.name, id: e.tokenId || e.contract || '' });
 							}}
-						/>
-						<View style={[S.wh(48), S.radius(48), SS.mr12, S.border(4), SS.bgP, SS.c]}>
-							<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(e.name).toLocaleUpperCase()[0]}</Text>
-						</View>
-						<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
+							style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz16]}>{String(e.name).toLocaleUpperCase()}</Text>
 								{!IotaSDK.isWeb3Node && statedAmount > 0 && e.realBalance > 0 && !needRestake ? (
@@ -115,8 +130,8 @@ export const CoinList = ({ setHeight }) => {
 									) : null}
 								</View>
 							)}
-						</View>
-					</TouchableOpacity>
+						</TouchableOpacity>
+					</View>
 				);
 			})}
 		</View>
@@ -166,9 +181,9 @@ export const RewardsList = () => {
 		}
 		let arr = Object.values(obj);
 		arr.sort((a) => (a.isSMR ? -1 : 0));
-		if (checkClaim) {
-			arr = arr.filter((e) => !e.isSMR);
-		}
+		// if (checkClaim) {
+		arr = arr.filter((e) => !e.isSMR);
+		// }
 		setList(arr);
 	}, [checkClaim, JSON.stringify(stakedRewards), JSON.stringify(rewards), curWallet?.address + curWallet?.nodeId]);
 	const ListEl = useMemo(() => {
@@ -437,17 +452,25 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											/>
 										) : null}
 									</View>
-									<CachedImage
-										style={[
-											S.radius(8),
-											S.wh(imgW),
-											S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
-											S.marginB(15),
-											SS.bgS
-										]}
-										resizeMode='contain'
-										source={{ uri: e.thumbnailImage || e.media }}
-									/>
+									<TouchableOpacity
+										activeOpacity={0.8}
+										onPress={() => {
+											Base.push('assets/nftDetail', {
+												...e
+											});
+										}}>
+										<CachedImage
+											style={[
+												S.radius(8),
+												S.wh(imgW),
+												S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+												S.marginB(15),
+												SS.bgS
+											]}
+											resizeMode='contain'
+											source={{ uri: e.thumbnailImage || e.media }}
+										/>
+									</TouchableOpacity>
 								</View>
 							);
 						})}

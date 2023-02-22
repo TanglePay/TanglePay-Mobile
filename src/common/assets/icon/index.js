@@ -3,6 +3,7 @@
 import React from 'react';
 
 import About from './About';
+import AddCircle from './AddCircle';
 import Add from './Add';
 import Advanced from './Advanced';
 import Apps from './Apps';
@@ -28,6 +29,7 @@ import Lang from './Lang';
 import Left from './Left';
 import Loading from './Loading';
 import Me from './Me';
+import MinusCircle from './MinusCircle';
 import More from './More';
 import Network from './Network';
 import NoScreenshot from './NoScreenshot';
@@ -51,6 +53,7 @@ import Up from './Up';
 import View from './View';
 import Wallet from './Wallet';
 export { default as About } from './About';
+export { default as AddCircle } from './AddCircle';
 export { default as Add } from './Add';
 export { default as Advanced } from './Advanced';
 export { default as Apps } from './Apps';
@@ -76,6 +79,7 @@ export { default as Lang } from './Lang';
 export { default as Left } from './Left';
 export { default as Loading } from './Loading';
 export { default as Me } from './Me';
+export { default as MinusCircle } from './MinusCircle';
 export { default as More } from './More';
 export { default as Network } from './Network';
 export { default as NoScreenshot } from './NoScreenshot';
@@ -103,100 +107,104 @@ let IconFont = ({ name, ...rest }) => {
   switch (name) {
     case 'about':
       return <About key="L1" {...rest} />;
+    case 'add_circle':
+      return <AddCircle key="L2" {...rest} />;
     case 'add':
-      return <Add key="L2" {...rest} />;
+      return <Add key="L3" {...rest} />;
     case 'advanced':
-      return <Advanced key="L3" {...rest} />;
+      return <Advanced key="L4" {...rest} />;
     case 'apps':
-      return <Apps key="L4" {...rest} />;
+      return <Apps key="L5" {...rest} />;
     case 'assets':
-      return <Assets key="L5" {...rest} />;
+      return <Assets key="L6" {...rest} />;
     case 'buy':
-      return <Buy key="L6" {...rest} />;
+      return <Buy key="L7" {...rest} />;
     case 'cache':
-      return <Cache key="L7" {...rest} />;
+      return <Cache key="L8" {...rest} />;
     case 'checkbox_0':
-      return <Checkbox0 key="L8" {...rest} />;
+      return <Checkbox0 key="L9" {...rest} />;
     case 'checkbox_1':
-      return <Checkbox1 key="L9" {...rest} />;
+      return <Checkbox1 key="L10" {...rest} />;
     case 'close':
-      return <Close key="L10" {...rest} />;
+      return <Close key="L11" {...rest} />;
     case 'copy':
-      return <Copy key="L11" {...rest} />;
+      return <Copy key="L12" {...rest} />;
     case 'down':
-      return <Down key="L12" {...rest} />;
+      return <Down key="L13" {...rest} />;
     case 'edit':
-      return <Edit key="L13" {...rest} />;
+      return <Edit key="L14" {...rest} />;
     case 'encrypt':
-      return <Encrypt key="L14" {...rest} />;
+      return <Encrypt key="L15" {...rest} />;
     case 'excel':
-      return <Excel key="L15" {...rest} />;
+      return <Excel key="L16" {...rest} />;
     case 'eye_0':
-      return <Eye0 key="L16" {...rest} />;
+      return <Eye0 key="L17" {...rest} />;
     case 'eye_1':
-      return <Eye1 key="L17" {...rest} />;
+      return <Eye1 key="L18" {...rest} />;
     case 'file':
-      return <File key="L18" {...rest} />;
+      return <File key="L19" {...rest} />;
     case 'fingerprint':
-      return <Fingerprint key="L19" {...rest} />;
+      return <Fingerprint key="L20" {...rest} />;
     case 'help':
-      return <Help key="L20" {...rest} />;
+      return <Help key="L21" {...rest} />;
     case 'history':
-      return <History key="L21" {...rest} />;
+      return <History key="L22" {...rest} />;
     case 'into':
-      return <Into key="L22" {...rest} />;
+      return <Into key="L23" {...rest} />;
     case 'lang':
-      return <Lang key="L23" {...rest} />;
+      return <Lang key="L24" {...rest} />;
     case 'left':
-      return <Left key="L24" {...rest} />;
+      return <Left key="L25" {...rest} />;
     case 'loading':
-      return <Loading key="L25" {...rest} />;
+      return <Loading key="L26" {...rest} />;
     case 'me':
-      return <Me key="L26" {...rest} />;
+      return <Me key="L27" {...rest} />;
+    case 'minus_circle':
+      return <MinusCircle key="L28" {...rest} />;
     case 'more':
-      return <More key="L27" {...rest} />;
+      return <More key="L29" {...rest} />;
     case 'network':
-      return <Network key="L28" {...rest} />;
+      return <Network key="L30" {...rest} />;
     case 'no_screenshot':
-      return <NoScreenshot key="L29" {...rest} />;
+      return <NoScreenshot key="L31" {...rest} />;
     case 'noData':
-      return <NoData key="L30" {...rest} />;
+      return <NoData key="L32" {...rest} />;
     case 'outto':
-      return <Outto key="L31" {...rest} />;
+      return <Outto key="L33" {...rest} />;
     case 'privacy':
-      return <Privacy key="L32" {...rest} />;
+      return <Privacy key="L34" {...rest} />;
     case 'radio':
-      return <Radio key="L33" {...rest} />;
+      return <Radio key="L35" {...rest} />;
     case 'remove':
-      return <Remove key="L34" {...rest} />;
+      return <Remove key="L36" {...rest} />;
     case 'right':
-      return <Right key="L35" {...rest} />;
+      return <Right key="L37" {...rest} />;
     case 'scan':
-      return <Scan key="L36" {...rest} />;
+      return <Scan key="L38" {...rest} />;
     case 'search':
-      return <Search key="L37" {...rest} />;
+      return <Search key="L39" {...rest} />;
     case 'send':
-      return <Send key="L38" {...rest} />;
+      return <Send key="L40" {...rest} />;
     case 'set':
-      return <Set key="L39" {...rest} />;
+      return <Set key="L41" {...rest} />;
     case 'share':
-      return <Share key="L40" {...rest} />;
+      return <Share key="L42" {...rest} />;
     case 'stake':
-      return <Stake key="L41" {...rest} />;
+      return <Stake key="L43" {...rest} />;
     case 'staking':
-      return <Staking key="L42" {...rest} />;
+      return <Staking key="L44" {...rest} />;
     case 'tick':
-      return <Tick key="L43" {...rest} />;
+      return <Tick key="L45" {...rest} />;
     case 'time':
-      return <Time key="L44" {...rest} />;
+      return <Time key="L46" {...rest} />;
     case 'tradingTime':
-      return <TradingTime key="L45" {...rest} />;
+      return <TradingTime key="L47" {...rest} />;
     case 'up':
-      return <Up key="L46" {...rest} />;
+      return <Up key="L48" {...rest} />;
     case 'view':
-      return <View key="L47" {...rest} />;
+      return <View key="L49" {...rest} />;
     case 'wallet':
-      return <Wallet key="L48" {...rest} />;
+      return <Wallet key="L50" {...rest} />;
   }
 
   return null;
