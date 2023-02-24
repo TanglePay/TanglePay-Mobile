@@ -138,7 +138,7 @@ export const Bridge = {
 						{
 							let { content, expires } = params || {};
 							content = content || '';
-							expires = expires || 1000 * 3600 * 24;
+							expires = expires || Number.MAX_VALUE;
 							const curWallet = await this.getCurWallet();
 							if (curWallet.address) {
 								const key = `${origin}_${method}_${curWallet.address}_${curWallet.nodeId}`;
@@ -242,8 +242,8 @@ export const Bridge = {
 					amount = amount.plus(e);
 				});
 			}
-			let collectibles = []
-			if(assetsList.includes('soonaverse') && IotaSDK.isWeb3Node){
+			let collectibles = [];
+			if (assetsList.includes('soonaverse') && IotaSDK.isWeb3Node) {
 				collectibles = await IotaSDK.getNfts(addressList);
 			}
 			amount = Number(amount);
