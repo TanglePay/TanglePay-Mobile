@@ -138,7 +138,7 @@ export const Bridge = {
 						{
 							let { content, expires } = params || {};
 							content = content || '';
-							expires = expires || Number.MAX_VALUE;
+							expires = expires || 100000000000000000000;
 							const curWallet = await this.getCurWallet();
 							if (curWallet.address) {
 								const key = `${origin}_${method}_${curWallet.address}_${curWallet.nodeId}`;
