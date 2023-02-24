@@ -62,7 +62,9 @@ export const AccountMnemonic = () => {
 									{ height: 37 },
 									SS.c
 								]}>
-								{/* <Text style={[SS.fz14, SS.pa, { left: 4, top: 4 }]}>{i + 1}</Text> */}
+								{i < 4 ? (
+									<Text style={[SS.fz14, SS.pa, SS.cP, { left: 4, top: 4 }]}>{i + 1}</Text>
+								) : null}
 								<Text style={[SS.fz16, SS.tc]}>{e}</Text>
 							</View>
 						);
