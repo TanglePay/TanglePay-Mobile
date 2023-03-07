@@ -72,7 +72,8 @@ export const DappDialog = () => {
 		contract,
 		foundryData,
 		tag,
-		nftId
+		nftId,
+		reqId
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
@@ -157,7 +158,7 @@ export const DappDialog = () => {
 						}
 						messageId = res.messageId;
 						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendMessage(type, res);
+							Bridge.sendMessage(type, res, reqId);
 						}
 						setLoading(false);
 						// Toast.success(
@@ -170,7 +171,7 @@ export const DappDialog = () => {
 						await sleep(2000);
 					} catch (error) {
 						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendErrorMessage(type, String(error));
+							Bridge.sendErrorMessage(type, String(error), reqId);
 						}
 						setLoading(false);
 						Toast.error(String(error));
@@ -198,25 +199,29 @@ export const DappDialog = () => {
 				break;
 			case 'iota_changeAccount':
 				{
-					await Bridge.sendMessage(type, {
-						address: curWallet.address,
-						nodeId: curWallet.nodeId,
-						network: IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.network
-					});
+					await Bridge.sendMessage(
+						type,
+						{
+							address: curWallet.address,
+							nodeId: curWallet.nodeId,
+							network: IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.network
+						},
+						reqId
+					);
 					Toast.hideLoading();
 				}
 				break;
 			case 'iota_connect':
 				{
 					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_connect(origin, expires);
+						await Bridge.iota_connect(origin, expires, '', '', reqId);
 					});
 				}
 				break;
 			case 'iota_sign':
 				{
 					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_sign(origin, expires, content, password);
+						await Bridge.iota_sign(origin, expires, content, password, reqId);
 					});
 				}
 				break;
@@ -246,7 +251,9 @@ export const DappDialog = () => {
 		hide();
 	};
 	const handleUrl = async (url) => {
-		if (!url) return;
+		if (!url) {
+			return;
+		}
 		const res = Base.handlerParams(url);
 		const regex = /(<([^>]+)>)/gi;
 		for (const i in res) {
@@ -268,7 +275,8 @@ export const DappDialog = () => {
 			assetId = '',
 			nftId = '',
 			tag = '',
-			gas = ''
+			gas = '',
+			reqId = 0
 		} = res;
 		let toNetId;
 		if (network) {
@@ -497,7 +505,8 @@ export const DappDialog = () => {
 								nftId,
 								abiFunc,
 								abiParams,
-								gas
+								gas,
+								reqId
 							});
 							show();
 						}
@@ -522,7 +531,8 @@ export const DappDialog = () => {
 								texts,
 								return_url,
 								type,
-								content
+								content,
+								reqId
 							});
 							show();
 						}
@@ -549,7 +559,8 @@ export const DappDialog = () => {
 								return_url,
 								type,
 								origin,
-								expires
+								expires,
+								reqId
 							});
 							show();
 						}
@@ -574,7 +585,8 @@ export const DappDialog = () => {
 								type,
 								content,
 								origin,
-								expires
+								expires,
+								reqId
 							});
 							show();
 						}
