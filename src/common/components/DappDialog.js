@@ -108,6 +108,7 @@ export const DappDialog = () => {
 						}
 					}
 					let realBalance = BigNumber(assets.realBalance || 0);
+					console.log('real',realBalance)
 					if (IotaSDK.checkSMR(curWallet.nodeId) && !assets.isSMRToken) {
 						realBalance = BigNumber(assets.realAvailable || 0);
 					}
@@ -137,7 +138,9 @@ export const DappDialog = () => {
 							realBalance = 0;
 							decimal = 0;
 						}
-						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
+						let res = undefined
+						
+						res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: assets?.contract,
 							token: assets?.name,
 							taggedData,
@@ -149,10 +152,12 @@ export const DappDialog = () => {
 							awaitStake: true,
 							tag,
 							nftId,
-							gas: gasInfo.gasLimit,
-							gasPrice: gasInfo.gasPrice
+							gas: Math.ceil(gasInfo.gasLimit),
+							gasPrice: Math.ceil(gasInfo.gasPrice)
 						});
+						
 						if (!res) {
+							Bridge.sendErrorMessage(type, error, reqId);
 							setLoading(false);
 							return;
 						}

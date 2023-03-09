@@ -112,12 +112,12 @@ export const Bridge = {
 								abiRes.web3Contract.methods[abiRes.functionName](...abiParams)
 									.call()
 									.then((res) => {
-										this.sendMessage(method, res);
+										this.sendMessage(method, res, reqId);
 									})
 									.catch((error) => {
 										this.sendErrorMessage(method, {
 											msg: error.toString()
-										});
+										}, reqId);
 									});
 							}
 						} else {
@@ -134,7 +134,8 @@ export const Bridge = {
 								nftId = '',
 								gas = ''
 							} = params;
-							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}`;
+							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}&reqId=${reqId}`;
+							console.log('deeplink',url)
 							Linking.openURL(url);
 						}
 						break;
