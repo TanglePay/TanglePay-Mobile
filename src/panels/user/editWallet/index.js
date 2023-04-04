@@ -16,6 +16,7 @@ export const UserEditWallet = () => {
 	const name = curEdit.name || '';
 	const dialogRef = useRef();
 	const curNode = IotaSDK.nodes.find((d) => d.id == curEdit.nodeId);
+	const isLedger = curEdit.type == 'ledger';
 	return (
 		<Container>
 			<Nav title={I18n.t('user.manage')} />
@@ -75,18 +76,20 @@ export const UserEditWallet = () => {
 						<SvgIcon size={16} name='right' />
 					</TouchableOpacity>
 				) : null}
-				<TouchableOpacity
-					onPress={() => {
-						Base.push('user/walletPassword', {
-							...curEdit
-						});
-					}}
-					activeOpacity={0.8}
-					style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-					<Text style={[SS.fz14]}>{I18n.t('user.resetPassword')}</Text>
-					<SvgIcon size={16} name='right' />
-				</TouchableOpacity>
-				{curNode?.type == 2 ? (
+				{!isLedger ? (
+					<TouchableOpacity
+						onPress={() => {
+							Base.push('user/walletPassword', {
+								...curEdit
+							});
+						}}
+						activeOpacity={0.8}
+						style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+						<Text style={[SS.fz14]}>{I18n.t('user.resetPassword')}</Text>
+						<SvgIcon size={16} name='right' />
+					</TouchableOpacity>
+				) : null}
+				{curNode?.type == 2 && !isLedger ? (
 					<TouchableOpacity
 						onPress={() => {
 							Base.push('user/privateKey', {
