@@ -333,11 +333,42 @@ export const DappDialog = () => {
 
 								let [gasPrice, gasLimit] = await Promise.all([
 									IotaSDK.client.eth.getGasPrice(),
-									IotaSDK.getDefaultGasLimit(curWallet.address, taggedData ? address : '')
+									IotaSDK.getDefaultGasLimit(
+										curWallet.address,
+										taggedData ? address : '',
+										IotaSDK.getNumberStr(sendAmount || 0),
+										taggedData
+									)
 								]);
+
+								if (taggedData) {
+									if (IotaSDK.curNode?.contractGasPriceRate) {
+										gasPrice = IotaSDK.getNumberStr(
+											parseInt(gasPrice * IotaSDK.curNode?.contractGasPriceRate)
+										);
+									}
+									if (IotaSDK.curNode?.contractGasLimitRate) {
+										gasLimit = IotaSDK.getNumberStr(
+											parseInt(gasLimit * IotaSDK.curNode?.contractGasLimitRate)
+										);
+									}
+								} else {
+									if (IotaSDK.curNode?.gasPriceRate) {
+										gasPrice = IotaSDK.getNumberStr(
+											parseInt(gasPrice * IotaSDK.curNode?.gasPriceRate)
+										);
+									}
+									if (IotaSDK.curNode?.gasLimitRate) {
+										gasLimit = IotaSDK.getNumberStr(
+											parseInt(gasLimit * IotaSDK.curNode?.gasLimitRate)
+										);
+									}
+								}
+
 								const gasPriceWei = gasPrice;
 								gasLimit = gasLimit || 21000;
 								let totalWei = new BigNumber(gasPrice).times(gasLimit);
+								totalWei = IotaSDK.getNumberStr(totalWei);
 								const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
 								gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
 								const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
@@ -413,22 +444,29 @@ export const DappDialog = () => {
 										unit = Base.handleAddress(nftId);
 										setLoading(true);
 										if (IotaSDK?.IndexerPluginClient?.nft) {
-											let nftInfo = await IotaSDK.IndexerPluginClient.nft(nftId);
-											if (nftInfo?.items?.[0]) {
-												nftInfo = await IotaSDK.client.output(nftInfo?.items?.[0]);
-												let info = (nftInfo?.output?.immutableFeatures || []).find((d) => {
-													return d.type == 2;
-												});
-												if (info && info.data) {
-													try {
-														info = IotaSDK.hexToUtf8(info.data);
-														info = JSON.parse(info);
-														unit = info.name;
-													} catch (error) {
-														console.log(error);
+											unit = [];
+											const getNftInfo = async (curNftId) => {
+												let nftInfo = await IotaSDK.IndexerPluginClient.nft(curNftId);
+												if (nftInfo?.items?.[0]) {
+													nftInfo = await IotaSDK.client.output(nftInfo?.items?.[0]);
+
+													let info = (nftInfo?.output?.immutableFeatures || []).find((d) => {
+														return d.type == 2;
+													});
+													if (info && info.data) {
+														try {
+															info = IotaSDK.hexToUtf8(info.data);
+															info = JSON.parse(info);
+															unit.push(info.name);
+														} catch (error) {
+															console.log(error);
+														}
 													}
 												}
-											}
+											};
+											const nfts = nftId.split(',');
+											await Promise.all(nfts.map((e) => getNftInfo(e)));
+											unit = unit.join(' , ');
 										}
 										showUnit = unit;
 										setLoading(false);

@@ -54,23 +54,40 @@ export const AssetsSend = () => {
 	useEffect(() => {
 		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
 			const eth = IotaSDK.client.eth;
-			Promise.all([eth.getGasPrice(), IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract)]).then(
-				([gasPrice, gas]) => {
-					let gasLimit = gasInfo.gasLimit || gas;
-					let totalWei = new BigNumber(gasPrice).times(gasLimit);
-					const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
-					const gasPriceWei = gasPrice;
-					gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
-					const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
-					setGasInfo({
-						gasLimit,
-						gasPrice,
-						total,
-						totalEth,
-						gasPriceWei
-					});
+			Promise.all([
+				eth.getGasPrice(),
+				IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract, sendAmount)
+			]).then(([gasPrice, gas]) => {
+				if (assets?.contract) {
+					if (IotaSDK.curNode?.contractGasPriceRate) {
+						gasPrice = IotaSDK.getNumberStr(parseInt(gasPrice * IotaSDK.curNode?.contractGasPriceRate));
+					}
+					if (IotaSDK.curNode?.contractGasLimitRate) {
+						gas = IotaSDK.getNumberStr(parseInt(gas * IotaSDK.curNode?.contractGasLimitRate));
+					}
+				} else {
+					if (IotaSDK.curNode?.gasPriceRate) {
+						gasPrice = IotaSDK.getNumberStr(parseInt(gasPrice * IotaSDK.curNode?.gasPriceRate));
+					}
+					if (IotaSDK.curNode?.gasLimitRate) {
+						gas = IotaSDK.getNumberStr(parseInt(gas * IotaSDK.curNode?.gasLimitRate));
+					}
 				}
-			);
+				// let gasLimit = gasInfo.gasLimit || gas;
+				let gasLimit = gas;
+				let totalWei = new BigNumber(gasPrice).times(gasLimit);
+				const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+				const gasPriceWei = gasPrice;
+				gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
+				const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
+				setGasInfo({
+					gasLimit,
+					gasPrice,
+					total,
+					totalEth,
+					gasPriceWei
+				});
+			});
 		}
 	}, [curWallet.nodeId, assets?.contract]);
 

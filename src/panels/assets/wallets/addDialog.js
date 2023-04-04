@@ -42,10 +42,12 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 	const nodes = JSON.parse(JSON.stringify(IotaSDK.nodes));
 	nodes.forEach((e) => {
 		if (IotaSDK.checkWeb3Node(e.id)) {
-			if (!list.find((d) => d.type == e.type)) {
-				list.push({ ...e });
+			if (!e.isHideInAdd) {
+				if (!list.find((d) => d.type == e.type)) {
+					list.push({ ...e });
+				}
+				evmName.push(e.name);
 			}
-			evmName.push(e.name);
 		} else {
 			list.push({ ...e });
 		}
@@ -113,7 +115,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								style={[{ height: 72 }, SS.pl24, SS.jc]}>
 								<Text style={[SS.fz16]}>{I18n.t('account.createTitle')}</Text>
 							</TouchableOpacity>
-							{curNode?.type == 3 && (
+							{/* {curNode?.type == 3 && (
 								<TouchableOpacity
 									activeOpacity={0.8}
 									onPress={() => {
@@ -124,7 +126,7 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 									style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
 									<Text style={[SS.fz16]}>{I18n.t('shimmer.claimStakingReward')}</Text>
 								</TouchableOpacity>
-							)}
+							)} */}
 						</View>
 						<Text style={[SS.fz16, SS.cS, SS.mv16]}>{I18n.t('account.intoBtn')}</Text>
 						<View style={[SS.mb24, SS.bgW, SS.radius8]}>
