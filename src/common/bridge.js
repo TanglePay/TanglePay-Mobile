@@ -375,11 +375,9 @@ export const Bridge = {
 			});
 		}
 	},
-	accountsChanged(address, nodeId) {
-		this.callSDKFunc('iota_event_accountsChanged', {
-			address,
-			nodeId
-		});
+	// { address, nodeId, chainId }
+	accountsChanged(obj) {
+		this.callSDKFunc('iota_event_accountsChanged', obj);
 	},
 	sendMessage(method, response) {
 		this.sendToSDK({
