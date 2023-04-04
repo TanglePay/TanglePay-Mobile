@@ -2,7 +2,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Linking } from 'react-native';
 import { Base, IotaSDK, API_URL, Trace } from '@tangle-pay/common';
 import BigNumber from 'bignumber.js';
-
+import { ethGetBlockByNumber, ethGasPrice, setWeb3Client } from './EthereumWeb3Impl';
 export const Bridge = {
 	injectedJavaScript: `
         (function(){
@@ -44,7 +44,9 @@ export const Bridge = {
 		} catch (error) {
 			data = {};
 		}
+
 		const cmd = (data?.cmd || '').replace('injectToContent##', '');
+		const reqId = data.id ? data.id : 0;
 		switch (cmd) {
 			case 'goBack':
 				Base.goBack();
@@ -53,6 +55,7 @@ export const Bridge = {
 				{
 					this.sendToSDK({
 						cmd,
+						id: reqId,
 						data: {
 							version: DeviceInfo.getVersion()
 						}
@@ -107,12 +110,16 @@ export const Bridge = {
 								abiRes.web3Contract.methods[abiRes.functionName](...abiParams)
 									.call()
 									.then((res) => {
-										this.sendMessage(method, res);
+										this.sendMessage(method, res, reqId);
 									})
 									.catch((error) => {
-										this.sendErrorMessage(method, {
-											msg: error.toString()
-										});
+										this.sendErrorMessage(
+											method,
+											{
+												msg: error.toString()
+											},
+											reqId
+										);
 									});
 							}
 						} else {
@@ -129,7 +136,7 @@ export const Bridge = {
 								nftId = '',
 								gas = ''
 							} = params;
-							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}`;
+							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}&reqId=${reqId}`;
 							Linking.openURL(url);
 						}
 						break;
@@ -144,12 +151,12 @@ export const Bridge = {
 								const key = `${origin}_${method}_${curWallet.address}_${curWallet.nodeId}`;
 								const cacheData = await this.getCacheBgData(key);
 								if (cacheData) {
-									this[method](origin, expires, content);
+									this[method](origin, expires, content, '', reqId);
 									return;
 								}
 							}
 							Linking.openURL(
-								`tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&content=${content}&expires=${expires}`
+								`tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&content=${content}&expires=${expires}&reqId=${reqId}`
 							);
 						}
 						break;
@@ -171,7 +178,7 @@ export const Bridge = {
 					case 'iota_getBalance':
 					case 'eth_getBalance':
 						{
-							this[method](origin, params);
+							this[method](origin, params, reqId);
 						}
 						break;
 					case 'iota_getPublicKey':
@@ -190,6 +197,22 @@ export const Bridge = {
 							this.sendMessage('get_login_token', token);
 						}
 						break;
+					case 'eth_getBlockByNumber':
+						try {
+							const res = await this.ethGetBlockByNumber(params);
+							this.sendMessage(method, res, reqId);
+						} catch (e) {
+							this.sendErrorMessage(method, e.message, reqId);
+						}
+						break;
+					case 'eth_gasPrice':
+						try {
+							const res = await this.ethGasPrice(params);
+							this.sendMessage(method, res, reqId);
+						} catch (e) {
+							this.sendErrorMessage(method, e.message, reqId);
+						}
+						break;
 					default:
 						break;
 				}
@@ -201,11 +224,11 @@ export const Bridge = {
 		const curWallet = (list || []).find((e) => e.isSelected);
 		return curWallet || {};
 	},
-	async iota_sign(origin, expires, content, password) {
+	async iota_sign(origin, expires, content, password, reqId) {
 		const curWallet = await this.getCurWallet();
 		const res = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 		if (res) {
-			this.sendMessage('iota_sign', res);
+			this.sendMessage('iota_sign', res, reqId);
 			// this.cacheBgData(`${origin}_iota_sign_${curWallet.address}_${curWallet.nodeId}`, res, expires);
 		} else {
 			this.sendErrorMessage('iota_sign', {
@@ -213,7 +236,18 @@ export const Bridge = {
 			});
 		}
 	},
-	async iota_connect(origin, expires) {
+	ensureWeb3Client() {
+		if (IotaSDK.isWeb3Node) {
+			setWeb3Client(IotaSDK.client);
+		}
+	},
+	async ethGetBlockByNumber(params) {
+		return await ethGetBlockByNumber(...params);
+	},
+	async ethGasPrice(params) {
+		return await ethGasPrice(...params);
+	},
+	async iota_connect(origin, expires, _, _1, reqId) {
 		const curWallet = await this.getCurWallet();
 		if (curWallet.address) {
 			const obj = {
@@ -223,16 +257,20 @@ export const Bridge = {
 			if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
 				obj.chainId = await IotaSDK.client.eth.getChainId();
 			}
-			this.sendMessage('iota_connect', {
-				...obj
-			});
+			this.sendMessage(
+				'iota_connect',
+				{
+					...obj
+				},
+				reqId
+			);
 			const key = `${origin}_iota_connect_${curWallet.address}_${curWallet.nodeId}`;
 			this.cacheBgData(key, 1, expires);
 
 			Trace.dappConnect(origin.replace(/.+\/\//, ''), curWallet.address, curWallet.nodeId, IotaSDK.curNode.token);
 		}
 	},
-	async eth_getBalance(origin, { assetsList, addressList }) {
+	async eth_getBalance(origin, { assetsList, addressList }, reqId) {
 		try {
 			const curWallet = await this.getCurWallet();
 			assetsList = assetsList || [];
@@ -259,7 +297,7 @@ export const Bridge = {
 				collectibles
 			};
 			const key = `${origin}_eth_getBalance_${curWallet?.address}_${curWallet?.nodeId}`;
-			this.sendMessage('eth_getBalance', assetsData);
+			this.sendMessage('eth_getBalance', assetsData, reqId);
 		} catch (error) {
 			Toast.hideLoading();
 			this.sendErrorMessage('eth_getBalance', {
@@ -267,7 +305,7 @@ export const Bridge = {
 			});
 		}
 	},
-	async iota_accounts() {
+	async iota_accounts(_, _1, reqId) {
 		try {
 			const curWallet = await this.getCurWallet();
 			let addressList = [];
@@ -291,12 +329,16 @@ export const Bridge = {
 				}
 			}
 			if (addressList.length > 0) {
-				this.sendMessage('iota_accounts', addressList);
+				this.sendMessage('iota_accounts', addressList, reqId);
 			} else {
-				this.sendErrorMessage('iota_accounts', {
-					msg: 'Wallet not authorized',
-					status: 2
-				});
+				this.sendErrorMessage(
+					'iota_accounts',
+					{
+						msg: 'Wallet not authorized',
+						status: 2
+					},
+					reqId
+				);
 			}
 		} catch (error) {
 			this.sendErrorMessage('iota_accounts', {
@@ -305,7 +347,7 @@ export const Bridge = {
 			});
 		}
 	},
-	async iota_getBalance(origin, { assetsList, addressList }) {
+	async iota_getBalance(origin, { assetsList, addressList }, reqId) {
 		try {
 			const curWallet = await this.getCurWallet();
 			if (addressList.length === 0) {
@@ -344,7 +386,6 @@ export const Bridge = {
 							info: tokens[i]
 						};
 					});
-					console.log(nativeTokens);
 				}
 			} else {
 				if (assetsList.includes('smr') || assetsList.includes('asmb')) {
@@ -375,20 +416,29 @@ export const Bridge = {
 				nativeTokens
 			};
 
-			this.sendMessage('iota_getBalance', assetsData);
+			this.sendMessage('iota_getBalance', assetsData, reqId);
 		} catch (error) {
-			this.sendErrorMessage('iota_getBalance', {
-				msg: error.toString()
-			});
+			this.sendErrorMessage(
+				'iota_getBalance',
+				{
+					msg: error.toString()
+				},
+				reqId
+			);
 		}
 	},
-	// { address, nodeId, chainId }
-	accountsChanged(obj) {
-		this.callSDKFunc('iota_event_accountsChanged', obj);
+	accountsChanged({ address, nodeId, chainId, reqId }) {
+		this.callSDKFunc('iota_event_accountsChanged', {
+			address,
+			nodeId,
+			chainId,
+			id: reqId
+		});
 	},
-	sendMessage(method, response) {
+	sendMessage(method, response, reqId) {
 		this.sendToSDK({
 			cmd: 'iota_request',
+			id: reqId,
 			code: 200,
 			data: {
 				method,
@@ -396,9 +446,10 @@ export const Bridge = {
 			}
 		});
 	},
-	sendErrorMessage(method, response) {
+	sendErrorMessage(method, response, reqId) {
 		this.sendToSDK({
 			cmd: 'iota_request',
+			id: reqId,
 			code: -1,
 			data: {
 				method,

@@ -368,7 +368,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			shellScript = "set -e\n\nexport NODE_BINARY=/Users/mengyuan/.nvm/versions/node/v18.12.1/bin/node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		1942A5A9C0A765F0120900D1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -593,7 +593,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RDN6YDFBZF;
+				DEVELOPMENT_TEAM = 5FW9J9UAJ3;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = iota/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -606,7 +606,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.cat.iota;
+				PRODUCT_BUNDLE_IDENTIFIER = com.silianchina;
 				PRODUCT_NAME = iota;
 				SWIFT_OBJC_BRIDGING_HEADER = "iota-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -622,7 +622,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RDN6YDFBZF;
+				DEVELOPMENT_TEAM = 5FW9J9UAJ3;
 				INFOPLIST_FILE = iota/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -634,7 +634,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.cat.iota;
+				PRODUCT_BUNDLE_IDENTIFIER = com.silianchina;
 				PRODUCT_NAME = iota;
 				SWIFT_OBJC_BRIDGING_HEADER = "iota-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
