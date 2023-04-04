@@ -58,7 +58,7 @@ export const AssetsNftMerge = () => {
 	}, [isRequestNft]);
 	return (
 		<Container>
-			<View style={[SS.flex, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
+			<View style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
 				<View style={[SS.fz16, SS.fw600]}>{I18n.t('nft.selectHero')}</View>
 				<Button
 					disabled={isDisabled}
@@ -94,9 +94,9 @@ export const AssetsNftMerge = () => {
 						return (
 							<TouchableOpacity
 								activeOpacity={0.8}
-								style={[SS.flex, SS.ac, SS.jsb, SS.p8, SS.pr20, SS.bgS, SS.radius8, SS.mb8]}
+								style={[SS.row, SS.ac, SS.jsb, SS.p8, SS.pr20, SS.bgS, SS.radius8, SS.mb8]}
 								key={e.nftId}
-								onClick={() => {
+								onPress={() => {
 									let newList = [...selectList];
 									if (isSelect) {
 										newList.splice(selectList.indexOf(e.nftId), 1);
@@ -108,7 +108,7 @@ export const AssetsNftMerge = () => {
 									}
 									setSelectList(newList);
 								}}>
-								<View style={[SS.flex, SS.ac]}>
+								<View style={[SS.row, SS.ac]}>
 									<Image
 										style={[S.wh(64), S.radius(8), SS.bgS]}
 										resizeMode='contain'

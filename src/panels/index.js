@@ -41,7 +41,17 @@ import { TokenDetail } from './assets/tokenDetail/index';
 import { NftDetail } from './assets/nftDetail/index';
 import { ImportToken } from './assets/importToken/index';
 import { AssetsNftMerge } from './assets/nftMerge';
+import { AccountHardwareInto } from './account/hardware/into';
+import { AccountHardwareImport } from './account/hardware/import';
 export const panelsList = [
+	{
+		path: 'account/hardware/import',
+		component: AccountHardwareImport
+	},
+	{
+		path: 'account/hardware/into',
+		component: AccountHardwareInto
+	},
 	{
 		path: 'assets/nftMerge',
 		component: AssetsNftMerge

@@ -36,6 +36,7 @@ export const DappDialog = () => {
 	const [curNodeId] = useStore('common.curNodeId');
 	const changeNode = useChangeNode();
 	const [gasInfo, setGasInfo] = useState({});
+	const isLedger = curWallet.type == 'ledger';
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -77,9 +78,11 @@ export const DappDialog = () => {
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
-			const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-			if (!isPassword) {
-				return Toast.error(I18n.t('assets.passwordError'));
+			if (!isLedger) {
+				const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+				if (!isPassword) {
+					return Toast.error(I18n.t('assets.passwordError'));
+				}
 			}
 		}
 		let messageId = '';
@@ -304,7 +307,7 @@ export const DappDialog = () => {
 					case 'iota_sendTransaction':
 					case 'eth_sendTransaction':
 						{
-							value = parseFloat(value) || 0;
+							value = BigNumber(value || 0).valueOf();
 							if (nftId) {
 								value = 1;
 							}
@@ -423,9 +426,16 @@ export const DappDialog = () => {
 									}
 									contractAmount = Number(new BigNumber(contractAmount));
 									try {
-										curToken =
-											(await web3Contract.methods.symbol().call()) || IotaSDK.curNode?.token;
-										const decimals = await web3Contract.methods.decimals().call();
+										if (web3Contract?.methods?.symbol) {
+											curToken = await web3Contract.methods.symbol().call();
+										} else {
+											curToken = IotaSDK.curNode?.token;
+										}
+										let decimals = 0;
+										if (web3Contract?.methods?.decimals) {
+											decimals = await web3Contract.methods.decimals().call();
+										}
+
 										if (isErc20) {
 											IotaSDK.importContract(contract, curToken);
 										}
@@ -728,7 +738,7 @@ export const DappDialog = () => {
 								</View>
 							</View>
 						) : null}
-						{!isBio && dappData.type !== 'iota_connect' && (
+						{!isBio && dappData.type !== 'iota_connect' && !isLedger ? (
 							<Item inlineLabel style={[SS.ml0]}>
 								<Input
 									style={[SS.pl0]}
@@ -744,7 +754,7 @@ export const DappDialog = () => {
 									style={[SS.ml10]}
 								/>
 							</Item>
-						)}
+						) : null}
 						<View style={[SS.row, SS.jsb, SS.ac, SS.mt25, SS.pb20]}>
 							<Button
 								onPress={() => {
