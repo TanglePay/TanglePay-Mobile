@@ -40,7 +40,12 @@ import { AssetsTradingList } from './assets/trading/list';
 import { TokenDetail } from './assets/tokenDetail/index';
 import { NftDetail } from './assets/nftDetail/index';
 import { ImportToken } from './assets/importToken/index';
+import { AssetsNftMerge } from './assets/nftMerge';
 export const panelsList = [
+	{
+		path: 'assets/nftMerge',
+		component: AssetsNftMerge
+	},
 	{
 		path: 'assets/importToken',
 		component: ImportToken

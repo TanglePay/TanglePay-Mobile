@@ -153,6 +153,13 @@ export const Bridge = {
 							);
 						}
 						break;
+					case 'iota_merge_nft':
+						{
+							Base.push('assets/nftMerge', {
+								...params
+							});
+						}
+						break;
 					case 'iota_changeAccount':
 						{
 							const { network = '' } = params;
