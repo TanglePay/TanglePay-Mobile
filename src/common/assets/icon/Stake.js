@@ -14,7 +14,7 @@ const xml = `
 </svg>
 `
 
-let Stake = ({ size, ...rest }) => {
+let Stake = ({ size, color, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

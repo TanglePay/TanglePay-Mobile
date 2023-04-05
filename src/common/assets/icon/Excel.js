@@ -14,7 +14,7 @@ const xml = `
 </svg>
 `
 
-let Excel = ({ size, ...rest }) => {
+let Excel = ({ size, color, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

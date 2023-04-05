@@ -12,7 +12,7 @@ const xml = `
 </svg>
 `
 
-let NoScreenshot = ({ size, ...rest }) => {
+let NoScreenshot = ({ size, color, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

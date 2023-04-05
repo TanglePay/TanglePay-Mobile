@@ -9,7 +9,7 @@ const xml = `
 </svg>
 `
 
-let Privacy = ({ size, ...rest }) => {
+let Privacy = ({ size, color, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

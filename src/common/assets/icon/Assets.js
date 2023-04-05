@@ -14,7 +14,7 @@ const xml = `
 </svg>
 `
 
-let Assets = ({ size, ...rest }) => {
+let Assets = ({ size, color, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

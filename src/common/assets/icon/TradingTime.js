@@ -14,7 +14,7 @@ const xml = `
 </svg>
 `
 
-let TradingTime = ({ size, ...rest }) => {
+let TradingTime = ({ size, color, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );
