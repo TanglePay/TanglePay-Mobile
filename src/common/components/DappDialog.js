@@ -331,8 +331,9 @@ export const DappDialog = () => {
 							if (IotaSDK.checkWeb3Node(toNetId || curNodeId)) {
 								unit = unit || 'wei';
 								let curToken = IotaSDK.curNode?.token;
-								sendAmount = Number(new BigNumber(value));
-								showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
+								sendAmount = Number(new BigNumber(value || 0));
+								sendAmount = sendAmount || 0;
+								showValue = IotaSDK.client.utils.fromWei(IotaSDK.getNumberStr(sendAmount), 'ether');
 
 								let [gasPrice, gasLimit] = await Promise.all([
 									IotaSDK.client.eth.getGasPrice(),
@@ -372,9 +373,9 @@ export const DappDialog = () => {
 								gasLimit = gasLimit || 21000;
 								let totalWei = new BigNumber(gasPrice).times(gasLimit);
 								totalWei = IotaSDK.getNumberStr(totalWei);
-								const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+								const totalEth = IotaSDK.client.utils.fromWei(totalWei, 'ether');
 								gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
-								const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
+								const total = IotaSDK.client.utils.fromWei(totalWei, 'gwei');
 								setGasInfo({
 									gasLimit,
 									gasPrice,
@@ -414,7 +415,7 @@ export const DappDialog = () => {
 												0
 											);
 											gasFee = IotaSDK.client.utils.fromWei(
-												BigNumber(gasPrice).valueOf(),
+												IotaSDK.getNumberStr(BigNumber(gasPrice).valueOf()),
 												'ether'
 											);
 											gasFee = `${gasFee} ${IotaSDK.curNode.token}`;

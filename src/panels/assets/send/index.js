@@ -81,10 +81,11 @@ export const AssetsSend = () => {
 				// let gasLimit = gasInfo.gasLimit || gas;
 				let gasLimit = gas;
 				let totalWei = new BigNumber(gasPrice).times(gasLimit);
-				const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+				 totalWei = IotaSDK.getNumberStr(totalWei.valueOf())
+				const totalEth = IotaSDK.client.utils.fromWei(totalWei, 'ether');
 				const gasPriceWei = gasPrice;
 				gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
-				const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
+				const total = IotaSDK.client.utils.fromWei(totalWei, 'gwei');
 				setGasInfo({
 					gasLimit,
 					gasPrice,
