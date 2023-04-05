@@ -49,21 +49,11 @@ export const AccountHardwareImport = () => {
 			<Content contentContainerStyle={[SS.ph16]}>
 				<Text style={[SS.pv16, SS.fz16, SS.fw600]}>{I18n.t('account.selectNode')}</Text>
 				<TouchableOpacity
-					style={[
-						SS.ac,
-						SS.jsb,
-						SS.row,
-						SS.bgS,
-						SS.w100,
-						SS.ph16,
-						SS.fz16,
-						SS.fw400,
-						{ height: 48, borderRadius: 10 }
-					]}
+					style={[SS.ac, SS.jsb, SS.row, SS.bgS, SS.w100, SS.ph16, { height: 48, borderRadius: 10 }]}
 					onPress={() => {
 						setVisible(true);
 					}}>
-					<div>{IotaSDK.curNode.name}</div>
+					<Text style={[SS.fz16, SS.fw400]}>{IotaSDK.curNode.name}</Text>
 					<SvgIcon name='down' style={[SS.cS]} size={16} />
 				</TouchableOpacity>
 				{/* <Picker
