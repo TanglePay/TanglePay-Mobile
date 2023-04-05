@@ -143,7 +143,7 @@ export const DappDialog = () => {
 						let res = undefined;
 
 						res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
-							contract: assets?.contract,
+							contract: contract || assets?.contract,
 							token: assets?.name,
 							taggedData,
 							realBalance: Number(realBalance),
@@ -154,8 +154,8 @@ export const DappDialog = () => {
 							awaitStake: true,
 							tag,
 							nftId,
-							gas: Math.ceil(gasInfo.gasLimit),
-							gasPrice: Math.ceil(gasInfo.gasPriceWei)
+							gas: gasInfo.gasLimit,
+							gasPrice: gasInfo.gasPriceWei
 						});
 
 						if (!res) {
@@ -442,7 +442,9 @@ export const DappDialog = () => {
 										showContractAmount = new BigNumber(contractAmount)
 											.div(BigNumber(10).pow(decimals))
 											.valueOf();
-									} catch (error) {}
+									} catch (error) {
+										console.log(error);
+									}
 									Toast.hideLoading();
 								}
 								showUnit = curToken;

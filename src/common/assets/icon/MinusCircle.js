@@ -10,7 +10,7 @@ const xml = `
 </svg>
 `
 
-let MinusCircle = ({ size, color, ...rest }) => {
+let MinusCircle = ({ size, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

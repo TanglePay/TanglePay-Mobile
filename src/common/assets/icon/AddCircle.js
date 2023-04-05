@@ -10,7 +10,7 @@ const xml = `
 </svg>
 `
 
-let AddCircle = ({ size, color, ...rest }) => {
+let AddCircle = ({ size, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

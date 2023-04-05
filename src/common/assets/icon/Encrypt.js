@@ -9,7 +9,7 @@ const xml = `
 </svg>
 `
 
-let Encrypt = ({ size, color, ...rest }) => {
+let Encrypt = ({ size, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

@@ -9,7 +9,7 @@ const xml = `
 </svg>
 `
 
-let Remove = ({ size, color, ...rest }) => {
+let Remove = ({ size, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

@@ -9,7 +9,7 @@ const xml = `
 </svg>
 `
 
-let Fingerprint = ({ size, color, ...rest }) => {
+let Fingerprint = ({ size, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );

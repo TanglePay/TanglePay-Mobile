@@ -4,9 +4,9 @@ import { useGetNftList } from '@tangle-pay/store/nft';
 import { SvgIcon, Toast, SS, S } from '@/common';
 import { useRoute } from '@react-navigation/native';
 import { Base, I18n } from '@tangle-pay/common';
-import Bridge from '@/common/bridge';
-import { Container, View, Text, Button, Content } from 'native-base';
-import { TouchableOpacity, Image } from 'react-native';
+import { Bridge } from '@/common/bridge';
+import { Container, View, Header, Text, Button, Content, Left, Right } from 'native-base';
+import { TouchableOpacity, Image, ScrollView } from 'react-native';
 
 export const AssetsNftMerge = () => {
 	const [isRequestNft] = useStore('nft.isRequestNft');
@@ -50,7 +50,7 @@ export const AssetsNftMerge = () => {
 	const [selectList, setSelectList] = useState([]);
 	const isDisabled = selectList.length != selectCount;
 	useEffect(() => {
-		if (isRequestNft) {
+		if (!isRequestNft) {
 			Toast.showLoading();
 		} else {
 			Toast.hideLoading();
@@ -58,32 +58,38 @@ export const AssetsNftMerge = () => {
 	}, [isRequestNft]);
 	return (
 		<Container>
-			<View style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
-				<View style={[SS.fz16, SS.fw600]}>{I18n.t('nft.selectHero')}</View>
-				<Button
-					disabled={isDisabled}
-					onPress={() => {
-						const infoList = [];
-						filterNftList.forEach((e) => {
-							if (selectList.includes(e.nftId)) {
-								infoList.push(e);
+			<Header>
+				<Left style={[SS.pl10]}>
+					<Text style={[SS.fz16, SS.fw600]}>{I18n.t('nft.selectHero')}</Text>
+				</Left>
+				<Right style={[SS.pr0]}>
+					<Button
+						small
+						disabled={isDisabled}
+						onPress={() => {
+							const infoList = [];
+							filterNftList.forEach((e) => {
+								if (selectList.includes(e.nftId)) {
+									infoList.push(e);
+								}
+							});
+							Bridge.sendMessage('iota_merge_nft', infoList);
+							Base.goBack();
+						}}
+						style={[
+							SS.ph24,
+							{
+								borderRadius: 4,
+								border: 0,
+								background: isDisabled ? 'rgba(54, 113, 238, 0.2)' : 'rgba(54, 113, 238, 1)'
 							}
-						});
-						Bridge.sendMessage('iota_merge_nft', infoList);
-					}}
-					style={[
-						SS.ph24,
-						{
-							borderRadius: 4,
-							border: 0,
-							background: isDisabled ? 'rgba(54, 113, 238, 0.2)' : 'rgba(54, 113, 238, 1)'
-						}
-					]}
-					color='primary'>
-					<Text style={[SS.fz14]}>{I18n.t('nft.nftAdd')}</Text>
-				</Button>
-			</View>
-			<View>
+						]}
+						color='primary'>
+						<Text style={[SS.fz14]}>{I18n.t('nft.nftAdd')}</Text>
+					</Button>
+				</Right>
+			</Header>
+			<ScrollView>
 				<Text style={[SS.fz16, SS.pv8, SS.ph16]}>
 					{I18n.t('nft.totalNum').replace('{num}', filterNftList.length)}
 				</Text>
@@ -122,7 +128,7 @@ export const AssetsNftMerge = () => {
 						);
 					})}
 				</View>
-			</View>
+			</ScrollView>
 		</Container>
 	);
 };

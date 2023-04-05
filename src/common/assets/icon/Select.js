@@ -9,7 +9,7 @@ const xml = `
 </svg>
 `
 
-let Select = ({ size, color, ...rest }) => {
+let Select = ({ size, ...rest }) => {
   return (
     <SvgXml xml={xml}  width={size} height={size} {...rest} />
   );
