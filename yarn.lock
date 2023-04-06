@@ -10191,7 +10191,7 @@ table@^5.2.3:
 
 tanglepay@^2.4.8:
   version "2.4.8"
-  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.4.8.tgz#a8c07977d17ad5c24fd9dc80cdeca838730fdd87"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.4.8.tgz#a8c07977d17ad5c24fd9dc80cdeca838730fdd87"
   integrity sha512-hvpUIXf8xGpV07qj3SGZGMf7uv+HyvU9MbV7+z0atKK/gkCt5yIi6tWI2agK1gYq08mivDmWgMFWC2niWrIDkQ==
 
 tar@^4.0.2:
