@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle, useRef, useEffect } from 'react';
 import { View, Text, Form, Item, Input, Button, Step } from 'native-base';
 import { ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
-import { I18n, IotaSDK } from '@tangle-pay/common';
+import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useEditWallet } from '@tangle-pay/store/common';
@@ -12,6 +12,8 @@ import { StepInput } from '@/common/components/StepInput';
 import BigNumber from 'bignumber.js';
 import { Platform, PermissionsAndroid, TouchableOpacity } from 'react-native';
 import TransportBLE from '@ledgerhq/react-native-hw-transport-ble';
+import { Observable } from 'rxjs';
+import { PERMISSIONS, RESULTS, requestMultiple } from 'react-native-permissions';
 
 const deviceAddition =
 	(device) =>
@@ -35,33 +37,52 @@ export const BleDevices = ({ dialogRef }) => {
 		},
 		[]
 	);
-	const getPermissions = async () => {
+	const getPermissions = async (callBack) => {
 		if (Platform.OS === 'android') {
-			await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
+			await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+			await requestMultiple([PERMISSIONS.ANDROID.BLUETOOTH_SCAN, PERMISSIONS.ANDROID.BLUETOOTH_CONNECT]);
 		}
-	};
-	const startScan = async () => {
-		setRefreshing(true);
-		const sub = TransportBLE.observeState({
+		let previousAvailable = false;
+		TransportBLE.observeState({
 			next: (e) => {
-				console.log(e);
-				if (e.type === 'add') {
-					setDevices((list) => {
-						console.log(list);
-						const newList = [...list];
-						if (!newList.find((e) => e.id)) {
-							newList.push(e);
-						}
-						return newList;
-					});
+				if (e.available !== previousAvailable) {
+					previousAvailable = e.available;
+					if (e.available) {
+						setDevices([]);
+						setRefreshing(false);
+					}
+				}
+				callBack && callBack();
+			},
+			complete: () => {},
+			error: () => {}
+		});
+	};
+	const startScan = async (reject) => {
+		setRefreshing(true);
+		const sub = TransportBLE.listen({
+			next: (e) => {
+				try {
+					if (e.type === 'add') {
+						const device = e.descriptor;
+						setDevices((list) => {
+							const newList = [...list];
+							if (!newList.find((d) => d.id == device?.id)) {
+								newList.push(device);
+							}
+							return newList;
+						});
+					}
+				} catch (error) {
+					reject(error);
 				}
 			},
-			complete: (e) => {
-				console.log(e);
+			complete: () => {
 				setRefreshing(true);
 			},
-			error: () => {
+			error: (err) => {
 				setRefreshing(false);
+				reject(err);
 			}
 		});
 		setSub(sub);
@@ -74,9 +95,14 @@ export const BleDevices = ({ dialogRef }) => {
 			if (!isSupported) {
 				resolve();
 			} else {
-				await getPermissions();
-				setShow(true);
-				await startScan();
+				try {
+					await getPermissions(async () => {
+						await startScan(reject);
+						setShow(true);
+					});
+				} catch (error) {
+					reject(error);
+				}
 			}
 		});
 	};
@@ -91,9 +117,13 @@ export const BleDevices = ({ dialogRef }) => {
 		setShow(false);
 		clear();
 		if (info) {
-			Base.transport = await TransportBLE.open(info.id);
-			if (resolveRef.current) {
-				resolveRef.current();
+			try {
+				Base.transport = await TransportBLE.open(info.id);
+				if (resolveRef.current) {
+					resolveRef.current();
+				}
+			} catch (error) {
+				rejectRef.current(error);
 			}
 		} else {
 			if (rejectRef.current) {
@@ -129,7 +159,7 @@ export const BleDevices = ({ dialogRef }) => {
 									hide(e);
 								}}>
 								<View style={[SS.row, SS.ac, { width: (ThemeVar.deviceWidth / 3) * 2 }]}>
-									<Text style={[SS.ml12, SS.fz16, SS.fw500]}>{e.descriptor}</Text>
+									<Text style={[SS.ml12, SS.fz16, SS.fw500]}>{e.name || JSON.stringify(e)}</Text>
 								</View>
 								<SvgIcon name='select' style={[SS.cS]} size='20' />
 							</TouchableOpacity>
