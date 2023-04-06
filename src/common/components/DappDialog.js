@@ -12,10 +12,12 @@ import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { GasDialog } from '@/common/components/gasDialog';
+import { BleDevices } from '@/common/components/bleDevices';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
 	const gasDialog = useRef();
+	const bleDevices = useRef();
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	useGetParticipationEvents();
@@ -141,7 +143,9 @@ export const DappDialog = () => {
 							decimal = 0;
 						}
 						let res = undefined;
-
+						if (isLedger) {
+							await bleDevices.current.show();
+						}
 						res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							contract: contract || assets?.contract,
 							token: assets?.name,
@@ -831,6 +835,7 @@ export const DappDialog = () => {
 				</View>
 			</KeyboardAvoidingView>
 			<GasDialog dialogRef={gasDialog} />
+			<BleDevices dialogRef={bleDevices} />
 		</Modal>
 	);
 };

@@ -12,6 +12,7 @@ import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Image, TouchableOpacity } from 'react-native';
 import { GasDialog } from '@/common/components/gasDialog';
+import { BleDevices } from '@/common/components/bleDevices';
 
 const schema = {
 	// currency: Yup.string().required(),
@@ -35,6 +36,7 @@ export const AssetsSend = () => {
 	const [inputAmount, setInputAmount] = useState('');
 	const alert = useRef();
 	const gasDialog = useRef();
+	const bleDevices = useRef();
 	let currency = params?.currency;
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
@@ -81,7 +83,7 @@ export const AssetsSend = () => {
 				// let gasLimit = gasInfo.gasLimit || gas;
 				let gasLimit = gas;
 				let totalWei = new BigNumber(gasPrice).times(gasLimit);
-				 totalWei = IotaSDK.getNumberStr(totalWei.valueOf())
+				totalWei = IotaSDK.getNumberStr(totalWei.valueOf());
 				const totalEth = IotaSDK.client.utils.fromWei(totalWei, 'ether');
 				const gasPriceWei = gasPrice;
 				gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
@@ -196,6 +198,9 @@ export const AssetsSend = () => {
 								residue = 0;
 								realBalance = 0;
 								decimal = 0;
+							}
+							if (isLedger) {
+								await bleDevices.current.show();
 							}
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
@@ -398,6 +403,7 @@ export const AssetsSend = () => {
 			</Content>
 			<ConfirmDialog dialogRef={alert} />
 			<GasDialog dialogRef={gasDialog} />
+			<BleDevices dialogRef={bleDevices} />
 		</Container>
 	);
 };

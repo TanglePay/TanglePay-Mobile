@@ -9,13 +9,14 @@ import { useGetNodeWallet, useChangeNode, useSelectWallet } from '@tangle-pay/st
 import { useRoute } from '@react-navigation/native';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import { TouchableOpacity } from 'react-native';
+import Modal from 'react-native-modal';
 
 export const AccountHardwareImport = () => {
 	const changeNode = useChangeNode();
 	const pageSize = 5;
 	const { params } = useRoute();
 	const selectWallet = useSelectWallet();
-	const nodes = IotaSDK.nodes.filter((e) => e.type == params.type);
+	const nodes = IotaSDK.nodes.filter((e) => e.type == params?.type);
 	const [list, setList] = useState([]);
 	const [showList, setShowList] = useState([]);
 	const [visible, setVisible] = useState(false);
@@ -56,32 +57,12 @@ export const AccountHardwareImport = () => {
 					<Text style={[SS.fz16, SS.fw400]}>{IotaSDK.curNode.name}</Text>
 					<SvgIcon name='down' style={[SS.cS]} size={16} />
 				</TouchableOpacity>
-				{/* <Picker
-					cancelText={I18n.t('apps.cancel')}
-					confirmText={I18n.t('apps.execute')}
-					columns={[
-						nodes.map((e) => {
-							return {
-								value: e.id,
-								label: e.name
-							};
-						})
-					]}
-					visible={visible}
-					onClose={() => {
-						setVisible(false);
-					}}
-					value={[IotaSDK.curNode?.id]}
-					onConfirm={(v) => {
-						changeNode(v[0]);
-					}}
-				/> */}
 				{list.length > 0 ? (
 					<>
 						<Text style={[SS.pt24, SS.fz16, SS.fw600]}>Select an Account</Text>
 						<View>
 							{showList.map((e) => {
-								const hasSelect = list.find((d) => d.address == e.address && d.hasSelect);
+								const hasSelect = !!list.find((d) => d.address == e.address && d.hasSelect);
 								const borderColor = e.hasImport ? '#ccc' : hasSelect ? '#3671EE' : '#ccc';
 								const background = e.hasImport ? '#ccc' : hasSelect ? '#3671EE' : 'transparent';
 								return (
@@ -94,7 +75,7 @@ export const AccountHardwareImport = () => {
 												return;
 											}
 											const getList = (arr) => {
-												const newList = [...arr];
+												const newList = JSON.parse(JSON.stringify(arr));
 												const i = newList.findIndex((d) => d.address == e.address);
 												newList[i] = { ...e, hasSelect: !hasSelect };
 												return newList;
@@ -111,9 +92,9 @@ export const AccountHardwareImport = () => {
 													borderRadius: 4,
 													width: 16,
 													height: 16,
-													background,
 													borderColor,
-													padding: 1
+													padding: 1,
+													backgroundColor: background
 												}
 											]}></View>
 										<Text style={[SS.ml25, SS.fz14, SS.fw400, SS.tl, { width: 40 }]}>
@@ -151,23 +132,33 @@ export const AccountHardwareImport = () => {
 								<Button
 									primary
 									disabled={current == 1}
-									bordered
+									transparent
 									onPress={() => {
 										setCurrent(current - 1);
 									}}
 									style={[SS.c, SS.mr12]}>
-									<SvgIcon style={{ lineHeight: 0 }} name='left' size={14} />
-									<Text style={[SS.fz14, SS.ml12, { lineHeight: 0 }]}>PREV</Text>
+									<SvgIcon
+										color={current == 1 ? ThemeVar.buttonDisabledBg : ThemeVar.brandPrimary}
+										style={{ lineHeight: 0 }}
+										name='left'
+										size={14}
+									/>
+									<Text style={[SS.fz14, SS.pl8, { lineHeight: 0 }]}>PREV</Text>
 								</Button>
 								<Button
 									primary
-									bordered
-									style={[SS.c, SS.mr12]}
+									transparent
+									style={[SS.c, SS.mr16]}
 									onPress={() => {
 										setCurrent(current + 1);
 									}}>
-									<Text style={[SS.fz14, SS.ml12, { lineHeight: 0 }]}>NEXT</Text>
-									<SvgIcon style={{ lineHeight: 0 }} name='right' size={14} />
+									<Text style={[SS.fz14, SS.pr8, { lineHeight: 0 }]}>NEXT</Text>
+									<SvgIcon
+										color={ThemeVar.brandPrimary}
+										style={{ lineHeight: 0 }}
+										name='right'
+										size={14}
+									/>
 								</Button>
 							</View>
 						</View>
@@ -176,7 +167,7 @@ export const AccountHardwareImport = () => {
 								primary
 								bordered
 								block
-								style={[SS.mr24]}
+								style={[SS.mr24, SS.flex1]}
 								onPress={() => {
 									Base.replace('main');
 								}}>
@@ -184,6 +175,7 @@ export const AccountHardwareImport = () => {
 							</Button>
 							<Button
 								primary
+								style={[SS.flex1]}
 								block
 								onPress={async () => {
 									const selectList = list.filter((e) => e.hasSelect);
@@ -221,6 +213,37 @@ export const AccountHardwareImport = () => {
 					</>
 				) : null}
 			</Content>
+			<Modal
+				hasBackdrop
+				backdropOpacity={0.3}
+				onBackButtonPress={() => setVisible(false)}
+				onBackdropPress={() => setVisible(false)}
+				style={[SS.je, SS.p0, SS.m0]}
+				isVisible={visible}>
+				<View style={[SS.w100, SS.radius10, SS.bgW, SS.pv24]}>
+					{nodes.map((e) => {
+						return (
+							<TouchableOpacity
+								activeOpacity={0.8}
+								style={[SS.row, SS.ac, SS.jsb, SS.pv32, SS.pr20, SS.radius8, S.border(2)]}
+								key={e.id}
+								onPress={() => {
+									changeNode(e.id);
+									setVisible(false);
+								}}>
+								<View style={[SS.row, SS.ac, { width: (ThemeVar.deviceWidth / 3) * 2 }]}>
+									<Text style={[SS.ml12, SS.fz16, SS.fw500]}>{e.name}</Text>
+								</View>
+								<SvgIcon
+									name='select'
+									style={[e.id === IotaSDK.curNode?.id ? SS.cP : SS.cS]}
+									size='20'
+								/>
+							</TouchableOpacity>
+						);
+					})}
+				</View>
+			</Modal>
 		</Container>
 	);
 };
