@@ -3,81 +3,21 @@ import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import * as Yup from 'yup';
-import { useStore } from '@tangle-pay/store';
 import { useCreateCheck, useAddWallet } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { Platform, PermissionsAndroid } from 'react-native';
-import TransportBLE from '@ledgerhq/react-native-hw-transport-ble';
-// import { Observable } from 'rxjs';
+import { BleDevices } from '@/common/components/bleDevices';
 const schema = Yup.object().shape({
 	name: Yup.string().required(),
 	agree: Yup.bool().isTrue().required()
 });
-const deviceAddition =
-	(device) =>
-	({ devices }) => ({
-		devices: devices.some((i) => i.id === device.id) ? devices : devices.concat(device)
-	});
 export const AccountHardwareInto = () => {
 	const form = useRef();
 	const addWallet = useAddWallet();
-	const [sub, setSub] = useState();
-	const [devices, setDevices] = useState([]);
-	const [refreshing, setRefreshing] = useState(false);
-	console.log(devices);
+	const bleDevices = useRef();
 	useCreateCheck((name) => {
 		if (!IotaSDK.checkWeb3Node(IotaSDK.curNode?.id)) {
 			form.current.setFieldValue('name', name);
 		}
-	});
-	const getPermissions = async () => {
-		if (Platform.OS === 'android') {
-			await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
-		}
-		let previousAvailable = false;
-		// new Observable(TransportBLE.observeState).subscribe((e) => {
-		// 	if (e.available !== previousAvailable) {
-		// 		previousAvailable = e.available;
-		// 		if (e.available) {
-		// 			reload();
-		// 		}
-		// 	}
-		// });
-	};
-	const startScan = async () => {
-		setRefreshing(true);
-		const sub = TransportBLE.observeState({
-			next: (e) => {
-				console.log(e.descriptor);
-			},
-			complete: () => {},
-			error: () => {}
-		});
-		// const sub = new Observable(TransportBLE.listen).subscribe({
-		// 	complete: () => {
-		// 		setRefreshing(false);
-		// 	},
-		// 	next: (e) => {
-		// 		if (e.type === 'add') {
-		// 			setDevices(deviceAddition(e.descriptor));
-		// 		}
-		// 	},
-		// 	error: (error) => {
-		// 		console.log(error);
-		// 		setRefreshing(false);
-		// 	}
-		// });
-		setSub(sub);
-	};
-	const reload = () => {
-		if (sub) {
-			sub.unsubscribe();
-		}
-		setRefreshing(false);
-		setDevices([]);
-	};
-	useEffect(() => {
-		getPermissions();
 	});
 	return (
 		<Container>
@@ -116,12 +56,12 @@ export const AccountHardwareInto = () => {
 								Toast.hideLoading();
 								Base.replace('main');
 							} else if (IotaSDK.checkWeb3Node(curNodeId)) {
-								await startScan();
-								// await IotaSDK.checkHardwareConnect();
-								// Base.push('account/hardware/import', {
-								// 	name: values.name,
-								// 	type: IotaSDK.curNode?.type
-								// });
+								await bleDevices.current.show();
+								await IotaSDK.checkHardwareConnect();
+								Base.push('account/hardware/import', {
+									name: values.name,
+									type: IotaSDK.curNode?.type
+								});
 							}
 						} catch (error) {
 							Toast.show(String(error));
@@ -191,6 +131,7 @@ export const AccountHardwareInto = () => {
 					)}
 				</Formik>
 			</Content>
+			<BleDevices dialogRef={bleDevices} />
 		</Container>
 	);
 };
