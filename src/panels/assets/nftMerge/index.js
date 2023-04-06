@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@tangle-pay/store';
 import { useGetNftList } from '@tangle-pay/store/nft';
-import { SvgIcon, Toast, SS, S } from '@/common';
+import { SvgIcon, Toast, SS, S, ThemeVar } from '@/common';
 import { useRoute } from '@react-navigation/native';
 import { Base, I18n } from '@tangle-pay/common';
 import { Bridge } from '@/common/bridge';
@@ -58,37 +58,40 @@ export const AssetsNftMerge = () => {
 	}, [isRequestNft]);
 	return (
 		<Container>
-			<Header>
-				<Left style={[SS.pl10]}>
-					<Text style={[SS.fz16, SS.fw600]}>{I18n.t('nft.selectHero')}</Text>
-				</Left>
-				<Right style={[SS.pr0]}>
-					<Button
-						small
-						disabled={isDisabled}
-						onPress={() => {
-							const infoList = [];
-							filterNftList.forEach((e) => {
-								if (selectList.includes(e.nftId)) {
-									infoList.push(e);
+			<View style={[S.paddingT(ThemeVar.nav1ToolbarTop)]}>
+				<Header>
+					<Left style={[SS.pl10]}>
+						<Text style={[SS.fz16, SS.fw600]}>{I18n.t('nft.selectHero')}</Text>
+					</Left>
+					<Right style={[SS.pr0]}>
+						<Button
+							small
+							disabled={isDisabled}
+							onPress={() => {
+								const infoList = [];
+								filterNftList.forEach((e) => {
+									if (selectList.includes(e.nftId)) {
+										infoList.push(e);
+									}
+								});
+								Bridge.sendMessage('iota_merge_nft', infoList);
+								Base.goBack();
+							}}
+							style={[
+								SS.ph24,
+								{
+									borderRadius: 4,
+									border: 0,
+									background: isDisabled ? 'rgba(54, 113, 238, 0.2)' : 'rgba(54, 113, 238, 1)'
 								}
-							});
-							Bridge.sendMessage('iota_merge_nft', infoList);
-							Base.goBack();
-						}}
-						style={[
-							SS.ph24,
-							{
-								borderRadius: 4,
-								border: 0,
-								background: isDisabled ? 'rgba(54, 113, 238, 0.2)' : 'rgba(54, 113, 238, 1)'
-							}
-						]}
-						color='primary'>
-						<Text style={[SS.fz14]}>{I18n.t('nft.nftAdd')}</Text>
-					</Button>
-				</Right>
-			</Header>
+							]}
+							color='primary'>
+							<Text style={[SS.fz14]}>{I18n.t('nft.nftAdd')}</Text>
+						</Button>
+					</Right>
+				</Header>
+			</View>
+
 			<ScrollView>
 				<Text style={[SS.fz16, SS.pv8, SS.ph16]}>
 					{I18n.t('nft.totalNum').replace('{num}', filterNftList.length)}

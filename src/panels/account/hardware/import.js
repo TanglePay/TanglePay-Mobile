@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { useLocation } from 'react-router-dom';
-import { useGetNodeWallet, useChangeNode, useAddWallet } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useChangeNode, useSelectWallet } from '@tangle-pay/store/common';
 import { useRoute } from '@react-navigation/native';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import { TouchableOpacity } from 'react-native';
@@ -14,7 +14,7 @@ export const AccountHardwareImport = () => {
 	const changeNode = useChangeNode();
 	const pageSize = 5;
 	const { params } = useRoute();
-	const addWallet = useAddWallet();
+	const selectWallet = useSelectWallet();
 	const nodes = IotaSDK.nodes.filter((e) => e.type == params.type);
 	const [list, setList] = useState([]);
 	const [showList, setShowList] = useState([]);
@@ -96,7 +96,7 @@ export const AccountHardwareImport = () => {
 											const getList = (arr) => {
 												const newList = [...arr];
 												const i = newList.findIndex((d) => d.address == e.address);
-												newList[i] = { ...e, hasSelect: !e.hasSelect };
+												newList[i] = { ...e, hasSelect: !hasSelect };
 												return newList;
 											};
 											setList((list) => {
@@ -131,7 +131,19 @@ export const AccountHardwareImport = () => {
 											)}
 											{IotaSDK.curNode.token}
 										</Text>
-										<SvgIcon name='share' style={SS.cP} size={16} />
+										{e.hasImport ? (
+											<SvgIcon
+												onPress={() => {
+													selectWallet(e.id);
+													Base.replace('main');
+												}}
+												name='share'
+												style={SS.cP}
+												size={16}
+											/>
+										) : (
+											<View style={{ width: 16, height: 16 }} />
+										)}
 									</TouchableOpacity>
 								);
 							})}
@@ -166,7 +178,7 @@ export const AccountHardwareImport = () => {
 								block
 								style={[SS.mr24]}
 								onPress={() => {
-									Base.replace('/main');
+									Base.replace('main');
 								}}>
 								<Text>{I18n.t('apps.cancel')}</Text>
 							</Button>
@@ -201,7 +213,7 @@ export const AccountHardwareImport = () => {
 										type: 'common.walletsList',
 										data: [...walletsList]
 									});
-									Base.replace('/main');
+									Base.replace('main');
 								}}>
 								<Text>{I18n.t('assets.importBtn')}</Text>
 							</Button>

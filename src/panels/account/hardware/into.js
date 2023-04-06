@@ -114,7 +114,7 @@ export const AccountHardwareInto = () => {
 								});
 								addWallet(info);
 								Toast.hideLoading();
-								Base.replace('/main');
+								Base.replace('main');
 							} else if (IotaSDK.checkWeb3Node(curNodeId)) {
 								await startScan();
 								// await IotaSDK.checkHardwareConnect();
