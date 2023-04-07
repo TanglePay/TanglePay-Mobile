@@ -199,6 +199,9 @@ export const DappDialog = () => {
 				break;
 			case 'sign':
 				try {
+					if (isLedger) {
+						await bleDevices.current.show();
+					}
 					messageId = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 					setLoading(false);
 				} catch (error) {
@@ -232,6 +235,9 @@ export const DappDialog = () => {
 			case 'iota_sign':
 				{
 					InteractionManager.runAfterInteractions(async () => {
+						if (isLedger) {
+							await bleDevices.current.show();
+						}
 						await Bridge.iota_sign(origin, expires, content, password, reqId);
 					});
 				}

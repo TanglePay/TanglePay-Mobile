@@ -10236,10 +10236,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^2.4.9:
-  version "2.4.9"
-  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.4.9.tgz#83b874cbd62aeff30a3f3f2f0b55f38a7e4eb539"
-  integrity sha512-lRyNVpTmJ1oFpXSoRSOWkH/IK86Qp3ZBpKlXUdGmIdfnb66NbMF7JlEJxzdh6XOwPTG/pM9ZwoV5EpvIRG92PQ==
+tanglepay@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.5.0.tgz#bc957e0853fa8328684c0f3209abde8ae442ded9"
+  integrity sha512-ol5TnBi6qBfd4wpgOwWN1gLdQsXw1PwRC9HLGuLLkEwbjtZvZwZOmuTHjGQC9bi9O1PxMdRXjqwg/VQ7Frg2mQ==
 
 tar@^4.0.2:
   version "4.4.19"
