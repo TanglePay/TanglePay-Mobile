@@ -176,7 +176,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 										hideModal();
 										Base.push(
 											`${curNode.explorer}/${
-												IotaSDK.checkSMR(curWallet.nodeId) ? 'addr' : 'address'
+												IotaSDK.checkWeb3Node(curWallet.nodeId) ? 'address' : 'addr'
 											}/${curWallet.address}`
 										);
 									}}

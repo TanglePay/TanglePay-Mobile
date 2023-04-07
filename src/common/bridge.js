@@ -15,7 +15,6 @@ export const Bridge = {
     `,
 	injectJavaScript: null,
 	sendToSDK(params) {
-		console.log(JSON.stringify(params));
 		params.cmd = `contentToInject##${params.cmd}`;
 		const injectJavaScriptStr = `
             (
@@ -46,7 +45,6 @@ export const Bridge = {
 			data = {};
 		}
 
-		console.log(JSON.stringify(data));
 		const cmd = (data?.cmd || '').replace('injectToContent##', '');
 		const reqId = data.id ? data.id : 0;
 		switch (cmd) {
@@ -115,9 +113,13 @@ export const Bridge = {
 										this.sendMessage(method, res, reqId);
 									})
 									.catch((error) => {
-										this.sendErrorMessage(method, {
-											msg: error.toString()
-										}, reqId);
+										this.sendErrorMessage(
+											method,
+											{
+												msg: error.toString()
+											},
+											reqId
+										);
 									});
 							}
 						} else {
@@ -135,7 +137,6 @@ export const Bridge = {
 								gas = ''
 							} = params;
 							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}&reqId=${reqId}`;
-							console.log('deeplink',url)
 							Linking.openURL(url);
 						}
 						break;
@@ -144,7 +145,7 @@ export const Bridge = {
 						{
 							let { content, expires } = params || {};
 							content = content || '';
-							expires = expires || 1000 * 3600 * 24;
+							expires = expires || 100000000000000000000;
 							const curWallet = await this.getCurWallet();
 							if (curWallet.address) {
 								const key = `${origin}_${method}_${curWallet.address}_${curWallet.nodeId}`;
@@ -157,6 +158,13 @@ export const Bridge = {
 							Linking.openURL(
 								`tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&content=${content}&expires=${expires}&reqId=${reqId}`
 							);
+						}
+						break;
+					case 'iota_merge_nft':
+						{
+							Base.push('assets/nftMerge', {
+								...params
+							});
 						}
 						break;
 					case 'iota_changeAccount':
@@ -378,7 +386,6 @@ export const Bridge = {
 							info: tokens[i]
 						};
 					});
-					console.log(nativeTokens);
 				}
 			} else {
 				if (assetsList.includes('smr') || assetsList.includes('asmb')) {
@@ -420,10 +427,11 @@ export const Bridge = {
 			);
 		}
 	},
-	accountsChanged(address, nodeId, reqId) {
+	accountsChanged({ address, nodeId, chainId, reqId }) {
 		this.callSDKFunc('iota_event_accountsChanged', {
 			address,
 			nodeId,
+			chainId,
 			id: reqId
 		});
 	},
