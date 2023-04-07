@@ -186,22 +186,24 @@ export const Assets = () => {
 				</View>
 				<ScrollView scrollEnabled={false} ref={scroll} horizontal showsHorizontalScrollIndicator={false}>
 					<View style={[S.w(ThemeVar.deviceWidth), SS.ph16, SS.jsb]}>
-						<CoinList
-							setHeight={(e) => {
-								let h = e + 300;
-								if (h < hScroll) {
-									h = hScroll;
-								}
-								setHeightInfo({ ...heightInfo, 0: h });
-							}}
-						/>
-						{assetsTab.includes('stake') ? <RewardsList /> : null}
-						{!isRequestAssets ? (
-							<View style={[SS.p16, SS.c, SS.row]}>
-								<Spinner size='small' color='gray' />
-								<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
-							</View>
-						) : null}
+						<View>
+							<CoinList
+								setHeight={(e) => {
+									let h = e + 300;
+									if (h < hScroll) {
+										h = hScroll;
+									}
+									setHeightInfo({ ...heightInfo, 0: h });
+								}}
+							/>
+							{assetsTab.includes('stake') ? <RewardsList /> : null}
+							{!isRequestAssets ? (
+								<View style={[SS.p16, SS.c, SS.row]}>
+									<Spinner size='small' color='gray' />
+									<Text style={[SS.cS, SS.fz16, SS.pl10]}>{I18n.t('assets.requestAssets')}</Text>
+								</View>
+							) : null}
+						</View>
 						{IotaSDK.checkWeb3Node(curWallet.nodeId) ? (
 							<TouchableOpacity
 								style={[SS.pv16, SS.mt4, SS.c, SS.row]}
