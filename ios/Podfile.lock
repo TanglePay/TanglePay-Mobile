@@ -389,6 +389,8 @@ PODS:
     - React-Core
   - RNOS (1.2.6):
     - React
+  - RNPermissions (3.8.0):
+    - React-Core
   - RNScreens (3.20.0):
     - React-Core
     - React-RCTImage
@@ -473,6 +475,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -598,6 +601,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-localize"
   RNOS:
     :path: "../node_modules/react-native-os"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNShare:
@@ -673,6 +678,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: d4b8af4e442d4bcca54e68fc687a2129b4d71a81
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
+  RNPermissions: 215c54462104b3925b412b0fb3c9c497b21c358b
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNShare: a5dc3b9c53ddc73e155b8cd9a94c70c91913c43c
   RNSVG: d7d7bc8229af3842c9cfc3a723c815a52cdd1105
