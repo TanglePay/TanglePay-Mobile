@@ -5,20 +5,21 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
-import { useGetNodeWallet } from '@tangle-pay/store/common';
+import { useGetNodeWallet, useGetAssetsList } from '@tangle-pay/store/common';
 import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog, ThemeVar } from '@/common';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Image, TouchableOpacity } from 'react-native';
 import { GasDialog } from '@/common/components/gasDialog';
+import { BleDevices } from '@/common/components/bleDevices';
 
-const schema = Yup.object().shape({
+const schema = {
 	// currency: Yup.string().required(),
 	receiver: Yup.string().required(),
 	amount: Yup.number().positive().required(),
-	password: Yup.string()
-});
+	password: Yup.string().required()
+};
 const rnBiometrics = new ReactNativeBiometrics();
 
 export const AssetsSend = () => {
@@ -32,8 +33,10 @@ export const AssetsSend = () => {
 	const [showPwd, setShowPwd] = useState(false);
 	const { params } = useRoute();
 	const form = useRef();
+	const [inputAmount, setInputAmount] = useState('');
 	const alert = useRef();
 	const gasDialog = useRef();
+	const bleDevices = useRef();
 	let currency = params?.currency;
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
@@ -53,25 +56,55 @@ export const AssetsSend = () => {
 	const [gasInfo, setGasInfo] = useState({});
 	useEffect(() => {
 		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+			const amount = parseFloat(inputAmount) || 0;
+			let decimal = Math.pow(10, assets.decimal);
+			let sendAmount = Number(BigNumber(amount).times(decimal));
+			sendAmount = IotaSDK.getNumberStr(sendAmount || 0);
 			const eth = IotaSDK.client.eth;
-			Promise.all([eth.getGasPrice(), IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract)]).then(
-				([gasPrice, gas]) => {
-					let gasLimit = gasInfo.gasLimit || gas;
-					let totalWei = new BigNumber(gasPrice).times(gasLimit);
-					const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
-					gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
-					const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
-					setGasInfo({
-						gasLimit,
-						gasPrice,
-						total,
-						totalEth
-					});
+			Promise.all([
+				eth.getGasPrice(),
+				IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract, sendAmount)
+			]).then(([gasPrice, gas]) => {
+				if (assets?.contract) {
+					if (IotaSDK.curNode?.contractGasPriceRate) {
+						gasPrice = IotaSDK.getNumberStr(parseInt(gasPrice * IotaSDK.curNode?.contractGasPriceRate));
+					}
+					if (IotaSDK.curNode?.contractGasLimitRate) {
+						gas = IotaSDK.getNumberStr(parseInt(gas * IotaSDK.curNode?.contractGasLimitRate));
+					}
+				} else {
+					if (IotaSDK.curNode?.gasPriceRate) {
+						gasPrice = IotaSDK.getNumberStr(parseInt(gasPrice * IotaSDK.curNode?.gasPriceRate));
+					}
+					if (IotaSDK.curNode?.gasLimitRate) {
+						gas = IotaSDK.getNumberStr(parseInt(gas * IotaSDK.curNode?.gasLimitRate));
+					}
 				}
-			);
+				// let gasLimit = gasInfo.gasLimit || gas;
+				let gasLimit = gas;
+				let totalWei = new BigNumber(gasPrice).times(gasLimit);
+				totalWei = IotaSDK.getNumberStr(totalWei.valueOf());
+				const totalEth = IotaSDK.client.utils.fromWei(totalWei, 'ether');
+				const gasPriceWei = gasPrice;
+				gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
+				const total = IotaSDK.client.utils.fromWei(totalWei, 'gwei');
+				setGasInfo({
+					gasLimit,
+					gasPrice,
+					total,
+					totalEth,
+					gasPriceWei
+				});
+			});
 		}
-	}, [curWallet.nodeId, assets?.contract]);
-
+	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal]);
+	useGetAssetsList(curWallet);
+	const isLedger = curWallet.type == 'ledger';
+	if (isLedger) {
+		schema.password = Yup.string().optional();
+	} else {
+		schema.password = Yup.string().required();
+	}
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 	let realBalance = BigNumber(assets.realBalance || 0);
 	if (IotaSDK.checkSMR(curWallet.nodeId) && !assets.isSMRToken) {
@@ -92,41 +125,43 @@ export const AssetsSend = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={schema}
+					validationSchema={Yup.object().shape(schema)}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
-						if (isBio) {
-							password = curPwd;
-							rnBiometrics
-								.simplePrompt({
-									promptMessage: I18n.t('user.bioVerification'),
-									cancelButtonText: I18n.t('apps.cancel')
-								})
-								.then((resultObject) => {
-									const { success } = resultObject;
-									if (success) {
-										// Toast.success(
-										// 	I18n.t(
-										// 		IotaSDK.checkWeb3Node(curWallet.nodeId)
-										// 			? 'assets.sendSucc'
-										// 			: 'assets.sendSuccRestake'
-										// 	)
-										// );
-										setIsPwdInput(true);
-									} else {
+						if (!isLedger) {
+							if (isBio) {
+								password = curPwd;
+								rnBiometrics
+									.simplePrompt({
+										promptMessage: I18n.t('user.bioVerification'),
+										cancelButtonText: I18n.t('apps.cancel')
+									})
+									.then((resultObject) => {
+										const { success } = resultObject;
+										if (success) {
+											// Toast.success(
+											// 	I18n.t(
+											// 		IotaSDK.checkWeb3Node(curWallet.nodeId)
+											// 			? 'assets.sendSucc'
+											// 			: 'assets.sendSuccRestake'
+											// 	)
+											// );
+											setIsPwdInput(true);
+										} else {
+											return Toast.error(I18n.t('user.biometricsFailed'));
+										}
+									})
+									.catch(() => {
+										console.log('biometrics failed');
 										return Toast.error(I18n.t('user.biometricsFailed'));
-									}
-								})
-								.catch(() => {
-									console.log('biometrics failed');
-									return Toast.error(I18n.t('user.biometricsFailed'));
-								});
-						} else {
-							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-							if (!isBio && !isPassword) {
-								return Toast.error(I18n.t('assets.passwordError'));
+									});
 							} else {
-								setCurPwd(password);
+								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+								if (!isBio && !isPassword) {
+									return Toast.error(I18n.t('assets.passwordError'));
+								} else {
+									setCurPwd(password);
+								}
 							}
 						}
 
@@ -164,6 +199,9 @@ export const AssetsSend = () => {
 								realBalance = 0;
 								decimal = 0;
 							}
+							if (isLedger) {
+								await bleDevices.current.show();
+							}
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
@@ -175,7 +213,7 @@ export const AssetsSend = () => {
 								mainBalance,
 								nftId,
 								gas: gasInfo.gasLimit,
-								gasPrice: gasInfo.gasPrice
+								gasPrice: gasInfo.gasPriceWei
 							});
 							Toast.hideLoading();
 							if (res) {
@@ -284,6 +322,7 @@ export const AssetsSend = () => {
 														str = String(Math.pow(10, -precision));
 													}
 													setFieldValue('amount', str);
+													setInputAmount(str);
 												}}
 											/>
 											<Text style={[SS.fz14, SS.cS]}>
@@ -329,7 +368,7 @@ export const AssetsSend = () => {
 										</View>
 									</View>
 								) : null}
-								{isBio ? (
+								{isBio || isLedger ? (
 									<View />
 								) : (
 									<View>
@@ -364,6 +403,7 @@ export const AssetsSend = () => {
 			</Content>
 			<ConfirmDialog dialogRef={alert} />
 			<GasDialog dialogRef={gasDialog} />
+			<BleDevices dialogRef={bleDevices} />
 		</Container>
 	);
 };

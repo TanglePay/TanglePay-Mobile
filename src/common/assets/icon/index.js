@@ -41,6 +41,7 @@ import Remove from './Remove';
 import Right from './Right';
 import Scan from './Scan';
 import Search from './Search';
+import Select from './Select';
 import Send from './Send';
 import Set from './Set';
 import Share from './Share';
@@ -91,6 +92,7 @@ export { default as Remove } from './Remove';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
 export { default as Search } from './Search';
+export { default as Select } from './Select';
 export { default as Send } from './Send';
 export { default as Set } from './Set';
 export { default as Share } from './Share';
@@ -183,28 +185,30 @@ let IconFont = ({ name, ...rest }) => {
       return <Scan key="L38" {...rest} />;
     case 'search':
       return <Search key="L39" {...rest} />;
+    case 'select':
+      return <Select key="L40" {...rest} />;
     case 'send':
-      return <Send key="L40" {...rest} />;
+      return <Send key="L41" {...rest} />;
     case 'set':
-      return <Set key="L41" {...rest} />;
+      return <Set key="L42" {...rest} />;
     case 'share':
-      return <Share key="L42" {...rest} />;
+      return <Share key="L43" {...rest} />;
     case 'stake':
-      return <Stake key="L43" {...rest} />;
+      return <Stake key="L44" {...rest} />;
     case 'staking':
-      return <Staking key="L44" {...rest} />;
+      return <Staking key="L45" {...rest} />;
     case 'tick':
-      return <Tick key="L45" {...rest} />;
+      return <Tick key="L46" {...rest} />;
     case 'time':
-      return <Time key="L46" {...rest} />;
+      return <Time key="L47" {...rest} />;
     case 'tradingTime':
-      return <TradingTime key="L47" {...rest} />;
+      return <TradingTime key="L48" {...rest} />;
     case 'up':
-      return <Up key="L48" {...rest} />;
+      return <Up key="L49" {...rest} />;
     case 'view':
-      return <View key="L49" {...rest} />;
+      return <View key="L50" {...rest} />;
     case 'wallet':
-      return <Wallet key="L50" {...rest} />;
+      return <Wallet key="L51" {...rest} />;
   }
 
   return null;

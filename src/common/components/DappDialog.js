@@ -12,10 +12,12 @@ import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { GasDialog } from '@/common/components/gasDialog';
+import { BleDevices } from '@/common/components/bleDevices';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
 	const gasDialog = useRef();
+	const bleDevices = useRef();
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
 	useGetParticipationEvents();
@@ -36,6 +38,7 @@ export const DappDialog = () => {
 	const [curNodeId] = useStore('common.curNodeId');
 	const changeNode = useChangeNode();
 	const [gasInfo, setGasInfo] = useState({});
+	const isLedger = curWallet.type == 'ledger';
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -72,13 +75,16 @@ export const DappDialog = () => {
 		contract,
 		foundryData,
 		tag,
-		nftId
+		nftId,
+		reqId
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
-			const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-			if (!isPassword) {
-				return Toast.error(I18n.t('assets.passwordError'));
+			if (!isLedger) {
+				const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+				if (!isPassword) {
+					return Toast.error(I18n.t('assets.passwordError'));
+				}
 			}
 		}
 		let messageId = '';
@@ -136,8 +142,12 @@ export const DappDialog = () => {
 							realBalance = 0;
 							decimal = 0;
 						}
-						const res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
-							contract: assets?.contract,
+						let res = undefined;
+						if (isLedger) {
+							await bleDevices.current.show();
+						}
+						res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
+							contract: contract || assets?.contract,
 							token: assets?.name,
 							taggedData,
 							realBalance: Number(realBalance),
@@ -149,15 +159,17 @@ export const DappDialog = () => {
 							tag,
 							nftId,
 							gas: gasInfo.gasLimit,
-							gasPrice: gasInfo.gasPrice
+							gasPrice: gasInfo.gasPriceWei
 						});
+
 						if (!res) {
+							Bridge.sendErrorMessage(type, error, reqId);
 							setLoading(false);
 							return;
 						}
 						messageId = res.messageId;
 						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendMessage(type, res);
+							Bridge.sendMessage(type, res, reqId);
 						}
 						setLoading(false);
 						// Toast.success(
@@ -170,7 +182,7 @@ export const DappDialog = () => {
 						await sleep(2000);
 					} catch (error) {
 						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendErrorMessage(type, String(error));
+							Bridge.sendErrorMessage(type, String(error), reqId);
 						}
 						setLoading(false);
 						Toast.error(String(error));
@@ -187,6 +199,9 @@ export const DappDialog = () => {
 				break;
 			case 'sign':
 				try {
+					if (isLedger) {
+						await bleDevices.current.show();
+					}
 					messageId = await IotaSDK.iota_sign({ ...curWallet, password }, content);
 					setLoading(false);
 				} catch (error) {
@@ -198,25 +213,32 @@ export const DappDialog = () => {
 				break;
 			case 'iota_changeAccount':
 				{
-					await Bridge.sendMessage(type, {
-						address: curWallet.address,
-						nodeId: curWallet.nodeId,
-						network: IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.network
-					});
+					await Bridge.sendMessage(
+						type,
+						{
+							address: curWallet.address,
+							nodeId: curWallet.nodeId,
+							network: IotaSDK.nodes.find((e) => e.id == curWallet.nodeId)?.network
+						},
+						reqId
+					);
 					Toast.hideLoading();
 				}
 				break;
 			case 'iota_connect':
 				{
 					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_connect(origin, expires);
+						await Bridge.iota_connect(origin, expires, '', '', reqId);
 					});
 				}
 				break;
 			case 'iota_sign':
 				{
 					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_sign(origin, expires, content, password);
+						if (isLedger) {
+							await bleDevices.current.show();
+						}
+						await Bridge.iota_sign(origin, expires, content, password, reqId);
 					});
 				}
 				break;
@@ -246,7 +268,9 @@ export const DappDialog = () => {
 		hide();
 	};
 	const handleUrl = async (url) => {
-		if (!url) return;
+		if (!url) {
+			return;
+		}
 		const res = Base.handlerParams(url);
 		const regex = /(<([^>]+)>)/gi;
 		for (const i in res) {
@@ -268,7 +292,8 @@ export const DappDialog = () => {
 			assetId = '',
 			nftId = '',
 			tag = '',
-			gas = ''
+			gas = '',
+			reqId = 0
 		} = res;
 		let toNetId;
 		if (network) {
@@ -292,7 +317,7 @@ export const DappDialog = () => {
 					case 'iota_sendTransaction':
 					case 'eth_sendTransaction':
 						{
-							value = parseFloat(value) || 0;
+							value = BigNumber(value || 0).valueOf();
 							if (nftId) {
 								value = 1;
 							}
@@ -316,21 +341,55 @@ export const DappDialog = () => {
 							if (IotaSDK.checkWeb3Node(toNetId || curNodeId)) {
 								unit = unit || 'wei';
 								let curToken = IotaSDK.curNode?.token;
-								sendAmount = Number(new BigNumber(value));
-								showValue = IotaSDK.client.utils.fromWei(String(sendAmount), 'ether');
+								sendAmount = Number(new BigNumber(value || 0));
+								sendAmount = sendAmount || 0;
+								showValue = IotaSDK.client.utils.fromWei(IotaSDK.getNumberStr(sendAmount), 'ether');
 
 								let [gasPrice, gasLimit] = await Promise.all([
 									IotaSDK.client.eth.getGasPrice(),
-									IotaSDK.getDefaultGasLimit(curWallet.address, taggedData ? address : '')
+									IotaSDK.getDefaultGasLimit(
+										curWallet.address,
+										taggedData ? address : '',
+										IotaSDK.getNumberStr(sendAmount || 0),
+										taggedData
+									)
 								]);
+
+								if (taggedData) {
+									if (IotaSDK.curNode?.contractGasPriceRate) {
+										gasPrice = IotaSDK.getNumberStr(
+											parseInt(gasPrice * IotaSDK.curNode?.contractGasPriceRate)
+										);
+									}
+									if (IotaSDK.curNode?.contractGasLimitRate) {
+										gasLimit = IotaSDK.getNumberStr(
+											parseInt(gasLimit * IotaSDK.curNode?.contractGasLimitRate)
+										);
+									}
+								} else {
+									if (IotaSDK.curNode?.gasPriceRate) {
+										gasPrice = IotaSDK.getNumberStr(
+											parseInt(gasPrice * IotaSDK.curNode?.gasPriceRate)
+										);
+									}
+									if (IotaSDK.curNode?.gasLimitRate) {
+										gasLimit = IotaSDK.getNumberStr(
+											parseInt(gasLimit * IotaSDK.curNode?.gasLimitRate)
+										);
+									}
+								}
+
+								const gasPriceWei = gasPrice;
 								gasLimit = gasLimit || 21000;
 								let totalWei = new BigNumber(gasPrice).times(gasLimit);
-								const totalEth = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'ether');
+								totalWei = IotaSDK.getNumberStr(totalWei);
+								const totalEth = IotaSDK.client.utils.fromWei(totalWei, 'ether');
 								gasPrice = IotaSDK.client.utils.fromWei(gasPrice, 'gwei');
-								const total = IotaSDK.client.utils.fromWei(totalWei.valueOf(), 'gwei');
+								const total = IotaSDK.client.utils.fromWei(totalWei, 'gwei');
 								setGasInfo({
 									gasLimit,
 									gasPrice,
+									gasPriceWei,
 									total,
 									totalEth
 								});
@@ -366,7 +425,7 @@ export const DappDialog = () => {
 												0
 											);
 											gasFee = IotaSDK.client.utils.fromWei(
-												BigNumber(gasPrice).valueOf(),
+												IotaSDK.getNumberStr(BigNumber(gasPrice).valueOf()),
 												'ether'
 											);
 											gasFee = `${gasFee} ${IotaSDK.curNode.token}`;
@@ -378,16 +437,25 @@ export const DappDialog = () => {
 									}
 									contractAmount = Number(new BigNumber(contractAmount));
 									try {
-										curToken =
-											(await web3Contract.methods.symbol().call()) || IotaSDK.curNode?.token;
-										const decimals = await web3Contract.methods.decimals().call();
+										if (web3Contract?.methods?.symbol) {
+											curToken = await web3Contract.methods.symbol().call();
+										} else {
+											curToken = IotaSDK.curNode?.token;
+										}
+										let decimals = 0;
+										if (web3Contract?.methods?.decimals) {
+											decimals = await web3Contract.methods.decimals().call();
+										}
+
 										if (isErc20) {
 											IotaSDK.importContract(contract, curToken);
 										}
 										showContractAmount = new BigNumber(contractAmount)
 											.div(BigNumber(10).pow(decimals))
 											.valueOf();
-									} catch (error) {}
+									} catch (error) {
+										console.log(error);
+									}
 									Toast.hideLoading();
 								}
 								showUnit = curToken;
@@ -399,22 +467,29 @@ export const DappDialog = () => {
 										unit = Base.handleAddress(nftId);
 										setLoading(true);
 										if (IotaSDK?.IndexerPluginClient?.nft) {
-											let nftInfo = await IotaSDK.IndexerPluginClient.nft(nftId);
-											if (nftInfo?.items?.[0]) {
-												nftInfo = await IotaSDK.client.output(nftInfo?.items?.[0]);
-												let info = (nftInfo?.output?.immutableFeatures || []).find((d) => {
-													return d.type == 2;
-												});
-												if (info && info.data) {
-													try {
-														info = IotaSDK.hexToUtf8(info.data);
-														info = JSON.parse(info);
-														unit = info.name;
-													} catch (error) {
-														console.log(error);
+											unit = [];
+											const getNftInfo = async (curNftId) => {
+												let nftInfo = await IotaSDK.IndexerPluginClient.nft(curNftId);
+												if (nftInfo?.items?.[0]) {
+													nftInfo = await IotaSDK.client.output(nftInfo?.items?.[0]);
+
+													let info = (nftInfo?.output?.immutableFeatures || []).find((d) => {
+														return d.type == 2;
+													});
+													if (info && info.data) {
+														try {
+															info = IotaSDK.hexToUtf8(info.data);
+															info = JSON.parse(info);
+															unit.push(info.name);
+														} catch (error) {
+															console.log(error);
+														}
 													}
 												}
-											}
+											};
+											const nfts = nftId.split(',');
+											await Promise.all(nfts.map((e) => getNftInfo(e)));
+											unit = unit.join(' , ');
 										}
 										showUnit = unit;
 										setLoading(false);
@@ -497,7 +572,8 @@ export const DappDialog = () => {
 								nftId,
 								abiFunc,
 								abiParams,
-								gas
+								gas,
+								reqId
 							});
 							show();
 						}
@@ -522,7 +598,8 @@ export const DappDialog = () => {
 								texts,
 								return_url,
 								type,
-								content
+								content,
+								reqId
 							});
 							show();
 						}
@@ -549,7 +626,8 @@ export const DappDialog = () => {
 								return_url,
 								type,
 								origin,
-								expires
+								expires,
+								reqId
 							});
 							show();
 						}
@@ -574,7 +652,8 @@ export const DappDialog = () => {
 								type,
 								content,
 								origin,
-								expires
+								expires,
+								reqId
 							});
 							show();
 						}
@@ -672,7 +751,7 @@ export const DappDialog = () => {
 								</View>
 							</View>
 						) : null}
-						{!isBio && dappData.type !== 'iota_connect' && (
+						{!isBio && dappData.type !== 'iota_connect' && !isLedger ? (
 							<Item inlineLabel style={[SS.ml0]}>
 								<Input
 									style={[SS.pl0]}
@@ -688,7 +767,7 @@ export const DappDialog = () => {
 									style={[SS.ml10]}
 								/>
 							</Item>
-						)}
+						) : null}
 						<View style={[SS.row, SS.jsb, SS.ac, SS.mt25, SS.pb20]}>
 							<Button
 								onPress={() => {
@@ -762,6 +841,7 @@ export const DappDialog = () => {
 				</View>
 			</KeyboardAvoidingView>
 			<GasDialog dialogRef={gasDialog} />
+			<BleDevices dialogRef={bleDevices} />
 		</Modal>
 	);
 };

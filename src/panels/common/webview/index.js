@@ -3,7 +3,7 @@ import { Container, Content, Right, Button } from 'native-base';
 import { useRoute } from '@react-navigation/native';
 import { WebView } from 'react-native-webview';
 import { Nav, ThemeVar } from '@/common';
-import { Base } from '@tangle-pay/common';
+import { Base, IotaSDK } from '@tangle-pay/common';
 import { Bridge } from '@/common/bridge';
 import { SvgIcon } from '@/common/assets';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
@@ -30,9 +30,18 @@ export const CommonWebview = () => {
 		}
 		Bridge.injectJavaScript = (e) => webview.current.injectJavaScript(e);
 	}, []);
-	useEffect(() => {
+	useEffect(async () => {
 		if (curWallet.address) {
-			Bridge.accountsChanged(curWallet.address, curWallet.nodeId);
+			const obj = {
+				address: curWallet.address,
+				nodeId: curWallet.nodeId
+			};
+			if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+				try {
+					obj.chainId = await IotaSDK.client.eth.getChainId();
+				} catch (error) {}
+			}
+			Bridge.accountsChanged(obj);
 		}
 	}, [curWallet.address + curWallet.nodeId]);
 	return (
