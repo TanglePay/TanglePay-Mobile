@@ -117,7 +117,7 @@ const styleObj = {
 	}
 };
 // generate font styles
-for (let i = 10; i <= 30; i++) {
+for (let i = 10; i <= 32; i++) {
 	styleObj[`fz${i}`] = {
 		fontSize: i
 	};

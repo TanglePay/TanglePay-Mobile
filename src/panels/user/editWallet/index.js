@@ -1,11 +1,14 @@
-import React, { useRef } from 'react';
-import { Container, Content, View, Text } from 'native-base';
+import React, { useRef, useEffect, useState } from 'react';
+import { Container, Content, View, Text, Switch } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { NameDialog } from './nameDialog';
+import { EnablePasswordDialog } from './enablePasswordDialog';
+import { DisablePasswordDialog } from './disablePasswordDialog';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, ThemeVar, SvgIcon, Toast } from '@/common';
+import { checkWalletIsPasswordEnabled, context } from '@tangle-pay/domain';
 
 export const UserEditWallet = () => {
 	// const { params } = useRoute();
@@ -13,10 +16,21 @@ export const UserEditWallet = () => {
 	const id = curEdit.id;
 	// const [_, walletsList] = useGetNodeWallet();
 	// const curEdit = walletsList.find((e) => e.id === id) || {};
+	const [passwordEnabled, setPasswordEnabled] = useState(false)
+    const enableDialogRef = useRef()
+    const disableDialogRef = useRef()
 	const name = curEdit.name || '';
 	const dialogRef = useRef();
 	const curNode = IotaSDK.nodes.find((d) => d.id == curEdit.nodeId);
 	const isLedger = curEdit.type == 'ledger';
+	const syncIsPasswordEnabled = async () => {
+        const res = await checkWalletIsPasswordEnabled(curEdit.id)
+        setPasswordEnabled(res)
+    }
+	useEffect(() => {
+        console.log('curEdit', curEdit)
+        syncIsPasswordEnabled().catch(e=>console.log(e))
+    }, [])
 	return (
 		<Container>
 			<Nav title={I18n.t('user.manage')} />
@@ -77,17 +91,23 @@ export const UserEditWallet = () => {
 					</TouchableOpacity>
 				) : null}
 				{!isLedger ? (
-					<TouchableOpacity
-						onPress={() => {
-							Base.push('user/walletPassword', {
-								...curEdit
-							});
+					<View activeOpacity={0.8} style={[SS.p16, S.border(2), SS.row, SS.ac, SS.jsb]}>
+					<Text style={[SS.fz14]}>{I18n.t('account.toggleWalletPassword')}</Text>
+					<Switch
+						value={passwordEnabled}
+						onValueChange={async (e) => {
+							if (e) {
+                                enableDialogRef.current.show(syncIsPasswordEnabled)
+                            } else {
+                                if (context.state.isPinSet) {
+                                disableDialogRef.current.show(syncIsPasswordEnabled)
+                                } else {
+                                    Toast.error(I18n.t('account.needPinToTurnoffPassword'))
+                                }
+                            }
 						}}
-						activeOpacity={0.8}
-						style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
-						<Text style={[SS.fz14]}>{I18n.t('user.resetPassword')}</Text>
-						<SvgIcon size={16} name='right' />
-					</TouchableOpacity>
+					/>
+					</View>
 				) : null}
 				{curNode?.type == 2 && !isLedger ? (
 					<TouchableOpacity
@@ -113,6 +133,8 @@ export const UserEditWallet = () => {
 				</TouchableOpacity>
 			</Content>
 			<NameDialog dialogRef={dialogRef} data={{ ...curEdit }} />
+			<EnablePasswordDialog dialogRef={enableDialogRef} data={{ ...curEdit }} />
+			<DisablePasswordDialog dialogRef={disableDialogRef} data={{ ...curEdit }} />
 		</Container>
 	);
 };
