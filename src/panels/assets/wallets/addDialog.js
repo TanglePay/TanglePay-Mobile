@@ -6,7 +6,7 @@ import { useChangeNode } from '@tangle-pay/store/common';
 import { I18n, Base, IotaSDK } from '@tangle-pay/common';
 import { S, SS, ThemeVar, Toast } from '@/common';
 import { useStore } from '@tangle-pay/store';
-import { isNewWalletFlow } from '@tangle-pay/domain'
+import { isNewWalletFlow } from '@tangle-pay/domain';
 export const AddDialog = ({ dialogRef, nodeId }) => {
 	const [isShow, setShow] = useState(false);
 	const [isShowNode, setShowNode] = useState(true);
@@ -112,10 +112,10 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								onPress={() => {
 									hide();
 									if (isNewWalletFlow()) {
-                                        Base.push('account/registerPin')
-                                    } else {
-                                        Base.push('account/register')
-                                    }
+										Base.push('account/registerPin');
+									} else {
+										Base.push('account/register');
+									}
 								}}
 								style={[{ height: 72 }, SS.pl24, SS.jc]}>
 								<Text style={[SS.fz16]}>{I18n.t('account.createTitle')}</Text>
@@ -168,22 +168,18 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								</TouchableOpacity>
 							)}
 						</View>
-						{curNode?.type == 2 ? (
-							<>
-								<Text style={[SS.fz16, SS.cS, SS.mv16]}>{I18n.t('account.hardwareWallet')}</Text>
-								<View style={[SS.mb24, SS.bgW, SS.radius8]}>
-									<TouchableOpacity
-										activeOpacity={0.8}
-										onPress={() => {
-											hide();
-											Base.push('account/hardware/into');
-										}}
-										style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
-										<Text style={[SS.fz16]}>{I18n.t('account.hardwareWallet')}</Text>
-									</TouchableOpacity>
-								</View>
-							</>
-						) : null}
+						<Text style={[SS.fz16, SS.cS, SS.mv16]}>{I18n.t('account.hardwareWallet')}</Text>
+						<View style={[SS.mb24, SS.bgW, SS.radius8]}>
+							<TouchableOpacity
+								activeOpacity={0.8}
+								onPress={() => {
+									hide();
+									Base.push('account/hardware/into');
+								}}
+								style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
+								<Text style={[SS.fz16]}>{I18n.t('account.hardwareWallet')}</Text>
+							</TouchableOpacity>
+						</View>
 					</>
 				)}
 			</View>
