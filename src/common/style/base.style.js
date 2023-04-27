@@ -134,7 +134,7 @@ for (let n = 0; n <= 80; n += 5) {
 		};
 	});
 }
-for (let n = 0; n <= 32; n += 4) {
+for (let n = 0; n <= 32; n += 1) {
 	['Horizontal', 'Vertical', 'Top', 'Bottom', 'Left', 'Right', ''].forEach((k) => {
 		const key = `${(k[0] || '').toLocaleLowerCase()}${n}`;
 		styleObj[`p${key}`] = {

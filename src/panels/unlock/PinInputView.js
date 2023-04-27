@@ -26,27 +26,28 @@ function PinViewComponent({ errorMessage, onSubmit }) {
         <Image style={[S.wh(130, 136)]} source={logo_nobg} /> 
        <View style={[SS.p16,SS.jc,SS.as,{width:328,marginTop:114}]}>
             <Text style={[SS.fz32]}>{I18n.t('account.welcomeBack')}</Text>
-            <Label style={[SS.fz14, SS.mt19]}>{I18n.t('account.typeYourPin')}</Label>
-            <Item style={[SS.ml0,S.h(27.7)]} error={!!errorMessage}>
+            <Label style={[SS.fz14, SS.mt18]}>{I18n.t('account.typeYourPin')}</Label>
+            <Item style={[SS.mt10,SS.mb10,SS.ml10,,SS.mr10,S.h(25.7)]} error={!!errorMessage}>
                 <Input
                 secureTextEntry
                 keyboardType="number-pad"
                 style={[SS.fz14,{letterSpacing: 5}]}
-                placeholder={I18n.t('account.typeYourPin')}
                 onChangeText={handlePinChange}
                 value={pin}
                 maxLength={6}
                 />
             </Item>
+            <View style={[SS.h18,SS.w100]}>
+                <Text style={[SS.fz14, { color: 'red' }]}>{errorMessage??''}</Text>
+            </View>
+            <View style={[S.marginT(8.4),SS.w100]}>
+                <Button block onPress={triggerSubmit}>
+                    <Text>{I18n.t('assets.confirm')}</Text>
+                </Button>
+            </View>
         </View>
-        {errorMessage ? (
-            <Text style={[SS.fz14, { color: 'red' }]}>{errorMessage}</Text>
-        ) : null}
-        <View style={[S.marginT(43.4)]}>
-            <Button block onPress={triggerSubmit}>
-                <Text>{I18n.t('assets.confirm')}</Text>
-            </Button>
-        </View>
+        
+        
     </View>
   );
 }
