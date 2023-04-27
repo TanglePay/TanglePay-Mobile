@@ -10,6 +10,7 @@ import _sumBy from 'lodash/sumBy';
 import { useChangeNode, useGetNodeWallet } from '@tangle-pay/store/common';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { PasswordDialog } from '../biometrics/passwordDialog';
+import { context } from '@tangle-pay/domain';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -77,7 +78,13 @@ export const UserSetting = () => {
 			label: 'Advanced',
 			path: 'user/advanced',
 			size: 22
-		}
+		},
+		{
+            icon: 'pin',
+            label: context.state.isPinSet ? I18n.t('account.resetPinTitle') : I18n.t('account.setPinButton'),
+            path: context.state.isPinSet ? 'account/pin/reset' : 'account/pin/set',
+            size: 22
+        }
 	];
 	console.log(curWallet[0]?.id);
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;

@@ -10,6 +10,7 @@ module.exports = {
 					'#': './native-base-theme',
 					'@tangle-pay/common': 'tanglepay/lib/app/common',
 					'@tangle-pay/store': 'tanglepay/lib/app/store',
+					'@tangle-pay/domain': 'tanglepay/lib/app/domain',
 					'@tangle-pay/assets': 'tanglepay/lib/app/assets',
 					'@ledgerhq/cryptoassets/data': '@ledgerhq/cryptoassets/lib/data'
 				}

@@ -4,6 +4,7 @@ import { Nav, S, SS, SvgIcon, ThemeVar, Toast } from '@/common';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import Modal from 'react-native-modal';
 import { useCollect, useGetWalletInfo, useGetNodeWallet } from '@tangle-pay/store/common';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
 
 export const WalletCollection = () => {
 	const [, totalInfo, loading, getInfo] = useGetWalletInfo();
@@ -13,6 +14,12 @@ export const WalletCollection = () => {
 	const [list, setList] = useState([]);
 	const [start, stop] = useCollect();
 	let handeNum = list?.length || 0;
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(false)
+    useEffect(() => {
+        checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+            setIsWalletPassowrdEnabled(res)
+        })
+    })
 	const totalNum = totalInfo?.outputIds?.length || 0;
 	handeNum = handeNum <= totalNum ? handeNum : totalNum;
 	const handleStop = async () => {
@@ -48,22 +55,27 @@ export const WalletCollection = () => {
 							<Text style={[SS.fz14, SS.cS, SS.mr24]}>{I18n.t('account.pendingNum')}</Text>
 							<Text style={[SS.fz16, SS.cP, SS.fw600]}>{totalNum}</Text>
 						</View>
-						<Text style={[SS.fz14, SS.mt24]}>{I18n.t('assets.passwordTips')}</Text>
-						<Input
-							secureTextEntry
-							value={password}
-							onChangeText={setPassword}
-							style={[S.border(2), SS.pv10]}
-						/>
+						{isWalletPassowrdEnabled && (<>
+							<Text style={[SS.fz14, SS.mt24]}>{I18n.t('assets.passwordTips')}</Text>
+							<Input
+								secureTextEntry
+								value={password}
+								onChangeText={setPassword}
+								style={[S.border(2), SS.pv10]}
+							/>
+						</>
+						)}
 						<Button
-							disabled={!password}
+							disabled={!password && isWalletPassowrdEnabled}
 							onPress={async () => {
-								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-								if (!isPassword) {
-									return Toast.error(I18n.t('assets.passwordError'));
+								if (isWalletPassowrdEnabled) {
+									const isPassword = await IotaSDK.checkPassword(curWallet.seed, password)
+									if (!isPassword) {
+										return Toast.error(I18n.t('assets.passwordError'))
+									}
 								}
-								start({ ...curWallet, password }, setList);
-								setShow(true);
+								start({ ...curWallet, password:isWalletPassowrdEnabled?password:context.state.pin }, setList)
+								setShow(true)
 							}}
 							style={[SS.mt40, SS.mb16]}
 							block>

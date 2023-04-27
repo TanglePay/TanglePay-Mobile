@@ -8973,6 +8973,11 @@ react-native-permissions@^3.8.0:
     picocolors "^1.0.0"
     pkg-dir "^5.0.0"
 
+react-native-pin-view@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-pin-view/-/react-native-pin-view-3.0.3.tgz#2294369db926b39a6b1288f26254683c168413c0"
+  integrity sha512-0xCQBpwrP06wDjUlfwViFMzi1ph+9Y1ytYWkGtdIcy9XcR5RK94DOGDisNUb8LrvHjVIoeuoDIkYPVcvv43GGA==
+
 react-native-qrcode-svg@^6.1.1:
   version "6.2.0"
   resolved "https://registry.npmjs.org/react-native-qrcode-svg/-/react-native-qrcode-svg-6.2.0.tgz#62b62c5997ff23ba22544e289a6112a08f8ea306"

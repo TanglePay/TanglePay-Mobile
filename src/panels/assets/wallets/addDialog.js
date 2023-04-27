@@ -6,6 +6,7 @@ import { useChangeNode } from '@tangle-pay/store/common';
 import { I18n, Base, IotaSDK } from '@tangle-pay/common';
 import { S, SS, ThemeVar, Toast } from '@/common';
 import { useStore } from '@tangle-pay/store';
+import { isNewWalletFlow } from '@tangle-pay/domain'
 export const AddDialog = ({ dialogRef, nodeId }) => {
 	const [isShow, setShow] = useState(false);
 	const [isShowNode, setShowNode] = useState(true);
@@ -110,7 +111,11 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								activeOpacity={0.8}
 								onPress={() => {
 									hide();
-									Base.push('account/register');
+									if (isNewWalletFlow()) {
+                                        Base.push('account/registerPin')
+                                    } else {
+                                        Base.push('account/register')
+                                    }
 								}}
 								style={[{ height: 72 }, SS.pl24, SS.jc]}>
 								<Text style={[SS.fz16]}>{I18n.t('account.createTitle')}</Text>

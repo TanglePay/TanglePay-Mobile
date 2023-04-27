@@ -13,6 +13,7 @@ import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Image, TouchableOpacity } from 'react-native';
 import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
 
 const schema = {
 	// currency: Yup.string().required(),
@@ -50,6 +51,12 @@ export const AssetsSend = () => {
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
 	};
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true)
+	useEffect(() => {
+        checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+            setIsWalletPassowrdEnabled(res)
+        })
+    }, [curWallet.id])
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
@@ -100,7 +107,7 @@ export const AssetsSend = () => {
 	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal]);
 	useGetAssetsList(curWallet);
 	const isLedger = curWallet.type == 'ledger';
-	if (isLedger) {
+	if (isLedger && !isWalletPassowrdEnabled) {
 		schema.password = Yup.string().optional();
 	} else {
 		schema.password = Yup.string().required();
@@ -128,6 +135,9 @@ export const AssetsSend = () => {
 					validationSchema={Yup.object().shape(schema)}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
+						if (!isWalletPassowrdEnabled) {
+							password = context.state.pin;
+						}
 						if (!isLedger) {
 							if (isBio) {
 								password = curPwd;
@@ -368,7 +378,7 @@ export const AssetsSend = () => {
 										</View>
 									</View>
 								) : null}
-								{isBio || isLedger ? (
+								{isBio || isLedger || !isWalletPassowrdEnabled ? (
 									<View />
 								) : (
 									<View>
