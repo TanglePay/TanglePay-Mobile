@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@tangle-pay/store';
 import { Image, Animated, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { useHandleUnlocalConditions } from '@tangle-pay/store/common';
+import { useHandleUnlocalConditions, useGetNodeWallet } from '@tangle-pay/store/common';
 import { Container, Content, View, Text, Button } from 'native-base';
 import { Base, I18n } from '@tangle-pay/common';
 import { S, SS, Nav, SvgIcon, NoData, ThemeVar } from '@/common';
 
 const Item = (item) => {
 	const [ipfsImage, setIpfsImage] = useState('');
-	const { onDismiss } = useHandleUnlocalConditions();
+	const { onDismiss, onDismissNft } = useHandleUnlocalConditions();
 	const [opacity, setOpacity] = useState(1);
 	const btnAnim = useRef(new Animated.Value(0)).current;
 	const [isShowBtn, setShowBtn] = useState(false);
@@ -57,19 +57,21 @@ const Item = (item) => {
 						}}
 					/>
 					<View style={[{ width: 32, height: 32, borderRadius: 32 }, S.border(4), SS.bgP, SS.c]}>
-						<Text style={[SS.fw600, SS.cW, SS.fz22]}>{String(item.token).toLocaleUpperCase()[0]}</Text>
+						<Text style={[SS.fw600, SS.cW, SS.fz22]}>
+							{String(item.token || item.name).toLocaleUpperCase()[0]}
+						</Text>
 					</View>
 				</View>
 				<View style={[{ height: 72 }, SS.row, SS.ac, SS.jsb, SS.mr24, SS.flex1, S.border(2)]}>
 					<View style={{ width: 100 }}>
 						<Text style={[SS.cP, SS.fz14, SS.fw600]}>
-							{item.token}: {item.amountStr}
+							{item.nftId ? item.name : `${item.token}: ${item.amountStr}`}
 						</Text>
 					</View>
 					<View style={{ width: 130 }}>
 						<View>
 							<Text numberOfLines={1} style={[SS.fz14, SS.fw400, SS.mb4, { width: 130 }]}>
-								{item.blockId}
+								{item.id}
 							</Text>
 						</View>
 						<View>
@@ -127,7 +129,11 @@ const Item = (item) => {
 								{
 									text: I18n.t('apps.execute'),
 									onPress: () => {
-										onDismiss(item.blockId);
+										if (item.nftId) {
+											onDismissNft(item.id);
+										} else {
+											onDismiss(item.id);
+										}
 									},
 									style: 'default'
 								}
@@ -142,7 +148,8 @@ const Item = (item) => {
 						activeOpacity={1}
 						onPress={() => {
 							Base.push('assets/trading', {
-								id: item.blockId
+								id: item.id,
+								isLedger: item.isLedger ? 1 : 0
 							});
 							hideBtn();
 						}}>
@@ -185,13 +192,15 @@ const LockedItem = (item) => {
 						}}
 					/>
 					<View style={[{ width: 32, height: 32, borderRadius: 32 }, S.border(4), SS.bgP, SS.c]}>
-						<Text style={[SS.fw600, SS.cW, SS.fz22]}>{String(item.token).toLocaleUpperCase()[0]}</Text>
+						<Text style={[SS.fw600, SS.cW, SS.fz22]}>
+							{String(item.token || item.name).toLocaleUpperCase()[0]}
+						</Text>
 					</View>
 				</View>
 				<View style={[{ height: 72 }, SS.row, SS.ac, SS.jsb, SS.mr24, SS.flex1, S.border(2)]}>
 					<View style={{ width: 100 }}>
 						<Text style={[SS.cP, SS.fz14, SS.fw600]}>
-							{item.token}: {item.amountStr}
+							{item.nftId ? item.name : `${item.token}: ${item.amountStr}`}
 						</Text>
 					</View>
 					<View style={{ width: 130 }}>
@@ -228,21 +237,46 @@ const LockedItem = (item) => {
 export const AssetsTradingList = () => {
 	const [unlockConditions] = useStore('common.unlockConditions');
 	const [lockedList] = useStore('common.lockedList');
+	const [nftUnlockList] = useStore('nft.unlockList');
+	const [nftLockList] = useStore('nft.lockList');
+	const [curWallet] = useGetNodeWallet();
+	const isLedger = curWallet.type == 'ledger';
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.tradingList')} />
 			<ScrollView>
 				<View style={[S.h(10)]} />
-				{unlockConditions.length > 0 || lockedList.length > 0 ? (
+				{unlockConditions.length > 0 ||
+				lockedList.length > 0 ||
+				nftUnlockList.length > 0 ||
+				nftLockList.length > 0 ? (
 					<>
 						<View>
 							{unlockConditions.map((e, i) => {
-								return <Item {...e} key={e.blockId} i={i} />;
+								return <Item {...e} key={e.blockId} id={e.blockId} isLedger={isLedger} />;
+							})}
+						</View>
+						<View>
+							{nftUnlockList.map((e, i) => {
+								return (
+									<Item
+										{...e}
+										key={e.nftId}
+										id={e.nftId}
+										logoUrl={e.thumbnailImage || e.media}
+										isLedger={isLedger}
+									/>
+								);
 							})}
 						</View>
 						<View>
 							{lockedList.map((e, i) => {
 								return <LockedItem {...e} key={e.blockId} />;
+							})}
+						</View>
+						<View>
+							{lockedList.map((e, i) => {
+								return <LockedItem {...e} key={e.nftId} logoUrl={e.thumbnailImage || e.media} />;
 							})}
 						</View>
 					</>

@@ -7,22 +7,31 @@ import { useRoute } from '@react-navigation/native';
 import { Container, Content, View, Text, Input, Form, Button, Item } from 'native-base';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useGetNodeWallet, useHandleUnlocalConditions } from '@tangle-pay/store/common';
+import { useGetAssetsList, useGetNodeWallet, useHandleUnlocalConditions } from '@tangle-pay/store/common';
+import { useGetNftList } from '@tangle-pay/store/nft';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { BleDevices } from '@/common/components/bleDevices';
 
-const schema = Yup.object().shape({
+const schema = {
 	password: Yup.string().required()
-});
+};
 
 export const AssetsTrading = () => {
 	const form = useRef();
+	const bleDevices = useRef();
 	const [ipfsImage, setIpfsImage] = useState('');
 	const [curWallet] = useGetNodeWallet();
 	const { params } = useRoute();
 	const id = params.id;
 	const [unlockConditions] = useStore('common.unlockConditions');
-	const { onDismiss, onAccept } = useHandleUnlocalConditions();
-	const curInfo = unlockConditions.find((e) => e.blockId == id) || {};
+	const [nftUnlockList] = useStore('nft.unlockList');
+	useGetNftList();
+	useGetAssetsList(curWallet);
+	const { onDismiss, onDismissNft, onAccept, onAcceptNft } = useHandleUnlocalConditions();
+	let curInfo = unlockConditions.find((e) => e.blockId == id) || {};
+	if (!curInfo) {
+		curInfo = nftUnlockList.find((e) => e.nftId == id) || {};
+	}
 	const [opacity, setOpacity] = useState(1);
 	useEffect(() => {
 		if (/ipfs/.test(curInfo.logoUrl)) {
@@ -33,6 +42,15 @@ export const AssetsTrading = () => {
 				});
 		}
 	}, [curInfo.logoUrl]);
+	const isLedger = params.isLedger == 1;
+	if (isLedger) {
+		schema.password = Yup.string().optional();
+	} else {
+		schema.password = Yup.string().required();
+	}
+	useEffect(() => {
+		curInfo ? Toast.hideLoading() : Toast.showLoading();
+	}, curInfo);
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.tradingTitle')} />
@@ -51,19 +69,19 @@ export const AssetsTrading = () => {
 								{ left: 0, top: 0, zIndex: 1, opacity },
 								S.border(4)
 							]}
-							source={{ uri: ipfsImage || curInfo.logoUrl }}
+							source={{ uri: ipfsImage || curInfo.logoUrl || curInfo.thumbnailImage || curInfo.media }}
 							onError={() => {
 								setOpacity(0);
 							}}
 						/>
 						<View style={[{ width: 32, height: 32, borderRadius: 32 }, S.border(4), SS.bgP, SS.c]}>
 							<Text style={[SS.fw600, SS.cW, SS.fz22]}>
-								{String(curInfo.token).toLocaleUpperCase()[0]}
+								{String(curInfo.token || curInfo.name || '').toLocaleUpperCase()[0]}
 							</Text>
 						</View>
 					</View>
-					<Text style={[SS.cP, SS.fz14, SS.fw600, SS.ml20, SS.mr24]}>
-						{curInfo.token}: {curInfo.amountStr}
+					<Text style={[SS.cP, SS.fz14, SS.fw600, SS.ml20, SS.mr24, { width: 100 }]}>
+						{curInfo.nftId ? curInfo.name : `${curInfo.token}: ${curInfo.amountStr}`}
 					</Text>
 					<Text style={[SS.fz14]}>
 						{I18n.t('assets.tradingFrom')} {Base.handleAddress(curInfo.unlockAddress)}
@@ -112,20 +130,40 @@ export const AssetsTrading = () => {
 						validateOnBlur={false}
 						validateOnChange={false}
 						validateOnMount={false}
-						validationSchema={schema}
+						validationSchema={Yup.object().shape(schema)}
 						onSubmit={async (values) => {
 							const { password } = values;
-							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-							if (!isPassword) {
-								return Toast.error(I18n.t('assets.passwordError'));
+							if (!isLedger) {
+								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
+								if (!isPassword) {
+									return Toast.error(I18n.t('assets.passwordError'));
+								}
+							}
+							if (isLedger) {
+								await bleDevices.current.show();
 							}
 							try {
 								Toast.showLoading();
-								await onAccept({
+								const info = {
 									...curInfo,
 									curWallet: { ...curWallet, password }
-								});
-								onDismiss(curInfo.blockId);
+								};
+								if (info.nftId) {
+									await onAcceptNft({
+										...curInfo,
+										curWallet: { ...curWallet, password }
+									});
+								} else {
+									await onAccept({
+										...curInfo,
+										curWallet: { ...curWallet, password }
+									});
+								}
+								if (curInfo.nftId) {
+									onDismissNft(curInfo.nftId);
+								} else {
+									onDismiss(curInfo.blockId);
+								}
 								Toast.hideLoading();
 								Toast.success(I18n.t('assets.acceptSucc'));
 								IotaSDK.refreshAssets();
@@ -147,27 +185,29 @@ export const AssetsTrading = () => {
 						}}>
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<View>
-								<Form>
-									<Text style={[SS.fz14, SS.mb12, SS.mt12]}>
-										{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
-									</Text>
-									<Item style={[SS.ml0, S.border(2)]}>
-										<Input
-											keyboardType='ascii-capable'
-											secureTextEntry
-											style={[SS.fz14, SS.pl0, S.h(44)]}
-											placeholder={I18n.t('account.intoPasswordTips')}
-											onChangeText={handleChange('password')}
-											value={values.password}
-										/>
-									</Item>
-								</Form>
+								{!isLedger ? (
+									<Form>
+										<Text style={[SS.fz14, SS.mb12, SS.mt12]}>
+											{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
+										</Text>
+										<Item style={[SS.ml0, S.border(2)]}>
+											<Input
+												keyboardType='ascii-capable'
+												secureTextEntry
+												style={[SS.fz14, SS.pl0, S.h(44)]}
+												placeholder={I18n.t('account.intoPasswordTips')}
+												onChangeText={handleChange('password')}
+												value={values.password}
+											/>
+										</Item>
+									</Form>
+								) : null}
 								<View style={[SS.row, SS.ac, SS.jsb, { marginTop: 50, width: ThemeVar.deviceWidth }]}>
 									<Button
 										style={[S.w(ThemeVar.deviceWidth - 32)]}
 										block
 										primary
-										disabled={!values.password}
+										disabled={!values.password && !isLedger}
 										onPress={handleSubmit}>
 										<Text>{I18n.t('shimmer.accept')}</Text>
 									</Button>
@@ -177,6 +217,7 @@ export const AssetsTrading = () => {
 					</Formik>
 				</View>
 			</View>
+			<BleDevices dialogRef={bleDevices} />
 		</Container>
 	);
 };

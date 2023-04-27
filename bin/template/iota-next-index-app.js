@@ -4425,6 +4425,24 @@
 			block
 		};
 	}
+	const ledgerNeedBlindSigning = (outputs, final) => {
+		let blindSigning = false;
+		if (
+			outputs.find(
+				(e) =>
+					e.type != BASIC_OUTPUT_TYPE ||
+					e.nativeTokens?.length > 0 ||
+					e.nftId ||
+					e.addressType != 0 ||
+					e.unlockConditions?.length > 1 ||
+					(e.unlockConditions || []).find((d) => d.type != ADDRESS_UNLOCK_CONDITION_TYPE)
+			) ||
+			final.length > 251
+		) {
+			blindSigning = true;
+		}
+		return blindSigning;
+	};
 	/**
 	 * Build a transaction payload.
 	 * @param networkId The network id we are sending the payload on.
@@ -4547,15 +4565,34 @@
 					: undefined
 		};
 		const binaryEssence = new util_js.WriteStream();
+		let binaryEssenceToken = null;
 		serializeTransactionEssence(binaryEssence, transactionEssence);
 		if (getHardwareBip32Path) {
-			for (let i = 0; i < inputs.length; i++) {
-				const pathArr = getHardwareBip32Path(hardwarePathList[i]);
-				binaryEssence.writeUInt32('bip32_index', pathArr[3]);
-				binaryEssence.writeUInt32('bip32_change', pathArr[4]);
+			let final = binaryEssence.finalBytes();
+			if (ledgerNeedBlindSigning(outputs, final)) {
+				binaryEssenceToken = new util_js.WriteStream();
+				final = crypto_js.Blake2b.sum256(final);
+				binaryEssenceToken.writeBytes('essence_hash', final.length, final);
+				binaryEssenceToken.writeUInt16('inputs_count', hardwarePathList.length);
+				for (let i = 0; i < inputs.length; i++) {
+					const pathArr = getHardwareBip32Path(hardwarePathList[i]);
+					binaryEssenceToken.writeUInt32('bip32_index', pathArr[3]);
+					binaryEssenceToken.writeUInt32('bip32_change', pathArr[4]);
+				}
+			} else {
+				for (let i = 0; i < inputs.length; i++) {
+					const pathArr = getHardwareBip32Path(hardwarePathList[i]);
+					binaryEssence.writeUInt32('bip32_index', pathArr[3]);
+					binaryEssence.writeUInt32('bip32_change', pathArr[4]);
+				}
 			}
 		}
-		const essenceFinal = binaryEssence.finalBytes();
+		let essenceFinal;
+		if (binaryEssenceToken) {
+			essenceFinal = binaryEssenceToken.finalBytes();
+		} else {
+			essenceFinal = binaryEssence.finalBytes();
+		}
 		const essenceHash = crypto_js.Blake2b.sum256(essenceFinal);
 		// Create the unlocks
 		let unlocks = [];
@@ -4563,7 +4600,8 @@
 			unlocks = await signatureFunc(
 				essenceFinal,
 				inputs,
-				outputsWithSerialization.map((o) => o.output)
+				outputsWithSerialization.map((o) => o.output),
+				!!binaryEssenceToken
 			);
 		} else {
 			const addressToUnlock = {};

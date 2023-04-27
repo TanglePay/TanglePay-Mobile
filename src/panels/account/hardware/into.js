@@ -12,6 +12,7 @@ const schema = Yup.object().shape({
 });
 export const AccountHardwareInto = () => {
 	const form = useRef();
+	const [isLoading, setLoading] = useState(false);
 	const addWallet = useAddWallet();
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
@@ -34,6 +35,10 @@ export const AccountHardwareInto = () => {
 					validationSchema={schema}
 					onSubmit={async (values) => {
 						try {
+							if (isLoading) {
+								return;
+							}
+							setLoading(true);
 							const curNodeId = IotaSDK.curNode?.id;
 							const isIota = IotaSDK.checkIota(curNodeId);
 							const isShimmer = IotaSDK.checkSMR(curNodeId);
@@ -63,7 +68,9 @@ export const AccountHardwareInto = () => {
 									type: IotaSDK.curNode?.type
 								});
 							}
+							setLoading(false);
 						} catch (error) {
+							setLoading(false);
 							Toast.show(String(error));
 						}
 					}}>
