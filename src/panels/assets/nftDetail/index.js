@@ -7,10 +7,11 @@ import * as Yup from 'yup';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { useRoute } from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
+import dayjs from 'dayjs';
 
 export const NftDetail = () => {
 	const { params } = useRoute();
-	let { thumbnailImage, media, attributes, properties } = params;
+	let { thumbnailImage, media, attributes, properties, lockTime, isUnlock } = params;
 	attributes = attributes?.props || attributes || properties || {};
 	let propsList = [];
 	for (const i in attributes) {
@@ -98,17 +99,27 @@ export const NftDetail = () => {
 									<Text style={[SS.fz12, SS.fw400]}>{params.uri || params.ipfsMedia}</Text>
 								</TouchableOpacity>
 							</View>
-							<View style={[SS.mt8, SS.bgS, SS.radius10, SS.ph12, SS.pv12]}>
-								<Text style={[SS.fz14, SS.fw400, SS.mb4]}>{I18n.t('assets.collectionID')}</Text>
-								<TouchableOpacity
-									activeOpacity={0.8}
-									onPress={() => {
-										Clipboard.setString(params.collectionId);
-										Toast.success(I18n.t('assets.copied'));
-									}}>
-									<Text style={[SS.fz12, SS.fw400]}>{params.collectionId}</Text>
-								</TouchableOpacity>
-							</View>
+							{params.collectionId ? (
+								<View style={[SS.mt8, SS.bgS, SS.radius10, SS.ph12, SS.pv12]}>
+									<Text style={[SS.fz14, SS.fw400, SS.mb4]}>{I18n.t('assets.collectionID')}</Text>
+									<TouchableOpacity
+										activeOpacity={0.8}
+										onPress={() => {
+											Clipboard.setString(params.collectionId);
+											Toast.success(I18n.t('assets.copied'));
+										}}>
+										<Text style={[SS.fz12, SS.fw400]}>{params.collectionId}</Text>
+									</TouchableOpacity>
+								</View>
+							) : null}
+							{!isUnlock && lockTime ? (
+								<View style={[SS.mt8, SS.bgS, SS.radius10, SS.ph12, SS.pv12]}>
+									<Text style={[SS.fz14, SS.fw400, SS.mb4]}>{I18n.t('assets.unlockTime')}</Text>
+									<Text style={[SS.fz12, SS.fw400]}>
+										{dayjs(lockTime * 1000).format('YYYY-MM-DD HH:mm:ss')}
+									</Text>
+								</View>
+							) : null}
 						</View>
 					) : null}
 				</View>

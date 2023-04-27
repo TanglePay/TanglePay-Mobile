@@ -7,6 +7,7 @@ import { CoinList, ActivityList, CollectiblesList, RewardsList } from './list';
 import { useGetNodeWallet, useGetAssetsList, useGetLegal, useChangeNode } from '@tangle-pay/store/common';
 import { AssetsNav, SvgIcon, S, SS, ThemeVar, Toast } from '@/common';
 import { useGetEventsConfig } from '@tangle-pay/store/staking';
+import { useGetNftList } from '@tangle-pay/store/nft';
 
 const hScroll = ThemeVar.deviceHeight - 200;
 const initAsssetsTab = ['stake', 'soonaverse', 'contract'];
@@ -18,6 +19,9 @@ export const Assets = () => {
 	const [isRequestHis, __] = useStore('common.isRequestHis');
 	const [unlockConditions] = useStore('common.unlockConditions');
 	const [lockedList] = useStore('common.lockedList');
+	const [nftUnlockList] = useStore('nft.unlockList');
+	const [nftLockList] = useStore('nft.lockList');
+	useGetNftList();
 	const changeNode = useChangeNode();
 	const [isShowAssets, setShowAssets] = useStore('common.showAssets');
 	const [___, refreshAssets] = useStore('common.forceRequest');
@@ -162,18 +166,30 @@ export const Assets = () => {
 								</Text>
 							</TouchableOpacity>
 						)}
-						{unlockConditions.length > 0 || lockedList.length > 0 ? (
+						{unlockConditions.length > 0 ||
+						lockedList.length > 0 ||
+						nftUnlockList.length > 0 ||
+						nftLockList.length > 0 ? (
 							<TouchableOpacity
 								onPress={() => Base.push('assets/tradingList')}
 								activeOpacity={0.8}
 								style={[
 									SS.ph5,
 									SS.c,
-									S.bg(unlockConditions.length == 0 ? '#3671ee' : '#D53554'),
+									S.bg(
+										unlockConditions.length == 0 && nftUnlockList.length == 0
+											? '#3671ee'
+											: '#D53554'
+									),
 									{ borderRadius: 4, height: 18 }
 								]}>
 								<Text style={[SS.cW, SS.fz14]}>
-									{String(unlockConditions.length + lockedList.length)}
+									{String(
+										unlockConditions.length +
+											lockedList.length +
+											nftUnlockList.length +
+											nftLockList.length
+									)}
 								</Text>
 							</TouchableOpacity>
 						) : null}

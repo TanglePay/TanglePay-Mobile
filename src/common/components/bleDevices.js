@@ -92,7 +92,7 @@ export const BleDevices = ({ dialogRef }) => {
 			resolveRef.current = resolve;
 			rejectRef.current = reject;
 			const isSupported = await TransportBLE.isSupported();
-			if (!isSupported) {
+			if (!isSupported || Base.transport) {
 				resolve();
 			} else {
 				try {

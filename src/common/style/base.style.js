@@ -117,7 +117,7 @@ const styleObj = {
 	}
 };
 // generate font styles
-for (let i = 10; i <= 30; i++) {
+for (let i = 10; i <= 32; i++) {
 	styleObj[`fz${i}`] = {
 		fontSize: i
 	};
@@ -134,7 +134,7 @@ for (let n = 0; n <= 80; n += 5) {
 		};
 	});
 }
-for (let n = 0; n <= 32; n += 4) {
+for (let n = 0; n <= 32; n += 1) {
 	['Horizontal', 'Vertical', 'Top', 'Bottom', 'Left', 'Right', ''].forEach((k) => {
 		const key = `${(k[0] || '').toLocaleLowerCase()}${n}`;
 		styleObj[`p${key}`] = {

@@ -73,6 +73,7 @@
     "react-native-modal": "^13.0.0",
     "react-native-os": "^1.0.1",
     "react-native-permissions": "^3.8.0",
+    "react-native-pin-view": "^3.0.3",
     "react-native-qrcode-svg": "^6.1.1",
     "react-native-randombytes": "^3.0.0",
     "react-native-root-siblings": "^4.1.1",
