@@ -8,14 +8,14 @@ import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { StoreContext, useStoreReducer } from '@tangle-pay/store';
 import { useChangeNode } from '@tangle-pay/store/common';
-import { Theme, Toast } from '@/common';
+import { Theme, Toast, StorageFacade } from '@/common';
 import _wrap from 'lodash/wrap';
 import { DappDialog } from '@/common/components/DappDialog';
 import Jailbreak from 'react-native-jailbreak';
 import Exit from 'react-native-exit-app';
 import { PasswordDialog } from '@/common/components/passwordDialog';
 import SplashScreen from 'react-native-splash-screen';
-import { context, ensureInited, getIsUnlocked, init as pinInit, markWalletPasswordEnabled, isNewWalletFlow } from '@tangle-pay/domain'
+import { context, ensureInited, getIsUnlocked, init as pinInit, markWalletPasswordEnabled, isNewWalletFlow,  setStorageFacade } from '@tangle-pay/domain'
 
 const Stack = createStackNavigator();
 const getFirstScreen = async (store) => {
@@ -143,6 +143,7 @@ Please keep your device in non-rooted state and then launch the application agai
 				);
 			}
 		});
+		setStorageFacade(StorageFacade);
 		Base.globalInit({
 			store,
 			dispatch,
