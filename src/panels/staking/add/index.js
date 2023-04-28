@@ -8,6 +8,7 @@ import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet, useGetAssetsList } from '@tangle-pay/store/common';
 import { SS, S, Nav, AlertDialog, Toast } from '@/common';
 import { BleDevices } from '@/common/components/bleDevices';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
 const schema = {
 	// amount: Yup.number().positive().required(),
@@ -22,6 +23,12 @@ export const StakingAdd = () => {
 	useGetAssetsList(curWallet);
 	const { params } = useRoute();
 	const { tokens, type } = params;
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	useEffect(() => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+	}, [curWallet.id]);
 	const assets = assetsList.find((e) => e.name === currency) || {};
 	let available = parseFloat(assets.balance) || 0;
 	const realBalance = assets.realBalance;
@@ -56,7 +63,10 @@ export const StakingAdd = () => {
 					validateOnMount={false}
 					validationSchema={Yup.object().shape(schema)}
 					onSubmit={async (values) => {
-						const { password } = values;
+						let { password } = values;
+						if (!isWalletPassowrdEnabled) {
+							password = context.state.pin;
+						}
 						if (!isLedger) {
 							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 							if (!isPassword) {
@@ -108,7 +118,7 @@ export const StakingAdd = () => {
 					{({ handleChange, handleSubmit, values, errors }) => (
 						<View style={[SS.ph16, SS.pv24]}>
 							<Form>
-								{!isLedger ? (
+								{!isLedger && isWalletPassowrdEnabled ? (
 									<>
 										<Text style={[SS.fz16, SS.mt10, SS.fw600]}>{I18n.t('assets.password')}</Text>
 										<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
