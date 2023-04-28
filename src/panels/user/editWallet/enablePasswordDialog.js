@@ -51,8 +51,12 @@ export const EnablePasswordDialog = ({ dialogRef, data }) => {
                 .oneOf([Yup.ref('newPassword'), null], I18n.t('account.passwordMismatch'))
             })}
             onSubmit={async (values, { resetForm }) => {
+
               if (values.newPassword !== values.retypePassword) {
                 return Toast.errors(I18n.t('account.passwordMismatch'));
+              }
+              if (!Base.checkPassword(values.newPassword)) {
+                return Toast.error(I18n.t('account.intoPasswordTips'))
               }
               try {
                 Toast.showLoading();
