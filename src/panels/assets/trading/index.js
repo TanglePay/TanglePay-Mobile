@@ -9,6 +9,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useGetAssetsList, useGetNodeWallet, useHandleUnlocalConditions } from '@tangle-pay/store/common';
 import { useGetNftList } from '@tangle-pay/store/nft';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { BleDevices } from '@/common/components/bleDevices';
 
@@ -33,6 +34,12 @@ export const AssetsTrading = () => {
 		curInfo = nftUnlockList.find((e) => e.nftId == id) || {};
 	}
 	const [opacity, setOpacity] = useState(1);
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	useEffect(() => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+	}, [curWallet.id]);
 	useEffect(() => {
 		if (/ipfs/.test(curInfo.logoUrl)) {
 			fetch(curInfo.logoUrl)
@@ -133,6 +140,9 @@ export const AssetsTrading = () => {
 						validationSchema={Yup.object().shape(schema)}
 						onSubmit={async (values) => {
 							const { password } = values;
+							if (!isWalletPassowrdEnabled) {
+								password = context.state.pin;
+							}
 							if (!isLedger) {
 								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 								if (!isPassword) {
@@ -185,7 +195,7 @@ export const AssetsTrading = () => {
 						}}>
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<View>
-								{!isLedger ? (
+								{!isLedger && isWalletPassowrdEnabled ? (
 									<Form>
 										<Text style={[SS.fz14, SS.mb12, SS.mt12]}>
 											{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
@@ -207,7 +217,7 @@ export const AssetsTrading = () => {
 										style={[S.w(ThemeVar.deviceWidth - 32)]}
 										block
 										primary
-										disabled={!values.password && !isLedger}
+										disabled={!values.password && !isLedger && isWalletPassowrdEnabled}
 										onPress={handleSubmit}>
 										<Text>{I18n.t('shimmer.accept')}</Text>
 									</Button>
