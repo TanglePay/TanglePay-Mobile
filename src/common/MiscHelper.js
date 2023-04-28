@@ -2,9 +2,9 @@ import { Base } from '@tangle-pay/common'
 
 export const StorageFacade = {
     get: async (key) => {
-        return await Base.getLocalData(key)
+        return await Base.getSensitiveInfo(key)
     },
     set: (key, value) => {
-        Base.setLocalData(key, value)
+        Base.setSensitiveInfo(key, value)
     }
 }

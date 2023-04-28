@@ -7,6 +7,7 @@ import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { SS, S, Nav, AlertDialog, Toast } from '@/common';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
 
 const schema = Yup.object().shape({
 	// amount: Yup.number().positive().required(),
@@ -19,6 +20,12 @@ export const StakingAdd = () => {
 	const [curWallet] = useGetNodeWallet();
 	const { params } = useRoute();
 	const { tokens, type } = params;
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true)
+	useEffect(() => {
+        checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+            setIsWalletPassowrdEnabled(res)
+        })
+    }, [curWallet.id])
 	const assets = assetsList.find((e) => e.name === currency) || {};
 	let available = parseFloat(assets.balance) || 0;
 	const realBalance = assets.realBalance;
@@ -44,7 +51,10 @@ export const StakingAdd = () => {
 					validateOnMount={false}
 					validationSchema={schema}
 					onSubmit={async (values) => {
-						const { password } = values;
+						let { password } = values;
+						if (!isWalletPassowrdEnabled) {
+							password = context.state.pin;
+						}
 						const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 						if (!isPassword) {
 							return Toast.error(I18n.t('assets.passwordError'));
@@ -91,6 +101,7 @@ export const StakingAdd = () => {
 					{({ handleChange, handleSubmit, values, errors }) => (
 						<View style={[SS.ph16, SS.pv24]}>
 							<Form>
+								{ isWalletPassowrdEnabled ? (<>
 								<Text style={[SS.fz16, SS.mt10, SS.fw600]}>{I18n.t('assets.password')}</Text>
 								<Item style={[SS.ml0, SS.mt8]} error={!!errors.password}>
 									<Input
@@ -101,7 +112,7 @@ export const StakingAdd = () => {
 										onChangeText={handleChange('password')}
 										value={values.password}
 									/>
-								</Item>
+								</Item></>) : null}
 								<View style={[S.marginT(40), SS.pb30]}>
 									<Button block onPress={handleSubmit}>
 										<Text>{I18n.t('assets.confirm')}</Text>

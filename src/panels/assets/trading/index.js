@@ -8,6 +8,7 @@ import { Container, Content, View, Text, Input, Form, Button, Item } from 'nativ
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useGetNodeWallet, useHandleUnlocalConditions } from '@tangle-pay/store/common';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
 import Clipboard from '@react-native-clipboard/clipboard';
 
 const schema = Yup.object().shape({
@@ -24,6 +25,12 @@ export const AssetsTrading = () => {
 	const { onDismiss, onAccept } = useHandleUnlocalConditions();
 	const curInfo = unlockConditions.find((e) => e.blockId == id) || {};
 	const [opacity, setOpacity] = useState(1);
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true)
+	useEffect(() => {
+        checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+            setIsWalletPassowrdEnabled(res)
+        })
+    }, [curWallet.id])
 	useEffect(() => {
 		if (/ipfs/.test(curInfo.logoUrl)) {
 			fetch(curInfo.logoUrl)
@@ -114,7 +121,10 @@ export const AssetsTrading = () => {
 						validateOnMount={false}
 						validationSchema={schema}
 						onSubmit={async (values) => {
-							const { password } = values;
+							let { password } = values;
+							if (!isWalletPassowrdEnabled) {
+								password = context.state.pin;
+							}
 							const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 							if (!isPassword) {
 								return Toast.error(I18n.t('assets.passwordError'));
@@ -148,6 +158,7 @@ export const AssetsTrading = () => {
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<View>
 								<Form>
+									{isWalletPassowrdEnabled ? (<>
 									<Text style={[SS.fz14, SS.mb12, SS.mt12]}>
 										{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
 									</Text>
@@ -161,13 +172,14 @@ export const AssetsTrading = () => {
 											value={values.password}
 										/>
 									</Item>
+									</>):null}
 								</Form>
 								<View style={[SS.row, SS.ac, SS.jsb, { marginTop: 50, width: ThemeVar.deviceWidth }]}>
 									<Button
 										style={[S.w(ThemeVar.deviceWidth - 32)]}
 										block
 										primary
-										disabled={!values.password}
+										disabled={!values.password && isWalletPassowrdEnabled}
 										onPress={handleSubmit}>
 										<Text>{I18n.t('shimmer.accept')}</Text>
 									</Button>
