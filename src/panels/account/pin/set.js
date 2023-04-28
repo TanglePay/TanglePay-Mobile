@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, View, Label, Input, Form, Item, Button, Content } from 'native-base';
+import { Container, View, Label, Text, Form, Item, Button, Content } from 'native-base';
 import { Base, I18n } from '@tangle-pay/common';
 import { S, SS, Nav, Toast, MaskedInput } from '@/common';
 import { Formik } from 'formik';
