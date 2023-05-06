@@ -16,6 +16,7 @@ import { BleDevices } from '@/common/components/bleDevices';
 const schema = {
 	password: Yup.string().required()
 };
+const schemaNopassword = Yup.object().shape({});
 
 export const AssetsTrading = () => {
 	const form = useRef();
@@ -34,10 +35,10 @@ export const AssetsTrading = () => {
 		curInfo = nftUnlockList.find((e) => e.nftId == id) || {};
 	}
 	const [opacity, setOpacity] = useState(1);
-	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	const [isWalletPasswordEnabled, setIsWalletPasswordEnabled] = useState(true);
 	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
-			setIsWalletPassowrdEnabled(res);
+			setIsWalletPasswordEnabled(res);
 		});
 	}, [curWallet.id]);
 	useEffect(() => {
@@ -50,11 +51,6 @@ export const AssetsTrading = () => {
 		}
 	}, [curInfo.logoUrl]);
 	const isLedger = params.isLedger == 1;
-	if (isLedger) {
-		schema.password = Yup.string().optional();
-	} else {
-		schema.password = Yup.string().required();
-	}
 	useEffect(() => {
 		curInfo ? Toast.hideLoading() : Toast.showLoading();
 	}, curInfo);
@@ -137,10 +133,10 @@ export const AssetsTrading = () => {
 						validateOnBlur={false}
 						validateOnChange={false}
 						validateOnMount={false}
-						validationSchema={Yup.object().shape(schema)}
+						validationSchema={isLedger || !isWalletPasswordEnabled ? schemaNopassword : schema}
 						onSubmit={async (values) => {
 							const { password } = values;
-							if (!isWalletPassowrdEnabled) {
+							if (!isWalletPasswordEnabled) {
 								password = context.state.pin;
 							}
 							if (!isLedger) {
@@ -195,7 +191,7 @@ export const AssetsTrading = () => {
 						}}>
 						{({ handleChange, handleSubmit, values, errors }) => (
 							<View>
-								{!isLedger && isWalletPassowrdEnabled ? (
+								{!isLedger && isWalletPasswordEnabled ? (
 									<Form>
 										<Text style={[SS.fz14, SS.mb12, SS.mt12]}>
 											{I18n.t('account.showKeyInputPassword').replace(/{name}/, curWallet.name)}
@@ -217,7 +213,7 @@ export const AssetsTrading = () => {
 										style={[S.w(ThemeVar.deviceWidth - 32)]}
 										block
 										primary
-										disabled={!values.password && !isLedger && isWalletPassowrdEnabled}
+										disabled={!values.password && !isLedger && isWalletPasswordEnabled}
 										onPress={handleSubmit}>
 										<Text>{I18n.t('shimmer.accept')}</Text>
 									</Button>

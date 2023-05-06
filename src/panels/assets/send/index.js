@@ -13,7 +13,7 @@ import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Image, TouchableOpacity } from 'react-native';
 import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
-import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
 const schema = {
 	// currency: Yup.string().required(),
@@ -21,6 +21,10 @@ const schema = {
 	amount: Yup.number().positive().required(),
 	password: Yup.string().required()
 };
+const schemaNopassword = Yup.object().shape({
+	receiver: Yup.string().required(),
+	amount: Yup.number().positive().required()
+});
 const rnBiometrics = new ReactNativeBiometrics();
 
 export const AssetsSend = () => {
@@ -51,12 +55,12 @@ export const AssetsSend = () => {
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
 	};
-	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true)
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	useEffect(() => {
-        checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
-            setIsWalletPassowrdEnabled(res)
-        })
-    }, [curWallet.id])
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+	}, [curWallet.id]);
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
@@ -107,11 +111,6 @@ export const AssetsSend = () => {
 	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal]);
 	useGetAssetsList(curWallet);
 	const isLedger = curWallet.type == 'ledger';
-	if (isLedger && !isWalletPassowrdEnabled) {
-		schema.password = Yup.string().optional();
-	} else {
-		schema.password = Yup.string().required();
-	}
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 	let realBalance = BigNumber(assets.realBalance || 0);
 	if (IotaSDK.checkSMR(curWallet.nodeId) && !assets.isSMRToken) {
@@ -132,7 +131,7 @@ export const AssetsSend = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={Yup.object().shape(schema)}
+					validationSchema={isLedger || !isWalletPassowrdEnabled ? schemaNopassword : schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
 						if (!isWalletPassowrdEnabled) {

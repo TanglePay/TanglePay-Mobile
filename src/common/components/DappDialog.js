@@ -13,8 +13,7 @@ import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
-import { checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
-
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
@@ -41,12 +40,13 @@ export const DappDialog = () => {
 	const changeNode = useChangeNode();
 	const [gasInfo, setGasInfo] = useState({});
 	const isLedger = curWallet.type == 'ledger';
-	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true)
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	useEffect(() => {
-        checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
-            setIsWalletPassowrdEnabled(res)
-        })
-    }, [curWallet.id])
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+			setPassword(context.state.pin);
+		});
+	}, [curWallet.id]);
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -88,7 +88,7 @@ export const DappDialog = () => {
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
 		if (!noPassword.includes(type)) {
-			if (!isLedger && !isWalletPassowrdEnabled) {
+			if (!isLedger) {
 				const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 				if (!isPassword) {
 					return Toast.error(I18n.t('assets.passwordError'));
