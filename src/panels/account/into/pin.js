@@ -7,19 +7,23 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
+import { context, setPin } from '@tangle-pay/domain'
 import { ExpDialog } from './expDialog';
 
-const schema = Yup.object().shape({
-	mnemonic: Yup.string().required(),
-	name: Yup.string().required(),
-	password: Yup.string().required(),
-	rePassword: Yup.string().required(),
-	agree: Yup.bool().isTrue().required()
-});
+const schemaNopassword = Yup.object().shape({
+    mnemonic: Yup.string().required(),
+    name: Yup.string().required(),
+    agree: Yup.bool().isTrue().required()
+})
 
-export const AccountInto = () => {
+export const AccountIntoPin = () => {
 	const dialogRef = useRef();
 	const form = useRef();
+	const [shouldShowPin, setShouldShowPin ] = useState( true )
+    useEffect(() => {
+        console.log(context)
+        setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet)
+    }, [])
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
 	});
@@ -39,17 +43,23 @@ export const AccountInto = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={schema}
+					validationSchema={schemaNopassword}
 					onSubmit={async (values) => {
 						//import mnemonics
 						if (type === 1) {
-							const { password, rePassword } = values;
-							if (!Base.checkPassword(password)) {
-								return Toast.error(I18n.t('account.intoPasswordTips'));
-							}
-							if (password !== rePassword) {
-								return Toast.error(I18n.t('account.checkPasswrod'));
-							}
+							const { password, rePassword } = values
+                            if (shouldShowPin) {
+                                if (!Base.checkPin(password)) {
+                                    return Toast.error(I18n.t('account.intoPinTips'))
+                                }
+                                if (password !== rePassword) {
+                                    return Toast.error(I18n.t('account.checkPin'))
+                                }
+                                await setPin(password)
+                            } else {
+                                values.password = context.state.pin
+                                values.rePassword = context.state.pin
+                            }
 							const res = await IotaSDK.importMnemonic({
 								...values
 							});
@@ -124,6 +134,7 @@ export const AccountInto = () => {
 								<Text style={[SS.fz14, SS.mt32]}>
 									{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
 								</Text>
+								{shouldShowPin && (
 								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
 									<Input
 										keyboardType='ascii-capable'
@@ -131,14 +142,14 @@ export const AccountInto = () => {
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t(
-											type === 1 ? 'account.intoPasswordTips' : 'account.intoFilePasswordTips'
+											type === 1 ? 'account.intoPinTips' : 'account.intoFilePasswordTips'
 										)}
 										onChangeText={handleChange('password')}
 										value={values.password}
 									/>
-								</Item>
+								</Item>)}
 								<Input style={[S.h(1)]} />
-								{type === 1 && (
+								{type === 1 && shouldShowPin && (
 									<Item style={[SS.ml0, SS.mt8]} error={!!errors.rePassword}>
 										<Input
 											keyboardType='ascii-capable'
@@ -146,7 +157,7 @@ export const AccountInto = () => {
 											secureTextEntry
 											textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
 											style={[SS.fz14, SS.pl0, S.h(44)]}
-											placeholder={I18n.t('account.intoRePasswordTips')}
+											placeholder={I18n.t('account.intoRePin')}
 											onChangeText={handleChange('rePassword')}
 											value={values.rePassword}
 										/>

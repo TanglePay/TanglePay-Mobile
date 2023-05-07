@@ -6,14 +6,32 @@ import * as Yup from 'yup';
 import { useCreateCheck, useAddWallet } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { BleDevices } from '@/common/components/bleDevices';
-const schema = Yup.object().shape({
-	name: Yup.string().required(),
-	agree: Yup.bool().isTrue().required()
-});
+import { context, setPin } from '@tangle-pay/domain'
+const getSchema = (shouldShowPin) => {
+    if (shouldShowPin) {
+        return Yup.object().shape({
+            name: Yup.string().required(),
+            password: Yup.string().required(),
+            rePassword: Yup.string().required(),
+            agree: Yup.bool().isTrue().required()
+        })
+    } else {
+        return Yup.object().shape({
+            name: Yup.string().required(),
+            agree: Yup.bool().isTrue().required()
+        })
+    }
+}
 export const AccountHardwareInto = () => {
 	const form = useRef();
 	const [isLoading, setLoading] = useState(false);
 	const addWallet = useAddWallet();
+	const [shouldShowPin, setShouldShowPin] = useState(false)
+
+    useEffect(() => {
+        console.log(context)
+        setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet)
+    }, [])
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
 		if (!IotaSDK.checkWeb3Node(IotaSDK.curNode?.id)) {
@@ -32,12 +50,22 @@ export const AccountHardwareInto = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={schema}
+					validationSchema={getSchema(shouldShowPin)}
 					onSubmit={async (values) => {
 						try {
 							if (isLoading) {
 								return;
 							}
+							const { password, rePassword } = values
+                            if (shouldShowPin) {
+                                if (!Base.checkPin(password)) {
+                                    return Toast.error(I18n.t('account.intoPinTips'))
+                                }
+                                if (password !== rePassword) {
+                                    return Toast.error(I18n.t('account.checkPin'))
+                                }
+                                await setPin(password)
+                            }
 							setLoading(true);
 							const curNodeId = IotaSDK.curNode?.id;
 							const isIota = IotaSDK.checkIota(curNodeId);
@@ -86,6 +114,28 @@ export const AccountHardwareInto = () => {
 										value={values.name}
 									/>
 								</Item>
+								{ shouldShowPin && (<>
+								<Label style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoPin')}</Label>
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
+									<MaskedInput
+										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
+										placeholder={I18n.t('account.intoPinTips')}
+										onChangeText={handleChange('password')}
+										value={values.password}
+									/>
+								</Item>
+								<Input style={[S.h(1)]} />
+								<Item style={[SS.mt8, SS.ml0]} error={!!errors.rePassword}>
+									<MaskedInput
+										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+										style={[SS.fz14, SS.pl0, S.h(44)]}
+										placeholder={I18n.t('account.intoRePin')}
+										onChangeText={handleChange('rePassword')}
+										value={values.rePassword}
+									/>
+								</Item></>
+                                )}
 								<View style={[SS.mt20]} />
 								<Item
 									style={[SS.row, SS.as, SS.ml0, SS.mb40, { borderBottomWidth: 0 }]}

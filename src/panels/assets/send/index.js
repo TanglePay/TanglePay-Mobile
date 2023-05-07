@@ -131,7 +131,7 @@ export const AssetsSend = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={isLedger || !isWalletPassowrdEnabled ? schemaNopassword : schema}
+					validationSchema={(isLedger || !isWalletPassowrdEnabled) ? schemaNopassword : schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
 						if (!isWalletPassowrdEnabled) {

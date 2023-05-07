@@ -48,10 +48,10 @@ export const AccountRegisterPin = () => {
 						const { password, rePassword } = values
                         if (shouldShowPin) {
                             if (!Base.checkPin(password)) {
-                                return Toast.error(I18n.t('account.intoPasswordTips'))
+                                return Toast.error(I18n.t('account.intoPinTips'))
                             }
                             if (password !== rePassword) {
-                                return Toast.error(I18n.t('account.checkPasswrod'))
+                                return Toast.error(I18n.t('account.checkPin'))
                             }
                             await setPin(password)
                         }
