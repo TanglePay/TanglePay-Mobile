@@ -139,7 +139,11 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								activeOpacity={0.8}
 								onPress={() => {
 									hide();
-									Base.push('account/into', { type: 1 });
+									if (isNewWalletFlow()) {
+                                        Base.push('account/intopin', { type: 1 })
+                                    } else {
+                                        Base.push('account/into', { type: 1 })
+                                    }
 								}}
 								style={[{ height: 72 }, SS.pl24, SS.jc]}>
 								<Text style={[SS.fz16]}>{I18n.t('account.intoTitle1')}</Text>

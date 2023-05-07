@@ -49,7 +49,7 @@ export const DisablePasswordDialog = ({ dialogRef, data }) => {
               // Disable wallet password logic here
               const isPassword = await IotaSDK.checkPassword(data.seed, values.currentPassword)
               if (!isPassword) {
-                return Toast.error(I18n.t('account.invalidPassword'));
+                return Toast.error(I18n.t('account.passwordError'));
               }
               try {
                     Toast.showLoading();

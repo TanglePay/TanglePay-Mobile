@@ -47,7 +47,7 @@ import { AccountHardwareInto } from './account/hardware/into';
 import { AccountHardwareImport } from './account/hardware/import';
 import { AccountSetPin } from './account/pin/set';
 import { AccountResetPin } from './account/pin/reset';
-
+import { AccountIntoPin } from './account/into/pin'
 export const panelsList = [
 	{
 		path: 'account/pin/reset',
@@ -225,6 +225,10 @@ export const panelsList = [
 		path: 'account/into',
 		component: AccountInto
 	},
+	{
+        path: 'account/intopin',
+        component: AccountIntoPin
+    },
 	{
 		path: 'account/register',
 		component: AccountRegister

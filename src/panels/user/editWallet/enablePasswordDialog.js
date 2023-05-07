@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle, useEffect, useRef } from 'react';
 import { View, Text, Form, Input, Item, Button } from 'native-base';
 import { ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
-import { I18n } from '@tangle-pay/common';
+import { I18n, IotaSDK } from '@tangle-pay/common';
 import { useEditWallet } from '@tangle-pay/store/common';
 import { Formik } from 'formik';
 import { Toast } from '@/common';
@@ -51,7 +51,10 @@ export const EnablePasswordDialog = ({ dialogRef, data }) => {
                 .oneOf([Yup.ref('newPassword'), null], I18n.t('account.passwordMismatch'))
             })}
             onSubmit={async (values, { resetForm }) => {
-
+              const isPassword = await IotaSDK.checkPassword(data.seed, context.state.pin)
+              if (!isPassword) {
+                  return Toast.error(I18n.t('assets.passwordError'))
+              }
               if (values.newPassword !== values.retypePassword) {
                 return Toast.errors(I18n.t('account.passwordMismatch'));
               }

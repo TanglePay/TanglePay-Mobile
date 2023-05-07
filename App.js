@@ -25,9 +25,10 @@ const getFirstScreen = async (store) => {
 			await ensureExistingUserWalletStatus()
 		}
 		if (context.state.isPinSet && !getIsUnlocked()) {
+			Base.push('unlock')
 			return 'unlock'
 		} else {
-			return store.common.walletsList.length > 0 ? 'main' : 'account/changeNode'
+			return context.state.walletCount > 0 ? 'main' : 'account/changeNode'
 		}
 	}
 	const ensureExistingUserWalletStatus = async () => {
