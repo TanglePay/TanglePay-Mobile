@@ -88,7 +88,7 @@ export const Apps = () => {
 						value={searchStr}
 						onChangeText={setSearch}
 						onBlur={onBlur}
-						placeholder='Search Dapp'
+						placeholder='search or type URL'
 					/>
 				</View>
 				<View style={[SS.row, SS.ac, SS.pt16, SS.jsb, { flexWrap: 'wrap' }]}>
