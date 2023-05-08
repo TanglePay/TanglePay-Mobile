@@ -275,7 +275,7 @@ export const AssetsTradingList = () => {
 							})}
 						</View>
 						<View>
-							{lockedList.map((e, i) => {
+							{nftLockList.map((e, i) => {
 								return <LockedItem {...e} key={e.nftId} logoUrl={e.thumbnailImage || e.media} />;
 							})}
 						</View>
