@@ -13,9 +13,9 @@ import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { BleDevices } from '@/common/components/bleDevices';
 
-const schema = {
+const schema = Yup.object().shape({
 	password: Yup.string().required()
-};
+});
 const schemaNopassword = Yup.object().shape({});
 
 export const AssetsTrading = () => {

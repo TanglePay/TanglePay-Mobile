@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState ,useEffect} from 'react';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
@@ -7,23 +7,23 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { context, setPin } from '@tangle-pay/domain'
+import { context, setPin } from '@tangle-pay/domain';
 import { ExpDialog } from './expDialog';
 
 const schemaNopassword = Yup.object().shape({
-    mnemonic: Yup.string().required(),
-    name: Yup.string().required(),
-    agree: Yup.bool().isTrue().required()
-})
+	mnemonic: Yup.string().required(),
+	name: Yup.string().required(),
+	agree: Yup.bool().isTrue().required()
+});
 
 export const AccountIntoPin = () => {
 	const dialogRef = useRef();
 	const form = useRef();
-	const [shouldShowPin, setShouldShowPin ] = useState( true )
-    useEffect(() => {
-        console.log(context)
-        setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet)
-    }, [])
+	const [shouldShowPin, setShouldShowPin] = useState(true);
+	useEffect(() => {
+		console.log(context);
+		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
+	}, []);
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
 	});
@@ -47,19 +47,19 @@ export const AccountIntoPin = () => {
 					onSubmit={async (values) => {
 						//import mnemonics
 						if (type === 1) {
-							const { password, rePassword } = values
-                            if (shouldShowPin) {
-                                if (!Base.checkPin(password)) {
-                                    return Toast.error(I18n.t('account.intoPinTips'))
-                                }
-                                if (password !== rePassword) {
-                                    return Toast.error(I18n.t('account.checkPin'))
-                                }
-                                await setPin(password)
-                            } else {
-                                values.password = context.state.pin
-                                values.rePassword = context.state.pin
-                            }
+							const { password, rePassword } = values;
+							if (shouldShowPin) {
+								if (!Base.checkPin(password)) {
+									return Toast.error(I18n.t('account.intoPinTips'));
+								}
+								if (password !== rePassword) {
+									return Toast.error(I18n.t('account.checkPin'));
+								}
+								await setPin(password);
+							} else {
+								values.password = context.state.pin;
+								values.rePassword = context.state.pin;
+							}
 							const res = await IotaSDK.importMnemonic({
 								...values
 							});
@@ -135,19 +135,20 @@ export const AccountIntoPin = () => {
 									{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
 								</Text>
 								{shouldShowPin && (
-								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
-									<Input
-										keyboardType='ascii-capable'
-										secureTextEntry
-										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-										style={[SS.fz14, SS.pl0, S.h(44)]}
-										placeholder={I18n.t(
-											type === 1 ? 'account.intoPinTips' : 'account.intoFilePasswordTips'
-										)}
-										onChangeText={handleChange('password')}
-										value={values.password}
-									/>
-								</Item>)}
+									<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
+										<Input
+											keyboardType='ascii-capable'
+											secureTextEntry
+											textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+											style={[SS.fz14, SS.pl0, S.h(44)]}
+											placeholder={I18n.t(
+												type === 1 ? 'account.intoPinTips' : 'account.intoFilePasswordTips'
+											)}
+											onChangeText={handleChange('password')}
+											value={values.password}
+										/>
+									</Item>
+								)}
 								<Input style={[S.h(1)]} />
 								{type === 1 && shouldShowPin && (
 									<Item style={[SS.ml0, SS.mt8]} error={!!errors.rePassword}>

@@ -15,15 +15,16 @@ import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
 import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
-const schema = {
+const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
 	receiver: Yup.string().required(),
 	amount: Yup.number().positive().required(),
 	password: Yup.string().required()
-};
+});
 const schemaNopassword = Yup.object().shape({
 	receiver: Yup.string().required(),
-	amount: Yup.number().positive().required()
+	amount: Yup.number().positive().required(),
+	password: Yup.string().optional()
 });
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -131,7 +132,7 @@ export const AssetsSend = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={(isLedger || !isWalletPassowrdEnabled) ? schemaNopassword : schema}
+					validationSchema={isLedger || !isWalletPassowrdEnabled ? schemaNopassword : schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
 						if (!isWalletPassowrdEnabled) {

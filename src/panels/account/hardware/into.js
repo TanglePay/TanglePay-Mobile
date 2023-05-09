@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import * as Yup from 'yup';
 import { useCreateCheck, useAddWallet } from '@tangle-pay/store/common';
-import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
+import { S, SS, Nav, ThemeVar, SvgIcon, Toast, MaskedInput } from '@/common';
 import { BleDevices } from '@/common/components/bleDevices';
 import { context, setPin } from '@tangle-pay/domain';
 const getSchema = (shouldShowPin) => {
@@ -28,10 +28,10 @@ export const AccountHardwareInto = () => {
 	const addWallet = useAddWallet();
 	const [shouldShowPin, setShouldShowPin] = useState(false);
 
-	useEffect(() => {
-		console.log(context);
-		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
-	}, []);
+	// useEffect(() => {
+	// 	console.log(context);
+	// 	setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
+	// }, []);
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
 		if (!IotaSDK.checkWeb3Node(IotaSDK.curNode?.id)) {
