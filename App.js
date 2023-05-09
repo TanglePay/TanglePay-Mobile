@@ -15,39 +15,47 @@ import Jailbreak from 'react-native-jailbreak';
 import Exit from 'react-native-exit-app';
 import { PasswordDialog } from '@/common/components/passwordDialog';
 import SplashScreen from 'react-native-splash-screen';
-import { context, ensureInited, getIsUnlocked, init as pinInit, markWalletPasswordEnabled, isNewWalletFlow,  setStorageFacade } from '@tangle-pay/domain'
+import {
+	context,
+	ensureInited,
+	getIsUnlocked,
+	init as pinInit,
+	markWalletPasswordEnabled,
+	isNewWalletFlow,
+	setStorageFacade
+} from '@tangle-pay/domain';
 
 const Stack = createStackNavigator();
 const getFirstScreen = async (store) => {
-	    await ensureInited()
-		const isNewUser = await isNewWalletFlow()
-		if (!isNewUser) {
-			await ensureExistingUserWalletStatus()
-		}
-		if (context.state.isPinSet && !getIsUnlocked()) {
-			Base.push('unlock')
-			return 'unlock'
-		} else {
-			return context.state.walletCount > 0 ? 'main' : 'account/changeNode'
-		}
+	await ensureInited();
+	const isNewUser = await isNewWalletFlow();
+	if (!isNewUser) {
+		await ensureExistingUserWalletStatus();
 	}
-	const ensureExistingUserWalletStatus = async () => {
-		const isFixed = await Base.getLocalData('pin.isExistingFixed')
-		if (isFixed) return
-		const list = await IotaSDK.getWalletList()
-		const tasks = []
-		for (const wallet of list) {
-			const { id, type } = wallet;
-			if (type === 'ledger') {
-				continue;
-			}
-			tasks.push(markWalletPasswordEnabled(id))
-		}
-		if (tasks.length > 0) {
-			await Promise.all(tasks)
-		}
-		Base.setLocalData('pin.isExistingFixed', '1')
+	if (context.state.isPinSet && !getIsUnlocked()) {
+		// Base.push('unlock');
+		return 'unlock';
+	} else {
+		return context.state.walletCount > 0 ? 'main' : 'account/changeNode';
 	}
+};
+const ensureExistingUserWalletStatus = async () => {
+	const isFixed = await Base.getLocalData('pin.isExistingFixed');
+	if (isFixed) return;
+	const list = await IotaSDK.getWalletList();
+	const tasks = [];
+	for (const wallet of list) {
+		const { id, type } = wallet;
+		if (type === 'ledger') {
+			continue;
+		}
+		tasks.push(markWalletPasswordEnabled(id));
+	}
+	if (tasks.length > 0) {
+		await Promise.all(tasks);
+	}
+	Base.setLocalData('pin.isExistingFixed', '1');
+};
 export default () => {
 	const [store, dispatch] = useStoreReducer();
 	const changeNode = useChangeNode();
@@ -124,7 +132,7 @@ export default () => {
 			}
 		});
 	};
-	
+
 	useEffect(() => {
 		Jailbreak.check().then((result) => {
 			if (result && process.env.NODE_ENV == 'production') {
@@ -153,7 +161,7 @@ Please keep your device in non-rooted state and then launch the application agai
 		IotaSDK.passwordDialog = passwordDialog;
 		init();
 	}, []);
-	if (sceneList.length === 0) {
+	if (sceneList.length === 0 || !firstScreen) {
 		return null;
 	}
 	return (
@@ -169,23 +177,23 @@ Please keep your device in non-rooted state and then launch the application agai
 							ref={(ref) => {
 								Base.setNavigator(ref);
 							}}>
-							{ firstScreen && (
-							<Stack.Navigator
-								initialRouteName={firstScreen}>
-								{sceneList.map((e) => {
-									return (
-										<Stack.Screen
-											options={{
-												headerShown: false,
-												...TransitionPresets.SlideFromRightIOS
-											}}
-											key={e.path}
-											name={e.path}
-											component={e.component}
-										/>
-									);
-								})}
-							</Stack.Navigator>)}
+							{firstScreen && (
+								<Stack.Navigator initialRouteName={firstScreen}>
+									{sceneList.map((e) => {
+										return (
+											<Stack.Screen
+												options={{
+													headerShown: false,
+													...TransitionPresets.SlideFromRightIOS
+												}}
+												key={e.path}
+												name={e.path}
+												component={e.component}
+											/>
+										);
+									})}
+								</Stack.Navigator>
+							)}
 						</NavigationContainer>
 						<DappDialog />
 						<PasswordDialog dialogRef={passwordDialog} />
