@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input } from 'native-base';
 
-export const MaskedInput = ({ value, onChangeText, ...props }) => {
+export const MaskedInput = ({ maxLength, value, onChangeText, ...props }) => {
   const maskedValue = value ? value.replace(/./g, '*') : value;
 
   const handleInputChange = (masked) => {
@@ -12,7 +12,7 @@ export const MaskedInput = ({ value, onChangeText, ...props }) => {
     } else {
       neoValue = neoValue.slice(0, masked.length);
     }
-    const inputValue = neoValue.replace(/[^\d]/g, '').slice(0, 6);
+    const inputValue = neoValue.slice(0, maxLength??8);
     console.log('unmasked value', inputValue);
     onChangeText(inputValue);
   };
@@ -21,7 +21,7 @@ export const MaskedInput = ({ value, onChangeText, ...props }) => {
     <Input
       {...props}
       keyboardType="numeric"
-      maxLength={6}
+      maxLength={maxLength??8}
       value={maskedValue}
       onChangeText={handleInputChange}
     />
