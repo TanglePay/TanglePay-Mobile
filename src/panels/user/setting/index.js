@@ -75,16 +75,16 @@ export const UserSetting = () => {
 		},
 		{
 			icon: 'advanced',
-			label: 'Advanced',
+			label: 'Test Mode',
 			path: 'user/advanced',
 			size: 22
 		},
 		{
-            icon: 'pin',
-            label: context.state.isPinSet ? I18n.t('account.resetPinTitle') : I18n.t('account.setPinButton'),
-            path: context.state.isPinSet ? 'account/pin/reset' : 'account/pin/set',
-            size: 22
-        }
+			icon: 'pin',
+			label: context.state.isPinSet ? I18n.t('account.resetPinTitle') : I18n.t('account.setPinButton'),
+			path: context.state.isPinSet ? 'account/pin/reset' : 'account/pin/set',
+			size: 22
+		}
 	];
 	console.log(curWallet[0]?.id);
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
@@ -210,7 +210,7 @@ export const UserSetting = () => {
 								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
 								<View style={[SS.row, SS.ac]}>
 									<View style={[SS.c, { minWidth: 24 }]}>
-										<SvgIcon name={e.icon} size={e.size || 24} />
+										<SvgIcon name={e.icon} size={e.size || 24} color='#000' />
 									</View>
 									<Text style={[SS.fz16, SS.ml12]}>{e.label}</Text>
 									{e.tips && <Text style={[SS.fz11, SS.ml10, SS.cS, SS.mt5]}>{e.tips}</Text>}
