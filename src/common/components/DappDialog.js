@@ -21,6 +21,7 @@ export const DappDialog = () => {
 	const bleDevices = useRef();
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
+	const [canShowDappDialog] = useStore('common.canShowDappDialog');
 	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
 	const [showPwd, setShowPwd] = useState(false);
@@ -46,7 +47,7 @@ export const DappDialog = () => {
 			setIsWalletPassowrdEnabled(res);
 			setPassword(context.state.pin);
 		});
-	}, [curWallet.id]);
+	}, [curWallet.id, canShowDappDialog]);
 	const show = () => {
 		requestAnimationFrame(() => {
 			setShow(true);
@@ -676,17 +677,19 @@ export const DappDialog = () => {
 		handleUrl(deepLink, curWallet.password);
 	}, [JSON.stringify(curWallet), deepLink, curNodeId]);
 	useEffect(() => {
-		Linking.getInitialURL().then((url) => {
-			if (/^tanglepay:\/\/.+/.test(url)) {
-				setDeepLink(url);
-			}
-		});
-		Linking.addEventListener('url', ({ url }) => {
-			if (/^tanglepay:\/\/.+/.test(url)) {
-				setDeepLink(url);
-			}
-		});
-	}, []);
+		if (canShowDappDialog) {
+			Linking.getInitialURL().then((url) => {
+				if (/^tanglepay:\/\/.+/.test(url)) {
+					setDeepLink(url);
+				}
+			});
+			Linking.addEventListener('url', ({ url }) => {
+				if (/^tanglepay:\/\/.+/.test(url)) {
+					setDeepLink(url);
+				}
+			});
+		}
+	}, [canShowDappDialog]);
 	return (
 		<Modal
 			style={[SS.m0]}
@@ -759,7 +762,7 @@ export const DappDialog = () => {
 								</View>
 							</View>
 						) : null}
-						{!isBio && dappData.type !== 'iota_connect' && !isLedger && !isWalletPassowrdEnabled ? (
+						{!isBio && dappData.type !== 'iota_connect' && !isLedger && isWalletPassowrdEnabled ? (
 							<Item inlineLabel style={[SS.ml0]}>
 								<Input
 									style={[SS.pl0]}
