@@ -36,6 +36,10 @@ const getFirstScreen = async (store) => {
 		Base.push('unlock');
 		return 'unlock';
 	} else {
+		Base.globalDispatch({
+			type: 'common.canShowDappDialog',
+			data: true
+		});
 		return context.state.walletCount > 0 ? 'main' : 'account/changeNode';
 	}
 };
