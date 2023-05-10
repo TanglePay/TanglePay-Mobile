@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Container, Content, View, Text, Form, Item, Input, Button } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
@@ -10,10 +10,11 @@ import { SS, S, Nav, AlertDialog, Toast } from '@/common';
 import { BleDevices } from '@/common/components/bleDevices';
 import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
-const schema = {
-	// amount: Yup.number().positive().required(),
+const schema = Yup.object().shape({
 	password: Yup.string().required()
-};
+});
+const schemaNopassword = Yup.object().shape({
+});
 export const StakingAdd = () => {
 	const alert = useRef();
 	const bleDevices = useRef();
@@ -44,11 +45,6 @@ export const StakingAdd = () => {
 		titleKey = 'staking.unstake';
 	}
 	const isLedger = curWallet.type == 'ledger';
-	if (isLedger) {
-		schema.password = Yup.string().optional();
-	} else {
-		schema.password = Yup.string().required();
-	}
 	useEffect(() => {
 		!available ? Toast.showLoading() : Toast.hideLoading();
 	}, [available]);
@@ -61,7 +57,7 @@ export const StakingAdd = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={Yup.object().shape(schema)}
+					validationSchema={isLedger || !isWalletPassowrdEnabled ? schemaNopassword : schema}
 					onSubmit={async (values) => {
 						let { password } = values;
 						if (!isWalletPassowrdEnabled) {

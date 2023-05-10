@@ -10,7 +10,7 @@ import _sumBy from 'lodash/sumBy';
 import { useChangeNode, useGetNodeWallet } from '@tangle-pay/store/common';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { PasswordDialog } from '../biometrics/passwordDialog';
-import { context } from '@tangle-pay/domain';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
 
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -24,6 +24,12 @@ export const UserSetting = () => {
 	const [isBio, setIsBio] = useStore('common.biometrics');
 	const dialogRef = useRef();
 	const [isPwdInput] = useStore('common.pwdInput');
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	useEffect(() => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+	}, [curWallet.id]);
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
@@ -176,7 +182,7 @@ export const UserSetting = () => {
 					if (success) {
 						console.log('successful biometrics provided');
 						setIsBio(true);
-						if (!isPwdInput) {
+						if (!isPwdInput && isWalletPassowrdEnabled) {
 							dialogRef.current.show();
 						}
 					} else {
