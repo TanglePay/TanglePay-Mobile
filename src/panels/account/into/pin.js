@@ -21,7 +21,7 @@ export const AccountIntoPin = () => {
 	const form = useRef();
 	const [shouldShowPin, setShouldShowPin] = useState(true);
 	useEffect(() => {
-		console.log(context);
+		console.log('into pin page',context);
 		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
 	}, []);
 	useCreateCheck((name) => {
@@ -131,10 +131,10 @@ export const AccountIntoPin = () => {
 										value={values.name}
 									/>
 								</Item>
-								<Text style={[SS.fz14, SS.mt32]}>
-									{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
-								</Text>
-								{shouldShowPin && (
+								{shouldShowPin && (<>
+									<Text style={[SS.fz14, SS.mt32]}>
+										{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
+									</Text>								
 									<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
 										<Input
 											keyboardType='ascii-capable'
@@ -147,7 +147,7 @@ export const AccountIntoPin = () => {
 											onChangeText={handleChange('password')}
 											value={values.password}
 										/>
-									</Item>
+									</Item></>
 								)}
 								<Input style={[S.h(1)]} />
 								{type === 1 && shouldShowPin && (

@@ -26,12 +26,12 @@ export const AccountHardwareInto = () => {
 	const form = useRef();
 	const [isLoading, setLoading] = useState(false);
 	const addWallet = useAddWallet();
-	const [shouldShowPin, setShouldShowPin] = useState(false);
+	const [shouldShowPin, setShouldShowPin] = useState(true);
 
-	// useEffect(() => {
-	// 	console.log(context);
-	// 	setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
-	// }, []);
+	useEffect(() => {
+		console.log(context);
+		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
+	}, []);
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
 		if (!IotaSDK.checkWeb3Node(IotaSDK.curNode?.id)) {
