@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';

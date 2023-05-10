@@ -133,7 +133,7 @@ export const AccountIntoPin = () => {
 								</Item>
 								{shouldShowPin && (<>
 									<Text style={[SS.fz14, SS.mt32]}>
-										{I18n.t(type === 1 ? 'account.intoPassword' : 'account.intoFilePassword')}
+										{I18n.t(type === 1 ? 'account.intoPin' : 'account.intoFilePassword')}
 									</Text>								
 									<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
 										<Input

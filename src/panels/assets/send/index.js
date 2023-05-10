@@ -234,7 +234,7 @@ export const AssetsSend = () => {
 											: 'assets.sendSuccRestake'
 									)
 								);
-								if (isBio === false && !isNotPrompt) {
+								if (isBio === false && isWalletPassowrdEnabled && !isNotPrompt) {
 									alert.current.show(I18n.t('user.biometriceDialog'), () => {
 										const path = 'user/setting';
 										Base.push(path);

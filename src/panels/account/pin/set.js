@@ -37,11 +37,11 @@ export const AccountSetPin = () => {
           {({ handleChange, handleSubmit, values, errors }) => (
             <View style={[SS.p16, SS.pt8]}>
               <Form>
-              <Label style={[SS.fz18, SS.mb10]}>{I18n.t('account.newPin')}</Label>
+              <Label style={[SS.fz18, SS.mb10]}>{I18n.t('account.setPinTitle')}</Label>
                 <Item style={[SS.mt5, SS.ml0]} error={!!errors.newPin}>
                   <MaskedInput
                     style={[SS.fz14, SS.pl0, S.h(44)]}
-                    placeholder={I18n.t('account.enterNewPin')}
+                    placeholder={I18n.t('account.intoPinTips')}
                     onChangeText={handleChange('newPin')}
                     value={values.newPin}
                   />
@@ -49,7 +49,7 @@ export const AccountSetPin = () => {
                 <Item style={[SS.ml0]} error={!!errors.retypedPin}>
                   <MaskedInput
                     style={[SS.fz14, SS.pl0, S.h(44)]}
-                    placeholder={I18n.t('account.retypeNewPin')}
+                    placeholder={I18n.t('account.retypePin')}
                     onChangeText={handleChange('retypedPin')}
                     value={values.retypedPin}
                   />
