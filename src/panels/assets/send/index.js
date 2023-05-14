@@ -139,7 +139,7 @@ export const AssetsSend = () => {
 							password = context.state.pin;
 						}
 						if (!isLedger) {
-							if (isBio) {
+							if (isWalletPassowrdEnabled && isBio) {
 								password = curPwd;
 								try {
 									const resultObject = await rnBiometrics.simplePrompt({
@@ -147,7 +147,7 @@ export const AssetsSend = () => {
 										cancelButtonText: I18n.t('apps.cancel')
 									});
 									if (resultObject.success) {
-										password = isWalletPassowrdEnabled ? curPwd : context.state.pin;
+										password = curPwd;
 									} else {
 										return Toast.error(I18n.t('user.biometricsFailed'));
 									}
