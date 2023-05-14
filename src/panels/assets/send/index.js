@@ -141,30 +141,19 @@ export const AssetsSend = () => {
 						if (!isLedger) {
 							if (isBio) {
 								password = curPwd;
-								rnBiometrics
-									.simplePrompt({
+								try {
+									const resultObject = await rnBiometrics.simplePrompt({
 										promptMessage: I18n.t('user.bioVerification'),
 										cancelButtonText: I18n.t('apps.cancel')
-									})
-									.then((resultObject) => {
-										const { success } = resultObject;
-										if (success) {
-											// Toast.success(
-											// 	I18n.t(
-											// 		IotaSDK.checkWeb3Node(curWallet.nodeId)
-											// 			? 'assets.sendSucc'
-											// 			: 'assets.sendSuccRestake'
-											// 	)
-											// );
-											setIsPwdInput(true);
-										} else {
-											return Toast.error(I18n.t('user.biometricsFailed'));
-										}
-									})
-									.catch(() => {
-										console.log('biometrics failed');
-										return Toast.error(I18n.t('user.biometricsFailed'));
 									});
+									if (resultObject.success) {
+										password = isWalletPassowrdEnabled ? curPwd : context.state.pin;
+									} else {
+										return Toast.error(I18n.t('user.biometricsFailed'));
+									}
+								} catch (error) {
+									return Toast.error(I18n.t('user.biometricsFailed'));
+								}
 							} else {
 								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
 								if (!isBio && !isPassword) {
