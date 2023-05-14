@@ -45,7 +45,9 @@ export const DappDialog = () => {
 	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPassowrdEnabled(res);
-			setPassword(context.state.pin);
+			if (!res) {
+				setPassword(context.state.pin);
+			}
 		});
 	}, [curWallet.id, canShowDappDialog]);
 	const show = () => {
@@ -790,7 +792,10 @@ export const DappDialog = () => {
 												Base.push(path);
 											});
 										}
-									} else if (isBio && dappData.type !== 'iota_connect') {
+									} else if (
+										(isBio && isWalletPassowrdEnabled) ||
+										(!isBio && dappData.type !== 'iota_connect')
+									) {
 										setPassword(curPwd);
 										rnBiometrics
 											.simplePrompt({
