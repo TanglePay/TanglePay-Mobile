@@ -40,7 +40,7 @@ export const AccountRegister = () => {
 						if (password !== rePassword) {
 							return Toast.error(I18n.t('account.checkPasswrod'));
 						}
-						setRegisterInfo(values);
+						setRegisterInfo(Object.assign({},values,{passwordIsPassword:true}));
 						Base.push('account/backup');
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (

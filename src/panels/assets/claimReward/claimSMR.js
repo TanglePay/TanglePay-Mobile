@@ -30,7 +30,7 @@ export const ClaimSMR = () => {
 	const changeNode = useChangeNode();
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(false)
     useEffect(() => {
-        checkIsWalletPasswordEnabled().then((res) => {
+        checkIsWalletPasswordEnabled(curEdit.id).then((res) => {
             setIsWalletPassowrdEnabled(res)
         })
     }, [])
