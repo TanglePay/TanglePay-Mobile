@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Item, Label, View, Text, Button } from 'native-base';
 import { Image } from 'react-native';
 import { S, SS, Nav, Toast } from '@/common';
-import { I18n } from '@tangle-pay/common';
+import { I18n,Base } from '@tangle-pay/common';
 import { default as logo_nobg } from '@tangle-pay/assets/images/logo_nobg.png'
 function PinViewComponent({ errorMessage, onSubmit }) {
   const [pin, setPin] = React.useState('');
