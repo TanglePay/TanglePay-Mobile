@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, View, Label, Text, Form, Item, Button, Content } from 'native-base';
+import { Container, View, Label, Text, Form, Item, Button, Content, Input } from 'native-base';
 import { Base, I18n } from '@tangle-pay/common';
-import { S, SS, Nav, Toast, MaskedInput } from '@/common';
+import { S, SS, Nav, Toast } from '@/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { setPin } from '@tangle-pay/domain';
@@ -39,7 +39,11 @@ export const AccountSetPin = () => {
               <Form>
               <Label style={[SS.fz18, SS.mb10]}>{I18n.t('account.setPinTitle')}</Label>
                 <Item style={[SS.mt5, SS.ml0]} error={!!errors.newPin}>
-                  <MaskedInput
+                <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                     style={[SS.fz14, SS.pl0, S.h(44)]}
                     placeholder={I18n.t('account.intoPinTips')}
                     onChangeText={handleChange('newPin')}
@@ -47,7 +51,11 @@ export const AccountSetPin = () => {
                   />
                 </Item>
                 <Item style={[SS.ml0]} error={!!errors.retypedPin}>
-                  <MaskedInput
+                <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                     style={[SS.fz14, SS.pl0, S.h(44)]}
                     placeholder={I18n.t('account.retypePin')}
                     onChangeText={handleChange('retypedPin')}

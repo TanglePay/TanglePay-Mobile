@@ -8,7 +8,6 @@ import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { context, setPin } from '@tangle-pay/domain'
 
-import { MaskedInput } from '@/common';
 
 const getSchema = shouldShowPin => shouldShowPin ? Yup.object().shape({
 	name: Yup.string().required(),
@@ -73,8 +72,11 @@ export const AccountRegisterPin = () => {
                                 { shouldShowPin && (<>
 								<Label style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoPin')}</Label>
 								<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
-									<MaskedInput
+								<Input
+										keyboardType='ascii-capable'
+										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+										maxLength={20}
 										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('account.intoPinTips')}
 										onChangeText={handleChange('password')}
@@ -83,8 +85,11 @@ export const AccountRegisterPin = () => {
 								</Item>
 								<Input style={[S.h(1)]} />
 								<Item style={[SS.mt8, SS.ml0]} error={!!errors.rePassword}>
-									<MaskedInput
+								<Input
+										keyboardType='ascii-capable'
+										secureTextEntry
 										textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+										maxLength={20}
 										style={[SS.fz14, SS.pl0, S.h(44)]}
 										placeholder={I18n.t('account.intoRePin')}
 										onChangeText={handleChange('rePassword')}

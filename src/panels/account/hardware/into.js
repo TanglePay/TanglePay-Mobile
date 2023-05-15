@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import * as Yup from 'yup';
 import { useCreateCheck, useAddWallet } from '@tangle-pay/store/common';
-import { S, SS, Nav, ThemeVar, SvgIcon, Toast, MaskedInput } from '@/common';
+import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { BleDevices } from '@/common/components/bleDevices';
 import { context, setPin } from '@tangle-pay/domain';
 const getSchema = (shouldShowPin) => {
@@ -119,8 +119,11 @@ export const AccountHardwareInto = () => {
 									<>
 										<Label style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoPin')}</Label>
 										<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
-											<MaskedInput
+										<Input
+												keyboardType='ascii-capable'
+												secureTextEntry
 												textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+												maxLength={20}
 												style={[SS.fz14, SS.pl0, S.h(44)]}
 												placeholder={I18n.t('account.intoPinTips')}
 												onChangeText={handleChange('password')}
@@ -129,8 +132,11 @@ export const AccountHardwareInto = () => {
 										</Item>
 										<Input style={[S.h(1)]} />
 										<Item style={[SS.mt8, SS.ml0]} error={!!errors.rePassword}>
-											<MaskedInput
+										<Input
+												keyboardType='ascii-capable'
+												secureTextEntry
 												textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+												maxLength={20}
 												style={[SS.fz14, SS.pl0, S.h(44)]}
 												placeholder={I18n.t('account.intoRePin')}
 												onChangeText={handleChange('rePassword')}

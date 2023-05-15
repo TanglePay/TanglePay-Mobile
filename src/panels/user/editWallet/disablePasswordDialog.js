@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import { I18n, Base, IotaSDK } from '@tangle-pay/common';
 import { useEditWallet } from '@tangle-pay/store/common';
-import { Toast, MaskedInput } from '@/common';
+import { Toast } from '@/common';
 import { context, markWalletPasswordDisabled } from '@tangle-pay/domain';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -69,7 +69,11 @@ export const DisablePasswordDialog = ({ dialogRef, data }) => {
               <Form>
                 <Text style={[SS.fz18, SS.fw600]}>{I18n.t('account.disableWalletPassword')}</Text>
                 <Item style={[SS.mt10, SS.ml0, { minHeight: 50 }]} stackedLabel error={!!errors.currentPassword}>
-                  <MaskedInput
+                <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                     style={[SS.fz14]}
                     placeholder={I18n.t('account.enterCurrentPassword')}
                     onChangeText={handleChange('currentPassword')}

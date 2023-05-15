@@ -1,10 +1,11 @@
 import React from 'react';
-import { Container, View, Text, Label, Form, Item, Button, Content } from 'native-base';
+import { Container, View, Text, Label, Form, Item, Button, Content, Input } from 'native-base';
 import { Base, I18n } from '@tangle-pay/common';
-import { S, SS, Nav, Toast, MaskedInput } from '@/common';
+import { S, SS, Nav, Toast } from '@/common';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { context, checkPin, setPin } from '@tangle-pay/domain';
+import { context, checkPin, resetPin } from '@tangle-pay/domain'
+import { useEditWallet } from '@tangle-pay/store/common'
 
 
 const schema = Yup.object().shape({
@@ -14,6 +15,7 @@ const schema = Yup.object().shape({
 });
 
 export const AccountResetPin = () => {
+  const editWallet = useEditWallet();
   return (
     <Container>
       <Nav title={I18n.t('account.resetPinTitle')} />
@@ -33,7 +35,7 @@ export const AccountResetPin = () => {
             if (newPin !== retypedPin) {
               return Toast.error(I18n.t('account.pinMismatch'));
             }
-            await setPin(newPin);
+            await resetPin(oldPin,newPin, editWallet);
             Toast.success(I18n.t('account.pinResetSuccess'));
             Base.push('main');
           }}
@@ -43,7 +45,11 @@ export const AccountResetPin = () => {
               <Form>
                 <Label style={[SS.fz14, SS.mb10]}>{I18n.t('account.oldPin')}</Label>
                 <Item style={[SS.mt8, SS.ml0]} error={!!errors.oldPin}>
-                  <MaskedInput
+                  <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                     style={[SS.fz14, SS.pl0, S.h(44)]}
                     placeholder={I18n.t('account.enterOldPin')}
                     onChangeText={handleChange('oldPin')}
@@ -52,7 +58,11 @@ export const AccountResetPin = () => {
                 </Item>
                 <Label style={[SS.fz14, SS.mt5,SS.mb10]}>{I18n.t('account.newPin')}</Label>
                 <Item style={[SS.mt8, SS.ml0]} error={!!errors.newPin}>
-                  <MaskedInput
+                <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                     style={[SS.fz14, SS.pl0, S.h(44)]}
                     placeholder={I18n.t('account.enterNewPin')}
                     onChangeText={handleChange('newPin')}
@@ -60,7 +70,11 @@ export const AccountResetPin = () => {
                   />
                 </Item>
                 <Item style={[SS.ml0]} error={!!errors.retypedPin}>
-                  <MaskedInput
+                <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                     style={[SS.fz14, SS.pl0, S.h(44)]}
                     placeholder={I18n.t('account.retypeNewPin')}
                     onChangeText={handleChange('retypedPin')}
