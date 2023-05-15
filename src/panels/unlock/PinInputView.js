@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input, Item, Label, View, Text, Button } from 'native-base';
 import { Image } from 'react-native';
-import { S, SS, Nav, Toast,MaskedInput } from '@/common';
+import { S, SS, Nav, Toast } from '@/common';
 import { I18n } from '@tangle-pay/common';
 import { default as logo_nobg } from '@tangle-pay/assets/images/logo_nobg.png'
 function PinViewComponent({ errorMessage, onSubmit }) {
@@ -28,11 +28,14 @@ function PinViewComponent({ errorMessage, onSubmit }) {
             <Text style={[SS.fz32]}>{I18n.t('account.welcomeBack')}</Text>
             <Label style={[SS.fz14, SS.mt18]}>{I18n.t('account.typeYourPin')}</Label>
             <Item style={[SS.mt10,SS.mb10,SS.ml10,,SS.mr10,S.h(25.7)]} error={!!errorMessage}>
-                <MaskedInput
+            <Input
+                    keyboardType='ascii-capable'
+                    secureTextEntry
+                    textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+                    maxLength={20}
                 style={[SS.fz14,{letterSpacing: 5}]}
                 onChangeText={handlePinChange}
                 value={pin}
-                maxLength={8}
                 />
             </Item>
             <View style={[SS.h18,SS.w100]}>

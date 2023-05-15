@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Container, Content, View, Text, Input, Button } from 'native-base';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
@@ -11,7 +11,7 @@ export const PrivateKey = () => {
 	const { params } = useRoute();
 	const id = params.id;
 	const [password, setPassword] = useState('');
-	const [keyStr, setKeyStr] = useState('');
+	const [keyStr, setKeyStr] = useState('abc');
 	const [_, walletsList] = useGetNodeWallet();
 	const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
@@ -21,7 +21,9 @@ export const PrivateKey = () => {
             if (!isEnabled && context.state.isPinSet) {
                 const privateKeyStr = await IotaSDK.getPrivateKey(curEdit.seed, context.state.pin);
 				setKeyStr(privateKeyStr.replace(/^0x/, ''));
-            }
+            } else {
+				setKeyStr('')
+			}
         }
         func()
     }, [])

@@ -76,6 +76,7 @@ export const UserSetting = () => {
 			value: isBio,
 			disabled: !curWallet[0]?.id || !bioSupport,
 			onChange: (e) => {
+				console.log('on bio change', e)
 				bioSwitchChange();
 			}
 		},
