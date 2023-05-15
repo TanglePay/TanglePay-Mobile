@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { tryUnlock, canTryUnlock, context } from '@tangle-pay/domain';
+import { tryUnlock, canTryUnlock, context, formatMillis } from '@tangle-pay/domain';
 import { I18n } from '@tangle-pay/common'
 export default function UnlockViewModel({PinView, successCallback}) {
     const [errorMessage, setErrorMessage] = useState('');
@@ -8,7 +8,7 @@ export default function UnlockViewModel({PinView, successCallback}) {
             return I18n.t('account.pinTryLeft').replace('${left}', context.state.unlockTryLefted);
         } else {
             // ${until} is a date string in format 'YYYY-MM-DD HH:mm:ss', context.state.unlockTryLeftedZeroValidUntil is milliseconds
-            return I18n.t('account.pinCanNotTryUntil').replace('${time}', new Date(context.state.unlockTryLeftedZeroValidUntil).toLocaleString());
+            return I18n.t('account.pinCanNotTryUntil').replace('${time}', formatMillis(context.state.unlockTryLeftedZeroValidUntil));
         }
     }
     const onSubmit = async (pin) => {
