@@ -25,7 +25,7 @@ export const AccountIntoPrivateKey = () => {
 	const [shouldShowPassword, setShouldShowPassword] = useState(false);
 	const [shouldShowPin, setShouldShowPin] = useState(false);
 	useEffect(() => {
-		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
+		setShouldShowPin(isNewWalletFlow());
 		setShouldShowPassword(!isNewWalletFlow());
 	}, []);
 	useCreateCheck((name) => {
@@ -69,6 +69,10 @@ export const AccountIntoPrivateKey = () => {
 						const res = await IotaSDK.importPrivateKey({
 							...values
 						});
+						if (shouldShowPassword) {
+							await markWalletPasswordEnabled(res.id);
+						}
+
 						addWallet({
 							...res
 						});

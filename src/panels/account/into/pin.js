@@ -7,7 +7,7 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { context, setPin } from '@tangle-pay/domain';
+import { context, setPin, isNewWalletFlow } from '@tangle-pay/domain';
 import { ExpDialog } from './expDialog';
 
 const schemaNopassword = Yup.object().shape({
@@ -22,7 +22,7 @@ export const AccountIntoPin = () => {
 	const [shouldShowPin, setShouldShowPin] = useState(true);
 	useEffect(() => {
 		console.log('into pin page',context);
-		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
+		setShouldShowPin(isNewWalletFlow());
 	}, []);
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
