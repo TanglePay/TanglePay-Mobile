@@ -16,6 +16,7 @@ const schema = Yup.object().shape({
 export const UserWalletPassword = () => {
 	const editWallet = useEditWallet();
 	const { params } = useRoute();
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	return (
 		<Container>
 			<Nav title={I18n.t('user.resetPassword')} />
@@ -45,6 +46,9 @@ export const UserWalletPassword = () => {
 							{ ...params, password: values.newPassword, oldPassword: values.old },
 							true
 						);
+						if (curPwd) {
+							setCurPwd(values.newPassword);
+						}
 						Toast.success(I18n.t('user.passwordSucc'));
 						Base.goBack();
 					}}>

@@ -10,7 +10,7 @@ import _sumBy from 'lodash/sumBy';
 import { useChangeNode, useGetNodeWallet } from '@tangle-pay/store/common';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { PasswordDialog } from '../biometrics/passwordDialog';
-import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -24,6 +24,7 @@ export const UserSetting = () => {
 	const [isBio, setIsBio] = useStore('common.biometrics');
 	const dialogRef = useRef();
 	const [isPwdInput] = useStore('common.pwdInput');
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
@@ -76,7 +77,7 @@ export const UserSetting = () => {
 			value: isBio,
 			disabled: !curWallet[0]?.id || !bioSupport,
 			onChange: (e) => {
-				console.log('on bio change', e)
+				console.log('on bio change', e);
 				bioSwitchChange();
 			}
 		},
@@ -185,6 +186,8 @@ export const UserSetting = () => {
 						setIsBio(true);
 						if (!isPwdInput && isWalletPassowrdEnabled) {
 							dialogRef.current.show();
+						} else if (!isWalletPassowrdEnabled) {
+							setCurPwd(context.state.pin);
 						}
 					} else {
 						console.log('user cancelled biometric prompt');

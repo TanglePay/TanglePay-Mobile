@@ -132,13 +132,13 @@ export const AssetsSend = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={(isLedger || !isWalletPassowrdEnabled || isBio) ? schemaNopassword : schema}
+					validationSchema={isLedger || !isWalletPassowrdEnabled || isBio ? schemaNopassword : schema}
 					onSubmit={async (values) => {
 						let { password, amount, receiver } = values;
 						if (!isWalletPassowrdEnabled) {
 							password = context.state.pin;
 						}
-						console.log('send wallet ledger bio',isWalletPassowrdEnabled,isLedger, isBio)
+						console.log('send wallet ledger bio', isWalletPassowrdEnabled, isLedger, isBio);
 						if (!isLedger) {
 							if (isWalletPassowrdEnabled && isBio) {
 								password = curPwd;
@@ -157,10 +157,10 @@ export const AssetsSend = () => {
 								}
 							} else {
 								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-								if (!isBio && !isPassword) {
+								if (!isPassword) {
 									return Toast.error(I18n.t('assets.passwordError'));
 								} else {
-									setCurPwd(password);
+									// setCurPwd(password);
 								}
 							}
 						}
