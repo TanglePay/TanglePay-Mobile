@@ -6,7 +6,7 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { isNewWalletFlow, context, setPin } from '@tangle-pay/domain';
+import { isNewWalletFlow, context, setPin, markWalletPasswordEnabled } from '@tangle-pay/domain';
 
 const schema = Yup.object().shape({
 	privateKey: Yup.string().required(),
