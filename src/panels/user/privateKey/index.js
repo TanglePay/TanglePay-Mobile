@@ -11,7 +11,7 @@ export const PrivateKey = () => {
 	const { params } = useRoute();
 	const id = params.id;
 	const [password, setPassword] = useState('');
-	const [keyStr, setKeyStr] = useState('abc');
+	const [keyStr, setKeyStr] = useState(' ');
 	const [_, walletsList] = useGetNodeWallet();
 	const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';

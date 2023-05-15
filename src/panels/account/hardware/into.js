@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useCreateCheck, useAddWallet } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { BleDevices } from '@/common/components/bleDevices';
-import { context, setPin } from '@tangle-pay/domain';
+import { context, setPin, ensureInited } from '@tangle-pay/domain';
 const getSchema = (shouldShowPin) => {
 	if (shouldShowPin) {
 		return Yup.object().shape({
@@ -29,8 +29,12 @@ export const AccountHardwareInto = () => {
 	const [shouldShowPin, setShouldShowPin] = useState(true);
 
 	useEffect(() => {
-		console.log(context);
-		setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet);
+		const fn = async () => {
+            await ensureInited();
+            console.log(context)
+            setShouldShowPin(context.state.walletCount == 0 && !context.state.isPinSet)
+        }
+        fn()
 	}, []);
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
