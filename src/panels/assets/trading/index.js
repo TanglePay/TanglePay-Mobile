@@ -29,9 +29,10 @@ export const AssetsTrading = () => {
 	const [nftUnlockList] = useStore('nft.unlockList');
 	useGetNftList();
 	useGetAssetsList(curWallet);
+	
 	const { onDismiss, onDismissNft, onAccept, onAcceptNft } = useHandleUnlocalConditions();
 	let curInfo = unlockConditions.find((e) => e.blockId == id) || {};
-	if (!curInfo) {
+	if (Object.keys(curInfo) == 0) {
 		curInfo = nftUnlockList.find((e) => e.nftId == id) || {};
 	}
 	const [opacity, setOpacity] = useState(1);
@@ -39,9 +40,11 @@ export const AssetsTrading = () => {
 	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPasswordEnabled(res);
+			
 		});
 	}, [curWallet.id]);
 	useEffect(() => {
+		
 		if (/ipfs/.test(curInfo.logoUrl)) {
 			fetch(curInfo.logoUrl)
 				.then((res) => res.json())
@@ -53,7 +56,7 @@ export const AssetsTrading = () => {
 	const isLedger = params.isLedger == 1;
 	useEffect(() => {
 		curInfo ? Toast.hideLoading() : Toast.showLoading();
-	}, curInfo);
+	}, [curInfo]);
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.tradingTitle')} />
@@ -135,7 +138,7 @@ export const AssetsTrading = () => {
 						validateOnMount={false}
 						validationSchema={isLedger || !isWalletPasswordEnabled ? schemaNopassword : schema}
 						onSubmit={async (values) => {
-							const { password } = values;
+							let { password } = values;
 							if (!isWalletPasswordEnabled) {
 								password = context.state.pin;
 							}
