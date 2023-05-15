@@ -30,11 +30,11 @@ export const AccountHardwareInto = () => {
 
 	useEffect(() => {
 		const fn = async () => {
-            await ensureInited();
-            console.log(context)
-            setShouldShowPin(isNewWalletFlow())
-        }
-        fn()
+			await ensureInited();
+			console.log(context);
+			setShouldShowPin(isNewWalletFlow());
+		};
+		fn();
 	}, []);
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
@@ -96,7 +96,7 @@ export const AccountHardwareInto = () => {
 							} else if (IotaSDK.checkWeb3Node(curNodeId)) {
 								await bleDevices.current.show();
 								await IotaSDK.checkHardwareConnect();
-								Base.push('account/hardware/import', {
+								Base.replace('account/hardware/import', {
 									name: values.name,
 									type: IotaSDK.curNode?.type
 								});
@@ -123,7 +123,7 @@ export const AccountHardwareInto = () => {
 									<>
 										<Label style={[SS.fz14, SS.mt24]}>{I18n.t('account.intoPin')}</Label>
 										<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
-										<Input
+											<Input
 												keyboardType='ascii-capable'
 												secureTextEntry
 												textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
@@ -136,7 +136,7 @@ export const AccountHardwareInto = () => {
 										</Item>
 										<Input style={[S.h(1)]} />
 										<Item style={[SS.mt8, SS.ml0]} error={!!errors.rePassword}>
-										<Input
+											<Input
 												keyboardType='ascii-capable'
 												secureTextEntry
 												textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
