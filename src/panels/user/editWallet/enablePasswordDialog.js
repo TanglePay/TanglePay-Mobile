@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import { I18n, IotaSDK, Base } from '@tangle-pay/common';
 import { useEditWallet } from '@tangle-pay/store/common';
+import { useStore } from '@tangle-pay/store';
 import { Formik } from 'formik';
 import { Toast } from '@/common';
 import { context, markWalletPasswordEnabled } from '@tangle-pay/domain';
