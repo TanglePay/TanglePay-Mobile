@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { useRoute } from '@react-navigation/native';
 import { useEditWallet } from '@tangle-pay/store/common';
 import { S, SS, Nav, Toast } from '@/common';
+import { useStore } from '@tangle-pay/store';
 
 const schema = Yup.object().shape({
 	old: Yup.string().required(),
