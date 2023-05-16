@@ -6,7 +6,7 @@ import { useAddWallet } from '@tangle-pay/store/common';
 import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { isNewWalletFlow, context, setPin, markWalletPasswordEnabled } from '@tangle-pay/domain';
+import { shouldShowSetPin, shouldShowSetPassword, context, setPin, markWalletPasswordEnabled } from '@tangle-pay/domain';
 
 const schema = Yup.object().shape({
 	privateKey: Yup.string().required(),
@@ -25,8 +25,8 @@ export const AccountIntoPrivateKey = () => {
 	const [shouldShowPassword, setShouldShowPassword] = useState(false);
 	const [shouldShowPin, setShouldShowPin] = useState(false);
 	useEffect(() => {
-		setShouldShowPin(isNewWalletFlow());
-		setShouldShowPassword(!isNewWalletFlow());
+		setShouldShowPin(shouldShowSetPin());
+		setShouldShowPassword(shouldShowSetPassword());
 	}, []);
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
