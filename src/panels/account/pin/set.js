@@ -28,6 +28,9 @@ export const AccountSetPin = () => {
             if (newPin !== retypedPin) {
               return Toast.error(I18n.t('account.pinMismatch'));
             }
+            if (!Base.checkPin(newPin)) {
+              return Toast.error(I18n.t('account.intoPinTips'));
+            }
             await setPin(newPin);
             Toast.success(I18n.t('account.pinResetSuccess'));
             Base.push('main');

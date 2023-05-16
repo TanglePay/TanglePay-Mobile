@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import { useStore } from '@tangle-pay/store';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { context, setPin } from '@tangle-pay/domain'
+import { context, setPin, shouldShowSetPin } from '@tangle-pay/domain'
 
 
 const getSchema = shouldShowPin => shouldShowPin ? Yup.object().shape({
@@ -25,7 +25,7 @@ export const AccountRegisterPin = () => {
     const [shouldShowPin, setShouldShowPin ] = useState( true )
     useEffect(() => {
         console.log(context.state)
-        setShouldShowPin(context.state.walletCount == 0 || !context.state.isPinSet)
+        setShouldShowPin(shouldShowSetPin())
     }, [])
 	useCreateCheck((name) => {
 		form.current.setFieldValue('name', name);
@@ -54,7 +54,7 @@ export const AccountRegisterPin = () => {
                             }
                             await setPin(password)
                         }
-						setRegisterInfo(Object.assign({},values,{ password:context.state.pin }))
+						setRegisterInfo(Object.assign({},values,{ password:context.state.pin, passwordIsPassword:false }))
 						Base.push('account/backup');
 					}}>
 					{({ handleChange, handleSubmit, setFieldValue, values, errors }) => (
