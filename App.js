@@ -79,7 +79,7 @@ export default () => {
 			}
 		});
 		// get encrypted sensitive data
-		const sensitiveList = ['common.activityData', 'common.walletsList'];
+		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash'];
 		const installedKey = 'tangle.installed';
 		const installed = await Base.getLocalData(installedKey);
 		if (!installed) {
