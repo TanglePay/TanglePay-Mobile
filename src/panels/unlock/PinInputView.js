@@ -42,7 +42,7 @@ function PinViewComponent({ errorMessage, onSubmit }) {
                 <Text style={[SS.fz14, { color: 'red' }]}>{errorMessage??''}</Text>
             </View>
             <View style={[S.marginT(8.4),SS.w100]}>
-                <Button block onPress={triggerSubmit}>
+                <Button block onPress={()=>triggerSubmit()}>
                     <Text>{I18n.t('assets.confirm')}</Text>
                 </Button>
             </View>
