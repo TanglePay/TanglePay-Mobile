@@ -32,7 +32,6 @@ export const AssetsSend = () => {
 	useGetParticipationEvents();
 	// const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
-	const [isBio] = useStore('common.biometrics');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt] = useStore('common.bioPrompt');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
@@ -49,6 +48,7 @@ export const AssetsSend = () => {
 	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
+	const isBio = !!(curPwd || {})[curWallet.id];
 	let assets = assetsList.find((e) => e.name === currency) || {};
 	if (assetsId) {
 		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
@@ -141,14 +141,13 @@ export const AssetsSend = () => {
 						console.log('send wallet ledger bio', isWalletPassowrdEnabled, isLedger, isBio);
 						if (!isLedger) {
 							if (isWalletPassowrdEnabled && isBio) {
-								password = curPwd;
 								try {
 									const resultObject = await rnBiometrics.simplePrompt({
 										promptMessage: I18n.t('user.bioVerification'),
 										cancelButtonText: I18n.t('apps.cancel')
 									});
 									if (resultObject.success) {
-										password = curPwd;
+										password = curPwd?.[curWallet.id];
 									} else {
 										return Toast.error(I18n.t('user.biometricsFailed'));
 									}

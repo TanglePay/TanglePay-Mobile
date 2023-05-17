@@ -25,7 +25,6 @@ export const DappDialog = () => {
 	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
 	const [showPwd, setShowPwd] = useState(false);
-	const [isBio] = useStore('common.biometrics');
 	const [curPwd] = useStore('common.curPwd');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt] = useStore(false);
@@ -42,6 +41,7 @@ export const DappDialog = () => {
 	const [gasInfo, setGasInfo] = useState({});
 	const isLedger = curWallet.type == 'ledger';
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	const isBio = !!(curPwd || {})[curWallet.id];
 	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPassowrdEnabled(res);
@@ -796,7 +796,7 @@ export const DappDialog = () => {
 										(isBio && isWalletPassowrdEnabled) ||
 										(!isBio && dappData.type !== 'iota_connect')
 									) {
-										setPassword(curPwd);
+										setPassword(curPwd?.[curWallet.id]);
 										rnBiometrics
 											.simplePrompt({
 												promptMessage: I18n.t('user.bioVerification'),

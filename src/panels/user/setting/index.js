@@ -17,11 +17,11 @@ const rnBiometrics = new ReactNativeBiometrics();
 export const UserSetting = () => {
 	useStore('common.lang');
 	const changeNode = useChangeNode();
-	const curWallet = useGetNodeWallet();
+	const [curWallet] = useGetNodeWallet();
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
 	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
-	const [isBio, setIsBio] = useStore('common.biometrics');
+	const [isBio, setIsBio] = useState(false);
 	const dialogRef = useRef();
 	const [isPwdInput] = useStore('common.pwdInput');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
@@ -30,7 +30,8 @@ export const UserSetting = () => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPassowrdEnabled(res);
 		});
-	}, [curWallet.id]);
+		setIsBio((curPwd || {})[curWallet.id] ? true : false);
+	}, [curWallet.id, JSON.stringify(curPwd)]);
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
@@ -75,7 +76,7 @@ export const UserSetting = () => {
 			label: I18n.t('user.biometrics'),
 			type: 'switch',
 			value: isBio,
-			disabled: !curWallet[0]?.id || !bioSupport,
+			disabled: !curWallet?.id || !bioSupport,
 			onChange: (e) => {
 				console.log('on bio change', e);
 				bioSwitchChange();
@@ -94,7 +95,6 @@ export const UserSetting = () => {
 			size: 22
 		}
 	];
-	console.log(curWallet[0]?.id);
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
 
 	if (curNodeKey) {
@@ -172,6 +172,11 @@ export const UserSetting = () => {
 	const bioSwitchChange = () => {
 		if (isBio) {
 			setIsBio(false);
+			const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+			setCurPwd({
+				...pwd,
+				[curWallet.id]: ''
+			});
 		} else {
 			rnBiometrics
 				.simplePrompt({
@@ -184,10 +189,20 @@ export const UserSetting = () => {
 					if (success) {
 						console.log('successful biometrics provided');
 						setIsBio(true);
-						if (!isPwdInput && isWalletPassowrdEnabled) {
+						// if (!isPwdInput && isWalletPassowrdEnabled) {
+						// 	dialogRef.current.show();
+						// } else if (!isWalletPassowrdEnabled) {
+						// 	setCurPwd(context.state.pin);
+						// }
+						if (isWalletPassowrdEnabled) {
 							dialogRef.current.show();
 						} else if (!isWalletPassowrdEnabled) {
-							setCurPwd(context.state.pin);
+							// setCurPwd(context.state.pin);
+							const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+							setCurPwd({
+								...pwd,
+								[curWallet.id]: context.state.pin
+							});
 						}
 					} else {
 						console.log('user cancelled biometric prompt');
