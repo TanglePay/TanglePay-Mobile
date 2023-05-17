@@ -26,14 +26,10 @@ import {
 } from '@tangle-pay/domain';
 
 const Stack = createStackNavigator();
-const getFirstScreen = async (store) => {
+const getFirstScreen = async () => {
 	await ensureInited();
-	const isNewUser = await isNewWalletFlow();
-	if (!isNewUser) {
-		await ensureExistingUserWalletStatus();
-	}
+	
 	if (context.state.isPinSet && !getIsUnlocked()) {
-		Base.push('unlock');
 		return 'unlock';
 	} else {
 		Base.globalDispatch({
@@ -68,6 +64,9 @@ export default () => {
 	const [firstScreen, setFirstScreen] = useState();
 
 	const [aState, setAppState] = useState(AppState.currentState);
+
+	const isExistingUserChecked = useRef(false);
+
 	useEffect(() => {
 		const appStateListener = AppState.addEventListener(
 		'change',
@@ -96,7 +95,7 @@ export default () => {
 			}
 		});
 		// get encrypted sensitive data
-		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash', 'state.pin-domain'];
+		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash', 'state.pin-domain', 'pin.isExistingFixed'];
 		const installedKey = 'tangle.installed';
 		const installed = await Base.getLocalData(installedKey);
 		if (!installed) {
@@ -132,6 +131,13 @@ export default () => {
 	const onResume = async () => {
 		console.log('onResume');
 		await ensureInited();
+		const isNewUser = await isNewWalletFlow();
+		if (!isNewUser) {
+			if (!isExistingUserChecked.current) {
+				await ensureExistingUserWalletStatus();
+				isExistingUserChecked.current = true;
+			}
+		}
 		if (context.state.isPinSet && !getIsUnlocked()) {
 			console.log('onResume push unlock');
 			Base.push('unlock');
@@ -150,7 +156,7 @@ export default () => {
 				if (nodeList.length == 0) {
 					await pinInit(0);
 				}
-				const firstScreen = await getFirstScreen(store);
+				const firstScreen = await getFirstScreen();
 				console.log('firstScreen', firstScreen);
 				setFirstScreen(firstScreen);
 				setTimeout(() => {
