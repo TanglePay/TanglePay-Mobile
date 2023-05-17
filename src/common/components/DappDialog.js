@@ -238,19 +238,15 @@ export const DappDialog = () => {
 				break;
 			case 'iota_connect':
 				{
-					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_connect(origin, expires, '', '', reqId);
-					});
+					await Bridge.iota_connect(origin, expires, '', '', reqId);
 				}
 				break;
 			case 'iota_sign':
 				{
-					InteractionManager.runAfterInteractions(async () => {
-						if (isLedger) {
-							await bleDevices.current.show();
-						}
-						await Bridge.iota_sign(origin, expires, content, password, reqId);
-					});
+					if (isLedger) {
+						await bleDevices.current.show();
+					}
+					await Bridge.iota_sign(origin, expires, content, password, reqId);
 				}
 				break;
 			default:
@@ -856,8 +852,8 @@ export const DappDialog = () => {
 					</View>
 				</View>
 			</KeyboardAvoidingView>
+			<BleDevices dialogRef={bleDevices} noModal={false} />
 			<GasDialog dialogRef={gasDialog} />
-			<BleDevices dialogRef={bleDevices} />
 		</Modal>
 	);
 };

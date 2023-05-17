@@ -196,7 +196,7 @@ export const UserSetting = () => {
 						// }
 						if (isWalletPassowrdEnabled) {
 							dialogRef.current.show();
-						} else if (!isWalletPassowrdEnabled) {
+						} else {
 							// setCurPwd(context.state.pin);
 							const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
 							setCurPwd({

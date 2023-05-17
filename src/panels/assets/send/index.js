@@ -34,7 +34,7 @@ export const AssetsSend = () => {
 	const [assetsList] = useStore('common.assetsList');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt] = useStore('common.bioPrompt');
-	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [curPwd] = useStore('common.curPwd');
 	const [showPwd, setShowPwd] = useState(false);
 	const { params } = useRoute();
 	const form = useRef();

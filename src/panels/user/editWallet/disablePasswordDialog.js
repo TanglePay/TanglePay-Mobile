@@ -9,6 +9,7 @@ import { context, markWalletPasswordDisabled } from '@tangle-pay/domain';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { S, SS } from '@/common';
+import { useStore } from '@tangle-pay/store';
 
 export const DisablePasswordDialog = ({ dialogRef, data }) => {
 	const [isShow, setShow] = useState(false);
