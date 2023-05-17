@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Alert } from 'react-native';
+import { Alert, AppState } from 'react-native';
 import { panelsList } from '@/panels';
 import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -66,6 +66,23 @@ export default () => {
 	const passwordDialog = useRef();
 	const [sceneList, setSceneList] = useState([]);
 	const [firstScreen, setFirstScreen] = useState();
+
+	const [aState, setAppState] = useState(AppState.currentState);
+	useEffect(() => {
+		const appStateListener = AppState.addEventListener(
+		'change',
+		nextAppState => {
+			console.log('Next AppState is: ', nextAppState);
+			setAppState(nextAppState);
+			if (nextAppState === 'active') {
+				onResume().catch(e=>console.log(e));
+			}
+		},
+		);
+		return () => {
+		appStateListener?.remove();
+		};
+	}, []);
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
@@ -112,6 +129,14 @@ export default () => {
 		const res = await Base.getLocalData('common.curNodeId');
 		changeNode(res || 1);
 	};
+	const onResume = async () => {
+		console.log('onResume');
+		await ensureInited();
+		if (context.state.isPinSet && !getIsUnlocked()) {
+			console.log('onResume push unlock');
+			Base.push('unlock');
+		} 
+	}
 	const init = async () => {
 		Trace.login();
 		Toast.showLoading();
