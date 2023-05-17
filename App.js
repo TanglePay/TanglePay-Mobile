@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Alert } from 'react-native';
+import { Alert, AppState } from 'react-native';
 import { panelsList } from '@/panels';
 import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -26,14 +26,10 @@ import {
 } from '@tangle-pay/domain';
 
 const Stack = createStackNavigator();
-const getFirstScreen = async (store) => {
+const getFirstScreen = async () => {
 	await ensureInited();
-	const isNewUser = await isNewWalletFlow();
-	if (!isNewUser) {
-		await ensureExistingUserWalletStatus();
-	}
+	
 	if (context.state.isPinSet && !getIsUnlocked()) {
-		Base.push('unlock');
 		return 'unlock';
 	} else {
 		Base.globalDispatch({
@@ -66,6 +62,26 @@ export default () => {
 	const passwordDialog = useRef();
 	const [sceneList, setSceneList] = useState([]);
 	const [firstScreen, setFirstScreen] = useState();
+
+	const [aState, setAppState] = useState(AppState.currentState);
+
+	const isExistingUserChecked = useRef(false);
+
+	useEffect(() => {
+		const appStateListener = AppState.addEventListener(
+		'change',
+		nextAppState => {
+			console.log('Next AppState is: ', nextAppState);
+			setAppState(nextAppState);
+			if (nextAppState === 'active') {
+				onResume().catch(e=>console.log(e));
+			}
+		},
+		);
+		return () => {
+		appStateListener?.remove();
+		};
+	}, []);
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
@@ -79,7 +95,7 @@ export default () => {
 			}
 		});
 		// get encrypted sensitive data
-		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash', 'state.pin-domain'];
+		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash', 'state.pin-domain', 'pin.isExistingFixed'];
 		const installedKey = 'tangle.installed';
 		const installed = await Base.getLocalData(installedKey);
 		if (!installed) {
@@ -112,6 +128,21 @@ export default () => {
 		const res = await Base.getLocalData('common.curNodeId');
 		changeNode(res || 1);
 	};
+	const onResume = async () => {
+		console.log('onResume');
+		await ensureInited();
+		const isNewUser = await isNewWalletFlow();
+		if (!isNewUser) {
+			if (!isExistingUserChecked.current) {
+				await ensureExistingUserWalletStatus();
+				isExistingUserChecked.current = true;
+			}
+		}
+		if (context.state.isPinSet && !getIsUnlocked()) {
+			console.log('onResume push unlock');
+			Base.push('unlock');
+		} 
+	}
 	const init = async () => {
 		Trace.login();
 		Toast.showLoading();
@@ -125,7 +156,7 @@ export default () => {
 				if (nodeList.length == 0) {
 					await pinInit(0);
 				}
-				const firstScreen = await getFirstScreen(store);
+				const firstScreen = await getFirstScreen();
 				console.log('firstScreen', firstScreen);
 				setFirstScreen(firstScreen);
 				setTimeout(() => {
