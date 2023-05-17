@@ -9,7 +9,7 @@ function PinViewComponent({ errorMessage, onSubmit }) {
 
     const handlePinChange = async (newPin) => {
         setPin(newPin);
-        if (newPin.length === 8) {
+        if (newPin.length === 20) {
             await triggerSubmit(newPin)
         }
     };
