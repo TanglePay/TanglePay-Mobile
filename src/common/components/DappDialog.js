@@ -13,7 +13,7 @@ import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
-import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
+import { context, checkWalletIsPasswordEnabled, getIsUnlocked } from '@tangle-pay/domain';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
@@ -51,9 +51,13 @@ export const DappDialog = () => {
 		});
 	}, [curWallet.id, canShowDappDialog]);
 	const show = () => {
-		requestAnimationFrame(() => {
-			setShow(true);
-		});
+		if (context.state.isPinSet && !getIsUnlocked()) {
+
+		} else {
+			requestAnimationFrame(() => {
+				setShow(true);
+			});
+		}
 	};
 	const hide = () => {
 		setShow(false);

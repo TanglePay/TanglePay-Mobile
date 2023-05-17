@@ -3977,6 +3977,11 @@ crypto-js@^4.1.1:
   resolved "https://registry.npmjs.org/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
   integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
+crypto@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/crypto/-/crypto-1.0.1.tgz#2af1b7cad8175d24c8a1b0778255794a21803037"
+  integrity sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==
+
 css-select@^5.1.0:
   version "5.1.0"
   resolved "https://registry.npmjs.org/css-select/-/css-select-5.1.0.tgz#b8ebd6554c3637ccc76688804ad3f6a6fdaea8a6"
@@ -10241,10 +10246,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.5.1.tgz#6d56ba4ba16eedb6015daced080745dc3403a758"
-  integrity sha512-F/DL3m2mvK8NXcbBuQMWhLJdDRq3u7FnexEqvGLCvhwIy3WrKNEJtqTknCbyu+WMuiaV2pWYMhXmYVAgzpHuXQ==
+tanglepay@^2.5.3:
+  version "2.5.3"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.5.3.tgz#e8ae0a016c5fa4c869da69190c196e300651c678"
+  integrity sha512-lq/MzwT0Jnp8upS7nryf3PdSBli1dAuz4g8gZZD/ilSm2sO3oN1O6DCP94vyYEiBqX2el/MVK2j25wUqymM0Ow==
 
 tar@^4.0.2:
   version "4.4.19"
