@@ -38,7 +38,6 @@ export const PasswordDialog = ({ dialogRef }) => {
 				...pwd,
 				[curWallet.id]: inputPwd
 			});
-			setIsBio(true);
 		}
 	};
 	const cancel = () => {
