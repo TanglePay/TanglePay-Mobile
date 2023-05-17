@@ -48,7 +48,12 @@ export const UserWalletPassword = () => {
 							true
 						);
 						if (curPwd) {
-							setCurPwd(values.newPassword);
+							// setCurPwd(values.newPassword);
+							const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+							setCurPwd({
+								...pwd,
+								[params.id]: values.newPassword
+							});
 						}
 						Toast.success(I18n.t('user.passwordSucc'));
 						Base.goBack();

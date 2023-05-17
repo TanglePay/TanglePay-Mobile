@@ -16,7 +16,6 @@ export const AssetsWallets = () => {
 	let [_, walletsList] = useGetNodeWallet();
 	const [curActive, setActive] = useState('');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
-	const [isBio, setIsBio] = useStore('common.biometrics');
 	const { params } = useRoute();
 	if (params?.nodeId) {
 		walletsList = walletsList.filter((e) => e.nodeId == params.nodeId);
@@ -43,7 +42,6 @@ export const AssetsWallets = () => {
 											return;
 										}
 										setActive(e.id);
-										setIsBio(false);
 										setIsPwdInput(false);
 										// Toast.showLoading();
 										setTimeout(() => {

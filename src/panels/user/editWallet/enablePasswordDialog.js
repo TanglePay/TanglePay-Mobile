@@ -73,7 +73,11 @@ export const EnablePasswordDialog = ({ dialogRef, data }) => {
 									true
 								);
 								await markWalletPasswordEnabled(data.id);
-								setCurPwd(values.retypePassword);
+								const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+								setCurPwd({
+									...pwd,
+									[data.id]: values.retypePassword
+								});
 								Toast.success(I18n.t('account.passwordEnabled'));
 
 								resetForm();
