@@ -10243,7 +10243,7 @@ table@^5.2.3:
 
 tanglepay@^2.5.1:
   version "2.5.1"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.5.1.tgz#6d56ba4ba16eedb6015daced080745dc3403a758"
+  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.5.1.tgz#6d56ba4ba16eedb6015daced080745dc3403a758"
   integrity sha512-F/DL3m2mvK8NXcbBuQMWhLJdDRq3u7FnexEqvGLCvhwIy3WrKNEJtqTknCbyu+WMuiaV2pWYMhXmYVAgzpHuXQ==
 
 tar@^4.0.2:
