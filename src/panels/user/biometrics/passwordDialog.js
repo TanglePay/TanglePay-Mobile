@@ -33,13 +33,10 @@ export const PasswordDialog = ({ dialogRef }) => {
 	};
 	const setBioPwd = (inputPwd) => {
 		const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
-		if (pwd[curWallet.id]) {
-			setCurPwd({
-				...pwd,
-				[curWallet.id]: inputPwd
-			});
-			setIsBio(true);
-		}
+		setCurPwd({
+			...pwd,
+			[curWallet.id]: inputPwd
+		});
 	};
 	const cancel = () => {
 		hide();
