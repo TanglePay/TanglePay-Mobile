@@ -2853,6 +2853,7 @@
 				const ed25519Address = new Ed25519Address(addressKeyPair.publicKey);
 				addressEd25519 = util_js.Converter.bytesToHex(ed25519Address.toAddress());
 			} else {
+				nextAddressPath(initialAddressState);
 				const hardwareAddressRes = await genAddressFunc(initialAddressState.addressIndex);
 				addressEd25519 = Bech32Helper.fromBech32(hardwareAddressRes.address, nodeInfo.bech32HRP)?.addressBytes;
 				addressEd25519 = util_js.Converter.bytesToHex(addressEd25519);

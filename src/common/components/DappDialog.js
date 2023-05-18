@@ -43,6 +43,11 @@ export const DappDialog = () => {
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	const isBio = !!(curPwd || {})[curWallet.id];
 	useEffect(() => {
+		if (isBio) {
+			setPassword(curPwd?.[curWallet.id]);
+		}
+	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
+	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPassowrdEnabled(res);
 			if (!res) {
@@ -52,7 +57,6 @@ export const DappDialog = () => {
 	}, [curWallet.id, canShowDappDialog]);
 	const show = () => {
 		if (context.state.isPinSet && !getIsUnlocked()) {
-
 		} else {
 			requestAnimationFrame(() => {
 				setShow(true);
@@ -796,7 +800,6 @@ export const DappDialog = () => {
 										(isBio && isWalletPassowrdEnabled) ||
 										(!isBio && dappData.type !== 'iota_connect')
 									) {
-										setPassword(curPwd?.[curWallet.id]);
 										rnBiometrics
 											.simplePrompt({
 												promptMessage: I18n.t('user.bioVerification'),

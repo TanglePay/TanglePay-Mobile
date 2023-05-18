@@ -4883,6 +4883,7 @@
 				const addressBytes = ed25519Address.toAddress();
 				addressBech32 = Bech32Helper.toBech32(ED25519_ADDRESS_TYPE, addressBytes, protocolInfo.bech32Hrp);
 			} else {
+				nextAddressPath(initialAddressState);
 				const hardwareAddressRes = await genAddressFunc(initialAddressState.addressIndex);
 				addressBech32 = hardwareAddressRes.address;
 				hardwarePath = hardwareAddressRes.path;
