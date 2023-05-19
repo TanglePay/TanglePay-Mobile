@@ -42,20 +42,24 @@ export const DappDialog = () => {
 	const isLedger = curWallet.type == 'ledger';
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	const isBio = !!(curPwd || {})[curWallet.id];
-	useEffect(() => {
-		if (isBio) {
-			setPassword(curPwd?.[curWallet.id]);
-		}
-	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
-	useEffect(() => {
+	const ensureWalletStatus = () => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPassowrdEnabled(res);
 			if (!res) {
 				setPassword(context.state.pin);
 			}
 		});
+	}
+	useEffect(() => {
+		if (isBio) {
+			setPassword(curPwd?.[curWallet.id]);
+		}
+	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
+	useEffect(() => {
+		ensureWalletStatus();
 	}, [curWallet.id, canShowDappDialog]);
 	const show = () => {
+		ensureWalletStatus();
 		if (context.state.isPinSet && !getIsUnlocked()) {
 		} else {
 			requestAnimationFrame(() => {
