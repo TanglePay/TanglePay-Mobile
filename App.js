@@ -15,6 +15,8 @@ import Jailbreak from 'react-native-jailbreak';
 import Exit from 'react-native-exit-app';
 import { PasswordDialog } from '@/common/components/passwordDialog';
 import SplashScreen from 'react-native-splash-screen';
+import DeviceInfo from 'react-native-device-info';
+
 import {
 	context,
 	ensureInited,
@@ -187,7 +189,8 @@ Please keep your device in non-rooted state and then launch the application agai
 				);
 			}
 		});
-		setStorageFacade(StorageFacade);
+		const uuid = DeviceInfo.getUniqueId();
+		setStorageFacade(StorageFacade, uuid);
 		Base.globalInit({
 			store,
 			dispatch,
