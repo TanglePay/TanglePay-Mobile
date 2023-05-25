@@ -101,7 +101,7 @@ export const DappDialog = () => {
 		nftId,
 		reqId
 	}) => {
-		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
+		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey', 'eth_importContract'];
 		if (!noPassword.includes(type)) {
 			if (!isLedger) {
 				const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
@@ -467,7 +467,7 @@ export const DappDialog = () => {
 										}
 
 										if (isErc20) {
-											IotaSDK.importContract(contract, curToken);
+											IotaSDK.importContract(contract, curToken, decimals);
 										}
 										showContractAmount = new BigNumber(contractAmount)
 											.div(BigNumber(10).pow(decimals))
