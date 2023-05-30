@@ -54,7 +54,7 @@ export const DappDialog = () => {
 				setPassword(context.state.pin);
 			}
 		});
-	}, [curWallet.id, canShowDappDialog]);
+	}, [curWallet.id, canShowDappDialog, isShow]);
 	const show = () => {
 		if (context.state.isPinSet && !getIsUnlocked()) {
 		} else {
