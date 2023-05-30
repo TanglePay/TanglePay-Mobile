@@ -49,7 +49,7 @@ export const DappDialog = () => {
 				setPassword(context.state.pin);
 			}
 		});
-	}
+	};
 	useEffect(() => {
 		if (isBio) {
 			setPassword(curPwd?.[curWallet.id]);

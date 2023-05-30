@@ -118,7 +118,7 @@ export const BleDevices = ({ dialogRef }) => {
 		clear();
 		if (info) {
 			try {
-				Base.transport = await TransportBLE.open(info.id);
+				Base.transport = await TransportBLE.open(info.id,true);
 				if (resolveRef.current) {
 					resolveRef.current();
 				}

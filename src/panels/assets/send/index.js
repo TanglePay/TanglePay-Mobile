@@ -134,6 +134,9 @@ export const AssetsSend = () => {
 					validateOnMount={false}
 					validationSchema={isLedger || !isWalletPassowrdEnabled || isBio ? schemaNopassword : schema}
 					onSubmit={async (values) => {
+						if (isLedger) {
+							await bleDevices.current.show();
+						}
 						let { password, amount, receiver } = values;
 						if (!isWalletPassowrdEnabled) {
 							password = context.state.pin;
@@ -163,7 +166,6 @@ export const AssetsSend = () => {
 								}
 							}
 						}
-
 						amount = parseFloat(amount) || 0;
 						let decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
@@ -198,9 +200,7 @@ export const AssetsSend = () => {
 								realBalance = 0;
 								decimal = 0;
 							}
-							if (isLedger) {
-								await bleDevices.current.show();
-							}
+
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
