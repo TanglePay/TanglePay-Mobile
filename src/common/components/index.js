@@ -5,3 +5,4 @@ export { NoData } from './NoData';
 export { AlertDialog } from './AlertDialog';
 export { ConfirmDialog } from './ConfirmDialog';
 export { Toast } from './Toast';
+export { MaskedInput } from './MaskedInput';

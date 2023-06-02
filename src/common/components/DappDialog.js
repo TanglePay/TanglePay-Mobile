@@ -13,6 +13,7 @@ import { Unit } from '@iota/unit-converter';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
+import { context, checkWalletIsPasswordEnabled, getIsUnlocked } from '@tangle-pay/domain';
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
@@ -20,10 +21,10 @@ export const DappDialog = () => {
 	const bleDevices = useRef();
 	const [isShow, setShow] = useState(false);
 	const [isLoading, setLoading] = useState(false);
+	const [canShowDappDialog] = useStore('common.canShowDappDialog');
 	useGetParticipationEvents();
 	const [password, setPassword] = useState('');
 	const [showPwd, setShowPwd] = useState(false);
-	const [isBio] = useStore('common.biometrics');
 	const [curPwd] = useStore('common.curPwd');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt] = useStore(false);
@@ -39,10 +40,32 @@ export const DappDialog = () => {
 	const changeNode = useChangeNode();
 	const [gasInfo, setGasInfo] = useState({});
 	const isLedger = curWallet.type == 'ledger';
-	const show = () => {
-		requestAnimationFrame(() => {
-			setShow(true);
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	const isBio = !!(curPwd || {})[curWallet.id];
+	const ensureWalletStatus = () => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+			if (!res) {
+				setPassword(context.state.pin);
+			}
 		});
+	};
+	useEffect(() => {
+		if (isBio) {
+			setPassword(curPwd?.[curWallet.id]);
+		}
+	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
+	useEffect(() => {
+		ensureWalletStatus();
+	}, [curWallet.id, canShowDappDialog]);
+	const show = () => {
+		ensureWalletStatus();
+		if (context.state.isPinSet && !getIsUnlocked()) {
+		} else {
+			requestAnimationFrame(() => {
+				setShow(true);
+			});
+		}
 	};
 	const hide = () => {
 		setShow(false);
@@ -78,7 +101,7 @@ export const DappDialog = () => {
 		nftId,
 		reqId
 	}) => {
-		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey'];
+		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey', 'eth_importContract'];
 		if (!noPassword.includes(type)) {
 			if (!isLedger) {
 				const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
@@ -227,19 +250,15 @@ export const DappDialog = () => {
 				break;
 			case 'iota_connect':
 				{
-					InteractionManager.runAfterInteractions(async () => {
-						await Bridge.iota_connect(origin, expires, '', '', reqId);
-					});
+					await Bridge.iota_connect(origin, expires, '', '', reqId);
 				}
 				break;
 			case 'iota_sign':
 				{
-					InteractionManager.runAfterInteractions(async () => {
-						if (isLedger) {
-							await bleDevices.current.show();
-						}
-						await Bridge.iota_sign(origin, expires, content, password, reqId);
-					});
+					if (isLedger) {
+						await bleDevices.current.show();
+					}
+					await Bridge.iota_sign(origin, expires, content, password, reqId);
 				}
 				break;
 			default:
@@ -448,7 +467,7 @@ export const DappDialog = () => {
 										}
 
 										if (isErc20) {
-											IotaSDK.importContract(contract, curToken);
+											IotaSDK.importContract(contract, curToken, decimals);
 										}
 										showContractAmount = new BigNumber(contractAmount)
 											.div(BigNumber(10).pow(decimals))
@@ -668,17 +687,19 @@ export const DappDialog = () => {
 		handleUrl(deepLink, curWallet.password);
 	}, [JSON.stringify(curWallet), deepLink, curNodeId]);
 	useEffect(() => {
-		Linking.getInitialURL().then((url) => {
-			if (/^tanglepay:\/\/.+/.test(url)) {
-				setDeepLink(url);
-			}
-		});
-		Linking.addEventListener('url', ({ url }) => {
-			if (/^tanglepay:\/\/.+/.test(url)) {
-				setDeepLink(url);
-			}
-		});
-	}, []);
+		if (canShowDappDialog) {
+			Linking.getInitialURL().then((url) => {
+				if (/^tanglepay:\/\/.+/.test(url)) {
+					setDeepLink(url);
+				}
+			});
+			Linking.addEventListener('url', ({ url }) => {
+				if (/^tanglepay:\/\/.+/.test(url)) {
+					setDeepLink(url);
+				}
+			});
+		}
+	}, [canShowDappDialog]);
 	return (
 		<Modal
 			style={[SS.m0]}
@@ -751,7 +772,7 @@ export const DappDialog = () => {
 								</View>
 							</View>
 						) : null}
-						{!isBio && dappData.type !== 'iota_connect' && !isLedger ? (
+						{!isBio && dappData.type !== 'iota_connect' && !isLedger && isWalletPassowrdEnabled ? (
 							<Item inlineLabel style={[SS.ml0]}>
 								<Input
 									style={[SS.pl0]}
@@ -779,8 +800,10 @@ export const DappDialog = () => {
 												Base.push(path);
 											});
 										}
-									} else if (isBio && dappData.type !== 'iota_connect') {
-										setPassword(curPwd);
+									} else if (
+										(isBio && isWalletPassowrdEnabled) ||
+										(!isBio && dappData.type !== 'iota_connect')
+									) {
 										rnBiometrics
 											.simplePrompt({
 												promptMessage: I18n.t('user.bioVerification'),
@@ -840,8 +863,8 @@ export const DappDialog = () => {
 					</View>
 				</View>
 			</KeyboardAvoidingView>
+			<BleDevices dialogRef={bleDevices} noModal={false} />
 			<GasDialog dialogRef={gasDialog} />
-			<BleDevices dialogRef={bleDevices} />
 		</Modal>
 	);
 };

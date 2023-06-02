@@ -66,10 +66,12 @@ export const CommonWebview = () => {
 				/>
 				<WebView
 					ref={webview}
+					cacheEnabled={true}
 					injectedJavaScript={Bridge.injectedJavaScript}
 					onMessage={(e) => Bridge.onMessage(e)}
 					style={{ flex: 1 }}
 					source={{ uri: url }}
+					startInLoadingState={true}
 				/>
 			</Container>
 		</>

@@ -13,7 +13,6 @@ export const PasswordDialog = ({ dialogRef }) => {
 	const [isShow, setShow] = useState(false);
 	const [curWallet] = useGetNodeWallet();
 	const [showPwd, setShowPwd] = useState(false);
-	const [isBio, setIsBio] = useStore('common.biometrics');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [curPwd, setCurPwd] = useStore('common.curPwd');
 
@@ -32,19 +31,25 @@ export const PasswordDialog = ({ dialogRef }) => {
 	const hide = () => {
 		setShow(false);
 	};
+	const setBioPwd = (inputPwd) => {
+		const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+		setCurPwd({
+			...pwd,
+			[curWallet.id]: inputPwd
+		});
+	};
 	const cancel = () => {
 		hide();
-		setIsBio(false);
+		setBioPwd('');
 	};
 	const checkPwd = async (inputPwd) => {
 		const isPassword = await IotaSDK.checkPassword(curWallet.seed, inputPwd);
 		if (!isPassword) {
-			setIsBio(false);
+			setBioPwd('');
 			return Toast.error(I18n.t('assets.passwordError'));
 		} else {
 			setIsPwdInput(true);
-			setCurPwd(inputPwd);
-			setIsBio(true);
+			setBioPwd(inputPwd);
 			hide();
 			return Toast.success(I18n.t('user.biometricsSucc'));
 		}

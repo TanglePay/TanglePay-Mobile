@@ -7,7 +7,6 @@ import { useGetLegal, useGetNodeWallet } from '@tangle-pay/store/common';
 import dayjs from 'dayjs';
 import { S, SS, SvgIcon, ThemeVar } from '@/common';
 import _get from 'lodash/get';
-import { useGetNftList } from '@tangle-pay/store/nft';
 import ImageView from 'react-native-image-view';
 import { CachedImage, ImageCache } from 'react-native-img-cache';
 import CameraRoll from '@react-native-community/cameraroll';
@@ -434,7 +433,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											name='eye_1'
 											color='#ffffff'
 										/>
-										{isSMRNode && e.nftId ? (
+										{isSMRNode && e.nftId && e.isUnlock ? (
 											<SvgIcon
 												onPress={() => {
 													if (isSMRNode && e.nftId) {
@@ -506,6 +505,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 };
 export const CollectiblesList = ({ setHeight }) => {
 	const [isRequestNft] = useStore('nft.isRequestNft');
+	const [curWallet] = useGetNodeWallet();
 	useEffect(() => {
 		const requestCameraPermission = async () => {
 			if (ThemeVar.platform === 'android') {
@@ -519,13 +519,12 @@ export const CollectiblesList = ({ setHeight }) => {
 		};
 		requestCameraPermission();
 	}, []);
-	useGetNftList();
 	const [list] = useStore('nft.list');
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
-			return <CollectiblesItem key={e.space} {...e} />;
+			return <CollectiblesItem isLedger={curWallet.type == 'ledger'} key={e.space} {...e} />;
 		});
-	}, [JSON.stringify(list)]);
+	}, [JSON.stringify(list), curWallet.type]);
 	return (
 		<View
 			onLayout={(e) => {

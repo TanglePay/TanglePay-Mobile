@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Container, Content, View, Text, Input, Item, Button, Spinner } from 'native-base';
 import { Nav, S, SS, SvgIcon, ThemeVar, Toast } from '@/common';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import Modal from 'react-native-modal';
 import { useCollect, useGetWalletInfo, useGetNodeWallet } from '@tangle-pay/store/common';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
+import { BleDevices } from '@/common/components/bleDevices';
 
 export const WalletCollection = () => {
+	const bleDevices = useRef();
 	const [, totalInfo, loading, getInfo] = useGetWalletInfo();
 	const [curWallet] = useGetNodeWallet();
 	const [password, setPassword] = useState('');
@@ -13,6 +16,13 @@ export const WalletCollection = () => {
 	const [list, setList] = useState([]);
 	const [start, stop] = useCollect();
 	let handeNum = list?.length || 0;
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(false);
+	const isLedger = curWallet.type == 'ledger';
+	useEffect(() => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+	});
 	const totalNum = totalInfo?.outputIds?.length || 0;
 	handeNum = handeNum <= totalNum ? handeNum : totalNum;
 	const handleStop = async () => {
@@ -48,21 +58,34 @@ export const WalletCollection = () => {
 							<Text style={[SS.fz14, SS.cS, SS.mr24]}>{I18n.t('account.pendingNum')}</Text>
 							<Text style={[SS.fz16, SS.cP, SS.fw600]}>{totalNum}</Text>
 						</View>
-						<Text style={[SS.fz14, SS.mt24]}>{I18n.t('assets.passwordTips')}</Text>
-						<Input
-							secureTextEntry
-							value={password}
-							onChangeText={setPassword}
-							style={[S.border(2), SS.pv10]}
-						/>
+						{isWalletPassowrdEnabled && !isLedger ? (
+							<>
+								<Text style={[SS.fz14, SS.mt24]}>{I18n.t('assets.passwordTips')}</Text>
+								<Input
+									secureTextEntry
+									value={password}
+									onChangeText={setPassword}
+									style={[S.border(2), SS.pv10]}
+								/>
+							</>
+						) : null}
 						<Button
-							disabled={!password}
+							disabled={!password && isWalletPassowrdEnabled && !isLedger}
 							onPress={async () => {
-								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-								if (!isPassword) {
-									return Toast.error(I18n.t('assets.passwordError'));
+								let walletPassword = password;
+								if (!isWalletPassowrdEnabled) {
+									walletPassword = context.state.pin;
 								}
-								start({ ...curWallet, password }, setList);
+								if (!isLedger) {
+									const isPassword = await IotaSDK.checkPassword(curWallet.seed, walletPassword);
+									if (!isPassword) {
+										return Toast.error(I18n.t('assets.passwordError'));
+									}
+								}
+								if (isLedger) {
+									await bleDevices.current.show();
+								}
+								start({ ...curWallet, password: walletPassword }, setList);
 								setShow(true);
 							}}
 							style={[SS.mt40, SS.mb16]}
@@ -106,6 +129,7 @@ export const WalletCollection = () => {
 					</View>
 				</Modal>
 			) : null}
+			<BleDevices dialogRef={bleDevices} />
 		</>
 	);
 };

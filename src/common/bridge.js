@@ -191,6 +191,32 @@ export const Bridge = {
 							});
 						}
 						break;
+					case 'eth_importContract':
+						try {
+							const contract = params?.contract;
+							const web3Contract = IotaSDK.getContract(contract);
+							if (web3Contract) {
+								const [token, decimal] = await Promise.all([
+									web3Contract.methods.symbol().call(),
+									web3Contract.methods.decimals().call()
+								]);
+								IotaSDK.importContract(contract, token, decimal);
+								this.sendMessage('eth_importContract', {
+									contract,
+									token,
+									decimal
+								});
+							} else {
+								this.sendErrorMessage('eth_importContract', {
+									msg: 'contract is error'
+								});
+							}
+						} catch (error) {
+							this.sendErrorMessage('eth_importContract', {
+								msg: error.toString()
+							});
+						}
+						break;
 					case 'get_login_token':
 						{
 							const token = (await Base.getLocalData('token')) || '';

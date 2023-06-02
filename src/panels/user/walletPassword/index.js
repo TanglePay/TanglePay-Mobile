@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { useRoute } from '@react-navigation/native';
 import { useEditWallet } from '@tangle-pay/store/common';
 import { S, SS, Nav, Toast } from '@/common';
+import { useStore } from '@tangle-pay/store';
 
 const schema = Yup.object().shape({
 	old: Yup.string().required(),
@@ -16,6 +17,7 @@ const schema = Yup.object().shape({
 export const UserWalletPassword = () => {
 	const editWallet = useEditWallet();
 	const { params } = useRoute();
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
 	return (
 		<Container>
 			<Nav title={I18n.t('user.resetPassword')} />
@@ -45,6 +47,14 @@ export const UserWalletPassword = () => {
 							{ ...params, password: values.newPassword, oldPassword: values.old },
 							true
 						);
+						if (curPwd) {
+							// setCurPwd(values.newPassword);
+							const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+							setCurPwd({
+								...pwd,
+								[params.id]: values.newPassword
+							});
+						}
 						Toast.success(I18n.t('user.passwordSucc'));
 						Base.goBack();
 					}}>

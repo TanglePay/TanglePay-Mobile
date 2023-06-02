@@ -8,13 +8,19 @@ import * as Yup from 'yup';
 import { useAddWallet } from '@tangle-pay/store/common';
 import { View, Text, Container, Content, Form, Item, Input, Button } from 'native-base';
 import Modal from 'react-native-modal';
+import { context, checkIsWalletPasswordEnabled } from '@tangle-pay/domain'
 
 const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
+
+const schemaNopassword = Yup.object().shape({
+
+})
 export const ClaimSMR = () => {
 	const form = useRef();
 	const [isShow, setShow] = useState(false);
+
 	let { params } = useRoute();
 	const id = params.id;
 	const [_, walletsList] = useGetNodeWallet();
@@ -22,6 +28,12 @@ export const ClaimSMR = () => {
 	const name = curEdit.name || '';
 	const addWallet = useAddWallet();
 	const changeNode = useChangeNode();
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(false)
+    useEffect(() => {
+        checkIsWalletPasswordEnabled(curEdit.id).then((res) => {
+            setIsWalletPassowrdEnabled(res)
+        })
+    }, [])
 	const hide = () => {
 		setShow(false);
 	};
@@ -45,12 +57,17 @@ export const ClaimSMR = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={schema}
+					validationSchema={isWalletPassowrdEnabled ? schema : schemaNopassword}
 					onSubmit={async (values) => {
-						const { password } = values;
-						if (!Base.checkPassword(password)) {
-							return Toast.error(I18n.t('account.intoPasswordTips'));
-						}
+						let password = ''
+                        if (isWalletPassowrdEnabled) {
+                            password = values.password
+                            if (!Base.checkPassword(password)) {
+                                return Toast.error(I18n.t('account.intoPasswordTips'))
+                            }
+                        } else {
+                            password = context.state.pin
+                        }
 						try {
 							await changeNode(IotaSDK.SMR_NODE_ID);
 							const res = await IotaSDK.claimSMR({ ...curEdit, password });
@@ -88,7 +105,7 @@ export const ClaimSMR = () => {
 								</Item>
 							</Form>
 							<View style={[{ marginTop: 100 }]}>
-								<Button onPress={handleSubmit} disabled={!values.password} color='primary' block>
+								<Button onPress={handleSubmit} disabled={!values.password && isWalletPassowrdEnabled} color='primary' block>
 									<Text>{I18n.t('shimmer.claim')}</Text>
 								</Button>
 							</View>

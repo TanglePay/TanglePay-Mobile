@@ -2,27 +2,88 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Alert } from 'react-native';
+import { Alert, AppState } from 'react-native';
 import { panelsList } from '@/panels';
 import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import { StoreContext, useStoreReducer } from '@tangle-pay/store';
 import { useChangeNode } from '@tangle-pay/store/common';
-import { Theme, Toast } from '@/common';
+import { Theme, Toast, StorageFacade } from '@/common';
 import _wrap from 'lodash/wrap';
 import { DappDialog } from '@/common/components/DappDialog';
 import Jailbreak from 'react-native-jailbreak';
 import Exit from 'react-native-exit-app';
 import { PasswordDialog } from '@/common/components/passwordDialog';
 import SplashScreen from 'react-native-splash-screen';
+import DeviceInfo from 'react-native-device-info';
+
+import {
+	context,
+	ensureInited,
+	getIsUnlocked,
+	init as pinInit,
+	markWalletPasswordEnabled,
+	isNewWalletFlow,
+	setStorageFacade
+} from '@tangle-pay/domain';
 
 const Stack = createStackNavigator();
-
+const getFirstScreen = async () => {
+	await ensureInited();
+	
+	if (context.state.isPinSet && !getIsUnlocked()) {
+		return 'unlock';
+	} else {
+		Base.globalDispatch({
+			type: 'common.canShowDappDialog',
+			data: true
+		});
+		return context.state.walletCount > 0 ? 'main' : 'account/changeNode';
+	}
+};
+const ensureExistingUserWalletStatus = async () => {
+	const isFixed = await Base.getLocalData('pin.isExistingFixed');
+	if (isFixed) return;
+	const list = await IotaSDK.getWalletList();
+	const tasks = [];
+	for (const wallet of list) {
+		const { id, type } = wallet;
+		if (type === 'ledger') {
+			continue;
+		}
+		tasks.push(markWalletPasswordEnabled(id));
+	}
+	if (tasks.length > 0) {
+		await Promise.all(tasks);
+	}
+	Base.setLocalData('pin.isExistingFixed', '1');
+};
 export default () => {
 	const [store, dispatch] = useStoreReducer();
 	const changeNode = useChangeNode();
 	const passwordDialog = useRef();
 	const [sceneList, setSceneList] = useState([]);
+	const [firstScreen, setFirstScreen] = useState();
+
+	const [aState, setAppState] = useState(AppState.currentState);
+
+	const isExistingUserChecked = useRef(false);
+
+	useEffect(() => {
+		const appStateListener = AppState.addEventListener(
+		'change',
+		nextAppState => {
+			console.log('Next AppState is: ', nextAppState);
+			setAppState(nextAppState);
+			if (nextAppState === 'active') {
+				onResume().catch(e=>console.log(e));
+			}
+		},
+		);
+		return () => {
+		appStateListener?.remove();
+		};
+	}, []);
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
@@ -36,7 +97,7 @@ export default () => {
 			}
 		});
 		// get encrypted sensitive data
-		const sensitiveList = ['common.activityData', 'common.walletsList'];
+		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash', 'pin.secret', 'state.pin-domain', 'pin.isExistingFixed'];
 		const installedKey = 'tangle.installed';
 		const installed = await Base.getLocalData(installedKey);
 		if (!installed) {
@@ -69,19 +130,46 @@ export default () => {
 		const res = await Base.getLocalData('common.curNodeId');
 		changeNode(res || 1);
 	};
+	const onResume = async () => {
+		console.log('onResume');
+		await ensureInited();
+		const isNewUser = await isNewWalletFlow();
+		if (!isNewUser) {
+			if (!isExistingUserChecked.current) {
+				await ensureExistingUserWalletStatus();
+				isExistingUserChecked.current = true;
+			}
+		}
+		if (context.state.isPinSet && !getIsUnlocked()) {
+			console.log('onResume push unlock');
+			Base.push('unlock');
+		} 
+	}
 	const init = async () => {
 		Trace.login();
 		Toast.showLoading();
 		IotaSDK.getNodes(async () => {
-			await getLocalInfo();
-			await initChangeNode();
-			Toast.hideLoading();
-			setSceneList(panelsList);
-			setTimeout(() => {
-				SplashScreen.hide();
-			}, 300);
+			try {
+				await getLocalInfo();
+				await initChangeNode();
+				Toast.hideLoading();
+				setSceneList(panelsList);
+				const nodeList = await IotaSDK.getWalletList();
+				if (nodeList.length == 0) {
+					await pinInit(0);
+				}
+				const firstScreen = await getFirstScreen();
+				console.log('firstScreen', firstScreen);
+				setFirstScreen(firstScreen);
+				setTimeout(() => {
+					SplashScreen.hide();
+				}, 300);
+			} catch (e) {
+				console.log(e);
+			}
 		});
 	};
+
 	useEffect(() => {
 		Jailbreak.check().then((result) => {
 			if (result && process.env.NODE_ENV == 'production') {
@@ -101,6 +189,8 @@ Please keep your device in non-rooted state and then launch the application agai
 				);
 			}
 		});
+		const uuid = DeviceInfo.getUniqueId();
+		setStorageFacade(StorageFacade, uuid);
 		Base.globalInit({
 			store,
 			dispatch,
@@ -109,7 +199,7 @@ Please keep your device in non-rooted state and then launch the application agai
 		IotaSDK.passwordDialog = passwordDialog;
 		init();
 	}, []);
-	if (sceneList.length === 0) {
+	if (sceneList.length === 0 || !firstScreen) {
 		return null;
 	}
 	return (
@@ -125,22 +215,23 @@ Please keep your device in non-rooted state and then launch the application agai
 							ref={(ref) => {
 								Base.setNavigator(ref);
 							}}>
-							<Stack.Navigator
-								initialRouteName={store.common.walletsList.length > 0 ? 'main' : 'account/changeNode'}>
-								{sceneList.map((e) => {
-									return (
-										<Stack.Screen
-											options={{
-												headerShown: false,
-												...TransitionPresets.SlideFromRightIOS
-											}}
-											key={e.path}
-											name={e.path}
-											component={e.component}
-										/>
-									);
-								})}
-							</Stack.Navigator>
+							{firstScreen && (
+								<Stack.Navigator initialRouteName={firstScreen}>
+									{sceneList.map((e) => {
+										return (
+											<Stack.Screen
+												options={{
+													headerShown: false,
+													...TransitionPresets.SlideFromRightIOS
+												}}
+												key={e.path}
+												name={e.path}
+												component={e.component}
+											/>
+										);
+									})}
+								</Stack.Navigator>
+							)}
 						</NavigationContainer>
 						<DappDialog />
 						<PasswordDialog dialogRef={passwordDialog} />

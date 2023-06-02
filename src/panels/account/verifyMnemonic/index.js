@@ -7,6 +7,7 @@ import { useRoute } from '@react-navigation/native';
 import { useStore } from '@tangle-pay/store';
 import { useAddWallet } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, Toast } from '@/common';
+import {  markWalletPasswordEnabled } from '@tangle-pay/domain';
 
 const VerifyItem = ({ setNext, index, word, err, isLast, addWallet }) => {
 	const [error, setError] = useState(false);
@@ -19,6 +20,9 @@ const VerifyItem = ({ setNext, index, word, err, isLast, addWallet }) => {
 				try {
 					Toast.showLoading();
 					const res = await IotaSDK.importMnemonic(registerInfo);
+					if (registerInfo.passwordIsPassword) {
+						await markWalletPasswordEnabled(res.id);
+					}
 					addWallet(res);
 					setRegisterInfo({});
 					Toast.hideLoading();

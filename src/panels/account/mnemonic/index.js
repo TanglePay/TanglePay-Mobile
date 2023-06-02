@@ -7,6 +7,7 @@ import { AppState, Platform, TouchableOpacity } from 'react-native';
 import { useAddWallet } from '@tangle-pay/store/common';
 import { useFocusEffect } from '@react-navigation/native';
 import FlagSecure from 'react-native-flag-secure-android';
+import { markWalletPasswordEnabled } from '@tangle-pay/domain';
 export const AccountMnemonic = () => {
 	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
 	const [list, setList] = useState([]);
@@ -124,6 +125,9 @@ export const AccountMnemonic = () => {
 							}
 							Toast.showLoading();
 							const res = await IotaSDK.importMnemonic(registerInfo);
+							if (registerInfo.passwordIsPassword) {
+								await markWalletPasswordEnabled(res.id);
+							}
 							addWallet(res);
 							setRegisterInfo({});
 							Toast.hideLoading();

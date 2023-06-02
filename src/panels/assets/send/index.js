@@ -13,23 +13,28 @@ import { useGetParticipationEvents } from '@tangle-pay/store/staking';
 import { Image, TouchableOpacity } from 'react-native';
 import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
-const schema = {
+const schema = Yup.object().shape({
 	// currency: Yup.string().required(),
 	receiver: Yup.string().required(),
 	amount: Yup.number().positive().required(),
 	password: Yup.string().required()
-};
+});
+const schemaNopassword = Yup.object().shape({
+	receiver: Yup.string().required(),
+	amount: Yup.number().positive().required(),
+	password: Yup.string().optional()
+});
 const rnBiometrics = new ReactNativeBiometrics();
 
 export const AssetsSend = () => {
 	useGetParticipationEvents();
 	// const [statedAmount] = useStore('staking.statedAmount');
 	const [assetsList] = useStore('common.assetsList');
-	const [isBio] = useStore('common.biometrics');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const [isNotPrompt] = useStore('common.bioPrompt');
-	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [curPwd] = useStore('common.curPwd');
 	const [showPwd, setShowPwd] = useState(false);
 	const { params } = useRoute();
 	const form = useRef();
@@ -43,6 +48,7 @@ export const AssetsSend = () => {
 	const nftImg = params?.nftImg;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
+	const isBio = !!(curPwd || {})[curWallet.id];
 	let assets = assetsList.find((e) => e.name === currency) || {};
 	if (assetsId) {
 		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
@@ -50,6 +56,12 @@ export const AssetsSend = () => {
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
 	};
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	useEffect(() => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+	}, [curWallet.id]);
 	useEffect(() => {
 		setReceiver(params?.address);
 	}, [params]);
@@ -100,11 +112,6 @@ export const AssetsSend = () => {
 	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal]);
 	useGetAssetsList(curWallet);
 	const isLedger = curWallet.type == 'ledger';
-	if (isLedger) {
-		schema.password = Yup.string().optional();
-	} else {
-		schema.password = Yup.string().required();
-	}
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
 	let realBalance = BigNumber(assets.realBalance || 0);
 	if (IotaSDK.checkSMR(curWallet.nodeId) && !assets.isSMRToken) {
@@ -125,46 +132,40 @@ export const AssetsSend = () => {
 					validateOnBlur={false}
 					validateOnChange={false}
 					validateOnMount={false}
-					validationSchema={Yup.object().shape(schema)}
+					validationSchema={isLedger || !isWalletPassowrdEnabled || isBio ? schemaNopassword : schema}
 					onSubmit={async (values) => {
+						if (isLedger) {
+							await bleDevices.current.show();
+						}
 						let { password, amount, receiver } = values;
+						if (!isWalletPassowrdEnabled) {
+							password = context.state.pin;
+						}
+						console.log('send wallet ledger bio', isWalletPassowrdEnabled, isLedger, isBio);
 						if (!isLedger) {
-							if (isBio) {
-								password = curPwd;
-								rnBiometrics
-									.simplePrompt({
+							if (isWalletPassowrdEnabled && isBio) {
+								try {
+									const resultObject = await rnBiometrics.simplePrompt({
 										promptMessage: I18n.t('user.bioVerification'),
 										cancelButtonText: I18n.t('apps.cancel')
-									})
-									.then((resultObject) => {
-										const { success } = resultObject;
-										if (success) {
-											// Toast.success(
-											// 	I18n.t(
-											// 		IotaSDK.checkWeb3Node(curWallet.nodeId)
-											// 			? 'assets.sendSucc'
-											// 			: 'assets.sendSuccRestake'
-											// 	)
-											// );
-											setIsPwdInput(true);
-										} else {
-											return Toast.error(I18n.t('user.biometricsFailed'));
-										}
-									})
-									.catch(() => {
-										console.log('biometrics failed');
-										return Toast.error(I18n.t('user.biometricsFailed'));
 									});
+									if (resultObject.success) {
+										password = curPwd?.[curWallet.id];
+									} else {
+										return Toast.error(I18n.t('user.biometricsFailed'));
+									}
+								} catch (error) {
+									return Toast.error(I18n.t('user.biometricsFailed'));
+								}
 							} else {
 								const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
-								if (!isBio && !isPassword) {
+								if (!isPassword) {
 									return Toast.error(I18n.t('assets.passwordError'));
 								} else {
-									setCurPwd(password);
+									// setCurPwd(password);
 								}
 							}
 						}
-
 						amount = parseFloat(amount) || 0;
 						let decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
@@ -199,9 +200,7 @@ export const AssetsSend = () => {
 								realBalance = 0;
 								decimal = 0;
 							}
-							if (isLedger) {
-								await bleDevices.current.show();
-							}
+
 							const res = await IotaSDK.send({ ...curWallet, password }, receiver, sendAmount, {
 								contract: assets?.contract,
 								token: assets?.name,
@@ -224,7 +223,7 @@ export const AssetsSend = () => {
 											: 'assets.sendSuccRestake'
 									)
 								);
-								if (isBio === false && !isNotPrompt) {
+								if (isBio === false && isWalletPassowrdEnabled && !isNotPrompt) {
 									alert.current.show(I18n.t('user.biometriceDialog'), () => {
 										const path = 'user/setting';
 										Base.push(path);
@@ -368,7 +367,7 @@ export const AssetsSend = () => {
 										</View>
 									</View>
 								) : null}
-								{isBio || isLedger ? (
+								{isBio || isLedger || !isWalletPassowrdEnabled ? (
 									<View />
 								) : (
 									<View>

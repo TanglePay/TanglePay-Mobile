@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { ExpDialog } from './expDialog';
+import { markWalletPasswordEnabled } from '@tangle-pay/domain';
 
 const schema = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -16,6 +17,7 @@ const schema = Yup.object().shape({
 	rePassword: Yup.string().required(),
 	agree: Yup.bool().isTrue().required()
 });
+
 export const AccountInto = () => {
 	const dialogRef = useRef();
 	const form = useRef();
@@ -52,6 +54,7 @@ export const AccountInto = () => {
 							const res = await IotaSDK.importMnemonic({
 								...values
 							});
+							await markWalletPasswordEnabled(res.id);
 							addWallet({
 								...res
 							});

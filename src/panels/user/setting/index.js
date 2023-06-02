@@ -10,19 +10,28 @@ import _sumBy from 'lodash/sumBy';
 import { useChangeNode, useGetNodeWallet } from '@tangle-pay/store/common';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { PasswordDialog } from '../biometrics/passwordDialog';
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
 export const UserSetting = () => {
 	useStore('common.lang');
 	const changeNode = useChangeNode();
-	const curWallet = useGetNodeWallet();
+	const [curWallet] = useGetNodeWallet();
 	const [disTrace, setDisTrace] = useStore('common.disTrace');
 	const [isNoRestake, setNoRestake] = useState(false);
 	const [cache, setCache] = useState('0 M');
-	const [isBio, setIsBio] = useStore('common.biometrics');
+	const [isBio, setIsBio] = useState(false);
 	const dialogRef = useRef();
 	const [isPwdInput] = useStore('common.pwdInput');
+	const [curPwd, setCurPwd] = useStore('common.curPwd');
+	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
+	useEffect(() => {
+		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
+			setIsWalletPassowrdEnabled(res);
+		});
+		setIsBio((curPwd || {})[curWallet.id] ? true : false);
+	}, [curWallet.id, JSON.stringify(curPwd)]);
 	const [biometrics, setBiometrics] = useState({
 		touchId: false,
 		faceId: false,
@@ -67,19 +76,25 @@ export const UserSetting = () => {
 			label: I18n.t('user.biometrics'),
 			type: 'switch',
 			value: isBio,
-			disabled: !curWallet[0]?.id || !bioSupport,
+			disabled: !curWallet?.id || !bioSupport,
 			onChange: (e) => {
+				console.log('on bio change', e);
 				bioSwitchChange();
 			}
 		},
 		{
 			icon: 'advanced',
-			label: 'Advanced',
+			label: 'Test Mode',
 			path: 'user/advanced',
+			size: 22
+		},
+		{
+			icon: 'pin',
+			label: context.state.isPinSet ? I18n.t('account.resetPinTitle') : I18n.t('account.setPinButton'),
+			path: context.state.isPinSet ? 'account/pin/reset' : 'account/pin/set',
 			size: 22
 		}
 	];
-	console.log(curWallet[0]?.id);
 	const curNodeKey = IotaSDK?.curNode?.curNodeKey;
 
 	if (curNodeKey) {
@@ -157,6 +172,11 @@ export const UserSetting = () => {
 	const bioSwitchChange = () => {
 		if (isBio) {
 			setIsBio(false);
+			const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+			setCurPwd({
+				...pwd,
+				[curWallet.id]: ''
+			});
 		} else {
 			rnBiometrics
 				.simplePrompt({
@@ -169,8 +189,20 @@ export const UserSetting = () => {
 					if (success) {
 						console.log('successful biometrics provided');
 						setIsBio(true);
-						if (!isPwdInput) {
+						// if (!isPwdInput && isWalletPassowrdEnabled) {
+						// 	dialogRef.current.show();
+						// } else if (!isWalletPassowrdEnabled) {
+						// 	setCurPwd(context.state.pin);
+						// }
+						if (isWalletPassowrdEnabled) {
 							dialogRef.current.show();
+						} else {
+							// setCurPwd(context.state.pin);
+							const pwd = curPwd ? JSON.parse(JSON.stringify(curPwd)) : {};
+							setCurPwd({
+								...pwd,
+								[curWallet.id]: context.state.pin
+							});
 						}
 					} else {
 						console.log('user cancelled biometric prompt');
@@ -203,7 +235,7 @@ export const UserSetting = () => {
 								style={[SS.row, SS.ac, SS.jsb, SS.p16, S.border(2)]}>
 								<View style={[SS.row, SS.ac]}>
 									<View style={[SS.c, { minWidth: 24 }]}>
-										<SvgIcon name={e.icon} size={e.size || 24} />
+										<SvgIcon name={e.icon} size={e.size || 24} color='#000' />
 									</View>
 									<Text style={[SS.fz16, SS.ml12]}>{e.label}</Text>
 									{e.tips && <Text style={[SS.fz11, SS.ml10, SS.cS, SS.mt5]}>{e.tips}</Text>}

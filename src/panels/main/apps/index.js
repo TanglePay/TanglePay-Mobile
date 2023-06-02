@@ -7,6 +7,7 @@ import { List } from './list';
 import { Base } from '@tangle-pay/common';
 import _uniq from 'lodash/uniq';
 import { useStore } from '@tangle-pay/store';
+import { WebView } from 'react-native-webview';
 
 export const Apps = () => {
 	const [curWallet] = useGetNodeWallet();
@@ -88,7 +89,7 @@ export const Apps = () => {
 						value={searchStr}
 						onChangeText={setSearch}
 						onBlur={onBlur}
-						placeholder='Search Dapp'
+						placeholder='search or type URL'
 					/>
 				</View>
 				<View style={[SS.row, SS.ac, SS.pt16, SS.jsb, { flexWrap: 'wrap' }]}>
@@ -125,6 +126,9 @@ export const Apps = () => {
 					</ScrollView>
 					<List list={showList} curWallet={curWallet} />
 				</View>
+				<WebView source={{ uri: 'https://earlybee.iotabee.com' }} />
+				<WebView source={{ uri: 'https://test.iotabee.com/' }} />
+				<WebView source={{ uri: 'https://soonaverse.com' }} />
 			</Content>
 		</Container>
 	);
