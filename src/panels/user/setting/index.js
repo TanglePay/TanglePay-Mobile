@@ -83,15 +83,15 @@ export const UserSetting = () => {
 			}
 		},
 		{
-			icon: 'advanced',
-			label: 'Test Mode',
-			path: 'user/advanced',
-			size: 22
-		},
-		{
 			icon: 'pin',
 			label: context.state.isPinSet ? I18n.t('account.resetPinTitle') : I18n.t('account.setPinButton'),
 			path: context.state.isPinSet ? 'account/pin/reset' : 'account/pin/set',
+			size: 22
+		},
+		{
+			icon: 'advanced',
+			label: 'Test Mode',
+			path: 'user/advanced',
 			size: 22
 		}
 	];

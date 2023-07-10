@@ -11,6 +11,14 @@ export const UserAdvanced = () => {
 	const [shimmerSupport, setShimmerSupport] = useState(false);
 	const [iotaSupport, setIotaSupport] = useState(false);
 	const [polyganSupport, setPolyganSupport] = useState(false);
+	const dispatch = (key, data) => {
+		if (Base.globalDispatch) {
+			Base.globalDispatch({
+				type: key,
+				data
+			});
+		}
+	};
 	useEffect(() => {
 		Base.getLocalData('common.shimmerSupport').then((res) => {
 			setShimmerSupport(res == 1);
@@ -42,6 +50,7 @@ export const UserAdvanced = () => {
 						onValueChange={async (e) => {
 							setShimmerSupport(e);
 							Base.setLocalData('common.shimmerSupport', e ? 1 : 0);
+							dispatch('common.shimmerSupport', e ? 1 : 0);
 							await handleChange();
 						}}
 					/>
@@ -53,6 +62,7 @@ export const UserAdvanced = () => {
 						onValueChange={async (e) => {
 							setIotaSupport(e);
 							Base.setLocalData('common.iotaSupport', e ? 1 : 0);
+							dispatch('common.iotaSupport', e ? 1 : 0);
 							await handleChange();
 						}}
 					/>
@@ -64,6 +74,7 @@ export const UserAdvanced = () => {
 						onValueChange={async (e) => {
 							setPolyganSupport(e);
 							Base.setLocalData('common.polyganSupport', e ? 1 : 0);
+							dispatch('common.polyganSupport', e ? 1 : 0);
 							await handleChange();
 						}}
 					/>

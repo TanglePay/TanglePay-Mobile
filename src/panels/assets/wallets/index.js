@@ -14,6 +14,7 @@ export const AssetsWallets = () => {
 	const dialogRef = useRef();
 	const selectWallet = useSelectWallet();
 	let [_, walletsList] = useGetNodeWallet();
+	walletsList = walletsList.filter((e) => !e.isHideTest);
 	const [curActive, setActive] = useState('');
 	const [isPwdInput, setIsPwdInput] = useStore('common.pwdInput');
 	const { params } = useRoute();
