@@ -415,7 +415,7 @@ export const DappDialog = () => {
 
 								if (taggedData) {
 									contract = address;
-									const { functionName, params, web3Contract, isErc20 } = IotaSDK.getAbiParams(
+									const { functionName, params, web3Contract, isErc20 } = await IotaSDK.getAbiParams(
 										address,
 										taggedData
 									);
