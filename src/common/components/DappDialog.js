@@ -170,6 +170,7 @@ export const DappDialog = () => {
 							await bleDevices.current.show();
 						}
 						res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
+							domain: origin,
 							contract: contract || assets?.contract,
 							token: assets?.name,
 							taggedData,
