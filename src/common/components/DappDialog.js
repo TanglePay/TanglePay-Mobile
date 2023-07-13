@@ -316,6 +316,19 @@ export const DappDialog = () => {
 			reqId = 0
 		} = res;
 		let toNetId;
+		if (!network) {
+			const path = url.replace('tanglepay://', '').split('?')[0];
+			let [, address] = (path || '').split('/');
+			if (/^iota/.test(address)) {
+				network = 'mainnet';
+			} else if (/^atoi/.test(address)) {
+				network = 'devnet';
+			} else if (/^smr/.test(address)) {
+				network = 'shimmer';
+			} else if (/^rms/.test(address)) {
+				network = 'testnet';
+			}
+		}
 		if (network) {
 			toNetId = IotaSDK.nodes.find((e) => e.network == network)?.id;
 		}
