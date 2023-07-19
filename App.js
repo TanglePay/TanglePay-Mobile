@@ -30,7 +30,7 @@ import {
 const Stack = createStackNavigator();
 const getFirstScreen = async () => {
 	await ensureInited();
-	
+
 	if (context.state.isPinSet && !getIsUnlocked()) {
 		return 'unlock';
 	} else {
@@ -70,24 +70,28 @@ export default () => {
 	const isExistingUserChecked = useRef(false);
 
 	useEffect(() => {
-		const appStateListener = AppState.addEventListener(
-		'change',
-		nextAppState => {
+		const appStateListener = AppState.addEventListener('change', (nextAppState) => {
 			console.log('Next AppState is: ', nextAppState);
 			setAppState(nextAppState);
 			if (nextAppState === 'active') {
-				onResume().catch(e=>console.log(e));
+				onResume().catch((e) => console.log(e));
 			}
-		},
-		);
+		});
 		return () => {
-		appStateListener?.remove();
+			appStateListener?.remove();
 		};
 	}, []);
 	// persist cache data into local storage
 	const getLocalInfo = async () => {
 		// unsensitve data
-		const list = ['common.showAssets', 'common.lang', 'common.price', 'common.disTrace', 'common.bioPrompt'];
+		const list = [
+			'common.showAssets',
+			'common.lang',
+			'common.price',
+			'common.disTrace',
+			'common.bioPrompt',
+			'common.polyganSupport'
+		];
 		const res = await Promise.all(list.map((e) => Base.getLocalData(e)));
 		list.map((e, i) => {
 			switch (e) {
@@ -97,7 +101,14 @@ export default () => {
 			}
 		});
 		// get encrypted sensitive data
-		const sensitiveList = ['common.activityData', 'common.walletsList', 'pin.hash', 'pin.secret', 'state.pin-domain', 'pin.isExistingFixed'];
+		const sensitiveList = [
+			'common.activityData',
+			'common.walletsList',
+			'pin.hash',
+			'pin.secret',
+			'state.pin-domain',
+			'pin.isExistingFixed'
+		];
 		const installedKey = 'tangle.installed';
 		const installed = await Base.getLocalData(installedKey);
 		if (!installed) {
@@ -143,8 +154,8 @@ export default () => {
 		if (context.state.isPinSet && !getIsUnlocked()) {
 			console.log('onResume push unlock');
 			Base.push('unlock');
-		} 
-	}
+		}
+	};
 	const init = async () => {
 		Trace.login();
 		Toast.showLoading();

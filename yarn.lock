@@ -10322,10 +10322,10 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-tanglepay@^2.5.5:
-  version "2.5.5"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.5.5.tgz#3158e628f1e0fa89f36ccd98b22b3acc962f52ef"
-  integrity sha512-TXiOWvPA/w0CNyQlLb8WCjiyoeghm+yadY0cXlI4H4Uqsqi6qZQgLaYKQkph8GUSETrX6wjqlcwIlusClk5FYA==
+tanglepay@^2.5.8:
+  version "2.5.8"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.5.8.tgz#ab47198b4aa0985396e66f6e336960c3809950cc"
+  integrity sha512-dm7EKr5aOLkcaf/JnRFEsOMX4JLm6fy7jDEQNIQvBYLBI+w4e00PwDoCOq1MwYBvTYyVOkg1JNBLfAiQslHB3g==
 
 tar@^4.0.2:
   version "4.4.19"
