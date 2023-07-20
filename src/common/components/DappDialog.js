@@ -606,7 +606,8 @@ export const DappDialog = () => {
 								abiFunc,
 								abiParams,
 								gas,
-								reqId
+								reqId,
+								origin
 							});
 							show();
 						}
@@ -632,7 +633,8 @@ export const DappDialog = () => {
 								return_url,
 								type,
 								content,
-								reqId
+								reqId,
+								origin
 							});
 							show();
 						}
