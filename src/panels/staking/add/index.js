@@ -13,8 +13,7 @@ import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 const schema = Yup.object().shape({
 	password: Yup.string().required()
 });
-const schemaNopassword = Yup.object().shape({
-});
+const schemaNopassword = Yup.object().shape({});
 export const StakingAdd = () => {
 	const alert = useRef();
 	const bleDevices = useRef();
@@ -83,7 +82,7 @@ export const StakingAdd = () => {
 								amount: realBalance,
 								type
 							});
-							Toast.hideLoading();
+							// Toast.hideLoading();
 							if (res.code === 0) {
 								Base.goBack();
 							} else {
