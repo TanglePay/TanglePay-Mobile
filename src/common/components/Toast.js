@@ -6,6 +6,8 @@ const config = {
 	buttonStyle: { backgroundColor: 'transparent', width: 0 },
 	buttonTextStyle: { color: 'transparent' }
 };
+let isLoading = false;
+let timeHandler = null;
 export const Toast = {
 	show(text) {
 		NativeBaseToast.show({
@@ -39,9 +41,19 @@ export const Toast = {
 		NativeBaseToast.hide();
 	},
 	showLoading() {
-		TinyToast.showLoading();
+		if (!isLoading) {
+			TinyToast.showLoading();
+		}
+		if (timeHandler) {
+			clearTimeout(timeHandler);
+		}
+		timeHandler = setTimeout(() => {
+			TinyToast.hide();
+		}, 90000);
+		isLoading = true;
 	},
 	hideLoading() {
+		isLoading = false;
 		TinyToast.hide();
 	}
 };

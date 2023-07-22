@@ -170,7 +170,7 @@ export const Bridge = {
 					case 'iota_changeAccount':
 						{
 							const { network = '' } = params;
-							const url = `tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&network=${network}`;
+							const url = `tanglepay://${method}?isKeepPopup=${isKeepPopup}&origin=${origin}&network=${network}&reqId=${reqId}`;
 							Linking.openURL(url);
 						}
 						break;
@@ -183,12 +183,19 @@ export const Bridge = {
 						break;
 					case 'iota_getPublicKey':
 						try {
-							const curWallet = await this.getCurWallet();
-							this.sendMessage('iota_getPublicKey', curWallet.publicKey);
+							const { address } = params || {};
+							const targetWallet = await this.getWallet(address);
+							if (!targetWallet) {
+								this.sendErrorMessage('iota_getPublicKey', {
+									msg: 'Wallet not found'
+								},reqId);
+							} else {
+								this.sendMessage('iota_getPublicKey', targetWallet.publicKey, reqId);
+							}
 						} catch (error) {
 							this.sendErrorMessage('iota_getPublicKey', {
 								msg: error.toString()
-							});
+							}, reqId);
 						}
 						break;
 					case 'eth_importContract':
@@ -205,22 +212,22 @@ export const Bridge = {
 									contract,
 									token,
 									decimal
-								});
+								}, reqId);
 							} else {
 								this.sendErrorMessage('eth_importContract', {
 									msg: 'contract is error'
-								});
+								}, reqId);
 							}
 						} catch (error) {
 							this.sendErrorMessage('eth_importContract', {
 								msg: error.toString()
-							});
+							}, reqId);
 						}
 						break;
 					case 'get_login_token':
 						{
 							const token = (await Base.getLocalData('token')) || '';
-							this.sendMessage('get_login_token', token);
+							this.sendMessage('get_login_token', token, reqId);
 						}
 						break;
 					case 'eth_getBlockByNumber':
@@ -246,9 +253,16 @@ export const Bridge = {
 		}
 	},
 	async getCurWallet() {
-		const list = await IotaSDK.getWalletList();
-		const curWallet = (list || []).find((e) => e.isSelected);
+		const curWallet = await this.getWallet();
 		return curWallet || {};
+	},
+	async getWallet(address) {
+		const list = await IotaSDK.getWalletList();
+		if (address) {
+			return (list || []).find((e) => e.address === address);
+		} else {
+			return (list || []).find((e) => e.isSelected);
+		}
 	},
 	async iota_sign(origin, expires, content, password, reqId) {
 		const curWallet = await this.getCurWallet();
@@ -259,7 +273,7 @@ export const Bridge = {
 		} else {
 			this.sendErrorMessage('iota_sign', {
 				msg: 'fail'
-			});
+			},reqId);
 		}
 	},
 	ensureWeb3Client() {
@@ -328,7 +342,7 @@ export const Bridge = {
 			Toast.hideLoading();
 			this.sendErrorMessage('eth_getBalance', {
 				msg: error.toString()
-			});
+			},reqId);
 		}
 	},
 	async iota_accounts(_, _1, reqId) {
@@ -370,7 +384,7 @@ export const Bridge = {
 			this.sendErrorMessage('iota_accounts', {
 				msg: error.toString(),
 				status: 3
-			});
+			},reqId);
 		}
 	},
 	async iota_getBalance(origin, { assetsList, addressList }, reqId) {

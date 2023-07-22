@@ -9,13 +9,19 @@ import { Toast } from './Toast';
 import { SvgIcon } from '@/common/assets';
 import Modal from 'react-native-modal';
 import { ThemeVar } from '../style/theme';
+import { useStore } from '@tangle-pay/store';
 
 export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) => {
+	const [polyganSupport] = useStore('common.polyganSupport');
 	const [curWallet] = useGetNodeWallet();
 	const nodeId = curWallet?.nodeId;
 	const curNode = IotaSDK.nodes.find((e) => e.id == nodeId) || {};
 	const isWeb3 = IotaSDK.checkWeb3Node(nodeId);
 	const web3Nodes = IotaSDK.nodes.filter((e) => IotaSDK.checkWeb3Node(e.id));
+	let nodeList = [...web3Nodes];
+	if (polyganSupport != 1) {
+		nodeList = web3Nodes.filter((e) => e.id != 8);
+	}
 	const [isOpenChange, setOpenChange] = useState(false);
 	const [isOpenMore, setOpenMore] = useState(false);
 	const changeNode = useChangeNode();
@@ -125,7 +131,7 @@ export const AssetsNav = ({ right, hasChangeNode, hasViewExplorer, hasScan }) =>
 							<View style={[SS.c, S.border(2), { height: 44, minWidth: 260 }]}>
 								<Text style={[SS.fz14]}>EVM {I18n.t('user.network')}</Text>
 							</View>
-							{web3Nodes.map((e) => {
+							{nodeList.map((e) => {
 								return (
 									<TouchableOpacity
 										key={e.id}
