@@ -1,4 +1,5 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
+source 'https://github.com/CocoaPods/Specs.git'
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
     "react-native/scripts/react_native_pods.rb",
@@ -65,7 +66,6 @@ target 'iota' do
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         if target.name == 'react-native-config' && config.name == 'Debug'
-          # 配置：ENVFILE，Release不用配置，因为该配置优先级会高于脚本中环境变量设置，build脚本输出test包会读取配置.env
           config.build_settings['ENVFILE'] = ENVFILES[config.name]
         end
       end

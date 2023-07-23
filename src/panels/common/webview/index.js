@@ -30,19 +30,22 @@ export const CommonWebview = () => {
 		}
 		Bridge.injectJavaScript = (e) => webview.current.injectJavaScript(e);
 	}, []);
-	useEffect(async () => {
-		if (curWallet.address) {
-			const obj = {
-				address: curWallet.address,
-				nodeId: curWallet.nodeId
-			};
-			if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
-				try {
-					obj.chainId = await IotaSDK.client.eth.getChainId();
-				} catch (error) {}
+	useEffect( () => {
+		const asyncFunc = async ()=>{
+			if (curWallet.address) {
+				const obj = {
+					address: curWallet.address,
+					nodeId: curWallet.nodeId
+				};
+				if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+					try {
+						obj.chainId = await IotaSDK.client.eth.getChainId();
+					} catch (error) {}
+				}
+				Bridge.accountsChanged(obj);
 			}
-			Bridge.accountsChanged(obj);
 		}
+		asyncFunc();
 	}, [curWallet.address + curWallet.nodeId]);
 	return (
 		<>

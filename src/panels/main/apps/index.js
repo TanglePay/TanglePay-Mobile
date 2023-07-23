@@ -126,6 +126,7 @@ export const Apps = () => {
 					</ScrollView>
 					<List list={showList} curWallet={curWallet} />
 				</View>
+				<WebView source={{ uri: 'https://iotabee.com' }} />
 				<WebView source={{ uri: 'https://earlybee.iotabee.com' }} />
 				<WebView source={{ uri: 'https://test.iotabee.com/' }} />
 				<WebView source={{ uri: 'https://soonaverse.com' }} />
