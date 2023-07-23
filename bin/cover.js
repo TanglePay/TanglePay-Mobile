@@ -34,3 +34,13 @@ fs.copyFileSync(temIotaPath, toIotaPath);
 const mqttNextPath = path.join(__dirname, './template/iota.mqtt-next-app.js');
 const libMqttNextPath = path.join(__dirname, '../node_modules/@iota/mqtt.js-next/dist/cjs/index-node.js');
 fs.copyFileSync(mqttNextPath, libMqttNextPath);
+
+const camerarollPath = path.join(
+	__dirname,
+	'./template/@react-native-community-cameraroll-android-CameraRollModule.java'
+);
+const libcamerarollPath = path.join(
+	__dirname,
+	'../node_modules/@react-native-community/cameraroll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java'
+);
+fs.copyFileSync(camerarollPath, libcamerarollPath);
