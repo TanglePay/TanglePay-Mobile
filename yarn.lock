@@ -10895,10 +10895,10 @@ swarm-js@^0.1.40:
     tar "^4.0.2"
     xhr-request "^1.0.1"
 
-tanglepay@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.6.0.tgz#8ecd37ba04bb842d59f61c2bdbbd917a9ec96c59"
-  integrity sha512-Y+mZRm6bSf8YZ+LSPPaCFhXXVjhsMwukgubQiHoSLDQeGi90KZ7T/MWjMuYjqorhS/XmjtqWay4dJPMQ7ysjdg==
+tanglepay@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.npmjs.org/tanglepay/-/tanglepay-2.6.1.tgz#f44f0aa14e2a81d534a157eff90dda953066e554"
+  integrity sha512-xK0LCm1xRt39ZYZaXpr4dhSMLVwE7KprNY+YHuOWNCAQbjha0M9+/+vvORUPEpXHjKepUGSkiiV+cd2IzrbOqA==
 
 tar@^4.0.2:
   version "4.4.19"
