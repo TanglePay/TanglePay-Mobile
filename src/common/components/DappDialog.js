@@ -558,13 +558,12 @@ export const DappDialog = () => {
 									showUnit = 'MIOTA';
 								}
 							}
-
 							let str = I18n.t(abiFunc === 'approve' ? 'apps.approve' : 'apps.send');
 							if (abiFunc && abiFunc !== 'approve' && abiFunc !== 'transfer') {
 								str = I18n.t('apps.contractFunc')
 									.replace('#abiFunc#', abiFunc)
-									.replace('#abiParams#', abiParams.join(','));
 							}
+
 							let fromStr = I18n.t('apps.sendFrom');
 							let forStr = I18n.t('apps.sendFor');
 							str = str.replace('#merchant#', merchant ? fromStr + merchant : '');
@@ -581,6 +580,9 @@ export const DappDialog = () => {
 								showValueStr = showValue;
 							}
 							texts = [
+								{
+									text: `${origin}\n`
+								},
 								{
 									text: texts[0]
 								},
