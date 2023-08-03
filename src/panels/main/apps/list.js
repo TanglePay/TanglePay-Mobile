@@ -15,7 +15,7 @@ const Item = ({ id, icon, desc, developer, url, curAddress }) => {
 					Clipboard.setString(curAddress);
 					Toast.success(I18n.t('discover.addressCopy'));
 				}
-				Base.push(url, { title: id });
+				Base.push(url, { title: id, icon });
 			}}
 			style={[SS.ac, SS.row, SS.mb8]}>
 			<View style={[SS.mr8]}>

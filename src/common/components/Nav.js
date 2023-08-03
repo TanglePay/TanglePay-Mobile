@@ -77,7 +77,7 @@ export const Nav = ({
 			androidStatusBarColor={androidStatusBarColor || ThemeVar.statusBarColor}
 			style={{ ...S.border(2), ...headerStyle }}>
 			{left}
-			<Body style={{ flex: 4, ...bodyStyle }}>
+			<Body style={{ flex: 2.5, ...bodyStyle }}>
 				<Text numberOfLines={1} style={{ ...S.font(18), ...titleStyle }}>
 					{title}
 				</Text>

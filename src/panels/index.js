@@ -226,9 +226,9 @@ export const panelsList = [
 		component: AccountInto
 	},
 	{
-        path: 'account/intopin',
-        component: AccountIntoPin
-    },
+		path: 'account/intopin',
+		component: AccountIntoPin
+  },
 	{
 		path: 'account/register',
 		component: AccountRegister

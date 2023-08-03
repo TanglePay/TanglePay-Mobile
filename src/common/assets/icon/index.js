@@ -38,6 +38,7 @@ import Outto from './Outto';
 import Pin from './Pin';
 import Privacy from './Privacy';
 import Radio from './Radio';
+import Refresh from './Refresh';
 import Remove from './Remove';
 import Right from './Right';
 import Scan from './Scan';
@@ -50,6 +51,7 @@ import Stake from './Stake';
 import Staking from './Staking';
 import Tick from './Tick';
 import Time from './Time';
+import Tool from './Tool';
 import TradingTime from './TradingTime';
 import Up from './Up';
 import View from './View';
@@ -90,6 +92,7 @@ export { default as Outto } from './Outto';
 export { default as Pin } from './Pin';
 export { default as Privacy } from './Privacy';
 export { default as Radio } from './Radio';
+export { default as Refresh } from './Refresh';
 export { default as Remove } from './Remove';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
@@ -102,6 +105,7 @@ export { default as Stake } from './Stake';
 export { default as Staking } from './Staking';
 export { default as Tick } from './Tick';
 export { default as Time } from './Time';
+export { default as Tool } from './Tool';
 export { default as TradingTime } from './TradingTime';
 export { default as Up } from './Up';
 export { default as View } from './View';
@@ -181,38 +185,42 @@ let IconFont = ({ name, ...rest }) => {
       return <Privacy key="L35" {...rest} />;
     case 'radio':
       return <Radio key="L36" {...rest} />;
+    case 'refresh':
+      return <Refresh key="L37" {...rest} />;
     case 'remove':
-      return <Remove key="L37" {...rest} />;
+      return <Remove key="L38" {...rest} />;
     case 'right':
-      return <Right key="L38" {...rest} />;
+      return <Right key="L39" {...rest} />;
     case 'scan':
-      return <Scan key="L39" {...rest} />;
+      return <Scan key="L40" {...rest} />;
     case 'search':
-      return <Search key="L40" {...rest} />;
+      return <Search key="L41" {...rest} />;
     case 'select':
-      return <Select key="L41" {...rest} />;
+      return <Select key="L42" {...rest} />;
     case 'send':
-      return <Send key="L42" {...rest} />;
+      return <Send key="L43" {...rest} />;
     case 'set':
-      return <Set key="L43" {...rest} />;
+      return <Set key="L44" {...rest} />;
     case 'share':
-      return <Share key="L44" {...rest} />;
+      return <Share key="L45" {...rest} />;
     case 'stake':
-      return <Stake key="L45" {...rest} />;
+      return <Stake key="L46" {...rest} />;
     case 'staking':
-      return <Staking key="L46" {...rest} />;
+      return <Staking key="L47" {...rest} />;
     case 'tick':
-      return <Tick key="L47" {...rest} />;
+      return <Tick key="L48" {...rest} />;
     case 'time':
-      return <Time key="L48" {...rest} />;
+      return <Time key="L49" {...rest} />;
+    case 'tool':
+      return <Tool key="L50" {...rest} />;
     case 'tradingTime':
-      return <TradingTime key="L49" {...rest} />;
+      return <TradingTime key="L51" {...rest} />;
     case 'up':
-      return <Up key="L50" {...rest} />;
+      return <Up key="L52" {...rest} />;
     case 'view':
-      return <View key="L51" {...rest} />;
+      return <View key="L53" {...rest} />;
     case 'wallet':
-      return <Wallet key="L52" {...rest} />;
+      return <Wallet key="L54" {...rest} />;
   }
 
   return null;

@@ -41,6 +41,7 @@ export { default as Outto } from './Outto';
 export { default as Pin } from './Pin';
 export { default as Privacy } from './Privacy';
 export { default as Radio } from './Radio';
+export { default as Refresh } from './Refresh';
 export { default as Remove } from './Remove';
 export { default as Right } from './Right';
 export { default as Scan } from './Scan';
@@ -53,13 +54,14 @@ export { default as Stake } from './Stake';
 export { default as Staking } from './Staking';
 export { default as Tick } from './Tick';
 export { default as Time } from './Time';
+export { default as Tool } from './Tool';
 export { default as TradingTime } from './TradingTime';
 export { default as Up } from './Up';
 export { default as View } from './View';
 export { default as Wallet } from './Wallet';
 
 interface Props extends GProps, ViewProps {
-  name: 'about' | 'add_circle' | 'add' | 'advanced' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'fingerprint' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'minus_circle' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'pin' | 'privacy' | 'radio' | 'remove' | 'right' | 'scan' | 'search' | 'select' | 'send' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'tradingTime' | 'up' | 'view' | 'wallet';
+  name: 'about' | 'add_circle' | 'add' | 'advanced' | 'apps' | 'assets' | 'buy' | 'cache' | 'checkbox_0' | 'checkbox_1' | 'close' | 'copy' | 'down' | 'edit' | 'encrypt' | 'excel' | 'eye_0' | 'eye_1' | 'file' | 'fingerprint' | 'help' | 'history' | 'into' | 'lang' | 'left' | 'loading' | 'me' | 'minus_circle' | 'more' | 'network' | 'no_screenshot' | 'noData' | 'outto' | 'pin' | 'privacy' | 'radio' | 'refresh' | 'remove' | 'right' | 'scan' | 'search' | 'select' | 'send' | 'set' | 'share' | 'stake' | 'staking' | 'tick' | 'time' | 'tool' | 'tradingTime' | 'up' | 'view' | 'wallet';
   size?: number;
   color?: string | string[];
 }
