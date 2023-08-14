@@ -147,7 +147,7 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	componentDidMount() {
 		styles = createStyles(this.state.screenDimensions);
-		Dimensions.addEventListener('change', this.onChangeDimension);
+		this.changeDimensions =  Dimensions.addEventListener('change', this.onChangeDimension);
 	}
 
 	componentDidUpdate() {
@@ -183,7 +183,10 @@ export default class ImageView extends Component<PropsType, StateType> {
 	}
 
 	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.onChangeDimension);
+		// Dimensions.removeEventListener('change', this.onChangeDimension);
+		if(this.changeDimensions){
+			this.changeDimensions.remove()
+		}
 
 		if (this.glideAlwaysTimer) {
 			clearTimeout(this.glideAlwaysTimer);
