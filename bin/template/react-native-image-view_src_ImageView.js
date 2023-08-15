@@ -207,10 +207,12 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	onNextImagesReceived(images: Array<ImageType>, imageIndex: number = 0) {
 		this.imageInitialParams = images.map((image) => getInitialParams(image, this.state.screenDimensions));
+		console.log(this.imageInitialParams,imageIndex);
 		const { scale, translate } = this.imageInitialParams[imageIndex] || {
 			scale: 1,
-			translate: {}
+			translate: {x:0,y:0}
 		};
+		console.log( scale, translate,'=====');
 
 		this.setState({
 			images,
@@ -480,8 +482,7 @@ export default class ImageView extends Component<PropsType, StateType> {
 	getInitialTranslate(index?: number): TranslateType {
 		const imageIndex = index !== undefined ? index : this.state.imageIndex;
 		const imageParams = this.imageInitialParams[imageIndex];
-
-		return imageParams ? imageParams.translate : { x: 0, y: 0 };
+		return imageParams && imageParams.translate ? imageParams.translate : { x: 0, y: 0 };
 	}
 
 	getImageStyle(
