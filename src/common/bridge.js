@@ -198,6 +198,56 @@ export const Bridge = {
 							}, reqId);
 						}
 						break;
+					case 'eth_importNFT':
+						debugger;
+						if(!IotaSDK.isWeb3Node) {
+							this.sendErrorMessage('eth_importNFT', {
+								msg: 'Node is error.'
+							}, reqId);
+						}
+						try {
+							this.ensureWeb3Client()
+							const { nft, tokenId } = params
+							const address = curWallet.address
+							const importedNFTKey = `${address}.nft.importedList`
+							const importedNFTInStorage = (await Base.getLocalData(importedNFTKey)) ?? {}
+
+							if(importedNFTInStorage?.[nft] && importedNFTInStorage[nft].find(nft => nft.tokenId === tokenId))  {
+                throw new Error('This NFT has already been imported.')
+            	}
+
+							const nftContract = IotaSDK.getNFTContract(nft)
+							const owner = await nftContract.methods.ownerOf(tokenId).call()
+							if(owner.toLocaleLowerCase() !== address.toLocaleLowerCase()) {
+                throw new Error('This NFT is not owned by the user')
+            	}
+
+							const tokenURI = await nftContract.methods.tokenURI(tokenId).call()
+							const name = await nftContract.methods.name().call()
+							const tokenURIRes = await fetch(tokenURI).then(res => res.json())
+							const importedNFTInfo = {
+									tokenId,
+									name,
+									image: tokenURIRes.image,
+									description: tokenURIRes.description
+							}
+							importedNFTInStorage[nft] = [
+                ...(importedNFTInStorage[nft] ?? []),
+                importedNFTInfo
+            	]
+
+							Base.setLocalData(importedNFTKey, importedNFTInStorage)
+
+							this.sendErrorMessage('eth_importNFT', {
+								nft,
+								tokenId
+							}, reqId);
+						}catch(error) {
+							this.sendErrorMessage('eth_importNFT', {
+								msg: error.toString()
+							}, reqId);
+						}
+						break;
 					case 'eth_importContract':
 						try {
 							const contract = params?.contract;
