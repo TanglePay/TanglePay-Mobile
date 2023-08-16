@@ -522,6 +522,7 @@ export const CollectiblesList = ({ setHeight }) => {
 		requestCameraPermission();
 	}, []);
 	const [list] = useStore('nft.list');
+	const [importedNFT] = useStore('nft.importedList')
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return <CollectiblesItem isLedger={curWallet.type == 'ledger'} key={e.space} {...e} />;
@@ -533,6 +534,21 @@ export const CollectiblesList = ({ setHeight }) => {
 				setHeight(e.nativeEvent.layout.height);
 			}}>
 			{ListEl}
+			{importedNFT && Object.keys(importedNFT).map((key,index) => {
+					const list = importedNFT[key] ?? []
+					if(list.length === 0) {
+							return null
+					} 
+					const firstNFT = list[0]
+					return <CollectiblesItem
+											isLedger={curWallet.type === 'ledger'}
+											logo={firstNFT.image}
+											name={firstNFT.name}
+											link={''}
+											key={index}
+											list={list.map(item => ({...item, thumbnailImage: item.image}))}
+									/>
+			})}
 			{!isRequestNft && (
 				<View style={[SS.c, SS.row]}>
 					<Spinner size='small' color='gray' />
