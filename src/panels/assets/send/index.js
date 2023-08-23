@@ -7,6 +7,7 @@ import { useStore } from '@tangle-pay/store';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet, useGetAssetsList } from '@tangle-pay/store/common';
 import { Nav, S, SS, SvgIcon, Toast, ConfirmDialog, ThemeVar } from '@/common';
+import { SendConfirmDialog } from '@/common/components/SendConfirmDialog';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import BigNumber from 'bignumber.js';
 import { useGetParticipationEvents } from '@tangle-pay/store/staking';
@@ -42,6 +43,8 @@ export const AssetsSend = () => {
 	const alert = useRef();
 	const gasDialog = useRef();
 	const bleDevices = useRef();
+	const confirmDialog =useRef();
+	const [waitPs,setWaitPs] = useState()
 	let currency = params?.currency;
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
@@ -166,6 +169,19 @@ export const AssetsSend = () => {
 								}
 							}
 						}
+						if (!isWalletPassowrdEnabled) {
+                            const wait = new Promise((resolve, reject) => {
+                                setWaitPs({ resolve, reject })
+                            })
+                            confirmDialog.current.show(receiver)
+                            console.log(waitPs)
+                            try {
+                                await wait
+                            } catch (error) {
+                                return
+                                // return Toast.error(I18n.t('assets.cancelSend'))
+                            }
+                        }
 						amount = parseFloat(amount) || 0;
 						let decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
@@ -186,6 +202,7 @@ export const AssetsSend = () => {
 							}
 						}
 						const tokenId = assets?.tokenId;
+						console.log('----------');
 						Toast.showLoading();
 						try {
 							let mainBalance = 0;
@@ -403,6 +420,7 @@ export const AssetsSend = () => {
 			<ConfirmDialog dialogRef={alert} />
 			<GasDialog dialogRef={gasDialog} />
 			<BleDevices dialogRef={bleDevices} />
+			<SendConfirmDialog dialogRef={confirmDialog} promise={waitPs}/>
 		</Container>
 	);
 };
