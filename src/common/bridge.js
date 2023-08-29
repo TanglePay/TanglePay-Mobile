@@ -3,7 +3,34 @@ import { Linking } from 'react-native';
 import { Base, IotaSDK, API_URL, Trace } from '@tangle-pay/common';
 import BigNumber from 'bignumber.js';
 import { ethGetBlockByNumber, ethGasPrice, setWeb3Client } from './EthereumWeb3Impl';
+
+const DATA_PER_REQUEST_PREFIX = 'data.per.request.prefix.'
+const dataPerRequestHelper = {
+	hasDataOnRequestMap: {},
+	getDataPerRequestKey(reqId) {
+    return DATA_PER_REQUEST_PREFIX + reqId
+	},
+	storeDataPerRequest(reqId, data){
+		if(!data) {
+				return
+		}
+		Base.setLocalData(this.getDataPerRequestKey(reqId), data)
+		this.hasDataOnRequestMap[reqId] = true
+	},
+	removeDataPerRequest(reqId){
+		Base.removeLocalData(this.getDataPerRequestKey(reqId))
+		delete this.hasDataOnRequestMap[reqId]
+	},
+	clearDataOnRequest() {
+		const reqIds = Object.keys(this.hasDataOnRequestMap)
+		reqIds.forEach((reqId) => {
+			this.removeDataPerRequest(reqId)
+		})
+	}
+}
+
 export const Bridge = {
+	dataPerRequestHelper,
 	injectedJavaScript: `
         (function(){
 			window.TanglePayEnv = 'app';
@@ -137,6 +164,11 @@ export const Bridge = {
 								gas = ''
 							} = params;
 							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}&reqId=${reqId}`;
+							const { metadata } = params
+							const dataPerRequest = {
+								metadata: metadata || null
+							}
+							this.dataPerRequestHelper.storeDataPerRequest(reqId, dataPerRequest)
 							Linking.openURL(url);
 						}
 						break;

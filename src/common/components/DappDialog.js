@@ -68,6 +68,7 @@ export const DappDialog = () => {
 		}
 	};
 	const hide = () => {
+		Bridge.dataPerRequestHelper.clearDataOnRequest()
 		setShow(false);
 		setLoading(false);
 	};
@@ -99,7 +100,8 @@ export const DappDialog = () => {
 		foundryData,
 		tag,
 		nftId,
-		reqId
+		reqId,
+		dataPerRequest
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey', 'eth_importContract'];
 		if (!noPassword.includes(type)) {
@@ -181,6 +183,7 @@ export const DappDialog = () => {
 							mainBalance,
 							awaitStake: true,
 							tag,
+							metadata: dataPerRequest?.metadata,
 							nftId,
 							gas: gasInfo.gasLimit,
 							gasPrice: gasInfo.gasPriceWei
@@ -594,6 +597,8 @@ export const DappDialog = () => {
 									text: texts[1]
 								}
 							];
+							const dataPerRequest = await Base.getLocalData(Bridge.dataPerRequestHelper.getDataPerRequestKey(reqId))
+							
 							setDappData({
 								texts,
 								return_url,
@@ -609,7 +614,8 @@ export const DappDialog = () => {
 								abiParams,
 								gas,
 								reqId,
-								origin
+								origin,
+								dataPerRequest
 							});
 							show();
 						}
