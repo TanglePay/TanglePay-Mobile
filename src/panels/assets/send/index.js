@@ -43,8 +43,8 @@ export const AssetsSend = () => {
 	const alert = useRef();
 	const gasDialog = useRef();
 	const bleDevices = useRef();
-	const confirmDialog =useRef();
-	const [waitPs,setWaitPs] = useState()
+	const confirmDialog = useRef();
+	const [waitPs, setWaitPs] = useState();
 	let currency = params?.currency;
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
@@ -170,18 +170,18 @@ export const AssetsSend = () => {
 							}
 						}
 						if (!isWalletPassowrdEnabled) {
-                            const wait = new Promise((resolve, reject) => {
-                                setWaitPs({ resolve, reject })
-                            })
-                            confirmDialog.current.show(receiver)
-                            console.log(waitPs)
-                            try {
-                                await wait
-                            } catch (error) {
-                                return
-                                // return Toast.error(I18n.t('assets.cancelSend'))
-                            }
-                        }
+							const wait = new Promise((resolve, reject) => {
+								setWaitPs({ resolve, reject });
+							});
+							confirmDialog.current.show(receiver);
+							console.log(waitPs);
+							try {
+								await wait;
+							} catch (error) {
+								return;
+								// return Toast.error(I18n.t('assets.cancelSend'))
+							}
+						}
 						amount = parseFloat(amount) || 0;
 						let decimal = Math.pow(10, assets.decimal);
 						let sendAmount = Number(BigNumber(amount).times(decimal));
@@ -252,7 +252,14 @@ export const AssetsSend = () => {
 						} catch (error) {
 							console.log(error);
 							Toast.hideLoading();
-							Toast.error(error.toString());
+							if (/Failed to fetch/i.test(error.toString())) {
+								setTimeout(() => {
+									IotaSDK.refreshAssets();
+								}, 10000);
+								IotaSDK.refreshAssets();
+							} else {
+								Toast.error(error.toString());
+							}
 							// Toast.error(
 							// 	`${error.toString()}---input:${
 							// 		values.amount
@@ -420,7 +427,7 @@ export const AssetsSend = () => {
 			<ConfirmDialog dialogRef={alert} />
 			<GasDialog dialogRef={gasDialog} />
 			<BleDevices dialogRef={bleDevices} />
-			<SendConfirmDialog dialogRef={confirmDialog} promise={waitPs}/>
+			<SendConfirmDialog dialogRef={confirmDialog} promise={waitPs} />
 		</Container>
 	);
 };
