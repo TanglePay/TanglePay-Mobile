@@ -40,7 +40,7 @@ export const NftDetail = () => {
 				<View style={[SS.c, { marginTop: 35, marginBottom: 32 }]}>
 					{
 						checkImgIsSVG(imageUri) ? 
-						<SVGViewer src={imageUri} style={[S.wh(160), S.radius(36), SS.bgS]}/> : 
+						<SVGViewer src={imageUri} width={160} height={160} style={[S.wh(160), S.radius(36), SS.bgS]}/> : 
 						<Image
 							style={[S.wh(160), S.radius(36), SS.bgS]}
 							resizeMode='contain'

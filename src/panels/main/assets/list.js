@@ -375,10 +375,11 @@ const ViewFooter = (data) => {
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
 export const checkImgIsSVG = (img) => img && img.startsWith('data:image/svg+xml')
 // NFT SVG is not well supported by react-native-svg, so use WebView as an alternative
-export const SVGViewer = ({style, src}) => <View style={[...style, S.flex, S.row, S.c]}>
+export const SVGViewer = ({style, width, height, src}) => <View style={[...style, S.flex, S.row, S.c]}>
 	<WebView 
 		originWhitelist={['*']} 
-		source={{html: `<img id="image" src="${src}" />`}}
+		onMessage={(event) => {}}
+		source={{html: `<html><head><meta name="viewport" content='width=${width},height=${height}'></head><body><div id="container"><img src="${src}" /></div></body></html>`}}
 	/>
 </View>
 
@@ -486,7 +487,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 										}}>
 										{ 
 											checkImgIsSVG(e.media) ? 
-											<SVGViewer src={e.media} style={[
+											<SVGViewer src={e.media} width={imgW} style={[
 													S.radius(8),
 													S.wh(imgW),
 													S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
@@ -579,10 +580,12 @@ export const CollectiblesList = ({ setHeight }) => {
 						return null;
 					}
 					const firstNFT = list[0];
+
+					list[1] = firstNFT
 					return (
 						<CollectiblesItem
 							isLedger={curWallet.type === 'ledger'}
-							logo={logo || name || firstNFT.name}
+							logo={logo || name || firstNFT.name || 'NFT'}
 							name={name ?? firstNFT.name}
 							link={''}
 							key={index}
