@@ -587,10 +587,10 @@ export const DappDialog = () => {
 								{
 									text: texts[0]
 								},
-								{
+								...(abiFunc && abiFunc !== 'approve' ? [] : [{
 									text: showValueStr,
 									isBold: true
-								},
+								}]),
 								{
 									text: texts[1]
 								}

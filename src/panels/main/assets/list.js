@@ -10,6 +10,7 @@ import _get from 'lodash/get';
 import ImageView from 'react-native-image-view';
 import { CachedImage, ImageCache } from 'react-native-img-cache';
 import CameraRoll from '@react-native-community/cameraroll';
+import WebView from 'react-native-webview';
 
 const itemH = 64;
 export const CoinList = ({ setHeight }) => {
@@ -372,9 +373,19 @@ const ViewFooter = (data) => {
 };
 
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
+export const checkImgIsSVG = (img) => img && img.startsWith('data:image/svg+xml')
+// NFT SVG is not well supported by react-native-svg, so use WebView as an alternative
+export const SVGViewer = ({style, src}) => <View style={[...style, S.flex, S.row, S.c]}>
+	<WebView 
+		originWhitelist={['*']} 
+		source={{html: `<img id="image" src="${src}" />`}}
+	/>
+</View>
+
 const CollectiblesItem = ({ logo, name, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
 	const [imgIndex, setImgIndex] = useState(0);
+	const [hideIcon, setHideIcon] = useState(false)
 	const [isShowPre, setIsShowPre] = useState(false);
 	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
 	const images = list.map((e) => {
@@ -395,8 +406,21 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 				}}
 				activeOpacity={0.7}
 				style={[SS.row, SS.ac, S.h(64)]}>
-				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />
-				<CachedImage style={[S.wh(32), S.radius(4), SS.mr10, SS.ml15]} source={{ uri: Base.getIcon(logo) }} />
+				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />			
+				{!hideIcon ? <CachedImage 
+					style={[S.wh(32), 
+						S.radius(4), 
+						SS.mr10, 
+						SS.ml15]} 
+					source={{ uri: Base.getIcon(logo) }} 
+					onError={() => {
+						setHideIcon(true)
+					}}
+				/> :
+				<View style={[S.wh(32), S.radius(32), SS.mr10, 
+					SS.ml15, S.border(4), SS.bgP, SS.c]}>
+					<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(logo).toLocaleUpperCase()[0]}</Text>
+				</View>}
 				<Text>{name}</Text>
 				<View style={[SS.bgS, SS.ml10, SS.ph5, S.paddingV(3), S.radius(4)]}>
 					<Text style={[SS.fz12]}>{list.length}</Text>
@@ -460,17 +484,27 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 												...e
 											});
 										}}>
-										<CachedImage
-											style={[
-												S.radius(8),
-												S.wh(imgW),
-												S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
-												S.marginB(15),
-												SS.bgS
-											]}
-											resizeMode='contain'
-											source={{ uri: e.thumbnailImage || e.media }}
-										/>
+										{ 
+											checkImgIsSVG(e.media) ? 
+											<SVGViewer src={e.media} style={[
+													S.radius(8),
+													S.wh(imgW),
+													S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+													S.marginB(15),
+													SS.bgS
+											]} />
+											: <CachedImage
+												style={[
+													S.radius(8),
+													S.wh(imgW),
+													S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
+													S.marginB(15),
+													SS.bgS
+												]}
+												resizeMode='contain'
+												source={{ uri: e.thumbnailImage || e.media }}
+											/>
+										}
 									</TouchableOpacity>
 								</View>
 							);
@@ -508,6 +542,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 export const CollectiblesList = ({ setHeight }) => {
 	const [isRequestNft] = useStore('nft.isRequestNft');
 	const [curWallet] = useGetNodeWallet();
+
 	useEffect(() => {
 		const requestCameraPermission = async () => {
 			if (ThemeVar.platform === 'android') {
@@ -523,7 +558,7 @@ export const CollectiblesList = ({ setHeight }) => {
 	}, []);
 	const [list] = useStore('nft.list');
 	let [importedNFT] = useStore('nft.importedList');
-	importedNFT = importedNFT || [];
+
 	const ListEl = useMemo(() => {
 		return list.map((e) => {
 			return <CollectiblesItem isLedger={curWallet.type == 'ledger'} key={e.space} {...e} />;
@@ -537,7 +572,9 @@ export const CollectiblesList = ({ setHeight }) => {
 			{ListEl}
 			{importedNFT &&
 				Object.keys(importedNFT).map((key, index) => {
-					const list = importedNFT[key] ?? [];
+					const nft = importedNFT[key] ?? {}
+					const { logo, name, list = []} = nft
+					
 					if (list.length === 0) {
 						return null;
 					}
@@ -545,11 +582,11 @@ export const CollectiblesList = ({ setHeight }) => {
 					return (
 						<CollectiblesItem
 							isLedger={curWallet.type === 'ledger'}
-							logo={firstNFT.image}
-							name={firstNFT.name}
+							logo={logo || name || firstNFT.name}
+							name={name ?? firstNFT.name}
 							link={''}
 							key={index}
-							list={list.map((item) => ({ ...item, thumbnailImage: item.image }))}
+							list={list.map((item) => ({ ...item, media: item.image }))}
 						/>
 					);
 				})}
