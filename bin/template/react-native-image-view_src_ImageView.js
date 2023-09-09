@@ -668,6 +668,7 @@ export default class ImageView extends Component<PropsType, StateType> {
 				{renderItem ? (
 					renderItem()
 				) : (
+					<>
 					<CustomCachedImage
 						component={Animated.Image}
 						resizeMode='contain'
@@ -675,8 +676,9 @@ export default class ImageView extends Component<PropsType, StateType> {
 						style={this.getImageStyle(image, index)}
 						onLoad={(): void => this.onImageLoaded(index)}
 						{...this.panResponder.panHandlers}></CustomCachedImage>
+						{!loaded && <ActivityIndicator style={styles.loading} />}
+					</>
 				)}
-				{!loaded && <ActivityIndicator style={styles.loading} />}
 			</View>
 		);
 	};
