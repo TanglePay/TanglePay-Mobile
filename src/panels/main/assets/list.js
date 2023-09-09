@@ -373,20 +373,24 @@ const ViewFooter = (data) => {
 };
 
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
-export const checkImgIsSVG = (img) => img && img.startsWith('data:image/svg+xml')
+export const checkImgIsSVG = (img) => img && img.startsWith('data:image/svg+xml');
 // NFT SVG is not well supported by react-native-svg, so use WebView as an alternative
-export const SVGViewer = ({style, width, height, src}) => <View style={[...style, S.flex, S.row, S.c]}>
-	<WebView 
-		originWhitelist={['*']} 
-		onMessage={(event) => {}}
-		source={{html: `<html><head><meta name="viewport" content='width=${width},height=${height}'></head><body><div id="container"><img src="${src}" /></div></body></html>`}}
-	/>
-</View>
+export const SVGViewer = ({ style, width, height, src }) => (
+	<View style={[...style, S.flex, S.row, S.c]}>
+		<WebView
+			originWhitelist={['*']}
+			onMessage={(event) => {}}
+			source={{
+				html: `<html><head><meta name="viewport" content='width=${width},height=${height}'></head><body><div id="container"><img src="${src}" /></div></body></html>`
+			}}
+		/>
+	</View>
+);
 
 const CollectiblesItem = ({ logo, name, link, list }) => {
 	const [isOpen, setOpen] = useState(false);
 	const [imgIndex, setImgIndex] = useState(0);
-	const [hideIcon, setHideIcon] = useState(false)
+	const [hideIcon, setHideIcon] = useState(false);
 	const [isShowPre, setIsShowPre] = useState(false);
 	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
 	const images = list.map((e) => {
@@ -396,7 +400,18 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 				uri: e.imageType === 'mp4' ? e.thumbnailImage : e.media
 			},
 			width: ThemeVar.deviceWidth,
-			height: ThemeVar.deviceHeight
+			height: ThemeVar.deviceHeight,
+			renderItem: checkImgIsSVG(e.media)
+				? () => {
+						return (
+							<SVGViewer
+								src={e.media}
+								width={ThemeVar.deviceWidth}
+								style={[S.wh(ThemeVar.deviceWidth)]}
+							/>
+						);
+				  }
+				: null
 		};
 	});
 	return (
@@ -407,21 +422,20 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 				}}
 				activeOpacity={0.7}
 				style={[SS.row, SS.ac, S.h(64)]}>
-				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />			
-				{!hideIcon ? <CachedImage 
-					style={[S.wh(32), 
-						S.radius(4), 
-						SS.mr10, 
-						SS.ml15]} 
-					source={{ uri: Base.getIcon(logo) }} 
-					onError={() => {
-						setHideIcon(true)
-					}}
-				/> :
-				<View style={[S.wh(32), S.radius(32), SS.mr10, 
-					SS.ml15, S.border(4), SS.bgP, SS.c]}>
-					<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(logo).toLocaleUpperCase()[0]}</Text>
-				</View>}
+				<SvgIcon size={14} name='up' style={[!isOpen && { transform: [{ rotate: '180deg' }] }]} />
+				{!hideIcon ? (
+					<CachedImage
+						style={[S.wh(32), S.radius(4), SS.mr10, SS.ml15]}
+						source={{ uri: Base.getIcon(logo) }}
+						onError={() => {
+							setHideIcon(true);
+						}}
+					/>
+				) : (
+					<View style={[S.wh(32), S.radius(32), SS.mr10, SS.ml15, S.border(4), SS.bgP, SS.c]}>
+						<Text style={[SS.fz26, SS.cW, SS.fw600]}>{String(logo).toLocaleUpperCase()[0]}</Text>
+					</View>
+				)}
 				<Text>{name}</Text>
 				<View style={[SS.bgS, SS.ml10, SS.ph5, S.paddingV(3), S.radius(4)]}>
 					<Text style={[SS.fz12]}>{list.length}</Text>
@@ -485,16 +499,20 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 												...e
 											});
 										}}>
-										{ 
-											checkImgIsSVG(e.media) ? 
-											<SVGViewer src={e.media} width={imgW} style={[
+										{checkImgIsSVG(e.media) ? (
+											<SVGViewer
+												src={e.media}
+												width={imgW}
+												style={[
 													S.radius(8),
 													S.wh(imgW),
 													S.marginH(parseInt(i % 3) == 1 ? 16 : 0),
 													S.marginB(15),
 													SS.bgS
-											]} />
-											: <CachedImage
+												]}
+											/>
+										) : (
+											<CachedImage
 												style={[
 													S.radius(8),
 													S.wh(imgW),
@@ -505,7 +523,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 												resizeMode='contain'
 												source={{ uri: e.thumbnailImage || e.media }}
 											/>
-										}
+										)}
 									</TouchableOpacity>
 								</View>
 							);
@@ -573,15 +591,15 @@ export const CollectiblesList = ({ setHeight }) => {
 			{ListEl}
 			{importedNFT &&
 				Object.keys(importedNFT).map((key, index) => {
-					const nft = importedNFT[key] ?? {}
-					const { logo, name, list = []} = nft
-					
+					const nft = importedNFT[key] ?? {};
+					const { logo, name, list = [] } = nft;
+
 					if (list.length === 0) {
 						return null;
 					}
 					const firstNFT = list[0];
 
-					list[1] = firstNFT
+					list[1] = firstNFT;
 					return (
 						<CollectiblesItem
 							isLedger={curWallet.type === 'ledger'}
