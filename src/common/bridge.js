@@ -231,7 +231,6 @@ export const Bridge = {
 						}
 						break;
 					case 'eth_importNFT':
-						debugger;
 						if(!IotaSDK.isWeb3Node) {
 							this.sendErrorMessage('eth_importNFT', {
 								msg: 'Node is error.'
@@ -239,21 +238,24 @@ export const Bridge = {
 						}
 						try {
 							this.ensureWeb3Client()
-							const { nft, tokenId } = params
+							let { nft, tokenId } = params
+							// Lowercase nft
+							nft = nft.toLocaleLowerCase()
 							const address = curWallet.address
 							const importedNFTKey = `${address}.nft.importedList`
 							const importedNFTInStorage = (await Base.getLocalData(importedNFTKey)) ?? {}
 
-							if(importedNFTInStorage?.[nft] && importedNFTInStorage[nft].find(nft => nft.tokenId === tokenId))  {
+							if (importedNFTInStorage?.[nft] && importedNFTInStorage[nft].find(item => item.tokenId === tokenId))  {
                 throw new Error('This NFT has already been imported.')
             	}
 
 							const nftContract = IotaSDK.getNFTContract(nft)
-							const owner = await nftContract.methods.ownerOf(tokenId).call()
-							if(owner.toLocaleLowerCase() !== address.toLocaleLowerCase()) {
-                throw new Error('This NFT is not owned by the user')
-            	}
+							const checkIsOwnder = await IotaSDK.checkNFTOwner(nftContract, tokenId, address)
 
+							if(!checkIsOwnder) {
+								throw new Error('This NFT is not owned by the user')
+							}
+							
 							const tokenURI = await nftContract.methods.tokenURI(tokenId).call()
 							const name = await nftContract.methods.name().call()
 							const tokenURIRes = await fetch(tokenURI).then(res => res.json())

@@ -8,6 +8,7 @@ import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { useRoute } from '@react-navigation/native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import dayjs from 'dayjs';
+import { checkImgIsSVG, SVGViewer } from '../../main/assets/list'
 
 export const NftDetail = () => {
 	const { params } = useRoute();
@@ -31,16 +32,21 @@ export const NftDetail = () => {
 	}
 	const [openDetail, setOpenDetail] = useState(false);
 	const [openProperties, setOpenProperties] = useState(false);
+	const imageUri = thumbnailImage || media
 	return (
 		<Container>
 			<Nav title={I18n.t('assets.nftInfo')} />
 			<Content contentContainerStyle={[SS.ph32]}>
 				<View style={[SS.c, { marginTop: 35, marginBottom: 32 }]}>
-					<Image
-						style={[S.wh(160), S.radius(36), SS.bgS]}
-						resizeMode='contain'
-						source={{ uri: thumbnailImage || media }}
-					/>
+					{
+						checkImgIsSVG(imageUri) ? 
+						<SVGViewer src={imageUri} width={160} height={160} style={[S.wh(160), S.radius(36), SS.bgS]}/> : 
+						<Image
+							style={[S.wh(160), S.radius(36), SS.bgS]}
+							resizeMode='contain'
+							source={{ uri: imageUri }}
+						/>
+					}
 					<Text style={[SS.fz16, SS.mt10, SS.fw600, SS.tc]}>{params.name}</Text>
 					<Text style={[SS.fz16, SS.fw600, SS.cS, { marginTop: 6 }]}>{params.issuerName}</Text>
 					<Text style={[SS.fz14, SS.mt16, SS.fw600, SS.cS]}>{params.description}</Text>
