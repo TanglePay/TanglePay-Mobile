@@ -375,13 +375,44 @@ const ViewFooter = (data) => {
 const imgW = (ThemeVar.deviceWidth - 20 * 2 - 16 * 2) / 3;
 export const checkImgIsSVG = (img) => img && img.startsWith('data:image/svg+xml');
 // NFT SVG is not well supported by react-native-svg, so use WebView as an alternative
-export const SVGViewer = ({ style, width, height, src }) => (
-	<View style={[...style, S.flex, S.row, S.c]}>
+export const SVGViewer = ({ style, src }) => (
+	<View style={[...style]}>
 		<WebView
+		  style={{backgroundColor: "transparent"}}
 			originWhitelist={['*']}
 			onMessage={(event) => {}}
 			source={{
-				html: `<html><head><meta name="viewport" content='width=${width},height=${height}'></head><body><div id="container"><img src="${src}" /></div></body></html>`
+				html: `
+				<!DOCTYPE html>
+				<html lang="en">
+						<head>
+								<meta charset="UTF-8" />
+								<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+								<style>
+										body {
+												padding: 0;
+												margin: 0;
+										}
+										.content {
+												display: flex;
+												align-items: center;
+												justify-content: center;
+												width: 100vw;
+												height: 100vh;
+										}
+										img {
+												max-width: 100%;
+												max-height: 100%;
+										}
+								</style>
+						</head>
+						<body>
+								<div class="content">
+										<img src="${src}" alt="" />
+								</div>
+						</body>
+				</html>
+				`
 			}}
 		/>
 	</View>
@@ -406,7 +437,6 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 						return (
 							<SVGViewer
 								src={e.media}
-								width={ThemeVar.deviceWidth}
 								style={[S.wh(ThemeVar.deviceWidth)]}
 							/>
 						);
@@ -502,7 +532,6 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 										{checkImgIsSVG(e.media) ? (
 											<SVGViewer
 												src={e.media}
-												width={imgW}
 												style={[
 													S.radius(8),
 													S.wh(imgW),
