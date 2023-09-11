@@ -627,8 +627,6 @@ export const CollectiblesList = ({ setHeight }) => {
 						return null;
 					}
 					const firstNFT = list[0];
-
-					list[1] = firstNFT;
 					return (
 						<CollectiblesItem
 							isLedger={curWallet.type === 'ledger'}
