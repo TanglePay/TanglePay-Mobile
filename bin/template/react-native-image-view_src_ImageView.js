@@ -666,7 +666,9 @@ export default class ImageView extends Component<PropsType, StateType> {
 		return (
 			<View style={styles.imageContainer} onStartShouldSetResponder={(): boolean => true}>
 				{renderItem ? (
-					renderItem()
+					<View style={{width:'100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+					  {renderItem()}
+					</View>
 				) : (
 					<>
 					<CustomCachedImage
