@@ -272,7 +272,7 @@ export const Bridge = {
 
 							Base.setLocalData(importedNFTKey, importedNFTInStorage)
 
-							this.sendErrorMessage('eth_importNFT', {
+							this.sendMessage('eth_importNFT', {
 								nft,
 								tokenId
 							}, reqId);
