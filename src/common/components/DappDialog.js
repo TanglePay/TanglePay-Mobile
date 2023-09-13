@@ -72,22 +72,22 @@ export const DappDialog = () => {
 		setShow(false);
 		setLoading(false);
 	};
-	const onHandleCancel = async ({ type }) => {
+	const onHandleCancel = async ({ type, reqId }) => {
 		switch (type) {
 			case 'iota_sign':
 			case 'iota_connect':
 			case 'iota_sendTransaction':
 			case 'eth_sendTransaction':
-					Bridge.sendErrorMessage(
-							type,
-							{
-									msg: 'cancel'
-							},
-							reqId
-					)
-					break
+				Bridge.sendErrorMessage(
+					type,
+					{
+						msg: 'cancel'
+					},
+					reqId
+				);
+				break;
 			default:
-					break
+				break;
 		}
 	};
 	const onExecute = async ({
@@ -590,10 +590,14 @@ export const DappDialog = () => {
 								{
 									text: texts[0]
 								},
-								...(abiFunc && abiFunc !== 'approve' ? [] : [{
-									text: showValueStr,
-									isBold: true
-								}]),
+								...(abiFunc && abiFunc !== 'approve'
+									? []
+									: [
+											{
+												text: showValueStr,
+												isBold: true
+											}
+									  ]),
 								{
 									text: texts[1]
 								}
