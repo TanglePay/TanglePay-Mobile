@@ -253,12 +253,18 @@ export const Bridge = {
 							const checkIsOwnder = await IotaSDK.checkNFTOwner(nftContract, tokenId, address)
 
 							if(!checkIsOwnder) {
-								throw new Error('This NFT is not owned by the user')
+								throw new Error('This NFT is not owned by the user.')
 							}
 							
 							const tokenURI = await nftContract.methods.tokenURI(tokenId).call()
+							const tokenURIRes = await IotaSDK.parseNFTTokenURI(tokenURI)
+
+							if(!tokenURIRes) {
+								throw new Error('Failed to parse nft tokenURI.')
+							}
+							
 							const name = await nftContract.methods.name().call()
-							const tokenURIRes = await fetch(tokenURI).then(res => res.json())
+
 							const importedNFTInfo = {
 									tokenId,
 									name,
