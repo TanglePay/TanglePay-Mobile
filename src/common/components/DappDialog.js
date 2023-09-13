@@ -76,15 +76,18 @@ export const DappDialog = () => {
 		switch (type) {
 			case 'iota_sign':
 			case 'iota_connect':
-				InteractionManager.runAfterInteractions(() => {
-					Bridge.sendErrorMessage(type, {
-						msg: 'cancel'
-					});
-				});
-				break;
-
+			case 'iota_sendTransaction':
+			case 'eth_sendTransaction':
+					Bridge.sendErrorMessage(
+							type,
+							{
+									msg: 'cancel'
+							},
+							reqId
+					)
+					break
 			default:
-				break;
+					break
 		}
 	};
 	const onExecute = async ({
