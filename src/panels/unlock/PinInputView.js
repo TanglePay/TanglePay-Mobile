@@ -32,6 +32,9 @@ function PinViewComponent({ errorMessage, onSubmit }) {
             <Item style={[SS.mt10,SS.mb10,SS.mr10,S.h(25.7)]} error={!!errorMessage}>
             {new Array(pin.length).fill(1).map((_,i) =>  <Text key={i} style={[S.wh(0, 0), S.border(4, '#000', 5), SS.mr3, S.radius(5)]}></Text>)}
             <Input
+                keyboardType='ascii-capable'
+                secureTextEntry
+                textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
                 maxLength={20}
                 style={[SS.pl0, {color: '#fff', marginLeft: -5}]}
                 onChangeText={handlePinChange}
