@@ -35,9 +35,10 @@ function PinViewComponent({ errorMessage, onSubmit }) {
                     secureTextEntry
                     textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
                     maxLength={20}
-                    style={[SS.pl0, {color: 'rgba(0,0,0,0)',letterSpacing: 7}]}
+                    style={[SS.pl0, {color: 'rgba(0,0,0,0)'}]}
                     onChangeText={handlePinChange}
                     value={pin}
+                    caretHidden={pin.length > 0 ? true : false}
                     />
             </Item>
             
