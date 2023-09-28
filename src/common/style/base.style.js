@@ -42,6 +42,9 @@ const styleObj = {
 		alignItems: 'center',
 		flexDirection: 'row'
 	},
+	flex: {
+		display: 'flex'
+	},
 	flex1: {
 		flex: 1
 	},

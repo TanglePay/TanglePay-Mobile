@@ -1,0 +1,18 @@
+diff --git a/node_modules/@ledgerhq/react-native-hid/android/build.gradle b/node_modules/@ledgerhq/react-native-hid/android/build.gradle
+index d6eebd0..f161be9 100644
+--- a/node_modules/@ledgerhq/react-native-hid/android/build.gradle
++++ b/node_modules/@ledgerhq/react-native-hid/android/build.gradle
+@@ -21,11 +21,11 @@ allprojects {
+ apply plugin: 'com.android.library'
+ 
+ android {
+-  compileSdkVersion 29
++  compileSdkVersion 33
+ 
+   defaultConfig {
+     minSdkVersion 24
+-    targetSdkVersion 29
++    targetSdkVersion 33
+     versionCode 1
+     versionName "1.0"
+   }

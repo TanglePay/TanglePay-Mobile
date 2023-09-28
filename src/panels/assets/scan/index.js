@@ -18,16 +18,19 @@ export const AssetsScan = () => {
 	const { params } = useRoute();
 	const isClickRef = useRef();
 	const timeHandleRef = useRef();
-	useEffect(async () => {
-		await requestCameraPermission();
-		startAnimation();
-		getDataFlag = false;
-		return () => {
+	useEffect( () => {
+		const asyncFunc =async ()=>{
+			await requestCameraPermission();
+			startAnimation();
 			getDataFlag = false;
-			if (timeHandleRef.current) {
-				clearTimeout(timeHandleRef.current);
-			}
-		};
+			return () => {
+				getDataFlag = false;
+				if (timeHandleRef.current) {
+					clearTimeout(timeHandleRef.current);
+				}
+			};
+		}
+		asyncFunc();
 	}, []);
 	const requestCameraPermission = async () => {
 		if (ThemeVar.platform === 'android') {

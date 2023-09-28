@@ -3926,6 +3926,44 @@
 		return canUse;
 	}
 
+	async function getNftsOutputs(client, address) {
+		const localClient = typeof client === 'string' ? new SingleNodeClient(client) : client;
+		const indexerPluginClient = new IndexerPluginClient(localClient);
+		const outputs = await indexerPluginClient.nfts({
+			addressBech32: address
+		});
+		let outputIds = outputs.items;
+		const nftInfos = await Promise.all(
+			outputIds.map((e) => {
+				return client.output(e);
+			})
+		);
+		nftInfos.forEach((e) => {
+			let info = (e?.output?.immutableFeatures || []).find((d) => {
+				return d.type == 2;
+			});
+			if (info && info.data) {
+				try {
+					info = util_js.Converter.hexToUtf8(info.data);
+					info = JSON.parse(info);
+					let nftId = e?.output?.nftId;
+					if (nftId == 0) {
+						nftId = TransactionHelper.resolveIdFromOutputId(outputIds[i]);
+					}
+					const unlockConditions = e?.output?.unlockConditions || [];
+					const isUnlock = checkUnLock(e);
+					const expirationData = unlockConditions.find((d) => d.type == EXPIRATION_UNLOCK_CONDITION_TYPE); // EXPIRATION_UNLOCK_CONDITION_TYPE
+					const expirationTime = expirationData?.unixTime;
+					const isExpiration = expirationTime && expirationTime <= new Date().getTime() / 1000;
+					e.info = info;
+					e.isUnlock = isUnlock;
+					e.isExpiration = isExpiration;
+				} catch (error) {}
+			}
+		});
+		return nftInfos;
+	}
+
 	// Copyright 2020 IOTA Stiftung
 	/**
 	 * Get the balance for an address.
@@ -3949,6 +3987,12 @@
 		let response;
 		let cursor;
 		do {
+			const nftOutpusDatas = await getNftsOutputs(client, addressBech32);
+			nftOutpusDatas.forEach((e) => {
+				if (e.isUnlock || e.isExpiration) {
+					total = total.plus(e.output.amount);
+				}
+			});
 			response = await indexerPluginClient.outputs({ addressBech32, cursor });
 			const localOutputDatas = await Promise.all(response.items.map((outputId) => localClient.output(outputId)));
 			for (const [index, outputId] of response.items.entries()) {
@@ -4724,7 +4768,8 @@
 			return {
 				address: util_js.Converter.bytesToHex(bech32Details.addressBytes, true),
 				addressType: bech32Details.addressType,
-				amount: output.amount
+				amount: output.amount,
+				features: output.features || []
 			};
 		});
 		return sendWithAddressGenerator(

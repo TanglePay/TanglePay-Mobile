@@ -15,7 +15,7 @@ export const PrivateKey = () => {
 	const [_, walletsList] = useGetNodeWallet();
 	const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
-	useEffect(async () => {
+	useEffect(() => {
         const func = async () => {
             const isEnabled = await checkWalletIsPasswordEnabled(curEdit.id)
             if (!isEnabled && context.state.isPinSet) {

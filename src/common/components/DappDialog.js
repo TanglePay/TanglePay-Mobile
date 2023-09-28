@@ -68,20 +68,24 @@ export const DappDialog = () => {
 		}
 	};
 	const hide = () => {
+		Bridge.dataPerRequestHelper.clearDataOnRequest();
 		setShow(false);
 		setLoading(false);
 	};
-	const onHandleCancel = async ({ type }) => {
+	const onHandleCancel = async ({ type, reqId }) => {
 		switch (type) {
 			case 'iota_sign':
 			case 'iota_connect':
-				InteractionManager.runAfterInteractions(() => {
-					Bridge.sendErrorMessage(type, {
+			case 'iota_sendTransaction':
+			case 'eth_sendTransaction':
+				Bridge.sendErrorMessage(
+					type,
+					{
 						msg: 'cancel'
-					});
-				});
+					},
+					reqId
+				);
 				break;
-
 			default:
 				break;
 		}
@@ -99,7 +103,8 @@ export const DappDialog = () => {
 		foundryData,
 		tag,
 		nftId,
-		reqId
+		reqId,
+		dataPerRequest
 	}) => {
 		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey', 'eth_importContract'];
 		if (!noPassword.includes(type)) {
@@ -181,6 +186,7 @@ export const DappDialog = () => {
 							mainBalance,
 							awaitStake: true,
 							tag,
+							metadata: dataPerRequest?.metadata,
 							nftId,
 							gas: gasInfo.gasLimit,
 							gasPrice: gasInfo.gasPriceWei
@@ -205,19 +211,18 @@ export const DappDialog = () => {
 						const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 						await sleep(2000);
 					} catch (error) {
-						if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
-							Bridge.sendErrorMessage(type, String(error), reqId);
+						if (/Failed to fetch/i.test(String(error))) {
+							IotaSDK.refreshAssets();
+							setTimeout(() => {
+								IotaSDK.refreshAssets();
+							}, 10000);
+						} else {
+							if (type === 'iota_sendTransaction' || type === 'eth_sendTransaction') {
+								Bridge.sendErrorMessage(type, String(error), reqId);
+							}
+							setLoading(false);
+							Toast.error(String(error));
 						}
-						setLoading(false);
-						Toast.error(String(error));
-						// Toast.error(
-						// 	`${error.toString()}---amount:${amount}---residue:${residue}---realBalance:${Number(
-						// 		realBalance
-						// 	)}`,
-						// 	{
-						// 		duration: 5000
-						// 	}
-						// );
 					}
 				}
 				break;
@@ -558,13 +563,11 @@ export const DappDialog = () => {
 									showUnit = 'MIOTA';
 								}
 							}
-
 							let str = I18n.t(abiFunc === 'approve' ? 'apps.approve' : 'apps.send');
 							if (abiFunc && abiFunc !== 'approve' && abiFunc !== 'transfer') {
-								str = I18n.t('apps.contractFunc')
-									.replace('#abiFunc#', abiFunc)
-									.replace('#abiParams#', abiParams.join(','));
+								str = I18n.t('apps.contractFunc').replace('#abiFunc#', abiFunc);
 							}
+
 							let fromStr = I18n.t('apps.sendFrom');
 							let forStr = I18n.t('apps.sendFor');
 							str = str.replace('#merchant#', merchant ? fromStr + merchant : '');
@@ -582,16 +585,27 @@ export const DappDialog = () => {
 							}
 							texts = [
 								{
-									text: texts[0]
+									text: `${origin}\n`
 								},
 								{
-									text: showValueStr,
-									isBold: true
+									text: texts[0]
 								},
+								...(abiFunc && abiFunc !== 'approve'
+									? []
+									: [
+											{
+												text: showValueStr,
+												isBold: true
+											}
+									  ]),
 								{
 									text: texts[1]
 								}
 							];
+							const dataPerRequest = await Base.getLocalData(
+								Bridge.dataPerRequestHelper.getDataPerRequestKey(reqId)
+							);
+
 							setDappData({
 								texts,
 								return_url,
@@ -607,7 +621,8 @@ export const DappDialog = () => {
 								abiParams,
 								gas,
 								reqId,
-								origin
+								origin,
+								dataPerRequest
 							});
 							show();
 						}

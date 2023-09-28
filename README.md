@@ -1,153 +1,79 @@
-# Tangle Pay (Mobile)
-![Tangle Pay](https://tanglepay.com/image/TanglePayLogo.png "Tangle Pay")
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-## Intro
-[TanglePay](https://www.tanglepay.com) is an open-source IOTA wallet that manages your IOTA token and explore the IOTA ecosystem
-in one secure interface on your mobile or browser.
+# Getting Started
 
-This repo hosts the source code of TanglePay mobile version that supports iOS and Android.
+>**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-### Secure
-Your private keys are encrypted and never leave your device. You have full control of your funds.
+## Step 1: Start the Metro Server
 
-### Anonymous
-There are no accounts, verification or required KYC for basic features in the wallet.
+First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
 
-### Accessible
-You can access TanglePay anywhere at any time with mobile app or chrome app.
+To start Metro, run the following command from the _root_ of your React Native project:
 
-### Open
-TanglePay is an open gateway to IOTA ecosystem, supporting Defi, NFTs and IoT in the coming update of IOTA.
+```bash
+# using npm
+npm start
 
-## Installation
-Download from official [TanglePay](https://www.tanglepay.com) website.
+# OR using Yarn
+yarn start
+```
 
-## Contributing
-Help out the TanglePay project by filing a bug report, making a feature request or opening a pull request. 
+## Step 2: Start your Application
 
-## Joining the discussion
-- [Telegram](https://t.me/tanglepay)
-- [Twitter](https://twitter.com/tanglepaycom)
-- [Discord](https://discord.gg/5yMCwbdjZ3)
-- Email:support@tanglepay.com 
+Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
 
-## Open source project references
-<details>
-  <summary>Expand the details</summary>
-  
-#### @iota/iota.js
-> repository: https://github.com/iotaledger/iota.js.git
+### For Android
 
-> license: Apache-2.0
+```bash
+# using npm
+npm run android
 
-#### @iota/crypto.js
-> repository: https://github.com/iotaledger/iota.js.git
+# OR using Yarn
+yarn android
+```
 
-> license: Apache-2.0
+### For iOS
 
-#### @iota/util.js
-> repository: https://github.com/iotaledger/iota.js.git
+```bash
+# using npm
+npm run ios
 
-> license: Apache-2.0
+# OR using Yarn
+yarn ios
+```
 
-#### @iota/mqtt.js
-> repository: https://github.com/iotaledger/iota.js.git
+If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
 
-> license: Apache-2.0
+This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
-#### antd-mobile
-> repository: git+https://github.com/ant-design/ant-design-mobile.git
+## Step 3: Modifying your App
 
-> license: MIT
+Now that you have successfully run the app, let's modify it.
 
-#### antd-mobile-icons
-> repository: git@github.com:awmleer/antd-mobile-icons.git
+1. Open `App.tsx` in your text editor of choice and edit some lines.
+2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
 
-> license: MIT
+   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
 
-#### bignumber.js
-> repository: https://github.com/MikeMcl/bignumber.js.git
+## Congratulations! :tada:
 
-> license: MIT
+You've successfully run and modified your React Native App. :partying_face:
 
-#### crypto-js
-> repository: http://github.com/brix/crypto-js.git
+### Now what?
 
-> license: MIT
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
 
-#### formik
-> repository: https://github.com/formium/formik.git
+# Troubleshooting
 
-> license: Apache-2.0
+If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-#### i18next
-> repository: https://github.com/i18next/i18next.git
+# Learn More
 
-> license: MIT
+To learn more about React Native, take a look at the following resources:
 
-#### i18next-browser-languagedetector
-> repository: https://github.com/i18next/i18next-browser-languageDetector.git
-
-> license: MIT
-
-#### localforage
-> repository: git://github.com/localForage/localForage.git
-
-> license: Apache-2.0
-
-#### qrcode.react
-> repository: https://github.com/zpao/qrcode.react.git
-
-> license: ISC
-
-#### react
-> repository: https://github.com/facebook/react.git
-
-> license: MIT
-> 
-#### react-copy-to-clipboard
-> repository: https://github.com/nkbt/react-copy-to-clipboard.git
-
-> license: MIT
-
-#### react-dom
-> repository: https://github.com/facebook/react.git
-
-> license: MIT
-
-
-#### react-i18next
-> repository: https://github.com/i18next/react-i18next.git
-
-> license: MIT
-
-#### react-router-dom
-> repository: https://github.com/remix-run/react-router
-
-> license: MIT
-
-#### react-scripts
-> repository: https://github.com/facebook/create-react-app.git
-
-> license: MIT
-
-#### react-transition-group
-> repository: https://github.com/reactjs/react-transition-group.git
-
-> license: MIT
-
-#### web-vitals
-> repository: https://github.com/GoogleChrome/web-vitals.git
-
-> license: Apache-2.0
-
-#### yup
-> repository: git+https://github.com/jquense/yup.git
-
-> license: MIT
-
-#### tanglepay
-> repository: https://github.com/TanglePay/TanglePay.git
-
-> license: Apache-2.0
-</details>
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

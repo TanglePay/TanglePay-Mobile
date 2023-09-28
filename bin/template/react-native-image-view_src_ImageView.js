@@ -147,7 +147,7 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	componentDidMount() {
 		styles = createStyles(this.state.screenDimensions);
-		Dimensions.addEventListener('change', this.onChangeDimension);
+		this.changeDimensions = Dimensions.addEventListener('change', this.onChangeDimension);
 	}
 
 	componentDidUpdate() {
@@ -183,7 +183,10 @@ export default class ImageView extends Component<PropsType, StateType> {
 	}
 
 	componentWillUnmount() {
-		Dimensions.removeEventListener('change', this.onChangeDimension);
+		// Dimensions.removeEventListener('change', this.onChangeDimension);
+		if (this.changeDimensions) {
+			this.changeDimensions.remove();
+		}
 
 		if (this.glideAlwaysTimer) {
 			clearTimeout(this.glideAlwaysTimer);
@@ -204,10 +207,12 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	onNextImagesReceived(images: Array<ImageType>, imageIndex: number = 0) {
 		this.imageInitialParams = images.map((image) => getInitialParams(image, this.state.screenDimensions));
+		console.log(this.imageInitialParams, imageIndex);
 		const { scale, translate } = this.imageInitialParams[imageIndex] || {
 			scale: 1,
-			translate: {}
+			translate: { x: 0, y: 0 }
 		};
+		console.log(scale, translate, '=====');
 
 		this.setState({
 			images,
@@ -477,8 +482,7 @@ export default class ImageView extends Component<PropsType, StateType> {
 	getInitialTranslate(index?: number): TranslateType {
 		const imageIndex = index !== undefined ? index : this.state.imageIndex;
 		const imageParams = this.imageInitialParams[imageIndex];
-
-		return imageParams ? imageParams.translate : { x: 0, y: 0 };
+		return imageParams && imageParams.translate ? imageParams.translate : { x: 0, y: 0 };
 	}
 
 	getImageStyle(
@@ -658,16 +662,25 @@ export default class ImageView extends Component<PropsType, StateType> {
 
 	renderImage = ({ item: image, index }: { item: *, index: number }): * => {
 		const loaded = image.loaded && image.width && image.height;
+		const renderItem = image.renderItem;
 		return (
 			<View style={styles.imageContainer} onStartShouldSetResponder={(): boolean => true}>
-				<CustomCachedImage
-					component={Animated.Image}
-					resizeMode='contain'
-					source={image.source}
-					style={this.getImageStyle(image, index)}
-					onLoad={(): void => this.onImageLoaded(index)}
-					{...this.panResponder.panHandlers}></CustomCachedImage>
-				{!loaded && <ActivityIndicator style={styles.loading} />}
+				{renderItem ? (
+					<View style={{width:'100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+					  {renderItem()}
+					</View>
+				) : (
+					<>
+					<CustomCachedImage
+						component={Animated.Image}
+						resizeMode='contain'
+						source={image.source}
+						style={this.getImageStyle(image, index)}
+						onLoad={(): void => this.onImageLoaded(index)}
+						{...this.panResponder.panHandlers}></CustomCachedImage>
+						{!loaded && <ActivityIndicator style={styles.loading} />}
+					</>
+				)}
 			</View>
 		);
 	};

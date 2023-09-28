@@ -3,7 +3,34 @@ import { Linking } from 'react-native';
 import { Base, IotaSDK, API_URL, Trace } from '@tangle-pay/common';
 import BigNumber from 'bignumber.js';
 import { ethGetBlockByNumber, ethGasPrice, setWeb3Client } from './EthereumWeb3Impl';
+
+const DATA_PER_REQUEST_PREFIX = 'data.per.request.prefix.';
+const dataPerRequestHelper = {
+	hasDataOnRequestMap: {},
+	getDataPerRequestKey(reqId) {
+		return DATA_PER_REQUEST_PREFIX + reqId;
+	},
+	storeDataPerRequest(reqId, data) {
+		if (!data) {
+			return;
+		}
+		Base.setLocalData(this.getDataPerRequestKey(reqId), data);
+		this.hasDataOnRequestMap[reqId] = true;
+	},
+	removeDataPerRequest(reqId) {
+		Base.removeLocalData(this.getDataPerRequestKey(reqId));
+		delete this.hasDataOnRequestMap[reqId];
+	},
+	clearDataOnRequest() {
+		const reqIds = Object.keys(this.hasDataOnRequestMap);
+		reqIds.forEach((reqId) => {
+			this.removeDataPerRequest(reqId);
+		});
+	}
+};
+
 export const Bridge = {
+	dataPerRequestHelper,
 	injectedJavaScript: `
         (function(){
 			window.TanglePayEnv = 'app';
@@ -137,6 +164,11 @@ export const Bridge = {
 								gas = ''
 							} = params;
 							const url = `tanglepay://${method}/${to}?isKeepPopup=${isKeepPopup}&origin=${origin}&value=${value}&unit=${unit}&network=${network}&merchant=${merchant}&item_desc=${item_desc}&assetId=${assetId}&taggedData=${data}&tag=${tag}&nftId=${nftId}&gas=${gas}&reqId=${reqId}`;
+							const { metadata } = params;
+							const dataPerRequest = {
+								metadata: metadata || null
+							};
+							this.dataPerRequestHelper.storeDataPerRequest(reqId, dataPerRequest);
 							Linking.openURL(url);
 						}
 						break;
@@ -186,16 +218,98 @@ export const Bridge = {
 							const { address } = params || {};
 							const targetWallet = await this.getWallet(address);
 							if (!targetWallet) {
-								this.sendErrorMessage('iota_getPublicKey', {
-									msg: 'Wallet not found'
-								},reqId);
+								this.sendErrorMessage(
+									'iota_getPublicKey',
+									{
+										msg: 'Wallet not found'
+									},
+									reqId
+								);
 							} else {
 								this.sendMessage('iota_getPublicKey', targetWallet.publicKey, reqId);
 							}
 						} catch (error) {
-							this.sendErrorMessage('iota_getPublicKey', {
-								msg: error.toString()
-							}, reqId);
+							this.sendErrorMessage(
+								'iota_getPublicKey',
+								{
+									msg: error.toString()
+								},
+								reqId
+							);
+						}
+						break;
+					case 'eth_importNFT':
+						if (!IotaSDK.isWeb3Node) {
+							this.sendErrorMessage(
+								'eth_importNFT',
+								{
+									msg: 'Node is error.'
+								},
+								reqId
+							);
+						}
+						try {
+							this.ensureWeb3Client();
+							let { nft, tokenId } = params;
+							// Lowercase nft
+							nft = nft.toLocaleLowerCase();
+							const address = curWallet.address;
+							const importedNFTKey = `${address}.nft.importedList`;
+							const importedNFTInStorage = (await Base.getLocalData(importedNFTKey)) ?? {};
+
+							if (
+								importedNFTInStorage?.[nft] &&
+								importedNFTInStorage[nft].find((item) => item.tokenId === tokenId)
+							) {
+								throw new Error('This NFT has already been imported.');
+							}
+
+							const nftContract = IotaSDK.getNFTContract(nft);
+							const checkIsOwnder = await IotaSDK.checkNFTOwner(nftContract, tokenId, address);
+
+							if (!checkIsOwnder) {
+								throw new Error('This NFT is not owned by the user.');
+							}
+
+							const tokenURI = await nftContract.methods.tokenURI(tokenId).call();
+							const tokenURIRes = await IotaSDK.parseNFTTokenURI(tokenURI);
+
+							if (!tokenURIRes) {
+								throw new Error('Failed to parse nft tokenURI.');
+							}
+
+							const name = await nftContract.methods.name().call();
+
+							const importedNFTInfo = {
+								tokenId,
+								name,
+								image: tokenURIRes.image,
+								description: tokenURIRes.description
+							};
+							importedNFTInStorage[nft] = [...(importedNFTInStorage[nft] ?? []), importedNFTInfo];
+
+							Base.setLocalData(importedNFTKey, importedNFTInStorage);
+
+							this.sendMessage(
+								'eth_importNFT',
+								{
+									nft,
+									tokenId
+								},
+								reqId
+							);
+							Base.globalDispatch({
+								type: 'nft.forceRequest',
+								data: Math.random()
+							});
+						} catch (error) {
+							this.sendErrorMessage(
+								'eth_importNFT',
+								{
+									msg: error.toString()
+								},
+								reqId
+							);
 						}
 						break;
 					case 'eth_importContract':
@@ -208,20 +322,32 @@ export const Bridge = {
 									web3Contract.methods.decimals().call()
 								]);
 								IotaSDK.importContract(contract, token, decimal);
-								this.sendMessage('eth_importContract', {
-									contract,
-									token,
-									decimal
-								}, reqId);
+								this.sendMessage(
+									'eth_importContract',
+									{
+										contract,
+										token,
+										decimal
+									},
+									reqId
+								);
 							} else {
-								this.sendErrorMessage('eth_importContract', {
-									msg: 'contract is error'
-								}, reqId);
+								this.sendErrorMessage(
+									'eth_importContract',
+									{
+										msg: 'contract is error'
+									},
+									reqId
+								);
 							}
 						} catch (error) {
-							this.sendErrorMessage('eth_importContract', {
-								msg: error.toString()
-							}, reqId);
+							this.sendErrorMessage(
+								'eth_importContract',
+								{
+									msg: error.toString()
+								},
+								reqId
+							);
 						}
 						break;
 					case 'get_login_token':
@@ -271,9 +397,13 @@ export const Bridge = {
 			this.sendMessage('iota_sign', res, reqId);
 			// this.cacheBgData(`${origin}_iota_sign_${curWallet.address}_${curWallet.nodeId}`, res, expires);
 		} else {
-			this.sendErrorMessage('iota_sign', {
-				msg: 'fail'
-			},reqId);
+			this.sendErrorMessage(
+				'iota_sign',
+				{
+					msg: 'fail'
+				},
+				reqId
+			);
 		}
 	},
 	ensureWeb3Client() {
@@ -340,9 +470,13 @@ export const Bridge = {
 			this.sendMessage('eth_getBalance', assetsData, reqId);
 		} catch (error) {
 			Toast.hideLoading();
-			this.sendErrorMessage('eth_getBalance', {
-				msg: error.toString()
-			},reqId);
+			this.sendErrorMessage(
+				'eth_getBalance',
+				{
+					msg: error.toString()
+				},
+				reqId
+			);
 		}
 	},
 	async iota_accounts(_, _1, reqId) {
@@ -381,10 +515,14 @@ export const Bridge = {
 				);
 			}
 		} catch (error) {
-			this.sendErrorMessage('iota_accounts', {
-				msg: error.toString(),
-				status: 3
-			},reqId);
+			this.sendErrorMessage(
+				'iota_accounts',
+				{
+					msg: error.toString(),
+					status: 3
+				},
+				reqId
+			);
 		}
 	},
 	async iota_getBalance(origin, { assetsList, addressList }, reqId) {
