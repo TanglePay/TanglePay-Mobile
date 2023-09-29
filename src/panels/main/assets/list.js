@@ -234,12 +234,15 @@ export const ActivityList = ({ search, setHeight }) => {
 	);
 	const ListEl = useMemo(() => {
 		return showList.map((e, j) => {
+			const isContract = e.contractDetail
 			const isOutto = [1, 3, 6, 8].includes(e.type);
 			const isStake = [2, 3].includes(e.type);
 			const isSign = [4].includes(e.type);
 			const isNft = [7, 8].includes(e.type);
 			let FromToEl = null;
-			if (isSign) {
+			if(isContract) {
+				FromToEl = <Text style={[SS.fz16, SS.mb5]}>{e.contractDetail.abiFunc}</Text>;
+			}else if (isSign) {
 				FromToEl = <Text style={[SS.fz16, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
 			} else {
 				if (isStake) {
@@ -254,7 +257,7 @@ export const ActivityList = ({ search, setHeight }) => {
 					);
 				}
 			}
-			let AssetsEl = isShowAssets ? (
+			let AssetsEl = isShowAssets ? isContract ? null : (
 				<View>
 					<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140 }]}>
 						{isSign ? '' : isOutto ? '-' : '+'} {!isNft ? `${e.num} ` : ''}
@@ -279,7 +282,7 @@ export const ActivityList = ({ search, setHeight }) => {
 					onPress={() => {
 						e.viewUrl && Base.push(e.viewUrl);
 					}}>
-					<SvgIcon style={[SS.mr16]} name={isOutto ? 'outto' : 'into'} size={36} />
+					<SvgIcon style={[SS.mr16]} name={isContract ? 'interaction' : isOutto ? 'outto' : 'into'} size={36} />
 					<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb16]}>
 						<View>
 							{FromToEl}
