@@ -15,6 +15,8 @@ import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
 import { context, checkWalletIsPasswordEnabled, getIsUnlocked } from '@tangle-pay/domain';
 
+const contractTokenMethod = ['approve', 'transfer']
+
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
 	const gasDialog = useRef();
@@ -177,6 +179,7 @@ export const DappDialog = () => {
 						res = await IotaSDK.send({ ...curWallet, password }, address, amount, {
 							domain: origin,
 							contract: contract || assets?.contract,
+							contractDetail: dappData.contractDetail,
 							token: assets?.name,
 							taggedData,
 							realBalance: Number(realBalance),
@@ -371,6 +374,7 @@ export const DappDialog = () => {
 							let showUnit = '';
 							let sendAmount = 0;
 							let contract = '';
+							let contractDetail = null
 							let abiFunc = '';
 							let abiParams = [];
 							let gasFee = '';
@@ -497,6 +501,14 @@ export const DappDialog = () => {
 									Toast.hideLoading();
 								}
 								showUnit = curToken;
+
+								if (abiFunc && !contractTokenMethod.includes(abiFunc)) {
+									contractDetail = {
+											abiFunc,
+											value: showValue,
+											unit: showUnit
+									}
+								}
 							} else {
 								if (IotaSDK.checkSMR(toNetId || curNodeId)) {
 									if (nftId) {
@@ -614,6 +626,7 @@ export const DappDialog = () => {
 								address,
 								taggedData,
 								contract,
+								contractDetail: contractDetail,
 								foundryData,
 								tag,
 								nftId,
