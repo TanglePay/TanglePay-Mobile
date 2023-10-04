@@ -26,10 +26,13 @@ export const AccountChangeNode = () => {
 			list.push({ ...e });
 		}
 	});
-	const evmData = list.find((e) => IotaSDK.checkWeb3Node(e.id));
+
+	const evmData = list.find((e) => IotaSDK.checkWeb3Node(e.id))
 	if (evmData) {
-		evmData.name = `EVM (${evmName.join(' / ')})`;
+			evmName = evmName.filter(name  => ['BSC', 'Polygon', 'ETH', 'Shimmer EVM'].map(chain => chain.toLocaleLowerCase()).includes(name.toLocaleLowerCase()))
+			evmData.name = `EVM (${evmName.join(' / ')})`
 	}
+
 	return (
 		<Container>
 			<Nav leftIcon={false} headerStyle={{ borderBottomWidth: 0 }} />
