@@ -15,7 +15,7 @@ import { GasDialog } from '@/common/components/gasDialog';
 import { BleDevices } from '@/common/components/bleDevices';
 import { context, checkWalletIsPasswordEnabled, getIsUnlocked } from '@tangle-pay/domain';
 
-const contractTokenMethod = ['approve', 'transfer']
+const contractTokenMethod = ['approve', 'transfer'];
 
 const rnBiometrics = new ReactNativeBiometrics();
 export const DappDialog = () => {
@@ -108,7 +108,13 @@ export const DappDialog = () => {
 		reqId,
 		dataPerRequest
 	}) => {
-		const noPassword = ['iota_connect', 'iota_changeAccount', 'iota_getPublicKey', 'eth_importContract'];
+		const noPassword = [
+			'iota_connect',
+			'iota_changeAccount',
+			'iota_getPublicKey',
+			'iota_getWalletType',
+			'eth_importContract'
+		];
 		if (!noPassword.includes(type)) {
 			if (!isLedger) {
 				const isPassword = await IotaSDK.checkPassword(curWallet.seed, password);
@@ -374,7 +380,7 @@ export const DappDialog = () => {
 							let showUnit = '';
 							let sendAmount = 0;
 							let contract = '';
-							let contractDetail = null
+							let contractDetail = null;
 							let abiFunc = '';
 							let abiParams = [];
 							let gasFee = '';
@@ -504,10 +510,10 @@ export const DappDialog = () => {
 
 								if (abiFunc && !contractTokenMethod.includes(abiFunc)) {
 									contractDetail = {
-											abiFunc,
-											value: showValue,
-											unit: showUnit
-									}
+										abiFunc,
+										value: showValue,
+										unit: showUnit
+									};
 								}
 							} else {
 								if (IotaSDK.checkSMR(toNetId || curNodeId)) {

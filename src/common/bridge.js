@@ -238,6 +238,31 @@ export const Bridge = {
 							);
 						}
 						break;
+					case 'iota_getWalletType':
+						try {
+							const { address } = params || {};
+							const targetWallet = await this.getWallet(address);
+							if (!targetWallet) {
+								this.sendErrorMessage(
+									'iota_getWalletType',
+									{
+										msg: 'Wallet not found'
+									},
+									reqId
+								);
+							} else {
+								this.sendMessage('iota_getWalletType', targetWallet.type, reqId);
+							}
+						} catch (error) {
+							this.sendErrorMessage(
+								'iota_getWalletType',
+								{
+									msg: error.toString()
+								},
+								reqId
+							);
+						}
+						break;
 					case 'eth_importNFT':
 						if (!IotaSDK.isWeb3Node) {
 							this.sendErrorMessage(
