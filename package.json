@@ -1,6 +1,6 @@
 {
   "name": "tangle",
-  "version": "1.5.8",
+  "version": "1.5.9",
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",

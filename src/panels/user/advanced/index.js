@@ -23,9 +23,9 @@ export const UserAdvanced = () => {
 		Base.getLocalData('common.shimmerSupport').then((res) => {
 			setShimmerSupport(res == 1);
 		});
-		Base.getLocalData('common.iotaSupport').then((res) => {
-			setIotaSupport(res == 1);
-		});
+		// Base.getLocalData('common.iotaSupport').then((res) => {
+		// 	setIotaSupport(res == 1);
+		// });
 		Base.getLocalData('common.polyganSupport').then((res) => {
 			setPolyganSupport(res == 1);
 		});
@@ -55,7 +55,7 @@ export const UserAdvanced = () => {
 						}}
 					/>
 				</View>
-				<View activeOpacity={0.8} style={[SS.p16, S.border(2), SS.row, SS.ac, SS.jsb]}>
+				{/* <View activeOpacity={0.8} style={[SS.p16, S.border(2), SS.row, SS.ac, SS.jsb]}>
 					<Text style={[SS.fz16]}>Support IOTA Testnet</Text>
 					<Switch
 						value={iotaSupport}
@@ -66,7 +66,7 @@ export const UserAdvanced = () => {
 							await handleChange();
 						}}
 					/>
-				</View>
+				</View> */}
 				<View activeOpacity={0.8} style={[SS.p16, S.border(2), SS.row, SS.ac, SS.jsb]}>
 					<Text style={[SS.fz16]}>Support Polygon Testnet</Text>
 					<Switch

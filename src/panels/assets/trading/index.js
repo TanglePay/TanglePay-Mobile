@@ -187,6 +187,7 @@ export const AssetsTrading = () => {
 									error.includes('There are not enough funds in the inputs for the required balance')
 								) {
 									error = I18n.t('assets.unlockError');
+									error = error.replace(/{token}/g, IotaSDK.isIotaStardust(curWallet.nodeId) ? 'IOTA' : 'SMR')
 								}
 								Toast.show(error);
 								Base.goBack();

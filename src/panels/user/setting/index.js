@@ -61,16 +61,16 @@ export const UserSetting = () => {
 			value: disTrace == 1,
 			onChange: (e) => setDisTrace(e ? 1 : 0)
 		},
-		{
-			icon: 'stake',
-			label: I18n.t('staking.restake'),
-			type: 'switch',
-			value: isNoRestake,
-			onChange: (e) => {
-				setNoRestake(e);
-				Base.setLocalData('common.isNoRestake', e ? 0 : 1);
-			}
-		},
+		// {
+		// 	icon: 'stake',
+		// 	label: I18n.t('staking.restake'),
+		// 	type: 'switch',
+		// 	value: isNoRestake,
+		// 	onChange: (e) => {
+		// 		setNoRestake(e);
+		// 		Base.setLocalData('common.isNoRestake', e ? 0 : 1);
+		// 	}
+		// },
 		{
 			icon: 'fingerprint',
 			label: I18n.t('user.biometrics'),
@@ -121,9 +121,9 @@ export const UserSetting = () => {
 		});
 	}
 	useEffect(() => {
-		Base.getLocalData('common.isNoRestake').then((res) => {
-			setNoRestake(res != 1);
-		});
+		// Base.getLocalData('common.isNoRestake').then((res) => {
+		// 	setNoRestake(res != 1);
+		// });
 		getCache();
 		rnBiometrics
 			.isSensorAvailable()
