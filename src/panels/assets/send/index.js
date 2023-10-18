@@ -141,6 +141,7 @@ export const AssetsSend = () => {
 							await bleDevices.current.show();
 						}
 						let { password, amount, receiver } = values;
+						amount = inputAmount || amount
 						if (!isWalletPassowrdEnabled) {
 							password = context.state.pin;
 						}
@@ -344,7 +345,8 @@ export const AssetsSend = () => {
 													if (parseFloat(str) < Math.pow(10, -precision)) {
 														str = String(Math.pow(10, -precision));
 													}
-													setFieldValue('amount', str);
+													// We format, but not show on the page
+													// setFieldValue('amount', str);
 													setInputAmount(str);
 												}}
 											/>
