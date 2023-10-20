@@ -238,6 +238,31 @@ export const Bridge = {
 							);
 						}
 						break;
+					case 'iota_getWalletType':
+						try {
+							const { address } = params || {};
+							const targetWallet = await this.getWallet(address);
+							if (!targetWallet) {
+								this.sendErrorMessage(
+									'iota_getWalletType',
+									{
+										msg: 'Wallet not found'
+									},
+									reqId
+								);
+							} else {
+								this.sendMessage('iota_getWalletType', targetWallet.type, reqId);
+							}
+						} catch (error) {
+							this.sendErrorMessage(
+								'iota_getWalletType',
+								{
+									msg: error.toString()
+								},
+								reqId
+							);
+						}
+						break;
 					case 'eth_importNFT':
 						if (!IotaSDK.isWeb3Node) {
 							this.sendErrorMessage(
@@ -550,9 +575,9 @@ export const Bridge = {
 			let nativeTokens = [];
 			let othersDic = {};
 			if (IotaSDK.checkSMR(curWallet.nodeId)) {
-				if (assetsList.includes('smr')) {
+				if (assetsList.includes('smr') || assetsList.includes('iota')) {
 					const smrAessets = (await IotaSDK.getBalance(curWallet, addressList)) || [];
-					amount = smrAessets.find((e) => e.token === IotaSDK.curNode?.token)?.realBalance;
+					amount = smrAessets.find((e) => e.token === IotaSDK.curNode?.token)?.realAvailable;
 					nativeTokens = smrAessets.filter((e) => e.token !== IotaSDK.curNode?.token);
 					let tokens = nativeTokens.map((e) => e.tokenId);
 					tokens = await Promise.all(nativeTokens.map((e) => IotaSDK.foundry(e.tokenId)));

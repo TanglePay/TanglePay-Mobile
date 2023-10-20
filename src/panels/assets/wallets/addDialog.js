@@ -172,18 +172,22 @@ export const AddDialog = ({ dialogRef, nodeId }) => {
 								</TouchableOpacity>
 							)}
 						</View>
-						<Text style={[SS.fz16, SS.cS, SS.mv16]}>{I18n.t('account.hardwareWallet')}</Text>
-						<View style={[SS.mb24, SS.bgW, SS.radius8]}>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								onPress={() => {
-									hide();
-									Base.push('account/hardware/into');
-								}}
-								style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
-								<Text style={[SS.fz16]}>{I18n.t('account.hardwareWallet')}</Text>
-							</TouchableOpacity>
-						</View>
+						{IotaSDK.isIotaAccordingId(curNodeId) ? null : 
+							<>
+								<Text style={[SS.fz16, SS.cS, SS.mv16]}>{I18n.t('account.hardwareWallet')}</Text>
+								<View style={[SS.mb24, SS.bgW, SS.radius8]}>
+									<TouchableOpacity
+										activeOpacity={0.8}
+										onPress={() => {
+											hide();
+											Base.push('account/hardware/into');
+										}}
+										style={[{ height: 72 }, SS.pl24, SS.jc, S.border(0)]}>
+										<Text style={[SS.fz16]}>{I18n.t('account.hardwareWallet')}</Text>
+									</TouchableOpacity>
+								</View>
+							</>
+						}
 					</>
 				)}
 			</View>
