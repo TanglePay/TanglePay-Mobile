@@ -49,6 +49,7 @@ export const AssetsSend = () => {
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
+	const collectionId = params.collectionId;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
 	const isBio = !!(curPwd || {})[curWallet.id];
@@ -141,7 +142,7 @@ export const AssetsSend = () => {
 							await bleDevices.current.show();
 						}
 						let { password, amount, receiver } = values;
-						amount = inputAmount || amount
+						amount = inputAmount || amount;
 						if (!isWalletPassowrdEnabled) {
 							password = context.state.pin;
 						}
@@ -229,6 +230,7 @@ export const AssetsSend = () => {
 								decimal: assets?.decimal,
 								mainBalance,
 								nftId,
+								collectionId,
 								gas: gasInfo.gasLimit,
 								gasPrice: gasInfo.gasPriceWei
 							});

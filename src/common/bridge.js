@@ -309,7 +309,9 @@ export const Bridge = {
 								tokenId,
 								name,
 								image: tokenURIRes.image,
-								description: tokenURIRes.description
+								description: tokenURIRes.description,
+								standard: 'ERC 721',
+								collectionId: nft
 							};
 							importedNFTInStorage[nft] = [...(importedNFTInStorage[nft] ?? []), importedNFTInfo];
 
