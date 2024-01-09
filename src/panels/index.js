@@ -28,6 +28,7 @@ import { StakingAdd } from './staking/add';
 import { StakingHistory } from './staking/history';
 import { AppsExecute } from './apps/execute';
 import { PrivateKey } from './user/privateKey';
+import { PrivateKeyMnemonic } from './user/privateKey/mnemonic';
 import { AccountIntoPrivateKey } from './account/into/privateKey';
 import { Staking } from './main/staking';
 import { RemoveWallet } from './user/editWallet/removeWallet';
@@ -47,7 +48,7 @@ import { AccountHardwareInto } from './account/hardware/into';
 import { AccountHardwareImport } from './account/hardware/import';
 import { AccountSetPin } from './account/pin/set';
 import { AccountResetPin } from './account/pin/reset';
-import { AccountIntoPin } from './account/into/pin'
+import { AccountIntoPin } from './account/into/pin';
 export const panelsList = [
 	{
 		path: 'account/pin/reset',
@@ -132,6 +133,10 @@ export const panelsList = [
 	{
 		path: 'user/privateKey',
 		component: PrivateKey
+	},
+	{
+		path: 'user/exportMnemonic',
+		component: PrivateKeyMnemonic
 	},
 	{
 		path: 'apps/execute',
@@ -228,7 +233,7 @@ export const panelsList = [
 	{
 		path: 'account/intopin',
 		component: AccountIntoPin
-  },
+	},
 	{
 		path: 'account/register',
 		component: AccountRegister
