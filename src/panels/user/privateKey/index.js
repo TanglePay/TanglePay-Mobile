@@ -1,11 +1,11 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Content, View, Text, Input, Button } from 'native-base';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { useRoute } from '@react-navigation/native';
 import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, Toast } from '@/common';
-import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain'
+import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
 export const PrivateKey = () => {
 	const { params } = useRoute();
@@ -16,17 +16,17 @@ export const PrivateKey = () => {
 	const curEdit = walletsList.find((e) => e.id === id) || {};
 	const name = curEdit.name || '';
 	useEffect(() => {
-        const func = async () => {
-            const isEnabled = await checkWalletIsPasswordEnabled(curEdit.id)
-            if (!isEnabled && context.state.isPinSet) {
-                const privateKeyStr = await IotaSDK.getPrivateKey(curEdit.seed, context.state.pin);
+		const func = async () => {
+			const isEnabled = await checkWalletIsPasswordEnabled(curEdit.id);
+			if (!isEnabled && context.state.isPinSet) {
+				const privateKeyStr = await IotaSDK.getPrivateKey(curEdit.seed, context.state.pin, curEdit.path);
 				setKeyStr(privateKeyStr.replace(/^0x/, ''));
-            } else {
-				setKeyStr('')
+			} else {
+				setKeyStr('');
 			}
-        }
-        func()
-    }, [])
+		};
+		func();
+	}, []);
 	return (
 		<Container>
 			<Nav title={name} />
@@ -70,7 +70,11 @@ export const PrivateKey = () => {
 							<Button
 								onPress={async () => {
 									try {
-										const privateKeyStr = await IotaSDK.getPrivateKey(curEdit.seed, password);
+										const privateKeyStr = await IotaSDK.getPrivateKey(
+											curEdit.seed,
+											password,
+											curEdit.path
+										);
 										setKeyStr(privateKeyStr.replace(/^0x/, ''));
 									} catch (error) {
 										return Toast.error(I18n.t('assets.passwordError'));

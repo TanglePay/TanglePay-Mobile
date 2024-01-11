@@ -1,4 +1,4 @@
-import React, { useRef, useState ,useEffect} from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
 import { Formik } from 'formik';
@@ -9,6 +9,7 @@ import { useCreateCheck } from '@tangle-pay/store/common';
 import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
 import { context, setPin, shouldShowSetPin } from '@tangle-pay/domain';
 import { ExpDialog } from './expDialog';
+import { useStore } from '@tangle-pay/store';
 
 const schemaNopassword = Yup.object().shape({
 	mnemonic: Yup.string().required(),
@@ -18,10 +19,11 @@ const schemaNopassword = Yup.object().shape({
 
 export const AccountIntoPin = () => {
 	const dialogRef = useRef();
+	const [_, setRegisterInfo] = useStore('common.registerInfo');
 	const form = useRef();
 	const [shouldShowPin, setShouldShowPin] = useState(true);
 	useEffect(() => {
-		console.log('into pin page',context);
+		console.log('into pin page', context);
 		setShouldShowPin(shouldShowSetPin());
 	}, []);
 	useCreateCheck((name) => {
@@ -60,19 +62,46 @@ export const AccountIntoPin = () => {
 								values.password = context.state.pin;
 								values.rePassword = context.state.pin;
 							}
-							const res = await IotaSDK.importMnemonic({
-								...values
-							});
-							addWallet({
-								...res
-							});
-							if (from === 'smr') {
-								Base.replace('assets/claimReward/claimSMR', {
-									id: res.id
+
+							Toast.showLoading();
+							const checkList = await IotaSDK.importMnemonicCheckBalance({ ...values });
+							let hasBalanceList = checkList.filter((e) => e.balances.find((d) => Number(d.balance) > 0));
+							for (let i = 0; i < checkList.length; i++) {
+								const e = checkList[i];
+								checkList[i].hasImport = await IotaSDK.checkImport(e.address);
+							}
+							Toast.hideLoading();
+							const needImportList = hasBalanceList.filter((e) => !e.hasImport);
+							const jump = (res) => {
+								if (from === 'smr') {
+									Base.replace('assets/claimReward/claimSMR', {
+										id: res.id
+									});
+								} else {
+									Base.replace('main');
+								}
+							};
+							if (needImportList.length == 0) {
+								const res = await IotaSDK.importMnemonic({
+									...values
 								});
+								addWallet({
+									...res
+								});
+								jump(res);
+							} else if (needImportList.length == 1) {
+								const res = await IotaSDK.importMnemonic({
+									...values,
+									path: needImportList[0].path
+								});
+								addWallet({
+									...res
+								});
+								jump(res);
 							} else {
-								Base.popToTop();
-								Base.replace('main');
+								setRegisterInfo({ ...values });
+								Base.push('account/into/import', { list: JSON.stringify(hasBalanceList) });
+								return;
 							}
 						}
 					}}>
@@ -131,23 +160,25 @@ export const AccountIntoPin = () => {
 										value={values.name}
 									/>
 								</Item>
-								{shouldShowPin && (<>
-									<Text style={[SS.fz14, SS.mt32]}>
-										{I18n.t(type === 1 ? 'account.intoPin' : 'account.intoFilePassword')}
-									</Text>								
-									<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
-										<Input
-											keyboardType='ascii-capable'
-											secureTextEntry
-											textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
-											style={[SS.fz14, SS.pl0, S.h(44)]}
-											placeholder={I18n.t(
-												type === 1 ? 'account.intoPinTips' : 'account.intoFilePasswordTips'
-											)}
-											onChangeText={handleChange('password')}
-											value={values.password}
-										/>
-									</Item></>
+								{shouldShowPin && (
+									<>
+										<Text style={[SS.fz14, SS.mt32]}>
+											{I18n.t(type === 1 ? 'account.intoPin' : 'account.intoFilePassword')}
+										</Text>
+										<Item style={[SS.mt8, SS.ml0]} error={!!errors.password}>
+											<Input
+												keyboardType='ascii-capable'
+												secureTextEntry
+												textContentType={Base.isIos14 ? 'oneTimeCode' : 'none'}
+												style={[SS.fz14, SS.pl0, S.h(44)]}
+												placeholder={I18n.t(
+													type === 1 ? 'account.intoPinTips' : 'account.intoFilePasswordTips'
+												)}
+												onChangeText={handleChange('password')}
+												value={values.password}
+											/>
+										</Item>
+									</>
 								)}
 								<Input style={[S.h(1)]} />
 								{type === 1 && shouldShowPin && (
