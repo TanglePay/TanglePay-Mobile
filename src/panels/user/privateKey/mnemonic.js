@@ -7,7 +7,7 @@ import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, Toast } from '@/common';
 import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
-export const PrivateKey = () => {
+export const PrivateKeyMnemonic = () => {
 	const { params } = useRoute();
 	const id = params.id;
 	const [password, setPassword] = useState('');

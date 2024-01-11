@@ -4,11 +4,11 @@ import { S, SS, Nav, Toast } from '@/common';
 import { useRoute } from '@react-navigation/native';
 import { Container, View, Text, Button } from 'native-base';
 import { TouchableOpacity, ScrollView } from 'react-native';
+import { useStore } from '@tangle-pay/store';
 
 export const AccountImportSelect = () => {
 	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
 	const { params } = useRoute();
-	params = Base.handlerParams(params.search);
 	let list = [];
 	try {
 		list = JSON.parse(params.list);
@@ -33,7 +33,7 @@ export const AccountImportSelect = () => {
 				});
 				newList[i].balanceStr = balanceList.slice(0, 2).join(' / ');
 				newList[i].hasImportc = await IotaSDK.checkImport(e.address);
-				let address = e.address
+				let address = (e.address || '')
 					.replace(new RegExp(`^${IotaSDK.curNode?.bech32HRP || ''}`), '')
 					.replace(/^0x/i, '');
 				address = address.replace(/(^.{4})(.+)(.{6}$)/, '$1...$3');
@@ -74,23 +74,25 @@ export const AccountImportSelect = () => {
 											newList[i] = { ...e, hasSelect: true };
 											setShowList(newList);
 										}}>
-										<View
-											className='border'
-											style={[
-												S.border(4),
-												{
-													borderRadius: 4,
-													width: 16,
-													height: 16,
-													borderColor,
-													padding: 1,
-													backgroundColor: background
-												}
-											]}></View>
-										<Text style={[SS.ml25, SS.fz14, SS.fw400, SS.tl, { width: 40 }]}>
-											{e.index}
-										</Text>
-										<Text style={[SS.fz14, SS.fw400, SS.tl, { width: 90 }]}>{e.addressStr}</Text>
+										<View style={[SS.row, SS.ac]}>
+											<View
+												className='border'
+												style={[
+													S.border(4),
+													{
+														borderRadius: 4,
+														width: 16,
+														height: 16,
+														borderColor,
+														padding: 1,
+														backgroundColor: background,
+														marginRight: 8
+													}
+												]}></View>
+											<Text style={[SS.fz14, SS.fw400, SS.tl, { width: 130 }]}>
+												{e.addressStr}
+											</Text>
+										</View>
 										<Text
 											ellipsizeMode='tail'
 											numberOfLines={1}

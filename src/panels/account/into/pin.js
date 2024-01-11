@@ -62,46 +62,54 @@ export const AccountIntoPin = () => {
 								values.password = context.state.pin;
 								values.rePassword = context.state.pin;
 							}
-
-							Toast.showLoading();
-							const checkList = await IotaSDK.importMnemonicCheckBalance({ ...values });
-							let hasBalanceList = checkList.filter((e) => e.balances.find((d) => Number(d.balance) > 0));
-							for (let i = 0; i < checkList.length; i++) {
-								const e = checkList[i];
-								checkList[i].hasImport = await IotaSDK.checkImport(e.address);
-							}
-							Toast.hideLoading();
-							const needImportList = hasBalanceList.filter((e) => !e.hasImport);
-							const jump = (res) => {
-								if (from === 'smr') {
-									Base.replace('assets/claimReward/claimSMR', {
-										id: res.id
-									});
-								} else {
-									Base.replace('main');
+							Toast.showLoading(10000000);
+							try {
+								const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+								await sleep(500);
+								const checkList = await IotaSDK.importMnemonicCheckBalance({ ...values });
+								let hasBalanceList = checkList.filter((e) =>
+									e.balances.find((d) => Number(d.balance) > 0)
+								);
+								for (let i = 0; i < checkList.length; i++) {
+									const e = checkList[i];
+									checkList[i].hasImport = await IotaSDK.checkImport(e.address);
 								}
-							};
-							if (needImportList.length == 0) {
-								const res = await IotaSDK.importMnemonic({
-									...values
-								});
-								addWallet({
-									...res
-								});
-								jump(res);
-							} else if (needImportList.length == 1) {
-								const res = await IotaSDK.importMnemonic({
-									...values,
-									path: needImportList[0].path
-								});
-								addWallet({
-									...res
-								});
-								jump(res);
-							} else {
-								setRegisterInfo({ ...values });
-								Base.push('account/into/import', { list: JSON.stringify(hasBalanceList) });
-								return;
+								Toast.hideLoading();
+								const needImportList = hasBalanceList.filter((e) => !e.hasImport);
+								const jump = (res) => {
+									if (from === 'smr') {
+										Base.replace('assets/claimReward/claimSMR', {
+											id: res.id
+										});
+									} else {
+										Base.replace('main');
+									}
+								};
+								if (needImportList.length == 0) {
+									const res = await IotaSDK.importMnemonic({
+										...values
+									});
+									addWallet({
+										...res
+									});
+									jump(res);
+								} else if (needImportList.length == 1) {
+									const res = await IotaSDK.importMnemonic({
+										...values,
+										path: needImportList[0].path
+									});
+									addWallet({
+										...res
+									});
+									jump(res);
+								} else {
+									setRegisterInfo({ ...values });
+									Base.push('account/into/import', { list: JSON.stringify(hasBalanceList) });
+									return;
+								}
+							} catch (error) {
+								console.log(error, '----');
+								Toast.hideLoading();
 							}
 						}
 					}}>
