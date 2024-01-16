@@ -57,8 +57,10 @@ export const AssetsSend = () => {
 	if (assetsId) {
 		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
 	}
+	const [curReceiver, setCurReceiver] = useState('');
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
+		setCurReceiver(receiver);
 	};
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	useEffect(() => {
@@ -77,10 +79,20 @@ export const AssetsSend = () => {
 			let sendAmount = Number(BigNumber(amount).times(decimal));
 			sendAmount = IotaSDK.getNumberStr(sendAmount || 0);
 			const eth = IotaSDK.client.eth;
-			Promise.all([
-				eth.getGasPrice(),
-				IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract, sendAmount)
-			]).then(([gasPrice, gas]) => {
+			const getDefaultGasLimit = async () => {
+				if (!collectionId) {
+					return IotaSDK.getDefaultGasLimit(
+						curWallet.address,
+						assets?.contract,
+						sendAmount,
+						undefined,
+						curReceiver
+					);
+				} else {
+					return IotaSDK.getNftDefaultGasLimit(curWallet.address, collectionId, nftId, curReceiver);
+				}
+			};
+			Promise.all([eth.getGasPrice(), getDefaultGasLimit()]).then(([gasPrice, gas]) => {
 				if (assets?.contract) {
 					if (IotaSDK.curNode?.contractGasPriceRate) {
 						gasPrice = IotaSDK.getNumberStr(parseInt(gasPrice * IotaSDK.curNode?.contractGasPriceRate));
@@ -113,7 +125,7 @@ export const AssetsSend = () => {
 				});
 			});
 		}
-	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal]);
+	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal, curReceiver]);
 	useGetAssetsList(curWallet);
 	const isLedger = curWallet.type == 'ledger';
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
