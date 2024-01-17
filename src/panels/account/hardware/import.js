@@ -1,68 +1,60 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Base, I18n, IotaSDK } from '@tangle-pay/common';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useCreateCheck } from '@tangle-pay/store/common';
-import { S, SS, Nav, ThemeVar, SvgIcon, Toast } from '@/common';
-import { useLocation } from 'react-router-dom';
-import { useGetNodeWallet, useChangeNode, useSelectWallet } from '@tangle-pay/store/common';
+import { S, SS, Nav, Toast } from '@/common';
 import { useRoute } from '@react-navigation/native';
-import { Container, View, Text, Input, Textarea, Form, Item, Button, Label, Content } from 'native-base';
-import { TouchableOpacity } from 'react-native';
-import Modal from 'react-native-modal';
+import { Container, View, Text, Button } from 'native-base';
+import { TouchableOpacity, ScrollView } from 'react-native';
 
 export const AccountHardwareImport = () => {
-	const changeNode = useChangeNode();
-	const pageSize = 5;
 	const { params } = useRoute();
-	const selectWallet = useSelectWallet();
-	const nodes = IotaSDK.nodes.filter((e) => e.type == params?.type);
-	const [list, setList] = useState([]);
-	const [showList, setShowList] = useState([]);
-	const [visible, setVisible] = useState(false);
-	const [current, setCurrent] = useState(1);
-	const getWalletList = async (current) => {
-		Toast.showLoading();
-		try {
-			const walletList = await IotaSDK.getHardwareAddressList(current, pageSize);
-			setList((list) => {
-				const newList = [...list];
-				walletList.forEach((e) => {
-					if (!newList.find((d) => d.address == e.address)) {
-						newList.push(e);
+	let list = [];
+	try {
+		list = JSON.parse(params.list);
+	} catch (error) {}
+	const [showList, setShowList] = useState(list || []);
+	useEffect(() => {
+		const init = async () => {
+			const newList = JSON.parse(JSON.stringify(showList));
+			for (let i = 0; i < newList.length; i++) {
+				const e = newList[i];
+				const { balances } = e;
+				const balanceList = [];
+				balances.forEach((e) => {
+					const node = IotaSDK.nodes.find((d) => d.id == e.nodeId) || {};
+					if (Number(e.balance) > 0) {
+						balanceList.push(
+							`${Base.formatNum(IotaSDK.getNumberStr(e.balance / Math.pow(10, node.decimal)))} ${
+								node.token
+							}`
+						);
 					}
 				});
-				return newList;
-			});
-			setShowList(walletList);
-			Toast.hideLoading();
-		} catch (error) {
-			Toast.hideLoading();
-			Toast.show(String(error));
-		}
-	};
-	useEffect(() => {
-		getWalletList(current);
-	}, [current, IotaSDK.curNode?.id]);
+				newList[i].balanceStr = balanceList.slice(0, 2).join(' / ');
+				newList[i].hasImportc = await IotaSDK.checkImport(e.address);
+				let address = e.address
+					.replace(new RegExp(`^${IotaSDK.curNode?.bech32HRP || ''}`), '')
+					.replace(/^0x/i, '');
+				address = address.replace(/(^.{4})(.+)(.{6}$)/, '$1...$3');
+				if (IotaSDK.curNode?.type == 2) {
+					address = `0x${address}`;
+				} else {
+					address = `${IotaSDK.curNode?.bech32HRP || ''}${address}`;
+				}
+				newList[i].addressStr = address;
+			}
+			setShowList(newList);
+		};
+		init();
+	}, []);
 	return (
 		<Container>
 			<Nav title={I18n.t('account.lederImport')} />
-			<Content contentContainerStyle={[SS.ph16]}>
-				<Text style={[SS.pv16, SS.fz16, SS.fw600]}>{I18n.t('account.selectNode')}</Text>
-				<TouchableOpacity
-					style={[SS.ac, SS.jsb, SS.row, SS.bgS, SS.w100, SS.ph16, { height: 48, borderRadius: 10 }]}
-					onPress={() => {
-						setVisible(true);
-					}}>
-					<Text style={[SS.fz16, SS.fw400]}>{IotaSDK.curNode.name}</Text>
-					<SvgIcon name='down' style={[SS.cS]} size={16} />
-				</TouchableOpacity>
-				{list.length > 0 ? (
+			<ScrollView contentContainerStyle={[SS.ph16]}>
+				{showList.length > 0 ? (
 					<>
-						<Text style={[SS.pt24, SS.fz16, SS.fw600]}>Select an Account</Text>
 						<View>
 							{showList.map((e) => {
-								const hasSelect = !!list.find((d) => d.address == e.address && d.hasSelect);
+								const hasSelect = !!showList.find((d) => d.address == e.address && d.hasSelect);
 								const borderColor = e.hasImport ? '#ccc' : hasSelect ? '#3671EE' : '#ccc';
 								const background = e.hasImport ? '#ccc' : hasSelect ? '#3671EE' : 'transparent';
 								return (
@@ -74,93 +66,40 @@ export const AccountHardwareImport = () => {
 											if (e.hasImport) {
 												return;
 											}
-											const getList = (arr) => {
-												const newList = JSON.parse(JSON.stringify(arr));
-												const i = newList.findIndex((d) => d.address == e.address);
-												newList[i] = { ...e, hasSelect: !hasSelect };
-												return newList;
-											};
-											setList((list) => {
-												return getList(list);
-											});
+											const newList = JSON.parse(JSON.stringify(showList));
+											const i = newList.findIndex((d) => d.address == e.address);
+											newList.forEach((e) => (e.hasSelect = false));
+											newList[i] = { ...e, hasSelect: true };
+											setShowList(newList);
 										}}>
-										<View
-											className='border'
-											style={[
-												S.border(4),
-												{
-													borderRadius: 4,
-													width: 16,
-													height: 16,
-													borderColor,
-													padding: 1,
-													backgroundColor: background
-												}
-											]}></View>
-										<Text style={[SS.ml25, SS.fz14, SS.fw400, SS.tl, { width: 40 }]}>
-											{e.index}
-										</Text>
-										<Text style={[SS.fz14, SS.fw400, SS.tl, { width: 90 }]}>
-											{Base.handleAddress(e.address)}
-										</Text>
+										<View style={[SS.row, SS.ac]}>
+											<View
+												className='border'
+												style={[
+													S.border(4),
+													{
+														borderRadius: 4,
+														width: 16,
+														height: 16,
+														borderColor,
+														padding: 1,
+														backgroundColor: background,
+														marginRight: 8
+													}
+												]}></View>
+											<Text style={[SS.fz14, SS.fw400, SS.tl, { width: 130 }]}>
+												{e.addressStr}
+											</Text>
+										</View>
 										<Text
 											ellipsizeMode='tail'
 											numberOfLines={1}
 											style={[SS.fz14, SS.fw400, SS.tr, SS.mr25, { flex: 1 }]}>
-											{Base.formatNum(
-												IotaSDK.getNumberStr(e.balance / Math.pow(10, IotaSDK.curNode?.decimal))
-											)}
-											{IotaSDK.curNode.token}
+											{e.balanceStr}
 										</Text>
-										{e.hasImport ? (
-											<SvgIcon
-												onPress={() => {
-													selectWallet(e.id);
-													Base.replace('main');
-												}}
-												name='share'
-												style={SS.cP}
-												size={16}
-											/>
-										) : (
-											<View style={{ width: 16, height: 16 }} />
-										)}
 									</TouchableOpacity>
 								);
 							})}
-							<View style={[SS.row, SS.c, SS.mt16]}>
-								<Button
-									primary
-									disabled={current == 1}
-									transparent
-									onPress={() => {
-										setCurrent(current - 1);
-									}}
-									style={[SS.c, SS.mr12]}>
-									<SvgIcon
-										color={current == 1 ? ThemeVar.buttonDisabledBg : ThemeVar.brandPrimary}
-										style={{ lineHeight: 0 }}
-										name='left'
-										size={14}
-									/>
-									<Text style={[SS.fz14, SS.pl8, { lineHeight: 0 }]}>PREV</Text>
-								</Button>
-								<Button
-									primary
-									transparent
-									style={[SS.c, SS.mr16]}
-									onPress={() => {
-										setCurrent(current + 1);
-									}}>
-									<Text style={[SS.fz14, SS.pr8, { lineHeight: 0 }]}>NEXT</Text>
-									<SvgIcon
-										color={ThemeVar.brandPrimary}
-										style={{ lineHeight: 0 }}
-										name='right'
-										size={14}
-									/>
-								</Button>
-							</View>
 						</View>
 						<View style={[SS.row, SS.ac, SS.jsb, SS.ph16, { marginTop: 40 }]}>
 							<Button
@@ -178,7 +117,7 @@ export const AccountHardwareImport = () => {
 								style={[SS.flex1]}
 								block
 								onPress={async () => {
-									const selectList = list.filter((e) => e.hasSelect);
+									const selectList = showList.filter((e) => e.hasSelect);
 									if (selectList.length == 0) {
 										return Toast.show('Please select the account that needs to be imported.');
 									}
@@ -193,6 +132,7 @@ export const AccountHardwareImport = () => {
 											});
 										})
 									);
+									setRegisterInfo({});
 									let walletsList = await IotaSDK.getWalletList();
 									walletsList = [...walletsList, ...addressList];
 									walletsList = [
@@ -212,38 +152,7 @@ export const AccountHardwareImport = () => {
 						</View>
 					</>
 				) : null}
-			</Content>
-			<Modal
-				hasBackdrop
-				backdropOpacity={0.3}
-				onBackButtonPress={() => setVisible(false)}
-				onBackdropPress={() => setVisible(false)}
-				style={[SS.je, SS.p0, SS.m0]}
-				isVisible={visible}>
-				<View style={[SS.w100, SS.radius10, SS.bgW, SS.pv24]}>
-					{nodes.map((e) => {
-						return (
-							<TouchableOpacity
-								activeOpacity={0.8}
-								style={[SS.row, SS.ac, SS.jsb, SS.pv32, SS.pr20, SS.radius8, S.border(2)]}
-								key={e.id}
-								onPress={() => {
-									changeNode(e.id);
-									setVisible(false);
-								}}>
-								<View style={[SS.row, SS.ac, { width: (ThemeVar.deviceWidth / 3) * 2 }]}>
-									<Text style={[SS.ml12, SS.fz16, SS.fw500]}>{e.name}</Text>
-								</View>
-								<SvgIcon
-									name='select'
-									style={[e.id === IotaSDK.curNode?.id ? SS.cP : SS.cS]}
-									size='20'
-								/>
-							</TouchableOpacity>
-						);
-					})}
-				</View>
-			</Modal>
+			</ScrollView>
 		</Container>
 	);
 };
