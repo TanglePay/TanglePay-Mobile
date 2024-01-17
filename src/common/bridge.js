@@ -578,7 +578,7 @@ export const Bridge = {
 			let othersDic = {};
 			if (IotaSDK.checkSMR(curWallet.nodeId)) {
 				if (assetsList.includes('smr') || assetsList.includes('iota')) {
-					const smrAessets = (await IotaSDK.getBalance(curWallet, addressList)) || [];
+					const {list:smrAessets} = (await IotaSDK.getBalance(curWallet, addressList)) || {list:[]};
 					amount = smrAessets.find((e) => e.token === IotaSDK.curNode?.token)?.realAvailable;
 					nativeTokens = smrAessets.filter((e) => e.token !== IotaSDK.curNode?.token);
 					let tokens = nativeTokens.map((e) => e.tokenId);

@@ -168,11 +168,11 @@ export const AssetsTrading = () => {
 										curWallet: { ...curWallet, password }
 									});
 								}
-								if (curInfo.nftId) {
-									onDismissNft(curInfo.nftId);
-								} else {
-									onDismiss(curInfo.blockId);
-								}
+								// if (curInfo.nftId) {
+								// 	onDismissNft(curInfo.nftId);
+								// } else {
+								// 	onDismiss(curInfo.blockId);
+								// }
 								Toast.hideLoading();
 								Toast.success(I18n.t('assets.acceptSucc'));
 								IotaSDK.refreshAssets();
