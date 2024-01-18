@@ -66,7 +66,7 @@ export const AccountIntoPin = () => {
 							try {
 								const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 								await sleep(500);
-								const checkList = await IotaSDK.importMnemonicCheckBalance({ ...values });
+								const checkList = await IotaSDK.importMnemonicCheckBalance({ ...values }, 2);
 								let hasBalanceList = checkList.filter((e) =>
 									e.balances.find((d) => Number(d.balance) > 0)
 								);
