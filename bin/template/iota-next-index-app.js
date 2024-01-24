@@ -3958,11 +3958,34 @@
 		const features = output?.output?.features || [];
 		let featuresLock = false;
 		if (features.length > 0) {
-			const PARTICIPATE = `0x${util_js.Converter.utf8ToHex('PARTICIPATE')}`;
-			featuresLock = !!features.find((e) => e.tag === PARTICIPATE);
+			const tagFeature = features.find((e) => e.type == TAG_FEATURE_TYPE)
+            if (tagFeature) {
+                const tagHex = tagFeature.tag
+                const tagStr = util_js.Converter.hexToUtf8(tagHex)
+                // if tagStr start with PARTICIPATE, GROUPFIMARK, GROUPFIMUTE, GROUPFIVOTE,
+                if (tagStr && (tagStr.startsWith('PARTICIPATE') || tagStr.startsWith('GROUPFIMARK') || tagStr.startsWith('GROUPFIMUTE') || tagStr.startsWith('GROUPFIVOTE'))) {
+                    featuresLock = true
+                }
+            }
 		}
 		return !lockData && !featuresLock;
 	}
+	function isOutputGroupfi(output) {
+        const features = output?.output?.features || []
+        let isGroupfi = false
+        if (features.length > 0) {
+            const tagFeature = features.find((e) => e.type == TAG_FEATURE_TYPE)
+            if (tagFeature) {
+                const tagHex = tagFeature.tag
+                const tagStr = util_js.Converter.hexToUtf8(tagHex)
+                // if tagStr starts with GROUPFI,
+                if (tagStr && tagStr.startsWith('GROUPFI')) {
+                    isGroupfi = true
+                }
+            }
+        }
+        return isGroupfi
+    }
 	// check output
 	function checkOutput(output) {
 		const isSpent = output?.metadata?.isSpent;
@@ -4046,10 +4069,11 @@
 			for (const [index, outputId] of response.items.entries()) {
 				const output = localOutputDatas[index];
 				if (!output.metadata.isSpent) {
-					const isUnLock = checkUnLock(output);
-					if (isUnLock) {
-						total = total.plus(output.output.amount);
-					}
+					const isUnLock = checkUnLock(output)
+                    const isGroupfi = isOutputGroupfi(output)
+                    if (isUnLock || isGroupfi) {
+                        total = total.plus(output.output.amount)
+                    }
 					outputIds.push(outputId);
 					outputDatas.push(output);
 					const nativeTokenOutput = output.output?.nativeTokens || [];
