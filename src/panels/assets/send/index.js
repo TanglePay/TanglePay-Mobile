@@ -73,7 +73,7 @@ export const AssetsSend = () => {
 	}, [params]);
 	const [gasInfo, setGasInfo] = useState({});
 	useEffect(() => {
-		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+		if (IotaSDK.checkWeb3Node(curWallet.nodeId) && curReceiver) {
 			const amount = parseFloat(inputAmount) || 0;
 			let decimal = Math.pow(10, assets.decimal);
 			let sendAmount = Number(BigNumber(amount).times(decimal));
@@ -136,7 +136,7 @@ export const AssetsSend = () => {
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
-	let available = Base.formatNum(IotaSDK.getNumberStr(Number(realBalance.div(Math.pow(10, assets.decimal)))),6);
+	let available = Base.formatNum(IotaSDK.getNumberStr(Number(realBalance.div(Math.pow(10, assets.decimal)))), 6);
 
 	return (
 		<Container>
@@ -336,7 +336,9 @@ export const AssetsSend = () => {
 										returnKeyType='done'
 										style={[SS.fz14, SS.pl0, SS.pb0, S.h(44)]}
 										placeholder={I18n.t('assets.receiverTips')}
-										onChangeText={handleChange('receiver')}
+										onChangeText={(e) => {
+											setReceiver(e);
+										}}
 										value={values.receiver}
 									/>
 								</Item>
@@ -365,7 +367,12 @@ export const AssetsSend = () => {
 												}}
 											/>
 											<Text style={[SS.fz14, SS.cS]}>
-												{I18n.t('staking.available')} {Base.formatNum(available, IotaSDK.checkWeb3Node(curWallet.nodeId) ? 4 : 6)} {assets.unit}
+												{I18n.t('staking.available')}{' '}
+												{Base.formatNum(
+													available,
+													IotaSDK.checkWeb3Node(curWallet.nodeId) ? 4 : 6
+												)}{' '}
+												{assets.unit}
 											</Text>
 										</Item>
 									</>
