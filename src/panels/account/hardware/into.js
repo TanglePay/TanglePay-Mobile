@@ -79,7 +79,7 @@ export const AccountHardwareInto = () => {
 							const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 							await sleep(500);
 							if (isIota || isShimmer) {
-								checkList = await IotaSDK.getHardwareAccountInIota(curNodeId, 0, false, 20);
+								checkList = await IotaSDK.getHardwareAddressInIota(curNodeId, false, 0, 1, 0, 2);
 								const balanceList = await Promise.all(
 									checkList.map((d) => {
 										return IotaSDK.getBalance(
@@ -92,17 +92,21 @@ export const AccountHardwareInto = () => {
 										);
 									})
 								);
-								checkList.forEach((e) => {
+								checkList.forEach((e, i) => {
 									e.balances = [
 										{
-											balance: balanceList[e.index]?.list?.[0]?.realBalance,
+											balance: balanceList[i]?.list?.[0]?.realBalance,
 											nodeId: curNodeId
 										}
 									];
+									e.index = i + 1;
 								});
 							} else if (IotaSDK.checkWeb3Node(curNodeId)) {
 								await IotaSDK.checkHardwareConnect();
-								checkList = await IotaSDK.getHardwareAddressList(1, 20);
+								checkList = await IotaSDK.getHardwareAddressList(1, 2);
+								checkList.forEach((e, i) => {
+									e.index = i + 1;
+								});
 							}
 							let hasBalanceList = checkList.filter((e) => e.balances.find((d) => Number(d.balance) > 0));
 							for (let i = 0; i < checkList.length; i++) {
@@ -115,7 +119,7 @@ export const AccountHardwareInto = () => {
 								const obj = needImportList[0] || checkList[0];
 								const res = await IotaSDK.importHardware({
 									address: obj.address,
-									name: `${values.name} ${obj.index}`,
+									name: `${values.name}-${obj.index}`,
 									publicKey: obj.publicKey || '',
 									path: obj.path,
 									type: 'ledger'
