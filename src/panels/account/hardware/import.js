@@ -132,7 +132,6 @@ export const AccountHardwareImport = () => {
 											});
 										})
 									);
-									setRegisterInfo({});
 									let walletsList = await IotaSDK.getWalletList();
 									walletsList = [...walletsList, ...addressList];
 									walletsList = [
