@@ -3499,6 +3499,9 @@
 				if (filterOptions.hasTimelockCondition !== undefined) {
 					queryParams.push(`hasTimelockCondition=${filterOptions.hasTimelockCondition}`);
 				}
+				if (filterOptions.hasTimelock !== undefined) {
+                    queryParams.push(`hasTimelock=${filterOptions.hasTimelock}`)
+                }
 				if (filterOptions.timelockedBefore !== undefined) {
 					queryParams.push(`timelockedBefore=${filterOptions.timelockedBefore}`);
 				}
