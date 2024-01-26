@@ -82,6 +82,7 @@ export const AccountIntoPin = () => {
 											id: res.id
 										});
 									} else {
+										Base.popToTop();
 										Base.replace('main');
 									}
 								};

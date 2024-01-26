@@ -110,6 +110,7 @@ export const AccountImportSelect = () => {
 								block
 								style={[SS.mr24, SS.flex1]}
 								onPress={() => {
+									Base.popToTop();
 									Base.replace('main');
 								}}>
 								<Text>{I18n.t('apps.cancel')}</Text>
@@ -147,6 +148,7 @@ export const AccountImportSelect = () => {
 										type: 'common.walletsList',
 										data: [...walletsList]
 									});
+									Base.popToTop();
 									Base.replace('main');
 								}}>
 								<Text>{I18n.t('assets.importBtn')}</Text>

@@ -129,6 +129,7 @@ export const AccountHardwareInto = () => {
 									addWallet({
 										...res
 									});
+									Base.popToTop();
 									Base.replace('main');
 								} catch (error) {
 									Toast.show(String(error));
