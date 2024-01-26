@@ -114,11 +114,11 @@ export const CoinList = ({ setHeight }) => {
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
-										{e.balance} {String(e.unit || e.name).toLocaleUpperCase()}
+										{Base.formatNum(e.balance)} {String(e.unit || e.name).toLocaleUpperCase()}
 									</Text>
 									{isSMR ? (
 										<Text style={[SS.fz12, SS.tr, SS.cS]}>
-											{I18n.t('staking.available')} {e.available}{' '}
+											{I18n.t('staking.available')} {Base.formatNum(e.available)}{' '}
 										</Text>
 									) : null}
 								</View>

@@ -49,7 +49,7 @@ export const AssetsSend = () => {
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
-	const collectionId = params.collectionId;
+	const collectionId = params?.collectionId;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
 	const isBio = !!(curPwd || {})[curWallet.id];
