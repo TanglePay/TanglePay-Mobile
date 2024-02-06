@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleProvider, Root } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Alert, AppState, NetInfo, Platform } from 'react-native';
+import { Alert, AppState, Platform } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import { panelsList } from '@/panels';
 import { Base, Trace, IotaSDK } from '@tangle-pay/common';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -158,10 +159,10 @@ export default () => {
 	};
 	const init = async () => {
 		if (Platform.OS === 'ios') {
-			const isConnect = await NetInfo.isConnected.fetch();
-			if (!isConnect) {
-				NetInfo.isConnected.addEventListener('connectionChange', (e) => {
-					if (e) {
+			const netinfo = await NetInfo.fetch();
+			if (!netinfo.isConnected) {
+				NetInfo.addEventListener((e) => {
+					if (e.isConnected) {
 						init();
 					}
 				});

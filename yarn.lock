@@ -2576,6 +2576,11 @@
   resolved "https://registry.npmjs.org/@react-native-community/eslint-plugin/-/eslint-plugin-1.3.0.tgz#9e558170c106bbafaa1ef502bd8e6d4651012bf9"
   integrity sha512-+zDZ20NUnSWghj7Ku5aFphMzuM9JulqCW+aPXT6IfIXFbb8tzYTTOSeRFOtuekJ99ibW2fUCSsjuKNlwDIbHFg==
 
+"@react-native-community/netinfo@^11.2.1":
+  version "11.2.1"
+  resolved "https://g-alka8720-npm.pkg.coding.net/jdt/vue3-commom/@react-native-community/netinfo/-/netinfo-11.2.1.tgz#177f5409f2ac41fd51ede6e4994307bb0edb2178"
+  integrity sha512-n9kgmH7vLaU7Cdo8vGfJGGwhrlgppaOSq5zKj9I7H4k5iRM3aNtwURw83mgrc22Ip7nSye2afZV2xDiIyvHttQ==
+
 "@react-native-picker/picker@^1.9.7":
   version "1.16.8"
   resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-1.16.8.tgz#2126ca54d4a5a3e9ea5e3f39ad1e6643f8e4b3d4"
@@ -10738,7 +10743,7 @@ swarm-js@^0.1.40:
 
 tanglepay@^2.7.1:
   version "2.7.1"
-  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.7.1.tgz#b396cc6f8d7c7e530c7759401b260bb815bb5703"
+  resolved "https://g-alka8720-npm.pkg.coding.net/jdt/vue3-commom/tanglepay/-/tanglepay-2.7.1.tgz#b396cc6f8d7c7e530c7759401b260bb815bb5703"
   integrity sha512-UDlQ+3dGOdAK8KsB324kEzKenrJfq8HU7p3T8K7wel65jZxeD6LX2NDM6c0/hDySvD8lVnNWOajB+Br44JPeRw==
 
 tar@^4.0.2:
