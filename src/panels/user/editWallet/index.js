@@ -16,21 +16,21 @@ export const UserEditWallet = () => {
 	const id = curEdit.id;
 	// const [_, walletsList] = useGetNodeWallet();
 	// const curEdit = walletsList.find((e) => e.id === id) || {};
-	const [passwordEnabled, setPasswordEnabled] = useState(false)
-    const enableDialogRef = useRef()
-    const disableDialogRef = useRef()
+	const [passwordEnabled, setPasswordEnabled] = useState(false);
+	const enableDialogRef = useRef();
+	const disableDialogRef = useRef();
 	const name = curEdit.name || '';
 	const dialogRef = useRef();
 	const curNode = IotaSDK.nodes.find((d) => d.id == curEdit.nodeId);
 	const isLedger = curEdit.type == 'ledger';
 	const syncIsPasswordEnabled = async () => {
-        const res = await checkWalletIsPasswordEnabled(curEdit.id)
-        setPasswordEnabled(res)
-    }
+		const res = await checkWalletIsPasswordEnabled(curEdit.id);
+		setPasswordEnabled(res);
+	};
 	useEffect(() => {
-        console.log('curEdit', curEdit)
-        syncIsPasswordEnabled().catch(e=>console.log(e))
-    }, [])
+		console.log('curEdit', curEdit);
+		syncIsPasswordEnabled().catch((e) => console.log(e));
+	}, []);
 	return (
 		<Container>
 			<Nav title={I18n.t('user.manage')} />
@@ -92,21 +92,21 @@ export const UserEditWallet = () => {
 				) : null}
 				{!isLedger ? (
 					<View activeOpacity={0.8} style={[SS.p16, S.border(2), SS.row, SS.ac, SS.jsb]}>
-					<Text style={[SS.fz14]}>{I18n.t('account.toggleWalletPassword')}</Text>
-					<Switch
-						value={passwordEnabled}
-						onValueChange={async (e) => {
-							if (e) {
-                                enableDialogRef.current.show(syncIsPasswordEnabled)
-                            } else {
-                                if (context.state.isPinSet) {
-                                disableDialogRef.current.show(syncIsPasswordEnabled)
-                                } else {
-                                    Toast.error(I18n.t('account.needPinToTurnoffPassword'))
-                                }
-                            }
-						}}
-					/>
+						<Text style={[SS.fz14]}>{I18n.t('account.toggleWalletPassword')}</Text>
+						<Switch
+							value={passwordEnabled}
+							onValueChange={async (e) => {
+								if (e) {
+									enableDialogRef.current.show(syncIsPasswordEnabled);
+								} else {
+									if (context.state.isPinSet) {
+										disableDialogRef.current.show(syncIsPasswordEnabled);
+									} else {
+										Toast.error(I18n.t('account.needPinToTurnoffPassword'));
+									}
+								}
+							}}
+						/>
 					</View>
 				) : null}
 				{curNode?.type == 2 && !isLedger ? (
@@ -119,6 +119,19 @@ export const UserEditWallet = () => {
 						activeOpacity={0.8}
 						style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
 						<Text style={[SS.fz14]}>{I18n.t('account.exportKey')}</Text>
+						<SvgIcon size={16} name='right' />
+					</TouchableOpacity>
+				) : null}
+				{curEdit?.mnemonic ? (
+					<TouchableOpacity
+						onPress={() => {
+							Base.push('user/exportMnemonic', {
+								...curEdit
+							});
+						}}
+						activeOpacity={0.8}
+						style={[SS.ph16, SS.pv20, SS.row, SS.jsb, SS.ac, S.border(2)]}>
+						<Text style={[SS.fz14]}>{I18n.t('account.exportMnemonic')}</Text>
 						<SvgIcon size={16} name='right' />
 					</TouchableOpacity>
 				) : null}

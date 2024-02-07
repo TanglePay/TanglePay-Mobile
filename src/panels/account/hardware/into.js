@@ -30,11 +30,11 @@ export const AccountHardwareInto = () => {
 
 	useEffect(() => {
 		const fn = async () => {
-            await ensureInited();
-            console.log(context)
-            setShouldShowPin(shouldShowSetPin())
-        }
-        fn()
+			await ensureInited();
+			console.log(context);
+			setShouldShowPin(shouldShowSetPin());
+		};
+		fn();
 	}, []);
 	const bleDevices = useRef();
 	useCreateCheck((name) => {
@@ -74,34 +74,73 @@ export const AccountHardwareInto = () => {
 							const curNodeId = IotaSDK.curNode?.id;
 							const isIota = IotaSDK.checkIota(curNodeId);
 							const isShimmer = IotaSDK.checkSMR(curNodeId);
+							let checkList = [];
+							Toast.showLoading();
+							const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+							await sleep(500);
 							if (isIota || isShimmer) {
-								await bleDevices.current.show();
-								Toast.showLoading();
-								const [{ address, path }] = await IotaSDK.getHardwareAddressInIota(
-									curNodeId,
-									0,
-									true,
-									1
+								checkList = await IotaSDK.getHardwareAddressInIota(curNodeId, false, 0, 1, 0, 2);
+								const balanceList = await Promise.all(
+									checkList.map((d) => {
+										return IotaSDK.getBalance(
+											{
+												id: '',
+												address: d.address,
+												nodeId: curNodeId
+											},
+											[d.address]
+										);
+									})
 								);
-								const info = await IotaSDK.importHardware({
-									address: address,
-									name: values.name,
-									publicKey: '',
-									path: path,
-									type: 'ledger'
+								checkList.forEach((e, i) => {
+									e.balances = [
+										{
+											balance: balanceList[i]?.list?.[0]?.realBalance,
+											nodeId: curNodeId
+										}
+									];
+									e.index = i + 1;
 								});
-								addWallet(info);
-								Toast.hideLoading();
-								Base.replace('main');
 							} else if (IotaSDK.checkWeb3Node(curNodeId)) {
-								await bleDevices.current.show();
 								await IotaSDK.checkHardwareConnect();
-								Base.replace('account/hardware/import', {
-									name: values.name,
-									type: IotaSDK.curNode?.type
+								checkList = await IotaSDK.getHardwareAddressList(1, 2);
+								checkList.forEach((e, i) => {
+									e.index = i + 1;
 								});
 							}
+							let hasBalanceList = checkList.filter((e) => e.balances.find((d) => Number(d.balance) > 0));
+							for (let i = 0; i < checkList.length; i++) {
+								const e = checkList[i];
+								checkList[i].hasImport = await IotaSDK.checkImport(e.address);
+							}
+							Toast.hideLoading();
 							setLoading(false);
+							const needImportList = hasBalanceList.filter((e) => !e.hasImport);
+							if (needImportList.length <= 1) {
+								const obj = needImportList[0] || checkList[0];
+								try {
+									const res = await IotaSDK.importHardware({
+										address: obj.address,
+										name: `${values.name}-${obj.index}`,
+										publicKey: obj.publicKey || '',
+										path: obj.path,
+										type: 'ledger'
+									});
+									addWallet({
+										...res
+									});
+									Base.popToTop();
+									Base.replace('main');
+								} catch (error) {
+									Toast.show(String(error));
+								}
+							} else {
+								// 进入硬件钱包导入，传入list
+								Base.push('account/hardware/import', {
+									name: values.name,
+									list: JSON.stringify(hasBalanceList)
+								});
+							}
 						} catch (error) {
 							setLoading(false);
 							Toast.show(String(error));

@@ -40,7 +40,7 @@ export const Toast = {
 	hide() {
 		NativeBaseToast.hide();
 	},
-	showLoading() {
+	showLoading(timer) {
 		if (!isLoading) {
 			TinyToast.showLoading();
 		}
@@ -49,7 +49,8 @@ export const Toast = {
 		}
 		timeHandler = setTimeout(() => {
 			TinyToast.hide();
-		}, 90000);
+			isLoading = false;
+		}, timer || 90000);
 		isLoading = true;
 	},
 	hideLoading() {

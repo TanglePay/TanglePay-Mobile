@@ -4,8 +4,10 @@ import { S, SS, Nav, Toast } from '@/common';
 import { useRoute } from '@react-navigation/native';
 import { Container, View, Text, Button } from 'native-base';
 import { TouchableOpacity, ScrollView } from 'react-native';
+import { useStore } from '@tangle-pay/store';
 
-export const AccountHardwareImport = () => {
+export const AccountImportSelect = () => {
+	const [registerInfo, setRegisterInfo] = useStore('common.registerInfo');
 	const { params } = useRoute();
 	let list = [];
 	try {
@@ -31,7 +33,7 @@ export const AccountHardwareImport = () => {
 				});
 				newList[i].balanceStr = balanceList.slice(0, 2).join(' / ');
 				newList[i].hasImportc = await IotaSDK.checkImport(e.address);
-				let address = e.address
+				let address = (e.address || '')
 					.replace(new RegExp(`^${IotaSDK.curNode?.bech32HRP || ''}`), '')
 					.replace(/^0x/i, '');
 				address = address.replace(/(^.{4})(.+)(.{6}$)/, '$1...$3');
@@ -48,7 +50,7 @@ export const AccountHardwareImport = () => {
 	}, []);
 	return (
 		<Container>
-			<Nav title={I18n.t('account.lederImport')} />
+			<Nav title='Select an Account' />
 			<ScrollView contentContainerStyle={[SS.ph16]}>
 				{showList.length > 0 ? (
 					<>
@@ -124,15 +126,16 @@ export const AccountHardwareImport = () => {
 									}
 									const addressList = await Promise.all(
 										selectList.map((e) => {
-											return IotaSDK.importHardware({
-												address: e.address,
-												name: `${params.name} ${e.index}`,
-												publicKey: e.publicKey,
-												path: e.path,
-												type: 'ledger'
+											return IotaSDK.importMnemonic({
+												...registerInfo,
+												name: `${registerInfo.name}-${
+													Number(String(e.path).split('/').pop()) + 1
+												}`,
+												path: e.path
 											});
 										})
 									);
+									setRegisterInfo({});
 									let walletsList = await IotaSDK.getWalletList();
 									walletsList = [...walletsList, ...addressList];
 									walletsList = [

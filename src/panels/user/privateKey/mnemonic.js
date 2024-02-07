@@ -7,7 +7,7 @@ import { useGetNodeWallet } from '@tangle-pay/store/common';
 import { Nav, S, SS, Toast } from '@/common';
 import { context, checkWalletIsPasswordEnabled } from '@tangle-pay/domain';
 
-export const PrivateKey = () => {
+export const PrivateKeyMnemonic = () => {
 	const { params } = useRoute();
 	const id = params.id;
 	const [password, setPassword] = useState('');
@@ -19,7 +19,7 @@ export const PrivateKey = () => {
 		const func = async () => {
 			const isEnabled = await checkWalletIsPasswordEnabled(curEdit.id);
 			if (!isEnabled && context.state.isPinSet) {
-				const privateKeyStr = await IotaSDK.getPrivateKey(curEdit.seed, context.state.pin, curEdit.path);
+				const privateKeyStr = await IotaSDK.decryptSeed(curEdit.mnemonic, context.state.pin, true);
 				setKeyStr(privateKeyStr.replace(/^0x/, ''));
 			} else {
 				setKeyStr('');
@@ -38,11 +38,14 @@ export const PrivateKey = () => {
 				</View>
 				<View style={[SS.ph15]}>
 					<View style={[SS.c, SS.pv24]}>
-						<Text style={[SS.fz16, SS.fw600]}>{I18n.t('account.showKey')}</Text>
+						<Text style={[SS.fz16, SS.fw600]}>{I18n.t('account.showKeyMnemonic')}</Text>
 					</View>
 					<View>
 						<Text style={[SS.fz14]}>
-							{I18n.t(keyStr ? 'account.copyKeyTips' : 'assets.passwordTips').replace('{name}', name)}
+							{I18n.t(keyStr ? 'account.copyKeyTipsMnemonic' : 'assets.passwordTips').replace(
+								'{name}',
+								name
+							)}
 						</Text>
 						{!keyStr ? (
 							<Input
@@ -63,17 +66,17 @@ export const PrivateKey = () => {
 						)}
 					</View>
 					<View style={[SS.mt16, SS.mb32, S.bg('rgba(213, 53, 84, 0.05)'), SS.radius10, SS.p10]}>
-						<Text style={[SS.fz14, S.color('#D53554')]}>{I18n.t('account.showKeyTips')}</Text>
+						<Text style={[SS.fz14, S.color('#D53554')]}>{I18n.t('account.showKeyTipsMnemonic')}</Text>
 					</View>
 					{!keyStr ? (
 						<View style={[SS.row, SS.jsb]}>
 							<Button
 								onPress={async () => {
 									try {
-										const privateKeyStr = await IotaSDK.getPrivateKey(
-											curEdit.seed,
+										const privateKeyStr = await IotaSDK.decryptSeed(
+											curEdit.mnemonic,
 											password,
-											curEdit.path
+											true
 										);
 										setKeyStr(privateKeyStr.replace(/^0x/, ''));
 									} catch (error) {

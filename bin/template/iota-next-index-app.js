@@ -3499,6 +3499,9 @@
 				if (filterOptions.hasTimelockCondition !== undefined) {
 					queryParams.push(`hasTimelockCondition=${filterOptions.hasTimelockCondition}`);
 				}
+				if (filterOptions.hasTimelock !== undefined) {
+                    queryParams.push(`hasTimelock=${filterOptions.hasTimelock}`)
+                }
 				if (filterOptions.timelockedBefore !== undefined) {
 					queryParams.push(`timelockedBefore=${filterOptions.timelockedBefore}`);
 				}
@@ -3901,6 +3904,53 @@
 		}
 		return [!isError, tips];
 	}
+	// checkNFTUnLock is based on checkUnLock, but will additionally handle more unlock conditions
+	function checkNFTUnLock(output, shimmerAddressList, hexToBech32) {
+		const nowTime = Math.floor(Date.now() / 1000)
+
+		let unlockConditions = output?.output?.unlockConditions || []
+
+		// TIMELOCK_UNLOCK_CONDITION_TYPE
+		let timelockUnlockCondition = unlockConditions.find(e => e.type === TIMELOCK_UNLOCK_CONDITION_TYPE)
+		if(timelockUnlockCondition && nowTime > timelockUnlockCondition.unixTime) {
+				timelockUnlockCondition = null
+		}
+
+		 // Storage Deposit Return Unlock 
+		 let storageDepositReturnUnlockCondition = unlockConditions.find(e => e.type === STORAGE_DEPOSIT_RETURN_UNLOCK_CONDITION_TYPE)
+
+		// Expiration Unlock Condition
+		let expirationUnlockCondition = unlockConditions.find(e => e.type === EXPIRATION_UNLOCK_CONDITION_TYPE)
+
+		let addressInExpirationUnlockCondition
+		let unixTimeInExpirationUnlockCondition
+		if (expirationUnlockCondition && expirationUnlockCondition.returnAddress) {
+				addressInExpirationUnlockCondition = hexToBech32(expirationUnlockCondition.returnAddress.pubKeyHash)
+				unixTimeInExpirationUnlockCondition = expirationUnlockCondition.unixTime
+		}
+		
+		if (addressInExpirationUnlockCondition && shimmerAddressList.includes(addressInExpirationUnlockCondition)) {
+				if(unixTimeInExpirationUnlockCondition < nowTime) {
+						expirationUnlockCondition = null
+						storageDepositReturnUnlockCondition = null
+				}
+		}
+		
+		const features = output?.output?.features || []
+		let featuresLock = false
+		if (features.length > 0) {
+				const tagFeature = features.find((e) => e.type === TAG_FEATURE_TYPE)
+				if (tagFeature) {
+						const tagHex = tagFeature.tag
+						const tagStr = util_js.Converter.hexToUtf8(tagHex)
+						// if tagStr start with PARTICIPATE, GROUPFIMARK, GROUPFIMUTE, GROUPFIVOTE,
+						if (tagStr && (tagStr.startsWith('PARTICIPATE') || tagStr.startsWith('GROUPFIMARK') || tagStr.startsWith('GROUPFIMUTE') || tagStr.startsWith('GROUPFIVOTE'))) {
+								featuresLock = true
+						}
+				}
+		}
+		return !timelockUnlockCondition && !featuresLock && !expirationUnlockCondition && !storageDepositReturnUnlockCondition
+	}
 	function checkUnLock(output) {
 		const nowTime = parseInt(new Date().getTime() / 1000);
 		let unlockConditions = output?.output?.unlockConditions || [];
@@ -3911,11 +3961,34 @@
 		const features = output?.output?.features || [];
 		let featuresLock = false;
 		if (features.length > 0) {
-			const PARTICIPATE = `0x${util_js.Converter.utf8ToHex('PARTICIPATE')}`;
-			featuresLock = !!features.find((e) => e.tag === PARTICIPATE);
+			const tagFeature = features.find((e) => e.type == TAG_FEATURE_TYPE)
+            if (tagFeature) {
+                const tagHex = tagFeature.tag
+                const tagStr = util_js.Converter.hexToUtf8(tagHex)
+                // if tagStr start with PARTICIPATE, GROUPFIMARK, GROUPFIMUTE, GROUPFIVOTE,
+                if (tagStr && (tagStr.startsWith('PARTICIPATE') || tagStr.startsWith('GROUPFIMARK') || tagStr.startsWith('GROUPFIMUTE') || tagStr.startsWith('GROUPFIVOTE'))) {
+                    featuresLock = true
+                }
+            }
 		}
 		return !lockData && !featuresLock;
 	}
+	function isOutputGroupfi(output) {
+        const features = output?.output?.features || []
+        let isGroupfi = false
+        if (features.length > 0) {
+            const tagFeature = features.find((e) => e.type == TAG_FEATURE_TYPE)
+            if (tagFeature) {
+                const tagHex = tagFeature.tag
+                const tagStr = util_js.Converter.hexToUtf8(tagHex)
+                // if tagStr starts with GROUPFI,
+                if (tagStr && tagStr.startsWith('GROUPFI')) {
+                    isGroupfi = true
+                }
+            }
+        }
+        return isGroupfi
+    }
 	// check output
 	function checkOutput(output) {
 		const isSpent = output?.metadata?.isSpent;
@@ -3986,6 +4059,7 @@
 		let availableNativeTokens = {};
 		let response;
 		let cursor;
+		let isSomeOutputSpending = false
 		do {
 			const nftOutpusDatas = await getNftsOutputs(client, addressBech32);
 			nftOutpusDatas.forEach((e) => {
@@ -3998,10 +4072,11 @@
 			for (const [index, outputId] of response.items.entries()) {
 				const output = localOutputDatas[index];
 				if (!output.metadata.isSpent) {
-					const isUnLock = checkUnLock(output);
-					if (isUnLock) {
-						total = total.plus(output.output.amount);
-					}
+					const isUnLock = checkUnLock(output)
+                    const isGroupfi = isOutputGroupfi(output)
+                    if (isUnLock || isGroupfi) {
+                        total = total.plus(output.output.amount)
+                    }
 					outputIds.push(outputId);
 					outputDatas.push(output);
 					const nativeTokenOutput = output.output?.nativeTokens || [];
@@ -4031,6 +4106,8 @@
 							}
 						}
 					}
+				}else {
+					isSomeOutputSpending = true
 				}
 				ledgerIndex = output.metadata.ledgerIndex;
 			}
@@ -4045,7 +4122,8 @@
 			outputIds,
 			availableOutputIds,
 			outputDatas,
-			availableOutputDatas
+			availableOutputDatas,
+			isSomeOutputSpending
 		};
 	}
 
@@ -6281,6 +6359,7 @@
 	exports.UnitsHelper = UnitsHelper;
 	exports.verifySMRSendParams = verifySMRSendParams;
 	exports.checkOutput = checkOutput;
+	exports.checkNFTUnLock = checkNFTUnLock;
 	exports.checkUnLock = checkUnLock;
 	exports.addressBalance = addressBalance;
 	exports.blockIdFromMilestonePayload = blockIdFromMilestonePayload;

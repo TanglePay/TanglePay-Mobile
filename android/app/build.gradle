@@ -84,8 +84,8 @@ android {
         applicationId "com.cat.iota"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 41
-        versionName "1.5.9"
+        versionCode 42
+        versionName "1.6.3"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
     signingConfigs {

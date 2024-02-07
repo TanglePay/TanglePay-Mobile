@@ -130,7 +130,7 @@ const Item = (item) => {
 									text: I18n.t('apps.execute'),
 									onPress: () => {
 										if (item.nftId) {
-											onDismissNft(item.id);
+											onDismissNft(item.outputId);
 										} else {
 											onDismiss(item.id);
 										}

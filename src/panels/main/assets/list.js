@@ -114,11 +114,11 @@ export const CoinList = ({ setHeight }) => {
 							{isShowAssets ? (
 								<View>
 									<Text style={[SS.fz14, SS.tr, SS.mb4]}>
-										{e.balance} {String(e.unit || e.name).toLocaleUpperCase()}
+										{Base.formatNum(e.balance)} {String(e.unit || e.name).toLocaleUpperCase()}
 									</Text>
 									{isSMR ? (
 										<Text style={[SS.fz12, SS.tr, SS.cS]}>
-											{I18n.t('staking.available')} {e.available}{' '}
+											{I18n.t('staking.available')} {Base.formatNum(e.available)}{' '}
 										</Text>
 									) : null}
 								</View>
@@ -234,15 +234,15 @@ export const ActivityList = ({ search, setHeight }) => {
 	);
 	const ListEl = useMemo(() => {
 		return showList.map((e, j) => {
-			const isContract = e.contractDetail
+			const isContract = e.contractDetail;
 			const isOutto = [1, 3, 6, 8].includes(e.type);
 			const isStake = [2, 3].includes(e.type);
 			const isSign = [4].includes(e.type);
 			const isNft = [7, 8].includes(e.type);
 			let FromToEl = null;
-			if(isContract) {
+			if (isContract) {
 				FromToEl = <Text style={[SS.fz16, SS.mb5]}>{e.contractDetail.abiFunc}</Text>;
-			}else if (isSign) {
+			} else if (isSign) {
 				FromToEl = <Text style={[SS.fz16, SS.mb5]}>{I18n.t('apps.signLabel')}</Text>;
 			} else {
 				if (isStake) {
@@ -257,14 +257,16 @@ export const ActivityList = ({ search, setHeight }) => {
 					);
 				}
 			}
-			let AssetsEl = isShowAssets ? isContract ? null : (
-				<View>
-					<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140 }]}>
-						{isSign ? '' : isOutto ? '-' : '+'} {!isNft ? `${e.num} ` : ''}
-						{e.coin}
-					</Text>
-					<Text style={[SS.fz14, SS.tr, SS.cS]}>$ {e.assets}</Text>
-				</View>
+			let AssetsEl = isShowAssets ? (
+				isContract ? null : (
+					<View>
+						<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140 }]}>
+							{isSign ? '' : isOutto ? '-' : '+'} {!isNft ? `${e.num} ` : ''}
+							{e.coin}
+						</Text>
+						<Text style={[SS.fz14, SS.tr, SS.cS]}>$ {e.assets}</Text>
+					</View>
+				)
 			) : (
 				<View>
 					<Text style={[SS.fz14, SS.tr, SS.mb5]}>****</Text>
@@ -282,7 +284,11 @@ export const ActivityList = ({ search, setHeight }) => {
 					onPress={() => {
 						e.viewUrl && Base.push(e.viewUrl);
 					}}>
-					<SvgIcon style={[SS.mr16]} name={isContract ? 'interaction' : isOutto ? 'outto' : 'into'} size={36} />
+					<SvgIcon
+						style={[SS.mr16]}
+						name={isContract ? 'interaction' : isOutto ? 'outto' : 'into'}
+						size={36}
+					/>
 					<View style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, SS.pb16]}>
 						<View>
 							{FromToEl}
@@ -381,7 +387,7 @@ export const checkImgIsSVG = (img) => img && img.startsWith('data:image/svg+xml'
 export const SVGViewer = ({ style, src }) => (
 	<View style={[...style]}>
 		<WebView
-		  style={{backgroundColor: "transparent"}}
+			style={{ backgroundColor: 'transparent' }}
 			originWhitelist={['*']}
 			onMessage={(event) => {}}
 			source={{
@@ -427,6 +433,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 	const [hideIcon, setHideIcon] = useState(false);
 	const [isShowPre, setIsShowPre] = useState(false);
 	const isSMRNode = IotaSDK.checkSMR(IotaSDK.curNode?.id);
+	const isEvm = IotaSDK.checkWeb3Node(IotaSDK.curNode?.id);
 	const images = list.map((e) => {
 		return {
 			...e,
@@ -437,12 +444,7 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 			height: ThemeVar.deviceHeight,
 			renderItem: checkImgIsSVG(e.media)
 				? () => {
-						return (
-							<SVGViewer
-								src={e.media}
-								style={[S.wh(ThemeVar.deviceWidth)]}
-							/>
-						);
+						return <SVGViewer src={e.media} style={[S.wh(ThemeVar.deviceWidth)]} />;
 				  }
 				: null
 		};
@@ -507,12 +509,16 @@ const CollectiblesItem = ({ logo, name, link, list }) => {
 											name='eye_1'
 											color='#ffffff'
 										/>
-										{isSMRNode && e.nftId && e.isUnlock ? (
+										{(isSMRNode && e.nftId && e.isUnlock) || (isEvm && e.tokenId) ? (
 											<SvgIcon
 												onPress={() => {
-													if (isSMRNode && e.nftId) {
+													if (
+														(isSMRNode && e.nftId) ||
+														(isEvm && e.tokenId && e.collectionId)
+													) {
 														Base.push('assets/send', {
-															nftId: e.nftId,
+															nftId: e.nftId || e.tokenId,
+															collectionId: e.collectionId,
 															currency: e.name,
 															nftImg: e.thumbnailImage || e.media
 														});

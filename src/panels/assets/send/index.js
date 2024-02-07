@@ -49,6 +49,7 @@ export const AssetsSend = () => {
 	const assetsId = params?.id;
 	const nftId = params?.nftId;
 	const nftImg = params?.nftImg;
+	const collectionId = params?.collectionId;
 	currency = currency || assetsList?.[0]?.name;
 	const [curWallet] = useGetNodeWallet();
 	const isBio = !!(curPwd || {})[curWallet.id];
@@ -56,8 +57,10 @@ export const AssetsSend = () => {
 	if (assetsId) {
 		assets = assetsList.find((e) => e.tokenId === assetsId || e.contract === assetsId) || {};
 	}
+	const [curReceiver, setCurReceiver] = useState('');
 	const setReceiver = (receiver) => {
 		form.current.setFieldValue('receiver', receiver);
+		setCurReceiver(receiver);
 	};
 	const [isWalletPassowrdEnabled, setIsWalletPassowrdEnabled] = useState(true);
 	useEffect(() => {
@@ -70,16 +73,26 @@ export const AssetsSend = () => {
 	}, [params]);
 	const [gasInfo, setGasInfo] = useState({});
 	useEffect(() => {
-		if (IotaSDK.checkWeb3Node(curWallet.nodeId)) {
+		if (IotaSDK.checkWeb3Node(curWallet.nodeId) && curReceiver) {
 			const amount = parseFloat(inputAmount) || 0;
 			let decimal = Math.pow(10, assets.decimal);
 			let sendAmount = Number(BigNumber(amount).times(decimal));
 			sendAmount = IotaSDK.getNumberStr(sendAmount || 0);
 			const eth = IotaSDK.client.eth;
-			Promise.all([
-				eth.getGasPrice(),
-				IotaSDK.getDefaultGasLimit(curWallet.address, assets?.contract, sendAmount)
-			]).then(([gasPrice, gas]) => {
+			const getDefaultGasLimit = async () => {
+				if (!collectionId) {
+					return IotaSDK.getDefaultGasLimit(
+						curWallet.address,
+						assets?.contract,
+						sendAmount,
+						undefined,
+						curReceiver
+					);
+				} else {
+					return IotaSDK.getNftDefaultGasLimit(curWallet.address, collectionId, nftId, curReceiver);
+				}
+			};
+			Promise.all([eth.getGasPrice(), getDefaultGasLimit()]).then(([gasPrice, gas]) => {
 				if (assets?.contract) {
 					if (IotaSDK.curNode?.contractGasPriceRate) {
 						gasPrice = IotaSDK.getNumberStr(parseInt(gasPrice * IotaSDK.curNode?.contractGasPriceRate));
@@ -112,7 +125,7 @@ export const AssetsSend = () => {
 				});
 			});
 		}
-	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal]);
+	}, [curWallet.nodeId, assets?.contract, inputAmount, assets.decimal, curReceiver]);
 	useGetAssetsList(curWallet);
 	const isLedger = curWallet.type == 'ledger';
 	// const bigStatedAmount = BigNumber(statedAmount).times(IotaSDK.IOTA_MI);
@@ -123,7 +136,7 @@ export const AssetsSend = () => {
 	if (Number(realBalance) < 0) {
 		realBalance = BigNumber(0);
 	}
-	let available = Base.formatNum(IotaSDK.getNumberStr(Number(realBalance.div(Math.pow(10, assets.decimal)))));
+	let available = Base.formatNum(IotaSDK.getNumberStr(Number(realBalance.div(Math.pow(10, assets.decimal)))), 6);
 
 	return (
 		<Container>
@@ -141,7 +154,7 @@ export const AssetsSend = () => {
 							await bleDevices.current.show();
 						}
 						let { password, amount, receiver } = values;
-						amount = inputAmount || amount
+						amount = inputAmount || amount;
 						if (!isWalletPassowrdEnabled) {
 							password = context.state.pin;
 						}
@@ -229,6 +242,7 @@ export const AssetsSend = () => {
 								decimal: assets?.decimal,
 								mainBalance,
 								nftId,
+								collectionId,
 								gas: gasInfo.gasLimit,
 								gasPrice: gasInfo.gasPriceWei
 							});
@@ -322,7 +336,9 @@ export const AssetsSend = () => {
 										returnKeyType='done'
 										style={[SS.fz14, SS.pl0, SS.pb0, S.h(44)]}
 										placeholder={I18n.t('assets.receiverTips')}
-										onChangeText={handleChange('receiver')}
+										onChangeText={(e) => {
+											setReceiver(e);
+										}}
 										value={values.receiver}
 									/>
 								</Item>
@@ -351,7 +367,12 @@ export const AssetsSend = () => {
 												}}
 											/>
 											<Text style={[SS.fz14, SS.cS]}>
-												{I18n.t('staking.available')} {available} {assets.unit}
+												{I18n.t('staking.available')}{' '}
+												{Base.formatNum(
+													available,
+													IotaSDK.checkWeb3Node(curWallet.nodeId) ? 4 : 6
+												)}{' '}
+												{assets.unit}
 											</Text>
 										</Item>
 									</>
