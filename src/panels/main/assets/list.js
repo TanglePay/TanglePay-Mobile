@@ -99,7 +99,7 @@ export const CoinList = ({ setHeight }) => {
 							style={[S.border(2), SS.flex1, SS.row, SS.ac, SS.jsb, { height: itemH }]}>
 							<View style={[SS.ac, SS.row]}>
 								<Text style={[SS.fz16]}>{String(e.name).toLocaleUpperCase()}</Text>
-								{!IotaSDK.isWeb3Node && statedAmount > 0 && e.realBalance > 0 && !needRestake ? (
+								{/* {!IotaSDK.isWeb3Node && statedAmount > 0 && e.realBalance > 0 && !needRestake ? (
 									<View
 										style={[
 											SS.ml16,
@@ -109,7 +109,7 @@ export const CoinList = ({ setHeight }) => {
 										]}>
 										<Text style={[SS.fz10, { color: '#4A4A4D' }]}> {I18n.t('staking.title')}</Text>
 									</View>
-								) : null}
+								) : null} */}
 							</View>
 							{isShowAssets ? (
 								<View>

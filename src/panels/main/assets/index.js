@@ -212,7 +212,7 @@ export const Assets = () => {
 									setHeightInfo({ ...heightInfo, 0: h });
 								}}
 							/>
-							{assetsTab.includes('stake') ? <RewardsList /> : null}
+							{/* {assetsTab.includes('stake') ? <RewardsList /> : null} */}
 							{!isRequestAssets ? (
 								<View style={[SS.p16, SS.c, SS.row]}>
 									<Spinner size='small' color='gray' />
