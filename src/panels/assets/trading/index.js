@@ -29,7 +29,7 @@ export const AssetsTrading = () => {
 	const [nftUnlockList] = useStore('nft.unlockList');
 	useGetNftList();
 	useGetAssetsList(curWallet);
-	
+
 	const { onDismiss, onDismissNft, onAccept, onAcceptNft } = useHandleUnlocalConditions();
 	let curInfo = unlockConditions.find((e) => e.blockId == id) || {};
 	if (Object.keys(curInfo) == 0) {
@@ -40,11 +40,9 @@ export const AssetsTrading = () => {
 	useEffect(() => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
 			setIsWalletPasswordEnabled(res);
-			
 		});
 	}, [curWallet.id]);
 	useEffect(() => {
-		
 		if (/ipfs/.test(curInfo.logoUrl)) {
 			fetch(curInfo.logoUrl)
 				.then((res) => res.json())
@@ -153,6 +151,8 @@ export const AssetsTrading = () => {
 							}
 							try {
 								Toast.showLoading();
+								const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+								await sleep(500);
 								const info = {
 									...curInfo,
 									curWallet: { ...curWallet, password }
@@ -174,12 +174,13 @@ export const AssetsTrading = () => {
 								// 	onDismiss(curInfo.blockId);
 								// }
 								Toast.hideLoading();
+								Base.goBack();
 								Toast.success(I18n.t('assets.acceptSucc'));
+								await sleep(500);
 								IotaSDK.refreshAssets();
 								setTimeout(() => {
 									IotaSDK.refreshAssets();
 								}, 3000);
-								Base.goBack();
 							} catch (error) {
 								Toast.hideLoading();
 								error = String(error);
@@ -187,7 +188,10 @@ export const AssetsTrading = () => {
 									error.includes('There are not enough funds in the inputs for the required balance')
 								) {
 									error = I18n.t('assets.unlockError');
-									error = error.replace(/{token}/g, IotaSDK.isIotaStardust(curWallet.nodeId) ? 'IOTA' : 'SMR')
+									error = error.replace(
+										/{token}/g,
+										IotaSDK.isIotaStardust(curWallet.nodeId) ? 'IOTA' : 'SMR'
+									);
 								}
 								Toast.show(error);
 								Base.goBack();
