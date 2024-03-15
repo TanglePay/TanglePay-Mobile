@@ -49,6 +49,8 @@ export const DappDialog = () => {
 			setIsWalletPassowrdEnabled(res);
 			if (!res) {
 				setPassword(context.state.pin);
+			} else {
+				setPassword('');
 			}
 		});
 	};
@@ -56,7 +58,7 @@ export const DappDialog = () => {
 		if (isBio) {
 			setPassword(curPwd?.[curWallet.id]);
 		}
-	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
+	}, [isBio, JSON.stringify(curPwd), curWallet.id, isWalletPassowrdEnabled]);
 	useEffect(() => {
 		ensureWalletStatus();
 	}, [curWallet.id, canShowDappDialog]);
@@ -559,15 +561,18 @@ export const DappDialog = () => {
 										showValue = value / Math.pow(10, foundryData.decimals || 0);
 										sendAmount = value;
 										showUnit = unit;
-									} else if (IotaSDK.isIotaStardust(curNodeId)){
-										const iotaDecimal = IotaSDK.curNode?.decimal || 6
-										unit = 'IOTA'
-										showValue = Base.formatNum(BigNumber(value).div(Math.pow(10, iotaDecimal)).valueOf(), iotaDecimal)
-										if(parseFloat(showValue) < Math.pow(10, -iotaDecimal)) {
-												showValue = Math.pow(10, -iotaDecimal)
+									} else if (IotaSDK.isIotaStardust(curNodeId)) {
+										const iotaDecimal = IotaSDK.curNode?.decimal || 6;
+										unit = 'IOTA';
+										showValue = Base.formatNum(
+											BigNumber(value).div(Math.pow(10, iotaDecimal)).valueOf(),
+											iotaDecimal
+										);
+										if (parseFloat(showValue) < Math.pow(10, -iotaDecimal)) {
+											showValue = Math.pow(10, -iotaDecimal);
 										}
-										sendAmount = BigNumber(showValue).times(Math.pow(10, iotaDecimal)).valueOf()
-										showUnit = unit
+										sendAmount = BigNumber(showValue).times(Math.pow(10, iotaDecimal)).valueOf();
+										showUnit = unit;
 									} else {
 										unit = unit || 'SMR';
 										if (!['SMR', 'Glow'].includes(unit)) {
