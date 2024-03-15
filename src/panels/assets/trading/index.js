@@ -27,6 +27,7 @@ export const AssetsTrading = () => {
 	const id = params.id;
 	const [unlockConditions] = useStore('common.unlockConditions');
 	const [nftUnlockList] = useStore('nft.unlockList');
+	const [, refreshNftAssets] = useStore('nft.forceRequest');
 	useGetNftList();
 	useGetAssetsList(curWallet);
 
@@ -178,6 +179,9 @@ export const AssetsTrading = () => {
 								await sleep(500);
 								Toast.hideLoading();
 								IotaSDK.refreshAssets();
+								if (info.nftId) {
+									refreshNftAssets();
+								}
 								setTimeout(() => {
 									IotaSDK.refreshAssets();
 								}, 3000);
