@@ -173,10 +173,10 @@ export const AssetsTrading = () => {
 								// } else {
 								// 	onDismiss(curInfo.blockId);
 								// }
-								Toast.hideLoading();
 								Base.goBack();
 								Toast.success(I18n.t('assets.acceptSucc'));
 								await sleep(500);
+								Toast.hideLoading();
 								IotaSDK.refreshAssets();
 								setTimeout(() => {
 									IotaSDK.refreshAssets();
