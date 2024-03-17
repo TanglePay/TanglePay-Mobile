@@ -58,10 +58,10 @@ export const DappDialog = () => {
 		if (isBio) {
 			setPassword(curPwd?.[curWallet.id]);
 		}
-	}, [isBio, JSON.stringify(curPwd), curWallet.id, isWalletPassowrdEnabled]);
+	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
 	useEffect(() => {
 		ensureWalletStatus();
-	}, [curWallet.id, canShowDappDialog]);
+	}, [curWallet.id, canShowDappDialog, isWalletPassowrdEnabled]);
 	const show = () => {
 		ensureWalletStatus();
 		if (context.state.isPinSet && !getIsUnlocked()) {
