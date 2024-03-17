@@ -166,7 +166,6 @@ export default () => {
 						init();
 					}
 				});
-				return;
 				// return Toast.show('Network error.');
 			}
 		}
