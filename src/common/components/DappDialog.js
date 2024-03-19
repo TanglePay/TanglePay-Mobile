@@ -56,9 +56,9 @@ export const DappDialog = () => {
 	};
 	useEffect(() => {
 		if (isBio) {
-			setPassword(curPwd?.[curWallet.id]);
+			setPassword(context.state.pin || curPwd?.[curWallet.id]);
 		}
-	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
+	}, [isBio, JSON.stringify(curPwd), curWallet.id, context.state.pin]);
 	useEffect(() => {
 		ensureWalletStatus();
 	}, [curWallet.id, canShowDappDialog, isWalletPassowrdEnabled]);
