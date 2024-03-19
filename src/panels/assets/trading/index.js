@@ -176,8 +176,6 @@ export const AssetsTrading = () => {
 								// }
 								Base.goBack();
 								Toast.success(I18n.t('assets.acceptSucc'));
-								await sleep(500);
-								Toast.hideLoading();
 								IotaSDK.refreshAssets();
 								if (info.nftId) {
 									refreshNftAssets();
@@ -185,6 +183,8 @@ export const AssetsTrading = () => {
 								setTimeout(() => {
 									IotaSDK.refreshAssets();
 								}, 3000);
+								await sleep(3000);
+								Toast.hideLoading();
 							} catch (error) {
 								Toast.hideLoading();
 								error = String(error);
