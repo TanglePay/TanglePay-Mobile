@@ -260,7 +260,7 @@ export const ActivityList = ({ search, setHeight }) => {
 			let AssetsEl = isShowAssets ? (
 				isContract ? null : (
 					<View>
-						<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140 }]}>
+						<Text numberOfLines={1} style={[SS.fz14, SS.tr, SS.mb5, { maxWidth: 140, width: 140 }]}>
 							{isSign ? '' : isOutto ? '-' : '+'} {!isNft ? `${e.num} ` : ''}
 							{e.coin}
 						</Text>
