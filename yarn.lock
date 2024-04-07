@@ -10741,10 +10741,10 @@ swarm-js@^0.1.40:
     tar "^4.0.2"
     xhr-request "^1.0.1"
 
-tanglepay@^2.7.2:
-  version "2.7.2"
-  resolved "https://registry.yarnpkg.com/tanglepay/-/tanglepay-2.7.2.tgz#ec21a3f27e08826a9fd787d1b4a15485555e4a99"
-  integrity sha512-dQ0E30L3YnvOsevU6yFnnr9TxQIyql/2MasrIs7kxbBVKdg1YkubReRxbSTr7f59eAp5qkcsuFyZswGZxtBTlQ==
+tanglepay@^2.7.4:
+  version "2.7.4"
+  resolved "https://g-alka8720-npm.pkg.coding.net/jdt/vue3-commom/tanglepay/-/tanglepay-2.7.4.tgz#5edf2f081f7d1f749d0589e712eadce1616e0620"
+  integrity sha512-7jlg5Jmbm63srfQXtKD+qL3VD5LUxzOPwyoxC3rofEcF2MbWGnLb10SJf/YC0/VjYB5YrIRzLlqdh60eUiG2WA==
 
 tar@^4.0.2:
   version "4.4.19"
