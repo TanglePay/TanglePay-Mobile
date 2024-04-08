@@ -46,20 +46,26 @@ export const DappDialog = () => {
 	const isBio = !!(curPwd || {})[curWallet.id];
 	const ensureWalletStatus = () => {
 		checkWalletIsPasswordEnabled(curWallet.id).then((res) => {
-			setIsWalletPassowrdEnabled(res);
-			if (!res) {
-				setPassword(context.state.pin);
+			if (isBio) {
+				setPassword(curPwd?.[curWallet.id]);
+			} else {
+				setIsWalletPassowrdEnabled(res);
+				if (!res) {
+					setPassword(context.state.pin);
+				} else {
+					setPassword('');
+				}
 			}
 		});
 	};
-	useEffect(() => {
-		if (isBio) {
-			setPassword(curPwd?.[curWallet.id]);
-		}
-	}, [isBio, JSON.stringify(curPwd), curWallet.id]);
+	// useEffect(() => {
+	// 	if (isBio) {
+	// 		setPassword(context.state.pin || curPwd?.[curWallet.id]);
+	// 	}
+	// }, [isBio, JSON.stringify(curPwd), curWallet.id, context.state.pin]);
 	useEffect(() => {
 		ensureWalletStatus();
-	}, [curWallet.id, canShowDappDialog]);
+	}, [JSON.stringify(curPwd), context.state.pin, curWallet.id, canShowDappDialog, isWalletPassowrdEnabled, isBio]);
 	const show = () => {
 		ensureWalletStatus();
 		if (context.state.isPinSet && !getIsUnlocked()) {
@@ -559,15 +565,18 @@ export const DappDialog = () => {
 										showValue = value / Math.pow(10, foundryData.decimals || 0);
 										sendAmount = value;
 										showUnit = unit;
-									} else if (IotaSDK.isIotaStardust(curNodeId)){
-										const iotaDecimal = IotaSDK.curNode?.decimal || 6
-										unit = 'IOTA'
-										showValue = Base.formatNum(BigNumber(value).div(Math.pow(10, iotaDecimal)).valueOf(), iotaDecimal)
-										if(parseFloat(showValue) < Math.pow(10, -iotaDecimal)) {
-												showValue = Math.pow(10, -iotaDecimal)
+									} else if (IotaSDK.isIotaStardust(curNodeId)) {
+										const iotaDecimal = IotaSDK.curNode?.decimal || 6;
+										unit = 'IOTA';
+										showValue = Base.formatNum(
+											BigNumber(value).div(Math.pow(10, iotaDecimal)).valueOf(),
+											iotaDecimal
+										);
+										if (parseFloat(showValue) < Math.pow(10, -iotaDecimal)) {
+											showValue = Math.pow(10, -iotaDecimal);
 										}
-										sendAmount = BigNumber(showValue).times(Math.pow(10, iotaDecimal)).valueOf()
-										showUnit = unit
+										sendAmount = BigNumber(showValue).times(Math.pow(10, iotaDecimal)).valueOf();
+										showUnit = unit;
 									} else {
 										unit = unit || 'SMR';
 										if (!['SMR', 'Glow'].includes(unit)) {
